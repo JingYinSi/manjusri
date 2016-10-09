@@ -1,0 +1,68 @@
+{
+  "button": [
+    {
+      "name": "寺庙介绍",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "寺庙规划",
+          "url": "https://mp.weixin.qq.com/s?__biz=MjM5NTI2NTk4OQ==mid=2650144193idx=1sn=db62dc9752a6a81e3e53d87d0f9d0d2dscene=25srcid=07265DCaiSzh85mMKgsNPIzHkey=ascene=0uin=devicetype=iMac+MacBookPro11%2C3+OSX+OSX+10.11.4+build(15E65)version=11020012#wechat_redirect",
+          "sub_button": [ ]
+        },
+        {
+          "type": "view",
+          "name": "义工风采",
+          "url": "http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NTI2NTk4OQ==hid=5sn=50a9a8dbd640830697eb339665c28281#wechat_redirect",
+          "sub_button": [ ]
+        },
+        {
+          "type": "view",
+          "name": "师父开示",
+          "url": "https://mp.weixin.qq.com/mp/homepage?__biz=MjM5NTI2NTk4OQ==hid=2sn=1f3722d41f16eb7bdae1e9db36f78867uin=MjQ5NTM2NDcxMQ%3D%3Dkey=cf237d7ae24775e8e5fd2507dcb524de1607b70b386f89c5c54c82cbecdb08dac78683afa3226da62022753f65de7303devicetype=iPhone+OS9.3.2version=16031712lang=zh_CNnettype=WIFIfontScale=100pass_ticket=cU2yl44dl67f8kz63PUlWN20Jn9tpYKfesFx38PIzSDOeTbQ5XtY3rimnne0HzwXscene=1",
+          "sub_button": [ ]
+        },
+        {
+          "type": "view",
+          "name": "静音活动",
+          "url": "http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NTI2NTk4OQ==hid=3sn=e5b411921fe67b06dcb269d812f0282d#wechat_redirect",
+          "sub_button": [ ]
+        },
+        {
+          "type": "view",
+          "name": "静音风光",
+          "url": "http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NTI2NTk4OQ==hid=6sn=9c20aa08fbf706496c24701f5910e631#wechat_redirect",
+          "sub_button": [ ]
+        }
+      ]
+    },
+    {
+      "name": "寺庙动态",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "寺庙进度",
+          "url": "http://mp.weixin.qq.com/s?__biz=MjM5NTI2NTk4OQ==mid=2650144421idx=1sn=07e11552f80d19c31b76cee99128254dscene=18#wechat_redirect",
+          "sub_button": [ ]
+        },
+        {
+          "type": "view",
+          "name": "工程回顾",
+          "url": "http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NTI2NTk4OQ==hid=7sn=442e3174f2a7234db4eb59b61d756d75#wechat_redirect",
+          "sub_button": [ ]
+        },
+        {
+          "type": "view",
+          "name": "作品征集",
+          "url": "http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NTI2NTk4OQ==hid=1sn=048676d200e7908db9c7d1e6a6a868c8#wechat_redirect",
+          "sub_button": [ ]
+        }
+      ]
+    },
+    {
+      "type": "view",
+      "name": "日日善行",
+      "url": "http://121.41.93.210/jingyin/manjusri",
+      "sub_button": [ ]
+    }
+  ]
+}
