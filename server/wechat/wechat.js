@@ -1,6 +1,3 @@
-/**
- * Created by sony on 2016/9/18.
- */
 var sha1 = require('sha1');
 
 module.exports = {
@@ -15,7 +12,7 @@ module.exports = {
         // 随机字符串
             echostr = req.query.echostr;
 
-        var keys = new Array();
+        var keys = [];
         keys.push(token);
         keys.push(timestamp);
         keys.push(nonce);

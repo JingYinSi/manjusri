@@ -1,19 +1,13 @@
-/**
- * Created by sony on 2016/9/18.
- */
-var http = require("http");
-var https = require("https");
-var querystring = require('querystring');
-var ObjectID = require("mongodb").ObjectID;
-var js2xmlparser = require('js2xmlparser');
-var parseStringToJs = require('xml2js').parseString;
+var querystring = require('querystring'),
+    ObjectID = require("mongodb").ObjectID,
+    js2xmlparser = require('js2xmlparser'),
+    parseStringToJs = require('xml2js').parseString,
+    Virtue = require('./models/virtue');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
-
-var VirtueModel = require('../models/virtue');
-var weapp = require('../modules/weapp')(({
+var weapp = require('../../modules/weapp')(({
     appid: "wx76c06da9928cd6c3",
     appsecret: "f4d498d87cf8641b83671a533c3999ec",
     mch_id: "1364986702",
@@ -22,10 +16,10 @@ var weapp = require('../modules/weapp')(({
 
 module.exports = {
     index: function (req, res) {
-        var openid = "o0ghywcfW_2Dp4oN-7NADengZAVM";
-        var transId = req.query.transId;
-        var transName = decodeURIComponent(req.query.transName);
-        var amount = req.query.amount;
+        var openid = "o0ghywcfW_2Dp4oN-7NADengZAVM",
+            transId = req.query.transId,
+            transName = decodeURIComponent(req.query.transName),
+            amount = req.query.amount;
 
         applyVirtueOpenId(transId, openid, function (err) {
             if (err) {
@@ -39,7 +33,7 @@ module.exports = {
 
         //--------------------------------------------------------
         function applyVirtueOpenId(transId, openid, callback) {
-            VirtueModel.findOne({"_id": ObjectID(transId)}, function (err, virtue) {
+            Virtue.findOne({"_id": ObjectID(transId)}, function (err, virtue) {
                 if (err) {
                     logger.error(err);
                     callback(err);
@@ -47,9 +41,9 @@ module.exports = {
                 }
 
                 if (virtue == null) {
-                    var err = "更新交易记录openid时出错：未找到标识为" + transId + "的交易记录。";
-                    logger.error(err);
-                    callback(err);
+                    var errmsg = "更新交易记录openid时出错：未找到标识为" + transId + "的交易记录。";
+                    logger.error(errmsg);
+                    callback(errmsg);
                     return;
                 }
 
@@ -91,7 +85,7 @@ module.exports = {
                 weapp.getPayData(prepayId, function (payData) {
                     payData.success = true;
                     logger.debug("准备前端H5支付参数:" + JSON.stringify(payData));
-                    res.render('payment', payData);
+                    res.render('wechat/payment', payData);
                 })
             });
         }
@@ -154,7 +148,7 @@ module.exports = {
         }
 
         function applyVirtuePaid(transId, callback) {
-            VirtueModel.findOne({"_id": ObjectID(transId)}, function (err, virtue) {
+            Virtue.findOne({"_id": ObjectID(transId)}, function (err, virtue) {
                 if (err) {
                     logger.error(err);
                     return;

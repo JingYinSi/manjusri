@@ -1,6 +1,3 @@
-/**
- * Created by sony on 2016/9/25.
- */
 $(function () {
     $('#post-comment').hide();
     $('#btn-comment').on('click', function (event) {
@@ -24,7 +21,7 @@ $(function () {
             var imageId = $(this).data('id');
             $.ajax({
                 url: '/images/' + imageId,
-                type: 'DELETE',
+                type: 'DELETE'
             }).done(function (result) {
                 if(result){
                     $this.removeClass('btn-danger').addClass('btn-success');
@@ -34,4 +31,4 @@ $(function () {
             });
         }
     });
-})
+});

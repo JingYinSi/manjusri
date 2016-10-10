@@ -1,7 +1,7 @@
 /**
  * Created by sony on 2016/10/4.
  */
-var md5 = require('MD5'),
+var md5 = require('md5'),
     sha1 = require('sha1');
 
 module.exports = {

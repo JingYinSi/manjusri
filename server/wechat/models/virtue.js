@@ -1,6 +1,3 @@
-/**
- * Created by sony on 2016/9/26.
- */
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 

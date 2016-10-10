@@ -1,9 +1,5 @@
-/**
- * Created by sony on 2016/9/18.
- */
-
-var VirtueModel = require('../models/virtue');
-var weapp = require('../modules/weapp')(({
+var VirtueModel = require('./models/virtue');
+var weapp = require('../../modules/weapp')(({
     appid: "wx76c06da9928cd6c3",
     appsecret: "f4d498d87cf8641b83671a533c3999ec",
     mch_id: "1364986702",
@@ -11,8 +7,8 @@ var weapp = require('../modules/weapp')(({
 }));
 module.exports = {
     index: function (req, res) {
-        weapp.parseOath2RedirectURL()
-        res.render('accuvirtue');
+        weapp.parseOath2RedirectURL();
+        res.render('wechat/accuvirtue');
     },
     //创建日行一善订单
     action: function (req, res) {

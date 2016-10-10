@@ -1,31 +1,22 @@
-/**
- * Created by sony on 2016/9/18.
- */
-var express = require('express'),
-    router = express.Router(),
-    home = require('../controllers/home'),
-    image = require('../controllers/image'),
-    manjusri = require('../controllers/manjusri'),
-    accvirtue = require('../controllers/accvirtue'),
-    wechat  = require('../controllers/wechat'),
-    payment = require('../controllers/payment');
+var manjusri = require('./wechat/manjusri'),
+    accuvirtue = require('./wechat/accvirtue'),
+    wechat  = require('./wechat/wechat'),
+    payment = require('./wechat/payment');
 
-module.exports = function (app) {
-    router.get('/', home.index);
-    router.get('/images/:image_id', image.index);
-    router.post('/images', image.create);
-    router.post('/images/:image_id/like', image.like);
-    router.post('/images/:image_id/comment', image.comment);
-    router.delete('/images/:image_id', image.remove);
+module.exports = function(router) {
+    router.route('/jingyin/wechat')
+        .get(wechat.hook);
 
-    router.get('/jingyin/wechat', wechat.hook);
+    router.route('/jingyin/manjusri')
+        .get(manjusri.index);
 
-    router.get('/jingyin/manjusri', manjusri.index);
+    router.route('/jingyin/manjusri/accuvirtue')
+        .get(accuvirtue.index)
+        .post(accuvirtue.action);
 
-    router.get('/jingyin/manjusri/accuvirtue', accvirtue.index);
-    router.post('/jingyin/manjusri/accuvirtue', accvirtue.action);
+    router.route('/jingyin/manjusri/pay/confirm')
+        .get(payment.index);
 
-    router.get('/jingyin/manjusri/pay/confirm', payment.index);
-    router.post('/jingyin/manjusri/pay/notify', payment.payNotify);
-    app.use(router);
+    router.route('/jingyin/manjusri/pay/notify')
+        .post(payment.payNotify);
 };
