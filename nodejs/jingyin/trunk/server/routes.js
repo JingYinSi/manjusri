@@ -3,20 +3,20 @@ var manjusri = require('./wechat/manjusri'),
     wechat  = require('./wechat/wechat'),
     payment = require('./wechat/payment');
 
-module.exports = function(route) {
-    route('/jingyin/wechat')
+module.exports = function(router) {
+    router.route('/jingyin/wechat')
         .get(wechat.hook);
 
-    route('/jingyin/manjusri')
+    router.route('/jingyin/manjusri')
         .get(manjusri.index);
 
-    route('/jingyin/manjusri/accuvirtue')
+    router.route('/jingyin/manjusri/accuvirtue')
         .get(accuvirtue.index)
         .post(accuvirtue.action);
 
-    route('/jingyin/manjusri/pay/confirm')
+    router.route('/jingyin/manjusri/pay/confirm')
         .get(payment.index);
 
-    route('/jingyin/manjusri/pay/notify')
+    router.route('/jingyin/manjusri/pay/notify')
         .post(payment.payNotify);
 };
