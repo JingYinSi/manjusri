@@ -17,6 +17,7 @@ var weapp = require('../../modules/weapp')(({
 module.exports = {
     index: function (req, res) {
         var openid = "o0ghywcfW_2Dp4oN-7NADengZAVM",
+        //opendId = weapp.getOpenid(req.query.code, function(err, openId){}),  //TODO:当使用正式公众号时需动态获取OpenId
             transId = req.query.transId,
             transName = decodeURIComponent(req.query.transName),
             amount = req.query.amount;
@@ -33,6 +34,7 @@ module.exports = {
 
         //--------------------------------------------------------
         function applyVirtueOpenId(transId, openid, callback) {
+            //TODO: 用findById
             Virtue.findOne({"_id": ObjectID(transId)}, function (err, virtue) {
                 if (err) {
                     logger.error(err);
@@ -40,7 +42,7 @@ module.exports = {
                     return;
                 }
 
-                if (virtue == null) {
+                if (!virtue) {
                     var errmsg = "更新交易记录openid时出错：未找到标识为" + transId + "的交易记录。";
                     logger.error(errmsg);
                     callback(errmsg);
@@ -49,7 +51,7 @@ module.exports = {
 
                 try {
                     virtue.openid = openid;
-                    virtue.save();
+                    virtue.save();  //TODO:应该写成callback形式
                     callback(null);
                 }
                 catch (e) {
