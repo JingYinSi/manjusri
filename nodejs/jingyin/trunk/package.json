@@ -1,0 +1,49 @@
+{
+  "name": "imgploadr",
+  "version": "1.0.0",
+  "description": "demo project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "mocha -r tests/testhelper.js -R spec tests/**/*.test.js"
+  },
+  "author": "clx",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "errorhandler": "^1.4.3",
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.14.1",
+    "js2xmlparser": "^2.0.2",
+    "log4js": "^0.6.38",
+    "md5": "^2.2.1",
+    "method-override": "^2.3.6",
+    "mongodb": "^2.2.10",
+    "mongoose": "^4.6.3",
+    "morgan": "^1.7.0",
+    "oauth2orize": "^1.5.0",
+    "passport": "^0.3.2",
+    "passport-http": "^0.3.0",
+    "passport-http-bearer": "^1.0.1",
+    "passport-local": "^1.0.0",
+    "sha1": "^1.1.1",
+    "xml2js": "^0.4.17",
+    "async": "^2.0.1",
+    "fs": "0.0.1-security",
+    "jssha": "^2.2.0",
+    "moment": "^2.15.1",
+    "multer": "^1.2.0",
+    "path": "^0.12.7",
+    "querystring": "^0.2.0",
+    "request": "^2.75.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "proxyquire": "^1.7.10",
+    "sinon": "^1.17.6",
+    "sinon-chai": "^2.8.0"
+  }
+}
