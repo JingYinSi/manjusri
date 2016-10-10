@@ -7,7 +7,6 @@ var weapp = require('../../modules/weapp')(({
 }));
 module.exports = {
     index: function (req, res) {
-        weapp.parseOath2RedirectURL();
         res.render('wechat/accuvirtue');
     },
     //创建日行一善订单
@@ -21,6 +20,7 @@ module.exports = {
             res.end(JSON.stringify({payURL: payURL(virtue._id, "日行一善", amount)}));
         });
 
+        //TODO:createNewVirtue改写为通用方法
         //-----------------------------
         function createNewVirtue(amount, callback) {
             var virtue = new VirtueModel({
@@ -30,13 +30,17 @@ module.exports = {
                 "state": "0"
             });
             virtue.save(function (err, newVirtue) {
+                //TODO:处理virtue.save异常
+                //TODO:将console输出改为log4j输出
                 console.log(newVirtue);
                 console.log(JSON.stringify(newVirtue));
                 callback(newVirtue);
             });
         }
 
+        //TODO:交易对象的概念，包含transId,transName,以及一些相关行为
         function payURL(transId, transName, amount) {
+            //TODO:var payURL = "/jingyin/manjusri/pay/confirm";
             var payURL = "http://121.41.93.210/jingyin/manjusri/pay/confirm";
             payURL = payURL + "?transId=" + transId;
             payURL = payURL + "&transName=" + transName;
