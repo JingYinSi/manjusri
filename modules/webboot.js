@@ -25,7 +25,7 @@ module.exports = function(ctx) {
         resave: true
     }));
 
-    ctx.route(router);
+    ctx.route(router.route);
     app.use(router);
     app.use('/public/', express.static(ctx.static || path.join(__dirname, '../client/public')));
 
