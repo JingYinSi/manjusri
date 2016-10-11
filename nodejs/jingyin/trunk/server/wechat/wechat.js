@@ -31,8 +31,8 @@ module.exports = {
         res.end(rtn);
     },
     receive:function(req,res){
-        logger.info("request query:" + req.query);
-        logger.info("request params:" + req.params);
+        logger.info(req.query);
+        logger.info(req.params);
 
         var body = "";
         req.on("data", function (chunk) {
