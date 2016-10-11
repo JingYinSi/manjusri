@@ -30,17 +30,22 @@ module.exports = {
         }
         res.end(rtn);
     },
-    receive:function(req,res){
-        logger.info(req.query);
-        logger.info(req.params);
+    receive: function (req, res) {
+        // 微信加密签名
+        var signature = req.query.signature,
+        // 时间戳
+            timestamp = req.query.timestamp,
+        // 随机数
+            nonce = req.query.nonce,
+            openid = req.query.openid;
 
         var body = "";
         req.on("data", function (chunk) {
             body += chunk;
         });
         req.on("end", function () {
-           logger.info("request body:" +body);
+            logger.info("openid:" + openid);
+            logger.info("request body:" + body);
         });
-
     }
 };
