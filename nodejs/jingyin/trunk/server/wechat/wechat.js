@@ -31,6 +31,8 @@ module.exports = {
         res.end(rtn);
     },
     receive:function(req,res){
-        logger.info(JSON.stringify(req));
+        logger.info(req.query);
+        logger.info(req.params);
+        logger.info(req.body);
     }
 };
