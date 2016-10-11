@@ -5,7 +5,8 @@ var manjusri = require('./wechat/manjusri'),
 
 module.exports = function(router) {
     router.route('/jingyin/wechat')
-        .get(wechat.hook);
+        .get(wechat.hook)
+        .post(wechat.receive);
 
     router.route('/jingyin/manjusri')
         .get(manjusri.index);
