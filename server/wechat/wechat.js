@@ -1,5 +1,9 @@
 var sha1 = require('sha1');
 
+var log4js = require('log4js');
+log4js.configure("log4js.conf", {reloadSecs: 300});
+var logger = log4js.getLogger();
+
 module.exports = {
     hook: function (req, res) {
         var token = "jingyinManjusri";
@@ -25,5 +29,8 @@ module.exports = {
             rtn = echostr;
         }
         res.end(rtn);
+    },
+    receive:function(req,res){
+        logger.info(JSON.stringify(req));
     }
 };
