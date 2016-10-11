@@ -46,7 +46,7 @@ module.exports = {
             payURL = payURL + "&transName=" + transName;
             payURL = payURL + "&amount=" + amount;
             payURL = encodeURIComponent(payURL);
-            return weapp.parseOath2RedirectURL(payURL);
+            return weapp.wrapRedirectURLByOath2Way(payURL);
         }
     }
 };
