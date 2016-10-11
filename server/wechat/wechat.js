@@ -46,13 +46,16 @@ module.exports = {
         });
         req.on("end", function () {
             logger.info("openid:" + openid);
-            logger.info("request body:" + body);
             parseStringToJs(body, function (err, result) {
+                if(err){
+                    logger.error(err);
+                    return;
+                }
                 var data = result.xml;
                 for (var p in data) {
                     data[p] = data[p][0];
                 }
-                res.end(JSON.stringify(data));
+                res.end("request body:" + JSON.stringify(data));
             });
         });
     }
