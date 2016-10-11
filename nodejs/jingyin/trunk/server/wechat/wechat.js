@@ -1,4 +1,5 @@
-var sha1 = require('sha1');
+var sha1 = require('sha1'),
+    parseStringToJs = require('xml2js').parseString;
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -46,7 +47,13 @@ module.exports = {
         req.on("end", function () {
             logger.info("openid:" + openid);
             logger.info("request body:" + body);
-            res.end(body);
+            parseStringToJs(body, function (err, result) {
+                var data = result.xml;
+                for (var p in data) {
+                    data[p] = data[p][0];
+                }
+                res.end(JSON.stringify(data));
+            });
         });
     }
 };
