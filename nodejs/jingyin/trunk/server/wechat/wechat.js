@@ -46,6 +46,7 @@ module.exports = {
         req.on("end", function () {
             logger.info("openid:" + openid);
             logger.info("request body:" + body);
+            res.end(body);
         });
     }
 };
