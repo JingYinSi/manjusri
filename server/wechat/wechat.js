@@ -31,8 +31,16 @@ module.exports = {
         res.end(rtn);
     },
     receive:function(req,res){
-        logger.info(req.query);
-        logger.info(req.params);
-        logger.info(req.body);
+        logger.info("request query:" + req.query);
+        logger.info("request params:" + req.params);
+
+        var body = "";
+        req.on("data", function (chunk) {
+            body += chunk;
+        });
+        req.on("end", function () {
+           logger.info("request body:" +body);
+        });
+
     }
 };
