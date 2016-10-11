@@ -51,8 +51,9 @@ module.exports = {
                     logger.error(err);
                     return;
                 }
-                logger.error(result);
+                
                 var data = result.xml;
+                logger.error(data);
                 for (var p in data) {
                     data[p] = data[p][0];
                 }
