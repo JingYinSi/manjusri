@@ -46,6 +46,7 @@ module.exports = {
         });
         req.on("end", function () {
             logger.info("openid:" + openid);
+            logger.info("body:" + body);
             parseStringToJs(body, function (err, result) {
                 if(err){
                     logger.error(err);
