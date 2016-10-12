@@ -51,13 +51,15 @@ module.exports = {
                     logger.error(err);
                     return;
                 }
-                
+
                 var data = result.xml;
                 logger.error(data);
                 for (var p in data) {
                     data[p] = data[p][0];
                 }
-                res.end("request body:" + JSON.stringify(data));
+                res.write("MsgType:" + data.MsgType);
+                res.write("request body:" + JSON.stringify(data));
+                res.end();
             });
         });
     }
