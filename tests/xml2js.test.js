@@ -2,10 +2,10 @@
  * Created by sony on 2016/9/26.
  */
 var js2xmlparser = require('js2xmlparser'),
-    parseStringToJs = require('xml2js').parseString,
+    XML = require('pixl-xml'),
     assert = require('assert');
 
-describe('xml2js', function () {
+describe('pixl-xml', function () {
     it('读取XML字符串', function () {
         var xmlstr = '<xml><ToUserName><![CDATA[gh_03858052afc1]]></ToUserName>'
             +'<FromUserName><![CDATA[o0ghywcUHxUdazzXEBvYPxU1PVPk]]></FromUserName>'
@@ -14,10 +14,7 @@ describe('xml2js', function () {
             +'<Event><![CDATA[subscribe]]></Event>'
             +'<EventKey><![CDATA[]]></EventKey>'
             +'</xml>';
-        var json;
-        parseStringToJs(xmlstr, function (err, result) {
-            assert.equal(null, err);
-            console.log(JSON.stringify(result));
-        });
+        var doc = XML.parse(xmlstr);
+        console.log(doc);
     });
 });
