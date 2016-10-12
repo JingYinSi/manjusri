@@ -1,5 +1,5 @@
 var sha1 = require('sha1'),
-    parseStringToJs = require('xml2js').parseString;
+    XML = require('pixl-xml');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -45,23 +45,8 @@ module.exports = {
             body += chunk;
         });
         req.on("end", function () {
-            logger.info("openid:" + openid);
-            logger.info("body:" + body);
-            parseStringToJs(body, function (err, result) {
-                if(err){
-                    logger.error(err);
-                    return;
-                }
-
-                var data = result.xml;
-                logger.error(data);
-                for (var p in data) {
-                    data[p] = data[p][0];
-                }
-                res.write("MsgType:" + data.MsgType);
-                res.write("request body:" + JSON.stringify(data));
-                res.end();
-            });
+            var doc = XML.parse(body);
+            console.log(doc);
         });
     }
 };
