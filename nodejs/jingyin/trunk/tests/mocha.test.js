@@ -47,30 +47,51 @@ describe('静音寺业务系统', function () {
 
     describe('微信公众号', function () {
         describe('微信接口', function () {
-            describe('getopenid', function () {
-                it("获得OpenId", function (done) {
-                    var code = '1234',
-                        concatStub = sinon.stub().withArgs('https://c9.io/skyclx118')
-                        .callsArgWith(1, null, null, 'abc'),
-                        simpleget = {
-                            concat: concatStub
-                        };
-                    var weixinModule = proxyquire('../modules/weixin', {'simple-get': simpleget});
+            it("获得OpenId", function () {
+                var apiBaseURL = 'apiBaseURL',
+                    appid = 'appid',
+                    appsecret = 'appsecret';
 
-                    weixinModule.getOpenId(code, function (data) {
-                        expect(data).to.be.eql('abc');
-                        done();
-                    });
+                var code = '1234';
+                var url = apiBaseURL + "access_token?appid="
+                    + appid + "&secret=" + appsecret
+                    + "&code=" + code + "&grant_type=authorization_code";
+                var expectedOpenId = '123456789033';
+                var dataFromWeixin = {openid: expectedOpenId};
+
+                /*var concatStub = sinon.stub().withArgs(url + 'aaaaa')
+                 .callsArgWith(1, null, null, dataFromWeixin),*/
+                var simpleget = {
+                    concat: function (apiurl, ck) {
+                        expect(apiurl).eql(url);
+                        ck(null, null, dataFromWeixin);
+                    }
+                };
+                var weixinModule = proxyquire('../modules/weixin', {'simple-get': simpleget});
+                var weixin = weixinModule({
+                    apiBaseURL: 'apiBaseURL',
+                    appId: 'appid',
+                    appSecret: 'appsecret'
+                });
+                weixin.getOpenId(code, function (data) {
+                    expect(data).to.be.eql(expectedOpenId);
                 });
             });
 
-            /*describe('OAuth2', function () {
-             it('以OAuth2的形式wrap重定向Url', function () {
-             var oauth = require('../modules/oauth2');
-             var redirectUrl = 'http://localhost/foo';
-             expect(oauth.wrapRedirectURLByOath2Way(redirectUrl)).to.equal('jdjdjdjdj');
-             })
-             });*/
+            it('以OAuth2的形式wrap重定向Url', function () {
+                var appid = 'appid';
+                var oauth2BaseURL = 'any oauth2BaseURL';
+                var weixinModule = require('../modules/weixin');
+                var weixin = weixinModule({
+                    appId: 'appid',
+                    oauth2BaseURL: oauth2BaseURL
+                });
+                var redirectUrl = 'http://localhost/foo';
+                var wrapedUrl = oauth2BaseURL + "?appid=" + appid + "&redirect_uri="
+                    + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
+                expect(weixin.wrapRedirectURLByOath2Way(redirectUrl))
+                    .eql(wrapedUrl);
+            });
 
             describe('tech test', function () {
                 it('对参数按照key=value的格式，并按照参数名ASCII字典序排序', function () {
@@ -126,7 +147,68 @@ describe('静音寺业务系统', function () {
                     assert.equal('wx201610042139059db09c090a0428534885', result);
                 });
             })
-
         });
+
+        describe('服务端控制', function () {
+            it('配置路由', function () {
+                var routesModule = require('../server/services');
+                var manjusri = require('../server/wechat/manjusri'),
+                    accuvirtue = require('../server/wechat/accvirtue'),
+                    wechat = require('../server/wechat/wechat'),
+                    payment = require('../server/wechat/payment');
+                var getSpy = sinon.stub(),
+                    postSpy = sinon.spy(),
+                    putSpy = sinon.stub(),
+                    deleteSpy = sinon.stub();
+
+                var handlerStub = {
+                    get: getSpy,
+                    post: postSpy,
+                    put: postSpy,
+                    delete: deleteSpy
+                }
+                var routeStub = sinon.stub();
+                routeStub.withArgs('/jingyin/wechat').returns(handlerStub);
+                routeStub.withArgs('/jingyin/manjusri').returns(handlerStub);
+                routeStub.withArgs('/jingyin/manjusri/accuvirtue').returns(handlerStub);
+                routeStub.withArgs('/jingyin/manjusri/pay/confirm').returns(handlerStub);
+                routeStub.withArgs('/jingyin/manjusri/pay/notify').returns(handlerStub);
+
+                getSpy.withArgs(wechat.hook).returns(handlerStub);
+                //getSpy.withArgs(manjusri.index).returns(handlerStub);
+                getSpy.withArgs(accuvirtue.index).returns(handlerStub);
+                getSpy.withArgs(payment.index).returns(handlerStub);
+
+                routesModule.initRoutes({route: routeStub});
+
+
+                expect(getSpy).calledWith(manjusri.index);
+
+                expect(postSpy).calledWith(wechat.receive);
+                expect(postSpy).calledWith(accuvirtue.action);
+                expect(postSpy).calledWith(payment.payNotify);
+            });
+
+            it('向客户端发送可重定向的支付请求的Url', function () {
+
+                var routes = require('../server/services');
+
+                var resEndSpy = sinon.spy();
+                var info = {
+                    foo: 'foo',
+                    fee: 'fee',
+                    fuu: 'fuu',
+                }
+                var expectedUrl = '/jingyin/manjusri/pay/confirm?foo=foo&fee=fee&fuu=fuu'
+                var expectedOAuthUrl = 'expectedOAuthUrl';
+                var warpstub = sinon.stub();
+                routes.weixin = {wrapRedirectURLByOath2Way: warpstub};
+                warpstub.withArgs(expectedUrl).returns(expectedOAuthUrl);
+
+                routes.sendPayUrl({end: resEndSpy}, info);
+                expect(resEndSpy).calledWith(expectedOAuthUrl);
+            })
+
+        })
     })
 })
