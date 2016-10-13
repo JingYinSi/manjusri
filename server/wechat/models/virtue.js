@@ -19,5 +19,14 @@ VirtueSchema.statics.placeVirtue = function (amount, callback) {
     model.save(callback);
 };
 
+VirtueSchema.statics.applyVirtue = function (transId, openId, callback) {
+    var Virtue = mongoose.model('Virtue', VirtueSchema);
+    Virtue.findById(transId, function(err, virtue){
+        virtue.openid = openId;
+        virtue.state = 'applied';
+        virtue.save(callback);
+    });
+};
+
 module.exports = mongoose.model('Virtue', VirtueSchema);
 

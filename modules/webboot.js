@@ -36,6 +36,7 @@ module.exports = function(ctx) {
     app.engine('hbs', exphbs.create().engine);
     app.set('view engine', 'hbs');
     var connStr = 'mongodb://' + ctx.mongodb;
+    mongoose.Promise = global.Promise;
     mongoose.connect(connStr);
     mongoose.connection.on('open', function() {
         console.log('Mongoose:' + connStr + ' is connected!');
