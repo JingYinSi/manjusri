@@ -1,8 +1,7 @@
 /**
  * Created by sony on 2016/9/26.
  */
-var js2xmlparser = require('js2xmlparser'),
-    parseStringToJs = require('xml2js').parseString,
+var parseStringToJs = require('xml2js').parseString,
     assert = require('assert');
 
 describe('xml2js', function () {
@@ -16,8 +15,7 @@ describe('xml2js', function () {
             +'</xml>';
         var json;
         parseStringToJs(xmlstr, function (err, result) {
-            assert.equal(null, err);
-            console.log(JSON.stringify(result));
+            expect(result.xml.Event[0]).eql('subscribe');
         });
     });
 });
