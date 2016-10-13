@@ -1,12 +1,16 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
+function validateAmount (val) {
+    return val > 0;
+}
+
 var VirtueSchema = new Schema({
-    openid: {type: String},
-    transType: {type: String},
-    amount: {type: Number},
+    openid: String,
+    transType: String,
+    amount: { type: Number, validate: [validateAmount, '金额应大于零']},
     timestamp: {type: Date, 'default': Date.now()},
-    state: {type: String, default: '0'}
+    state: {type: String, required: true, default: 'new'}
 });
 
 VirtueSchema.statics.placeVirtue = function (amount, callback) {
