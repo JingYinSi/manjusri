@@ -202,8 +202,26 @@ describe('静音寺业务系统', function () {
             });
 
             it('发送微信支付下单请求', function(){
-               //TODO 明天继续
-                expect(1).eql('明天继续');
+                var xmlToPost = '<xml><foo>foo</foo><fee>...</fee></xml>';
+                var options = {
+                    url: "https://api.mch.weixin.qq.com:443/pay/unifiedorder",
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/xml",  // <--Very important!!!
+                    },
+                    body: xmlToPost
+                };
+
+                var prepayId = 'ffdbsrt4tn4tn4';
+                var requestStub = sinon.stub();
+                requestStub.withArgs(options).callsArgWith(1, null, prepayId);
+                weixinModule = proxyquire('../modules/weixin', {request: requestStub});
+                weixin = weixinModule(weixinConfig);
+
+                var callbackSpy = sinon.spy();
+                weixin.sendPrepayRequest(xmlToPost, callbackSpy);
+                expect(callbackSpy).calledWith(null, prepayId);
+
             });
 
             it('MD5签名', function () {

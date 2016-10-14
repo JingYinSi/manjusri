@@ -3,6 +3,7 @@
  */
 var simpleget = require('simple-get'),
     js2xmlparser = require('js2xmlparser'),
+    request = require('request'),
     md5 = require('md5');
 
 module.exports = function (config) {
@@ -47,6 +48,17 @@ module.exports = function (config) {
             payData.prepay_id = prepayId;
             callback(payData);
         })
+    }
+    this.sendPrepayRequest = function(prepayOrderXML, callback){
+        var options = {
+            url: "https://api.mch.weixin.qq.com:443/pay/unifiedorder",
+            method: "POST",
+            headers: {
+                "content-type": "application/xml",
+            },
+            body: prepayOrderXML
+        };
+        request(options, callback);
     }
     this.preparePrepayXml = function (order) {
         var prepayOrder = order;
