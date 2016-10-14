@@ -192,13 +192,9 @@ describe('静音寺业务系统', function () {
                 //prepayOrder.a = 'aaaaa';
 
                 var prepayXml = '<xml><foo>prepayOrderXML</foo></xml>';
-                console.log('out prepayOrder:' + JSON.stringify(prepayOrder));
-                //parseStub.withArgs("xml", prepayOrder).returns(prepayXml);
                 parseStub.withArgs("xml", prepayOrder).returns(prepayXml);
 
                 var result = weixin.preparePrepayOrderXml(order);
-                console.log(prepayXml);
-                console.log(result);
                 expect(result).xml.to.be.equal(prepayXml);
             });
 
@@ -222,7 +218,6 @@ describe('静音寺业务系统', function () {
                 var callbackSpy = sinon.spy();
                 weixin.sendPrepayRequest(xmlToPost, callbackSpy);
                 expect(callbackSpy).calledWith(null, prepayId);
-
             });
 
             it('MD5签名', function () {
@@ -237,7 +232,7 @@ describe('静音寺业务系统', function () {
         });
 
         describe('服务端控制', function () {
-            it('配置路由', function () {
+            xit('配置路由', function () {
                 var routesModule = require('../server/services');
                 var manjusri = require('../server/wechat/manjusri'),
                     accuvirtue = require('../server/wechat/accvirtue'),
