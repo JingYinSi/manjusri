@@ -232,61 +232,66 @@ describe('静音寺业务系统', function () {
         });
 
         describe('服务端控制', function () {
-            xit('配置路由', function () {
-                var routesModule = require('../server/services');
-                var manjusri = require('../server/wechat/manjusri'),
-                    accuvirtue = require('../server/wechat/accvirtue'),
-                    wechat = require('../server/wechat/wechat'),
-                    payment = require('../server/wechat/payment');
-                var getSpy = sinon.stub(),
-                    postSpy = sinon.spy(),
-                    putSpy = sinon.stub(),
-                    deleteSpy = sinon.stub();
+            describe('路由器', function () {
+                var routes;
+                beforeEach(function () {
+                    routes = require('../server/services');
+                });
 
-                var handlerStub = {
-                    get: getSpy,
-                    post: postSpy,
-                    put: postSpy,
-                    delete: deleteSpy
-                }
-                var routeStub = sinon.stub();
-                routeStub.withArgs('/jingyin/wechat').returns(handlerStub);
-                routeStub.withArgs('/jingyin/manjusri').returns(handlerStub);
-                routeStub.withArgs('/jingyin/manjusri/accuvirtue').returns(handlerStub);
-                routeStub.withArgs('/jingyin/manjusri/pay/confirm').returns(handlerStub);
-                routeStub.withArgs('/jingyin/manjusri/pay/notify').returns(handlerStub);
+                it('配置路由', function () {
+                    var manjusri = require('../server/wechat/manjusri'),
+                        accuvirtue = require('../server/wechat/accvirtue'),
+                        wechat = require('../server/wechat/wechat'),
+                        payment = require('../server/wechat/payment');
+                    var getSpy = sinon.stub(),
+                        postSpy = sinon.spy(),
+                        putSpy = sinon.stub(),
+                        deleteSpy = sinon.stub();
 
-                getSpy.withArgs(wechat.hook).returns(handlerStub);
-                //getSpy.withArgs(manjusri.index).returns(handlerStub);
-                getSpy.withArgs(accuvirtue.index).returns(handlerStub);
-                getSpy.withArgs(payment.index).returns(handlerStub);
+                    var handlerStub = {
+                        get: getSpy,
+                        post: postSpy,
+                        put: postSpy,
+                        delete: deleteSpy
+                    }
+                    var routeStub = sinon.stub();
+                    routeStub.withArgs('/jingyin/wechat').returns(handlerStub);
+                    routeStub.withArgs('/jingyin/manjusri').returns(handlerStub);
+                    routeStub.withArgs('/jingyin/manjusri/accuvirtue').returns(handlerStub);
+                    routeStub.withArgs('/jingyin/manjusri/pay/confirm').returns(handlerStub);
+                    routeStub.withArgs('/jingyin/manjusri/pay/notify').returns(handlerStub);
 
-                routesModule.initRoutes({route: routeStub});
+                    getSpy.withArgs(wechat.hook).returns(handlerStub);
+                    //getSpy.withArgs(manjusri.index).returns(handlerStub);
+                    getSpy.withArgs(accuvirtue.index).returns(handlerStub);
+                    getSpy.withArgs(payment.index).returns(handlerStub);
+
+                    routes.initRoutes({route: routeStub});
 
 
-                expect(getSpy).calledWith(manjusri.index);
+                    expect(getSpy).calledWith(manjusri.index);
 
-                expect(postSpy).calledWith(wechat.receive);
-                expect(postSpy).calledWith(accuvirtue.action);
-                expect(postSpy).calledWith(payment.payNotify);
-            });
+                    expect(postSpy).calledWith(wechat.receive);
+                    expect(postSpy).calledWith(accuvirtue.action);
+                    expect(postSpy).calledWith(payment.payNotify);
+                });
 
-            it('向客户端发送可重定向的支付请求的Url', function () {
-                var routes = require('../server/services');
-                var resEndSpy = sinon.spy();
-                var info = {
-                    foo: 'foo',
-                    fee: 'fee',
-                    fuu: 'fuu',
-                }
-                var expectedUrl = '/jingyin/manjusri/pay/confirm?foo=foo&fee=fee&fuu=fuu'
-                var expectedOAuthUrl = 'expectedOAuthUrl';
-                var warpstub = sinon.stub();
-                routes.weixin = {wrapRedirectURLByOath2Way: warpstub};
-                warpstub.withArgs(expectedUrl).returns(expectedOAuthUrl);
+                it('向客户端发送可重定向的支付请求的Url', function () {
+                    var resEndSpy = sinon.spy();
+                    var info = {
+                        foo: 'foo',
+                        fee: 'fee',
+                        fuu: 'fuu',
+                    }
+                    var expectedUrl = '/jingyin/manjusri/pay/confirm?foo=foo&fee=fee&fuu=fuu'
+                    var expectedOAuthUrl = 'expectedOAuthUrl';
+                    var warpstub = sinon.stub();
+                    routes.weixin = {wrapRedirectURLByOath2Way: warpstub};
+                    warpstub.withArgs(expectedUrl).returns(expectedOAuthUrl);
 
-                routes.sendPayUrl({end: resEndSpy}, info);
-                expect(resEndSpy).calledWith(expectedOAuthUrl);
+                    routes.sendPayUrl({end: resEndSpy}, info);
+                    expect(resEndSpy).calledWith(expectedOAuthUrl);
+                });
             });
 
             describe('处理请求', function () {
