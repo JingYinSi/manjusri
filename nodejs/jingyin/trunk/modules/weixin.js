@@ -7,12 +7,14 @@ var simpleget = require('simple-get'),
     md5 = require('md5');
 
 module.exports = function (config) {
-    this.apiBaseURL = config.apiBaseURL;
+    this.apiBaseURL = config.apiBaseURL ||
+        "https://api.weixin.qq.com/sns/oauth2/";
     this.appid = config.appId;
     this.appsecret = config.appSecret;
-    this.oauth2BaseURL = config.oauth2BaseURL;
+    this.oauth2BaseURL = config.oauth2BaseURL ||
+        "https://open.weixin.qq.com/connect/oauth2/authorize";
     this.mch_id = config.mch_id,
-    this.mch_key = config.mch_key
+        this.mch_key = config.mch_key
 
     this.createNonceStr = function () {
         return Math.random().toString(36).substr(2, 15);
@@ -51,7 +53,7 @@ module.exports = function (config) {
             callback(payData);
         })
     }
-    this.sendPrepayRequest = function(prepayOrderXML, callback){
+    this.sendPrepayRequest = function (prepayOrderXML, callback) {
         var options = {
             url: "https://api.mch.weixin.qq.com:443/pay/unifiedorder",
             method: "POST",
@@ -70,7 +72,6 @@ module.exports = function (config) {
         prepay.trade_type = "JSAPI";
         prepay.sign = this.signMD5(prepay, this.mch_key);
 
-        console.log('inner prepayOrder:' + JSON.stringify(prepay));
         var xml = js2xmlparser.parse('xml', prepay);
         return xml;
     }
