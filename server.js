@@ -1,5 +1,5 @@
 var webboot = require('./modules/webboot'),
-    route = require('./server/routes'),
+    route = require('./server/services'),
     ctx = {
         port: 80,
         //views: __dirname + '/client/views',
@@ -7,7 +7,7 @@ var webboot = require('./modules/webboot'),
         env: 'development',
         secret: 'jingyinmanjusriBiz',
         mongodb: '121.41.93.210:27017/jingyin',
-        route: route
+        route: route.initRoutes
     };
 
 webboot(ctx);
