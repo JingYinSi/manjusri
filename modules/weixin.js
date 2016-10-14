@@ -11,6 +11,8 @@ module.exports = function (config) {
     this.appid = config.appId;
     this.appsecret = config.appSecret;
     this.oauth2BaseURL = config.oauth2BaseURL;
+    this.mch_id = config.mch_id,
+    this.mch_key = config.mch_key
 
     this.createNonceStr = function () {
         return Math.random().toString(36).substr(2, 15);
@@ -60,15 +62,16 @@ module.exports = function (config) {
         };
         request(options, callback);
     }
-    this.preparePrepayXml = function (order) {
-        var prepayOrder = order;
-        prepayOrder.appid = this.appid;
-        prepayOrder.mch_id = this.mch_id;
-        prepayOrder.nonce_str = this.createNonceStr();
-        prepayOrder.trade_type = "JSAPI";
-        prepayOrder.sign = this.signMD5(prepayOrder, this.mch_key);
+    this.preparePrepayOrderXml = function (order) {
+        var prepay = Object.assign({}, order);
+        prepay.appid = this.appid;
+        prepay.mch_id = this.mch_id;
+        prepay.nonce_str = this.createNonceStr();
+        prepay.trade_type = "JSAPI";
+        prepay.sign = this.signMD5(prepay, this.mch_key);
 
-        var xml = js2xmlparser.parse('xml', prepayOrder);
+        console.log('inner prepayOrder:' + JSON.stringify(prepay));
+        var xml = js2xmlparser.parse('xml', prepay);
         return xml;
     }
     this.signMD5 = function (data, key) {

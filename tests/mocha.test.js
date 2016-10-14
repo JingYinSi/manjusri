@@ -1,11 +1,8 @@
 /**
  * Created by sony on 2016/9/26.
  */
-var wepay = require('../modules/wepay'),
-    parseStringToJs = require('xml2js').parseString,
-    mongoose = require('mongoose'),
-    proxyquire = require('proxyquire'),
-    assert = require('assert');
+var mongoose = require('mongoose'),
+    proxyquire = require('proxyquire');
 
 describe('静音寺业务系统', function () {
     describe('业务', function () {
@@ -71,7 +68,7 @@ describe('静音寺业务系统', function () {
 
     describe('微信公众号', function () {
         describe('微信接口', function () {
-            var weixinModule, stubs, weinxinConfug;
+            var weixinModule, stubs, weinxinConfig;
             var apiBaseURL, appid, appsecret, oauth2BaseURL;
             var mch_id, mch_key;
             var weixin;
@@ -93,8 +90,6 @@ describe('静音寺业务系统', function () {
                     mch_key: mch_key
                 };
                 stubs = {};
-                weixinModule = proxyquire('../modules/weixin', stubs);
-                weixin = weixinModule(weixinConfig);
             });
 
             it("获得OpenId", function () {
@@ -105,18 +100,16 @@ describe('静音寺业务系统', function () {
                 var expectedOpenId = '123456789033';
                 var dataFromWeixin = {openid: expectedOpenId};
 
-                /*var concatStub = sinon.stub().withArgs(url + 'aaaaa')
-                 .callsArgWith(1, null, null, dataFromWeixin),*/
-                var simpleget = {
-                    concat: function (apiurl, ck) {
-                        expect(apiurl).eql(url);
-                        ck(null, null, dataFromWeixin);
-                    }
-                };
-                stubs['simple-get'] = simpleget;
-                weixin.getOpenId(code, function (data) {
-                    expect(data).to.be.eql(expectedOpenId);
-                });
+                var concatStub = sinon.stub();
+                concatStub.withArgs(url).callsArgWith(1, null, null, dataFromWeixin);
+                stubs['simple-get'] = {concat: concatStub};
+
+                weixinModule = proxyquire('../modules/weixin', stubs);
+                weixin = weixinModule(weixinConfig);
+
+                var callback = sinon.spy();
+                weixin.getOpenId(code, callback);
+                expect(callback).calledWith(expectedOpenId);
             });
 
             it('以OAuth2的形式wrap重定向Url', function () {
@@ -134,7 +127,6 @@ describe('静音寺业务系统', function () {
                     fee: 'fee'
                 };
                 var prepayOrderXML = '<xml><foo>prepayOrderXML</foo></xml>';
-
                 var preparePrepayXmlStub = sinon.stub().withArgs(order).returns(prepayOrderXML);
                 weixin.preparePrepayXml = preparePrepayXmlStub;
 
@@ -172,36 +164,45 @@ describe('静音寺业务系统', function () {
             });
 
             it('准备微信支付单', function () {
+                var parseStub = sinon.stub();
+                stubs.js2xmlparser = {'parse': parseStub};
+                expect(stubs.js2xmlparser.parse).eql(parseStub);
+                weixinModule = proxyquire('../modules/weixin', stubs);
+                weixin = weixinModule(weixinConfig);
+
                 var order = {
                     foo: 'foo',
                     fee: 'fee'
                 };
-                var prepayOrder = order;
+                var prepayOrder = Object.assign({}, order);
                 prepayOrder.appid = appid;
                 prepayOrder.mch_id = mch_id;
 
                 var nonceStr = 'foo noncestr';
                 var createNonceStrStub = sinon.stub().returns(nonceStr);
                 weixin.createNonceStr = createNonceStrStub;
-
                 prepayOrder.nonce_str = nonceStr;
+
                 prepayOrder.trade_type = "JSAPI";
 
                 var paySign = 'vefnnvqjenvrgn3rngqrgqrngqerngr';
                 var signMD5Stub = sinon.stub().withArgs(prepayOrder, mch_key).returns(paySign);
                 weixin.signMD5 = signMD5Stub;
                 prepayOrder.sign = paySign;
+                //prepayOrder.a = 'aaaaa';
+
                 var prepayXml = '<xml><foo>prepayOrderXML</foo></xml>';
-
-                var parseStub = sinon.stub();
+                console.log('out prepayOrder:' + JSON.stringify(prepayOrder));
+                //parseStub.withArgs("xml", prepayOrder).returns(prepayXml);
                 parseStub.withArgs("xml", prepayOrder).returns(prepayXml);
-                weixinModule = proxyquire('../modules/weixin', {js2xmlparser: {parse: parseStub}});
-                weixin = weixinModule(weixinConfig);
 
-                expect(weixin.preparePrepayXml(order)).xml.to.be.equal(prepayXml);
+                var result = weixin.preparePrepayOrderXml(order);
+                console.log(prepayXml);
+                console.log(result);
+                expect(result).xml.to.be.equal(prepayXml);
             });
 
-            it('发送微信支付下单请求', function(){
+            it('发送微信支付下单请求', function () {
                 var xmlToPost = '<xml><foo>foo</foo><fee>...</fee></xml>';
                 var options = {
                     url: "https://api.mch.weixin.qq.com:443/pay/unifiedorder",
@@ -231,7 +232,7 @@ describe('静音寺业务系统', function () {
                     bbb: 2
                 };
                 var val = weixin.signMD5(data, 'wdfkwjdfkerjgirg');
-                assert.equal('399BCE1827E0B40C633C9A5CF892AFE6', val);
+                expect(val).eql('399BCE1827E0B40C633C9A5CF892AFE6');
             });
         });
 
