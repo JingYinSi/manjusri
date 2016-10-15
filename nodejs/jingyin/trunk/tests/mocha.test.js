@@ -276,14 +276,16 @@ describe('静音寺业务系统', function () {
                     expect(postSpy).calledWith(payment.payNotify);
                 });
 
-                it('向客户端发送可重定向的支付请求的Url', function () {
+
+                it('向客户端发送可重定向的支付请求的', function () {
                     var resEndSpy = sinon.spy();
                     var info = {
                         foo: 'foo',
-                        fee: 'fee',
+                        fee: '可能有中文',
                         fuu: 'fuu',
                     }
-                    var expectedUrl = '/jingyin/manjusri/pay/confirm?foo=foo&fee=fee&fuu=fuu'
+                    var expectedUrl = encodeURIComponent(
+                        '/jingyin/manjusri/pay/confirm?foo=foo&fee=可能有中文&fuu=fuu');
                     var expectedOAuthUrl = 'expectedOAuthUrl';
                     var warpstub = sinon.stub();
                     routes.weixin = {wrapRedirectURLByOath2Way: warpstub};
