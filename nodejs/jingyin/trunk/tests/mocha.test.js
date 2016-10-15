@@ -235,7 +235,7 @@ describe('静音寺业务系统', function () {
             describe('路由器', function () {
                 var routes;
                 beforeEach(function () {
-                    routes = require('../server/services');
+                    routes = require('../server/routes');
                 });
 
                 it('配置路由', function () {

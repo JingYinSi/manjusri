@@ -1,5 +1,5 @@
 var webboot = require('./modules/webboot'),
-    route = require('./server/services'),
+    route = require('./server/routes'),
     ctx = {
         port: 80,
         //views: __dirname + '/client/views',
