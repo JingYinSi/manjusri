@@ -24,6 +24,7 @@ module.exports = {
                 transName: '日行一善',
                 amount: amount
             };
+            console.log(routes.toString());
             routes.sendPayUrl(res, trans);
         });
     }

@@ -42,7 +42,10 @@ module.exports = function(ctx) {
         console.log('Mongoose:' + connStr + ' is connected!');
     });
     var port = process.env.PORT || ctx.port || 3301;
-    app.listen(port, process.env.IP || "0.0.0.0", function() {
-        console.log('Server up at port:' + port);
+    var server = app.listen(port, process.env.IP || "0.0.0.0", function() {
+        var host = server.address().address;
+        var port = server.address().port;
+
+        console.log("Server is listening at http://%s:%s", host, port)
     });
 };
