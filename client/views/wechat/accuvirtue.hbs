@@ -48,7 +48,7 @@
         var url = window.location.href;
         $.post(url, {amount: amount})
                 .done(function (data) {
-                    window.location = data.payURL;
+                    window.location = data;
                 });
     });
 </script>

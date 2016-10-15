@@ -44,6 +44,7 @@ module.exports = {
             url += (index > 0) ? '&' + k + '=' + payInfo[k] : k + '=' + payInfo[k];
             index++;
         }
+        url = encodeURIComponent(url);
         url = this.weixin.wrapRedirectURLByOath2Way(url);
         res.end(url);
     }
