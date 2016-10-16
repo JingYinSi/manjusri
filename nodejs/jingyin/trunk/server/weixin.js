@@ -14,7 +14,7 @@ module.exports = {
         oauth2BaseURL: "https://open.weixin.qq.com/connect/oauth2/authorize"
     }),
     sendPayUrl: function (res, payInfo) {
-        var url = 'http://121.41.93.210' + payurl + '?';
+        var url = payurl + '?';
         var index = 0;
         for (var k in payInfo) {
             url += (index > 0) ? '&' + k + '=' + payInfo[k] : k + '=' + payInfo[k];
