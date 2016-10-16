@@ -7,7 +7,7 @@ var webboot = require('./modules/webboot'),
         env: 'development',
         secret: 'jingyinmanjusriBiz',
         mongodb: '121.41.93.210:27017/jingyin',
-        route: route.initRoutes
+        route: route
     };
 
 webboot(ctx);
