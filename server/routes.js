@@ -5,7 +5,7 @@ const manjusri = require('./wechat/manjusri'),
     accuvirtue = require('./wechat/accvirtue'),
     wechat = require('./wechat/wechat'),
     payment = require('./wechat/payment'),
-    payurl = require('./payurl');
+    payRoute = require('./payurl').payRoute;
 
 module.exports = function (router) {
     router.route('/jingyin/wechat')
@@ -19,7 +19,7 @@ module.exports = function (router) {
         .get(accuvirtue.index)
         .post(accuvirtue.action);
 
-    router.route(payurl)
+    router.route(payRoute)
         .get(payment.index);
 
     router.route('/jingyin/manjusri/pay/notify')

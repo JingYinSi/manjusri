@@ -2,7 +2,7 @@
  * Created by sony on 2016/10/13.
  */
 const weixinModule = require('../modules/weixin'),
-    payurl = require('./payurl');
+    payurl = require('./payurl').payUrl;
 
 module.exports = {
     weixin: weixinModule({
