@@ -1,5 +1,4 @@
 var VirtueModel = require('./models/virtue'),
-    routes = require('../routes'),
     weixin = require('../weixin');
 
 /*
@@ -24,8 +23,7 @@ module.exports = {
                 transName: '日行一善',
                 amount: amount
             };
-            console.log(routes.toString());
-            routes.sendPayUrl(res, trans);
+            weixin.sendPayUrl(res, trans);
         });
     }
     /*action: function (req, res) {
