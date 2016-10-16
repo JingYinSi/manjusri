@@ -6,10 +6,8 @@ const weixinModule = require('../modules/weixin'),
 
 module.exports = {
     weixin: weixinModule({
-        appId: "wxc93a54d2d6e5b682",
+        appId: "wx76c06da9928cd6c3",
         appSecret: "f4d498d87cf8641b83671a533c3999ec",
-        //appId: "wx76c06da9928cd6c3",
-        //appSecret: "f4d498d87cf8641b83671a533c3999ec",
         mchId: "1364986702",
         mchKey: "womendoushiwutaishanjingyinsidet",
         apiBaseURL: "https://api.weixin.qq.com/sns/oauth2/",
