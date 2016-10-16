@@ -17,7 +17,7 @@ var weapp = require('../../modules/weapp')(({
 module.exports = {
     index: function (req, res) {
         var openid = "o0ghywcfW_2Dp4oN-7NADengZAVM";//clx openid
-        openid = "o0ghywcUHxUdazzXEBvYPxU1PVPk";//hanfei openid
+        //openid = "o0ghywcUHxUdazzXEBvYPxU1PVPk";//hanfei openid
         //opendId = weapp.getOpenid(req.query.code, function(err, openId){}),  //TODO:当使用正式公众号时需动态获取OpenId
             transId = req.query.transId,
             transName = decodeURIComponent(req.query.transName),
