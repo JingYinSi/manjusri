@@ -114,6 +114,7 @@ describe('静音寺业务系统', function () {
 
             it('以OAuth2的形式wrap重定向Url', function () {
                 var redirectUrl = 'http://localhost/foo';
+                var appid = 'wxc93a54d2d6e5b682'; //暂时使用测试公众号的AppId
                 var wrapedUrl = oauth2BaseURL + "?appid=" + appid + "&redirect_uri="
                     + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
                 expect(weixin.wrapRedirectURLByOath2Way(redirectUrl))
@@ -233,16 +234,16 @@ describe('静音寺业务系统', function () {
 
         describe('服务端控制', function () {
             describe('路由器', function () {
-                var routes;
                 beforeEach(function () {
-                    routes = require('../server/routes');
+
                 });
 
                 it('配置路由', function () {
                     var manjusri = require('../server/wechat/manjusri'),
                         accuvirtue = require('../server/wechat/accvirtue'),
                         wechat = require('../server/wechat/wechat'),
-                        payment = require('../server/wechat/payment');
+                        payment = require('../server/wechat/payment'),
+                        routes = require('../server/routes');
                     var getSpy = sinon.stub(),
                         postSpy = sinon.spy(),
                         putSpy = sinon.stub(),
@@ -266,7 +267,7 @@ describe('静音寺业务系统', function () {
                     getSpy.withArgs(accuvirtue.index).returns(handlerStub);
                     getSpy.withArgs(payment.index).returns(handlerStub);
 
-                    routes.initRoutes({route: routeStub});
+                    routes({route: routeStub});
 
 
                     expect(getSpy).calledWith(manjusri.index);
@@ -278,6 +279,8 @@ describe('静音寺业务系统', function () {
 
 
                 it('向客户端发送可重定向的支付请求的', function () {
+                    var weixin = require('../server/weixin'),
+                        payurl = require('../server/payurl');
                     var resEndSpy = sinon.spy();
                     var info = {
                         foo: 'foo',
@@ -285,13 +288,13 @@ describe('静音寺业务系统', function () {
                         fuu: 'fuu',
                     }
                     var expectedUrl = encodeURIComponent(
-                        '/jingyin/manjusri/pay/confirm?foo=foo&fee=可能有中文&fuu=fuu');
+                        payurl.payUrl + '?foo=foo&fee=可能有中文&fuu=fuu');
                     var expectedOAuthUrl = 'expectedOAuthUrl';
                     var warpstub = sinon.stub();
-                    routes.weixin = {wrapRedirectURLByOath2Way: warpstub};
+                    weixin.weixin = {wrapRedirectURLByOath2Way: warpstub};
                     warpstub.withArgs(expectedUrl).returns(expectedOAuthUrl);
 
-                    routes.sendPayUrl({end: resEndSpy}, info);
+                    weixin.sendPayUrl({end: resEndSpy}, info);
                     expect(resEndSpy).calledWith(expectedOAuthUrl);
                 });
             });
