@@ -7,12 +7,12 @@ var querystring = require('querystring'),
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
-/*var weapp = require('../../modules/weapp')(({
+var weapp = require('../../modules/weapp')(({
     appid: "wx76c06da9928cd6c3",
     appsecret: "f4d498d87cf8641b83671a533c3999ec",
     mch_id: "1364986702",
     mch_key: "womendoushiwutaishanjingyinsidet"
-}));*/
+}));
 const weinxin = require('../weixin').weixin;
 
 module.exports = {
