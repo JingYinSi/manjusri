@@ -40,9 +40,9 @@ module.exports = {
                 out_trade_no: transId,
                 body: transName,
                 detail: transName,
-                notify_url: "http://jingyintemple.top/jingyin/manjusri/pay/notify",
+                notify_url: "http://121.41.93.210/jingyin/manjusri/pay/notify",
                 openid: openid,
-                spbill_create_ip: "jingyintemple.top",
+                spbill_create_ip: "121.41.93.210",
                 total_fee: amount,
                 attach: "静音"
             };
