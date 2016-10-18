@@ -27,7 +27,6 @@ module.exports = function(ctx) {
 
     ctx.route(router);
     app.use(router);
-    //app.use('/public/', express.static(ctx.static || path.join(__dirname, '../client/public')));
     app.use('/', express.static(ctx.static || path.join(__dirname, '../client/public')));
 
     if ('development' === app.get('env') || ctx.env) {

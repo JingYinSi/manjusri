@@ -18,7 +18,7 @@ const weinxin = require('../weixin').weixin;
 module.exports = {
     index: function (req, res) {
         var openid = "o0ghywcfW_2Dp4oN-7NADengZAVM";
-        //opendId = weapp.getOpenid(req.query.code, function(err, openId){}); //TODO:当使用正式公众号时需动态获取OpenId
+        // var opendId = weapp.getOpenid(req.query.code, function(err, openId){}); //TODO:当使用正式公众号时需动态获取OpenId
         var transId = req.query.transId,
             transName = decodeURIComponent(req.query.transName),
             amount = req.query.amount;
@@ -40,7 +40,7 @@ module.exports = {
                 out_trade_no: transId,
                 body: transName,
                 detail: transName,
-                notify_url: "http://jingyintemple.top/jingyin/manjusri/pay/notify",
+                notify_url: "http://121.41.93.210/jingyin/manjusri/pay/notify",
                 openid: openid,
                 spbill_create_ip: "121.41.93.210",
                 total_fee: amount,
