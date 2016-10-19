@@ -66,7 +66,9 @@ module.exports = function (config) {
         var prepayOrderXML = this.preparePrepayOrderXml(openId, transId, transName, amount);
         this.sendPrepayRequest(prepayOrderXML, function (err, prepayId) {
             if(err){
-                console.log(err);
+                console.log('Here is sendPrepayRequest error:');
+                console.log('prepayOrderXml:' + prepayOrderXML);
+                console.log('err:' + err);
                 return;
             }
             var payData = {
