@@ -33,6 +33,7 @@ module.exports = function (config) {
             callback(data.openid);
         });
     }
+
     this.wrapRedirectURLByOath2Way = function (url) {
         var appid = "wxc93a54d2d6e5b682";
         var wrapedUrl = this.oauth2BaseURL + "?appid=" + appid
@@ -42,6 +43,7 @@ module.exports = function (config) {
          + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";*/
         return wrapedUrl;
     }
+
     this.preparePrepayOrderXml = function (openId, transId, transName, amount) {
         var prepay = {
             out_trade_no: transId,
@@ -61,6 +63,19 @@ module.exports = function (config) {
 
         return js2xmlparser.parse('xml', prepay);
     }
+
+    this.sendPrepayRequest = function (prepayOrderXML, callback) {
+        var options = {
+            url: "https://api.mch.weixin.qq.com:443/pay/unifiedorder",
+            method: "POST",
+            headers: {
+                "content-type": "application/xml",
+            },
+            body: prepayOrderXML
+        };
+        request(options, callback);
+    }
+
     this.prePay = function (openId, transId, transName, amount, callback) {
         var me = this;
         var prepayOrderXML = this.preparePrepayOrderXml(openId, transId, transName, amount);
@@ -84,17 +99,7 @@ module.exports = function (config) {
             callback(payData);
         })
     }
-    this.sendPrepayRequest = function (prepayOrderXML, callback) {
-        var options = {
-            url: "https://api.mch.weixin.qq.com:443/pay/unifiedorder",
-            method: "POST",
-            headers: {
-                "content-type": "application/xml",
-            },
-            body: prepayOrderXML
-        };
-        request(options, callback);
-    }
+
 
     this.signMD5 = function (data, key) {
         var keyvaluesort = function (data) {
