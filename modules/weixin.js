@@ -62,6 +62,7 @@ module.exports = function (config) {
         return js2xmlparser.parse('xml', prepay);
     }
     this.prePay = function (openId, transId, transName, amount, callback) {
+        var me = this;
         var prepayOrderXML = this.preparePrepayOrderXml(openId, transId, transName, amount);
         this.sendPrepayRequest(prepayOrderXML, function (err, prepayId) {
             var payData = {
@@ -69,9 +70,9 @@ module.exports = function (config) {
                 "package": "prepay_id=" + prepayId,
                 "signType": "MD5"
             };
-            payData.timeStamp = this.createTimeStamp();
-            payData.nonceStr = this.createNonceStr();
-            payData.paySign = this.signMD5(payData, this.mch_key);
+            payData.timeStamp = me.createTimeStamp();
+            payData.nonceStr = me.createNonceStr();
+            payData.paySign = me.signMD5(payData, this.mch_key);
             payData.prepay_id = prepayId;
             callback(payData);
         })
