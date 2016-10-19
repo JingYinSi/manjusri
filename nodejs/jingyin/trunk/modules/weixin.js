@@ -39,11 +39,30 @@ module.exports = function (config) {
             + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";
         //todo:正式公众号暂时未配置网页授权，目前使用37行和38行代码测试，正式公众号网页授权设置后采用41和42行代码
         /*var wrapedUrl = this.oauth2BaseURL + "?appid=" + this.appid
-            + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";*/
+         + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";*/
         return wrapedUrl;
     }
-    this.prePay = function (order, callback) {
-        var prepayOrderXML = this.preparePrepayXml(order);
+    this.preparePrepayOrderXml = function (openId, transId, transName, amount) {
+        var prepay = {
+            out_trade_no: transId,
+            body: transName,
+            detail: transName,
+            notify_url: "http://jingyintemple.top/jingyin/manjusri/pay/notify",
+            openid: openId,
+            spbill_create_ip: "121.41.93.210",
+            total_fee: amount,
+            attach: "静音",
+            appid: this.appid,
+            mch_id: this.mch_id,
+            trade_type: "JSAPI"
+        }
+        prepay.nonce_str = this.createNonceStr();
+        prepay.sign = this.signMD5(prepay, this.mch_key);
+
+        return js2xmlparser.parse('xml', prepay);
+    }
+    this.prePay = function (openId, transId, transName, amount, callback) {
+        var prepayOrderXML = this.preparePrepayXml(openId, transId, transName, amount);
         this.sendPrepayRequest(prepayOrderXML, function (err, prepayId) {
             var payData = {
                 "appId": this.appid,
@@ -68,17 +87,7 @@ module.exports = function (config) {
         };
         request(options, callback);
     }
-    this.preparePrepayOrderXml = function (order) {
-        var prepay = Object.assign({}, order);
-        prepay.appid = this.appid;
-        prepay.mch_id = this.mch_id;
-        prepay.nonce_str = this.createNonceStr();
-        prepay.trade_type = "JSAPI";
-        prepay.sign = this.signMD5(prepay, this.mch_key);
 
-        var xml = js2xmlparser.parse('xml', prepay);
-        return xml;
-    }
     this.signMD5 = function (data, key) {
         var keyvaluesort = function (data) {
             var keys = new Array();

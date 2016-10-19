@@ -13,7 +13,7 @@ var weapp = require('../../modules/weapp')(({
     mch_id: "1364986702",
     mch_key: "womendoushiwutaishanjingyinsidet"
 }));
-const weinxin = require('../weixin').weixin;
+const weixin = require('../weixin').weixin;
 
 module.exports = {
     index: function (req, res) {
@@ -23,48 +23,17 @@ module.exports = {
             transName = decodeURIComponent(req.query.transName),
             amount = req.query.amount;
 
-
-        Virtue.applyVirtue(transId, openid, function (err) {
+        Virtue.applyVirtue(transId, openid, function (err, virtue) {
             if (err) {
                 logger.error(err);
                 return;
             }
-            var prepayOrder = newPrepayOrder(openid, transId, transName, amount);
-            pay(prepayOrder, res);
+            weixin.prePay(openid, transId, transName, amount, function(err, paydata){
+                payData.success = true;
+                logger.debug("准备前端H5支付参数:" + JSON.stringify(payData));
+                res.render('wechat/payment', payData);
+            })
         });
-
-        //--------------------------------------------------------
-
-        function newPrepayOrder(openid, transId, transName, amount) {
-            return {
-                out_trade_no: transId,
-                body: transName,
-                detail: transName,
-                notify_url: "http://jingyintemple.top/jingyin/manjusri/pay/notify",
-                openid: openid,
-                spbill_create_ip: "121.41.93.210",
-                total_fee: amount,
-                attach: "静音"
-            };
-        }
-
-        function pay(prepayOrder, res) {
-            weapp.getPrepayId(prepayOrder, function (err, prepayId) {
-                if (err) {
-                    logger.debug("创建预支付失败:" + err);
-                    renderPaymentFail(res);
-                    return;
-                }
-
-                logger.debug("创建预支付成功，prepay_id:" + prepayId);
-
-                weapp.getPayData(prepayId, function (payData) {
-                    payData.success = true;
-                    logger.debug("准备前端H5支付参数:" + JSON.stringify(payData));
-                    res.render('wechat/payment', payData);
-                })
-            });
-        }
     },
     payNotify: function (req, res) {
         var body = "";
