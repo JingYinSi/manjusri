@@ -125,7 +125,6 @@ module.exports = function (config) {
         })
     }
 
-
     this.signMD5 = function (data, key) {
         var keyvaluesort = function (data) {
             var keys = new Array();
