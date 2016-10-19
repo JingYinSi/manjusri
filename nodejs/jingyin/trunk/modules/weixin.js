@@ -62,7 +62,7 @@ module.exports = function (config) {
         return js2xmlparser.parse('xml', prepay);
     }
     this.prePay = function (openId, transId, transName, amount, callback) {
-        var prepayOrderXML = this.preparePrepayXml(openId, transId, transName, amount);
+        var prepayOrderXML = this.preparePrepayOrderXml(openId, transId, transName, amount);
         this.sendPrepayRequest(prepayOrderXML, function (err, prepayId) {
             var payData = {
                 "appId": this.appid,
