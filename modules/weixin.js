@@ -141,7 +141,7 @@ module.exports = function (config) {
             };
             payData.timeStamp = me.createTimeStamp();
             payData.nonceStr = me.createNonceStr();
-            payData.paySign = me.signMD5(payData, this.mch_key);
+            payData.paySign = me.signMD5(payData, me.mch_key);
             payData.prepay_id = prepayId;
             console.log(JSON.stringify(payData));
             callback(payData);
