@@ -13,8 +13,8 @@ module.exports = function (config) {
     this.appsecret = config.appSecret;
     this.oauth2BaseURL = config.oauth2BaseURL ||
         "https://open.weixin.qq.com/connect/oauth2/authorize";
-    this.mch_id = config.mch_id,
-        this.mch_key = config.mch_key
+    this.mch_id = config.mchId,
+        this.mch_key = config.mchKey
 
     this.createNonceStr = function () {
         return Math.random().toString(36).substr(2, 15);
