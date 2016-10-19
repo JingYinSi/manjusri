@@ -65,6 +65,10 @@ module.exports = function (config) {
         var me = this;
         var prepayOrderXML = this.preparePrepayOrderXml(openId, transId, transName, amount);
         this.sendPrepayRequest(prepayOrderXML, function (err, prepayId) {
+            if(err){
+                console.log(err);
+                return;
+            }
             var payData = {
                 "appId": me.appid,
                 "package": "prepay_id=" + prepayId,
