@@ -50,6 +50,7 @@ module.exports = function (config) {
     }
 
     this.preparePrepayOrderXml = function (openId, transId, transName, amount) {
+        var me = this;
         var prepay = {
             out_trade_no: transId,
             body: transName,
@@ -59,31 +60,14 @@ module.exports = function (config) {
             spbill_create_ip: "121.41.93.210",
             total_fee: amount,
             attach: "静音",
-            //appid: this.appid,
-            //mch_id: this.mch_id,
+            appid: me.appid,
+            mch_id: me.mch_id,
+            nonce_str : me.createNonceStr(),
             trade_type: "JSAPI"
         }
-        prepay.appid = this.appid;
-        prepay.mch_id = this.mch_id;
-        prepay.nonce_str = this.createNonceStr();
-        prepay.sign = this.signMD5(prepay, this.mch_key);
-
+        prepay.sign = this.signMD5(prepay, me.mch_key);
         return js2xmlparser.parse('xml', prepay);
     }
-
-    /*this.sendPrepayRequest = function (prepayOrderXML, callback) {
-        console.log('The xml sent to weixin:');
-        console.log(prepayOrderXML);
-        var options = {
-            url: "https://api.mch.weixin.qq.com:443/pay/unifiedorder",
-            method: "POST",
-            headers: {
-                "content-type": "application/xml",
-            },
-            body: prepayOrderXML
-        };
-        request(options, callback);
-    }*/
 
     this.sendPrepayRequest = function (prepayOrderXML, callback) {
         console.log('The xml sent to weixin:');
