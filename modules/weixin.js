@@ -7,6 +7,9 @@ var simpleget = require('simple-get'),
     request = require('request'),
     https = require('https'),
     md5 = require('md5');
+var log4js = require('log4js');
+log4js.configure("log4js.conf", {reloadSecs: 300});
+var logger = log4js.getLogger();
 
 module.exports = function (config) {
     this.apiBaseURL = config.apiBaseURL ||
