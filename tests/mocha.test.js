@@ -114,21 +114,66 @@ describe('静音寺业务系统', function () {
 
             it('以OAuth2的形式wrap重定向Url', function () {
                 var redirectUrl = 'http://localhost/foo';
-                //var appid = 'wxc93a54d2d6e5b682'; //暂时使用测试公众号的AppId
+                var appid = 'wxc93a54d2d6e5b682'; //暂时使用测试公众号的AppId
                 var wrapedUrl = oauth2BaseURL + "?appid=" + appid + "&redirect_uri="
                     + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
                 expect(weixin.wrapRedirectURLByOath2Way(redirectUrl))
                     .eql(wrapedUrl);
             });
 
+            it('准备微信支付单', function () {
+                var openId = 'foo-openid',
+                    transId = 'transOrderNo',
+                    transName = 'transOrder description',
+                    amount = 58.7;
+                var nonceStr = 'foo noncestr';
+                var paySign = 'vefnnvqjenvrgn3rngqrgqrngqerngr';
+                var prepayXml = '<xml><foo>prepayOrderXML</foo></xml>';
+
+                var prepayOrderToSign = {
+                    out_trade_no: transId,
+                    body: transName,
+                    detail: transName,
+                    notify_url: "http://jingyintemple.top/jingyin/manjusri/pay/notify",
+                    openid: openId,
+                    spbill_create_ip: "121.41.93.210",
+                    total_fee: amount,
+                    attach: "静音",
+                    appid: appid,
+                    mch_id: mch_id,
+                    nonce_str: nonceStr,
+                    trade_type: "JSAPI",
+                };
+                var prepayOrderToXml = Object.assign({}, prepayOrderToSign);
+                prepayOrderToXml.sign = paySign;
+
+                var createNonceStrStub = sinon.stub().returns(nonceStr);
+                var signMD5Stub = sinon.stub().withArgs(prepayOrderToSign, mch_key).returns(paySign);
+                var parseStub = sinon.stub();
+                parseStub.withArgs("xml", prepayOrderToXml).returns(prepayXml);
+
+                stubs.js2xmlparser = {'parse': parseStub};
+                weixinModule = proxyquire('../modules/weixin', stubs);
+                weixin = weixinModule(weixinConfig);
+                weixin.createNonceStr = createNonceStrStub;
+                weixin.signMD5 = signMD5Stub;
+
+                var result = weixin.preparePrepayOrderXml(openId, transId, transName, amount);
+                expect(result).xml.to.be.equal(prepayXml);
+            });
+
             it('微信下单', function () {
                 var prePayId = 'prePayId';
-                var order = {
-                    foo: 'foo',
-                    fee: 'fee'
-                };
+                var openId = 'foo-openid',
+                    transId = 'transOrderNo',
+                    transName = 'transOrder description',
+                    amount = 58.7;
+
+                weixinModule = require('../modules/weixin');
+                weixin = weixinModule(weixinConfig);
+
                 var prepayOrderXML = '<xml><foo>prepayOrderXML</foo></xml>';
-                var preparePrepayXmlStub = sinon.stub().withArgs(order).returns(prepayOrderXML);
+                var preparePrepayXmlStub = sinon.stub().withArgs(openId, transId, transName, amount).returns(prepayOrderXML);
                 weixin.preparePrepayXml = preparePrepayXmlStub;
 
                 var prePayRequestSenderStub = sinon.stub();
@@ -160,43 +205,8 @@ describe('静音寺业务系统', function () {
                 expectedPay.prepay_id = prePayId;
 
                 var callback = sinon.spy();
-                weixin.prePay(order, callback);
+                weixin.prePay(openId, transId, transName, amount, callback);
                 expect(callback).calledWith(expectedPay);
-            });
-
-            it('准备微信支付单', function () {
-                var parseStub = sinon.stub();
-                stubs.js2xmlparser = {'parse': parseStub};
-                expect(stubs.js2xmlparser.parse).eql(parseStub);
-                weixinModule = proxyquire('../modules/weixin', stubs);
-                weixin = weixinModule(weixinConfig);
-
-                var order = {
-                    foo: 'foo',
-                    fee: 'fee'
-                };
-                var prepayOrder = Object.assign({}, order);
-                prepayOrder.appid = appid;
-                prepayOrder.mch_id = mch_id;
-
-                var nonceStr = 'foo noncestr';
-                var createNonceStrStub = sinon.stub().returns(nonceStr);
-                weixin.createNonceStr = createNonceStrStub;
-                prepayOrder.nonce_str = nonceStr;
-
-                prepayOrder.trade_type = "JSAPI";
-
-                var paySign = 'vefnnvqjenvrgn3rngqrgqrngqerngr';
-                var signMD5Stub = sinon.stub().withArgs(prepayOrder, mch_key).returns(paySign);
-                weixin.signMD5 = signMD5Stub;
-                prepayOrder.sign = paySign;
-                //prepayOrder.a = 'aaaaa';
-
-                var prepayXml = '<xml><foo>prepayOrderXML</foo></xml>';
-                parseStub.withArgs("xml", prepayOrder).returns(prepayXml);
-
-                var result = weixin.preparePrepayOrderXml(order);
-                expect(result).xml.to.be.equal(prepayXml);
             });
 
             it('发送微信支付下单请求', function () {
