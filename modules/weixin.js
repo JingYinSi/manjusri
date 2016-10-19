@@ -3,6 +3,7 @@
  */
 var simpleget = require('simple-get'),
     js2xmlparser = require('js2xmlparser'),
+    parseStringToJs = require('xml2js').parseString,
     request = require('request'),
     https = require('https'),
     md5 = require('md5');
