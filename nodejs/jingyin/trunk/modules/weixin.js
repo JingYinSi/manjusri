@@ -87,7 +87,7 @@ module.exports = function (config) {
                     str += data;
                 });
                 res.on('end', function () {
-                    logger.debug("来自微信支付接口的预支付数据生成结果:" + str);
+                    logger.debug("Prepay data from weixin API:" + str);
                     parseStringToJs(str, function (err, result) {
                         var data = result.xml;
                         for (var p in data) {
