@@ -42,7 +42,7 @@ module.exports = {
         });
         req.on("end", function () {
             parsePayNotify(body, function (err, result) {
-                logger.debug("解析支付结果通知:" + JSON.stringify(result));
+                logger.debug("Notification the result of payment:" + JSON.stringify(result));
                 if (result.pass()) {
                     applyVirtuePaid(result.out_trade_no, function () {
                     });
