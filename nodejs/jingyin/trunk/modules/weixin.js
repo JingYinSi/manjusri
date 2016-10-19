@@ -70,8 +70,6 @@ module.exports = function (config) {
     }
 
     this.sendPrepayRequest = function (prepayOrderXML, callback) {
-        console.log('The xml sent to weixin:');
-        console.log(prepayOrderXML);
         var options = {
             hostname: "api.mch.weixin.qq.com",
             port: "443",
@@ -114,23 +112,15 @@ module.exports = function (config) {
         var me = this;
         var prepayOrderXML = me.preparePrepayOrderXml(openId, transId, transName, amount);
         me.sendPrepayRequest(prepayOrderXML, function (err, prepayId) {
-            if(err){
-                console.log('Here is sendPrepayRequest error:');
-                console.log('prepayOrderXml:' + prepayOrderXML);
-                console.log('err:' + err);
-                return;
-            }
-
             var payData = {
                 "appId": me.appid,
                 "package": "prepay_id=" + prepayId,
+                "timeStamp" : me.createTimeStamp(),
+                "nonceStr" : me.createNonceStr(),
                 "signType": "MD5"
             };
-            payData.timeStamp = me.createTimeStamp();
-            payData.nonceStr = me.createNonceStr();
             payData.paySign = me.signMD5(payData, me.mch_key);
             payData.prepay_id = prepayId;
-            console.log(JSON.stringify(payData));
             callback(payData);
         })
     }
