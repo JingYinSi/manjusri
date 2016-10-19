@@ -66,7 +66,7 @@ module.exports = function (config) {
         var prepayOrderXML = this.preparePrepayOrderXml(openId, transId, transName, amount);
         this.sendPrepayRequest(prepayOrderXML, function (err, prepayId) {
             var payData = {
-                "appId": this.appid,
+                "appId": me.appid,
                 "package": "prepay_id=" + prepayId,
                 "signType": "MD5"
             };
@@ -74,6 +74,7 @@ module.exports = function (config) {
             payData.nonceStr = me.createNonceStr();
             payData.paySign = me.signMD5(payData, this.mch_key);
             payData.prepay_id = prepayId;
+            console.log(JSON.stringify(payData));
             callback(payData);
         })
     }
