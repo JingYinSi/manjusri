@@ -54,10 +54,12 @@ module.exports = function (config) {
             spbill_create_ip: "121.41.93.210",
             total_fee: amount,
             attach: "静音",
-            appid: this.appid,
-            mch_id: this.mch_id,
+            //appid: this.appid,
+            //mch_id: this.mch_id,
             trade_type: "JSAPI"
         }
+        prepay.appid = this.appid;
+        prepay.mch_id = this.mch_id;
         prepay.nonce_str = this.createNonceStr();
         prepay.sign = this.signMD5(prepay, this.mch_key);
 
