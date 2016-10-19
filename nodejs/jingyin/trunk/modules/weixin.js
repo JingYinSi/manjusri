@@ -82,7 +82,7 @@ module.exports = function (config) {
 
     this.prePay = function (openId, transId, transName, amount, callback) {
         var me = this;
-        var prepayOrderXML = this.preparePrepayOrderXml(openId, transId, transName, amount);
+        var prepayOrderXML = me.preparePrepayOrderXml(openId, transId, transName, amount);
         me.sendPrepayRequest(prepayOrderXML, function (err, prepayId) {
             if(err){
                 console.log('Here is sendPrepayRequest error:');
