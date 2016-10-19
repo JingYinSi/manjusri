@@ -4,6 +4,7 @@
 var simpleget = require('simple-get'),
     js2xmlparser = require('js2xmlparser'),
     request = require('request'),
+    https = require('https'),
     md5 = require('md5');
 
 module.exports = function (config) {
@@ -66,7 +67,7 @@ module.exports = function (config) {
         return js2xmlparser.parse('xml', prepay);
     }
 
-    this.sendPrepayRequest = function (prepayOrderXML, callback) {
+    /*this.sendPrepayRequest = function (prepayOrderXML, callback) {
         console.log('The xml sent to weixin:');
         console.log(prepayOrderXML);
         var options = {
@@ -78,6 +79,47 @@ module.exports = function (config) {
             body: prepayOrderXML
         };
         request(options, callback);
+    }*/
+
+    this.sendPrepayRequest = function (prepayOrderXML, callback) {
+        console.log('The xml sent to weixin:');
+        console.log(prepayOrderXML);
+        var options = {
+            hostname: "api.mch.weixin.qq.com",
+            port: "443",
+            path: "/pay/unifiedorder",
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/xml',
+                "Content-Length": Buffer.byteLength(prepayOrderXML)
+            }
+        };
+        https.request(options,
+            function (res) {
+                var str = '';
+                res.on('data', function (data) {
+                    str += data;
+                });
+                res.on('end', function () {
+                    logger.debug("来自微信支付接口的预支付数据生成结果:" + str);
+                    parseStringToJs(str, function (err, result) {
+                        var data = result.xml;
+                        for (var p in data) {
+                            data[p] = data[p][0];
+                        }
+
+                        data.isSuccess = function(){
+                            return this.return_msg == 'OK' &&this.result_code =='SUCCESS';
+                        };
+
+                        if(data.isSuccess()){
+                            callback(null, data.prepay_id);
+                        }else{
+                            callback(data.err_code_des, null);
+                        }
+                    });
+                });
+            }).write(prepayOrderXML);
     }
 
     this.prePay = function (openId, transId, transName, amount, callback) {
@@ -90,6 +132,7 @@ module.exports = function (config) {
                 console.log('err:' + err);
                 return;
             }
+
             var payData = {
                 "appId": me.appid,
                 "package": "prepay_id=" + prepayId,
