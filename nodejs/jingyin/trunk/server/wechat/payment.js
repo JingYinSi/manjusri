@@ -29,6 +29,7 @@ module.exports = {
                 return;
             }
             weixin.prePay(openid, transId, transName, amount, function(err, payData){
+
                 payData.success = true;
                 logger.debug("准备前端H5支付参数:" + JSON.stringify(payData));
                 res.render('wechat/payment', payData);
