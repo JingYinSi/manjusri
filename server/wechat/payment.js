@@ -40,9 +40,11 @@ module.exports = {
             body += chunk;
         });
         req.on("end", function () {
-            var payment = weixin.parsePaymentNotification(body)
+            var payment = weixin.parsePaymentNotification(body);
             if(payment.pass()){
+                logger.debug('success of payment ...');
                 Virtue.havePayed(payment.getOutTradeNo(), function () {
+                    logger.debug('db state is updated....');
                     responseOK(res);
                 });
             }
