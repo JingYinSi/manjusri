@@ -76,7 +76,7 @@ module.exports = function (config) {
                 res.on('data', function (data) {
                     str += data;
                 });
-                res.on('end', callback);
+                res.on('end', callback(str));
             });
         req.write(data);
     }
