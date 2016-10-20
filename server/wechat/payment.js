@@ -17,8 +17,7 @@ module.exports = {
             return;
         }
         weixin.getOpenId(req.query.code, function (err, openId) {
-            var /*transId = req.query.transId,*/
-                transName = decodeURIComponent(req.query.transName),
+            var transName = decodeURIComponent(req.query.transName),
                 amount = req.query.amount;
 
             Virtue.placeVirtue(openId, amount, function (err, virtue) {
@@ -26,7 +25,8 @@ module.exports = {
                     logger.error(err);
                     return;
                 }
-                weixin.prePay(openId, virtue._id.toString(), transName, amount, function (payData) {
+                var transId = virtue._id.toString();
+                weixin.prePay(openId, transId, transName, amount, function (payData) {
                     logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
                     payData.success = true;
                     res.render('wechat/payment', payData);

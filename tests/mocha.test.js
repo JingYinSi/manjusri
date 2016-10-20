@@ -10,7 +10,7 @@ describe('静音寺业务系统', function () {
     describe('业务', function () {
         describe('捐助交易', function () {
             var Virtue;
-            var amount;
+            var openid, amount;
             beforeEach(function (done) {
                 Virtue = require('../server/wechat/models/virtue');
                 amount = 45.8;
@@ -24,18 +24,28 @@ describe('静音寺业务系统', function () {
             });
 
             it('创建一笔捐助，金额应大于零', function (done) {
-                amount = 0;
-                Virtue.placeVirtue(0, function (err, virtue) {
+                amount = 25.78;
+                openid = "foo";
+                Virtue.placeVirtue(openid, 0, function (err, virtue) {
                     expect(err.errors['amount'].message).to.be.eql('金额应大于零');
                     expect(virtue).not.exist;
                     done();
                 });
             });
 
+            it('创建一笔捐助，未定义openId', function (done) {
+                amount = 32.8;
+                Virtue.placeVirtue(null, amount, function (err, virtue) {
+                    expect(err.errors['openid'].message).to.be.eql('OpenId必须定义');
+                    expect(virtue).not.exist;
+                    done();
+                });
+            });
+
             it('创建一笔捐助', function (done) {
-                Virtue.placeVirtue(amount, function (err, virtue) {
+                Virtue.placeVirtue(openid, amount, function (err, virtue) {
                     expect(err).be.null;
-                    expect(virtue.openId).not.exist;
+                    expect(virtue.openid).eql(openid);
                     expect(virtue.amount).to.be.equal(amount);
                     expect(virtue.state).to.be.equal('new');
                     expect(virtue.timestamp).to.be.a('date');
@@ -43,47 +53,25 @@ describe('静音寺业务系统', function () {
                 })
             });
 
-            describe('功德主确认捐助', function (done) {
-                var transId, opendId;
+            describe('捐助支付', function (done) {
+                var transId;
                 beforeEach(function (done) {
-                    opendId = 'foo openid';
-                    Virtue.placeVirtue(amount, function (err, v) {
-                        transId = v._id.toString();
+                    Virtue.placeVirtue(openid, amount, function (err, virtue) {
+                        expect(err).not.exist;
+                        transId = virtue._id.toString();
                         done();
                     })
                 });
 
-                it('确认捐助', function (done) {
-                    Virtue.applyVirtue(transId, opendId, function (err, virtue) {
+                it('支付成功', function (done) {
+                    Virtue.havePayed(transId, function (err, virtue) {
                         expect(err).not.exist;
                         expect(virtue._id.toString()).eql(transId);
-                        expect(virtue.openid).eql(opendId);
-                        expect(virtue.amount).eql(amount);
-                        expect(virtue.state).eql('applied');
-                        expect(virtue.timestamp).to.be.a('date');
+                        expect(virtue.state).eql('payed');
                         done();
                     })
-                });
-
-                describe('捐助支付', function (done) {
-                    beforeEach(function (done) {
-                        Virtue.applyVirtue(transId, opendId, function (err, virtue) {
-                            expect(err).not.exist;
-                            done();
-                        })
-                    });
-
-                    it('支付成功', function (done) {
-                        Virtue.havePayed(transId, function (err, virtue) {
-                            expect(err).not.exist;
-                            expect(virtue._id.toString()).eql(transId);
-                            expect(virtue.openid).eql(opendId);
-                            expect(virtue.state).eql('payed');
-                            done();
-                        })
-                    })
                 })
-            });
+            })
         });
     });
 
