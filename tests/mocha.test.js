@@ -3,6 +3,7 @@
  */
 var mongoose = require('mongoose'),
     XML = require('pixl-xml'),
+    js2xmlparser = require('js2xmlparser'),
     proxyquire = require('proxyquire');
 
 describe('静音寺业务系统', function () {
@@ -99,7 +100,7 @@ describe('静音寺业务系统', function () {
                 appsecret = 'appsecret';
                 oauth2BaseURL = 'oauth2BaseURL';
                 mch_id = 'eveqveqfvfvff';
-                mch_key = 'ddvebt rtbrt';
+                mch_key = 'womendoushiwutaishanjingyinsidet'; //-----IT IS VERY IMPORTMENT
 
                 weixinConfig = {
                     apiBaseURL: apiBaseURL,
@@ -281,7 +282,7 @@ describe('静音寺业务系统', function () {
                 });
 
                 it('MD5签名-KEY值缺省采用商户号mch_id', function () {
-                    var key = mch_id;
+                    var key = mch_key;
                     md5Stub.withArgs("a=567&bbb=2&sss=1&key=" + key).returns(signResult);
                     expect(weixin.signMD5(data)).eql(signResult.toUpperCase());
                 });
@@ -311,7 +312,7 @@ describe('静音寺业务系统', function () {
                         ' <transaction_id><![CDATA[4005172001201610207217503606]]></transaction_id>' +
                         ' </xml>';
                     paymentJsonToSign = XML.parse(paymentXml);
-                    delete paymentJsonToSign.sign;
+                    //delete paymentJsonToSign.sign;
                     signMD5Stub = sinon.stub().withArgs(paymentJsonToSign).returns('4C59A329EE4E7D35BE7FC840C599F6FE');
                     weixin.signMD5 = signMD5Stub;
                 });
@@ -320,6 +321,8 @@ describe('静音寺业务系统', function () {
                     var obj = weixin.parsePaymentNotification(paymentXml);
                     expect(obj.pass()).to.be.true;
                     expect(obj.getOutTradeNo()).eql('58088e7a253a72789bec6d98');
+                    var responseBodyXML = "<xml><return_code>SUCCESS</return_code><return_msg>OK</return_msg></xml>"
+                    expect(obj.replayOK()).xml.equal(responseBodyXML);
                 })
             })
         });
