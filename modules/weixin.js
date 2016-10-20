@@ -78,7 +78,7 @@ module.exports = function (config) {
                 });
                 res.on('end', callback);
             });
-        req.write(prepayOrderXML);
+        req.write(data);
     }
 
     this.sendPrepayRequest = function (prepayOrderXML, callback) {
