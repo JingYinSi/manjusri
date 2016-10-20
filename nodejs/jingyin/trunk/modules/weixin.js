@@ -34,7 +34,10 @@ module.exports = function (config) {
             + this.appid + "&secret=" + this.appsecret
             + "&code=" + code + "&grant_type=authorization_code";
 
+        logger.debug("The Url for getting openid is:\n" + url);
         simpleget.concat(url, function (err, res, data) {
+            if(err) logger.debug("There is a error when get openid:\n" + err);
+            logger.debug("Data from weixin is:" + JSON.stringify(data));
             callback(data.openid);
         });
     }
