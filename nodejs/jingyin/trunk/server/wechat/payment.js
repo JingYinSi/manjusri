@@ -45,7 +45,7 @@ module.exports = {
                 logger.debug('success of payment ...');
                 Virtue.havePayed(payment.getOutTradeNo(), function () {
                     logger.debug('db state is updated....');
-                    res.end(payment.replayOK());
+                    res.end(payment.replyOK());
                     //responseOK(res);
                 });
             }
