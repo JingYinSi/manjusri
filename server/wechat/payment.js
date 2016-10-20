@@ -78,7 +78,7 @@ module.exports = {
                 return this.verifySign();
             };
 
-            callback(err, data);
+            callback(null, data);
             /*parseStringToJs(payNotifyXml, function (err, result) {
                 var data = result.xml;
                 for (var p in data) {
