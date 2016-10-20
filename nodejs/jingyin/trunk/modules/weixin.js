@@ -3,6 +3,7 @@
  */
 var simpleget = require('simple-get'),
     js2xmlparser = require('js2xmlparser'),
+    XML = require(pixl - xml),
     parseStringToJs = require('xml2js').parseString,
     request = require('request'),
     https = require('https'),
@@ -62,7 +63,7 @@ module.exports = function (config) {
             attach: "静音",
             appid: me.appid,
             mch_id: me.mch_id,
-            nonce_str : me.createNonceStr(),
+            nonce_str: me.createNonceStr(),
             trade_type: "JSAPI"
         }
         prepay.sign = this.signMD5(prepay, me.mch_key);
@@ -87,23 +88,29 @@ module.exports = function (config) {
                     str += data;
                 });
                 res.on('end', function () {
-                    logger.debug("Prepay data from weixin API:" + str);
-                    parseStringToJs(str, function (err, result) {
-                        var data = result.xml;
-                        for (var p in data) {
-                            data[p] = data[p][0];
-                        }
+                    var doc = XML.parse(str);
+                    logger.debug("Prepay data from weixin API:" + JSON.stringify(doc));
+                    if (doc.return_msg == 'OK' && doc.result_code == 'SUCCESS') {
+                        callback(null, doc.prepay_id);
+                    } else {
+                        callback(doc.err_code_des, null);
+                    }
+                    /*parseStringToJs(str, function (err, result) {
+                     var data = result.xml;
+                     for (var p in data) {
+                     data[p] = data[p][0];
+                     }
 
-                        data.isSuccess = function(){
-                            return this.return_msg == 'OK' &&this.result_code =='SUCCESS';
-                        };
+                     data.isSuccess = function(){
+                     return this.return_msg == 'OK' &&this.result_code =='SUCCESS';
+                     };
 
-                        if(data.isSuccess()){
-                            callback(null, data.prepay_id);
-                        }else{
-                            callback(data.err_code_des, null);
-                        }
-                    });
+                     if(data.isSuccess()){
+                     callback(null, data.prepay_id);
+                     }else{
+                     callback(data.err_code_des, null);
+                     }
+                     });*/
                 });
             }).write(prepayOrderXML);
     }
@@ -115,8 +122,8 @@ module.exports = function (config) {
             var payData = {
                 "appId": me.appid,
                 "package": "prepay_id=" + prepayId,
-                "timeStamp" : me.createTimeStamp(),
-                "nonceStr" : me.createNonceStr(),
+                "timeStamp": me.createTimeStamp(),
+                "nonceStr": me.createNonceStr(),
                 "signType": "MD5"
             };
             payData.paySign = me.signMD5(payData, me.mch_key);

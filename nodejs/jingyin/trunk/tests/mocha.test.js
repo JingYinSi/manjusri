@@ -68,7 +68,7 @@ describe('静音寺业务系统', function () {
 
     describe('微信公众号', function () {
         describe('微信接口', function () {
-            var weixinModule, stubs, weinxinConfig;
+            var weixinModule, stubs, weixinConfig;
             var apiBaseURL, appid, appsecret, oauth2BaseURL;
             var mch_id, mch_key;
             var weixin;
@@ -86,8 +86,8 @@ describe('静音寺业务系统', function () {
                     appId: appid,
                     appSecret: appsecret,
                     oauth2BaseURL: oauth2BaseURL,
-                    mch_id: mch_id,
-                    mch_key: mch_key
+                    mchId: mch_id,
+                    mchKey: mch_key
                 };
                 stubs = {};
             });
@@ -174,7 +174,7 @@ describe('静音寺业务系统', function () {
 
                 var prepayOrderXML = '<xml><foo>prepayOrderXML</foo></xml>';
                 var preparePrepayXmlStub = sinon.stub().withArgs(openId, transId, transName, amount).returns(prepayOrderXML);
-                weixin.preparePrepayXml = preparePrepayXmlStub;
+                weixin.preparePrepayOrderXml = preparePrepayXmlStub;
 
                 var prePayRequestSenderStub = sinon.stub();
                 prePayRequestSenderStub.withArgs(prepayOrderXML)
@@ -200,7 +200,7 @@ describe('静音寺业务系统', function () {
                 var signMD5Stub = sinon.stub().withArgs(payDataToSignMD5, mch_key).returns(paySign);
                 weixin.signMD5 = signMD5Stub;
 
-                var expectedPay = payDataToSignMD5;
+                var expectedPay = Object.assign({}, payDataToSignMD5);;
                 expectedPay.paySign = paySign;
                 expectedPay.prepay_id = prePayId;
 

@@ -10,7 +10,7 @@
   "author": "clx",
   "license": "ISC",
   "dependencies": {
-    "async": "^2.0.1",
+    "async": "^2.1.2",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
@@ -26,7 +26,7 @@
     "method-override": "^2.3.6",
     "moment": "^2.15.1",
     "mongodb": "^2.2.10",
-    "mongoose": "^4.6.3",
+    "mongoose": "^4.6.4",
     "morgan": "^1.7.0",
     "multer": "^1.2.0",
     "oauth2orize": "^1.5.0",
@@ -35,12 +35,12 @@
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
+    "pixl-xml": "^1.0.9",
     "querystring": "^0.2.0",
     "request": "^2.75.0",
     "sha1": "^1.1.1",
-    "simple-get": "^2.2.5",
-    "xml2js": "^0.4.17",
-    "pixl-xml": "1.0.9"
+    "simple-get": "^2.3.0",
+    "xml2js": "^0.4.17"
   },
   "devDependencies": {
     "chai": "^3.5.0",
