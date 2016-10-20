@@ -1,17 +1,19 @@
 var querystring = require('querystring'),
-    XML = require('pixl-xml'),
+    //XML = require('pixl-xml'),
     js2xmlparser = require('js2xmlparser'),
     Virtue = require('./models/virtue');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
+/*
 var weapp = require('../../modules/weapp')(({
     appid: "wx76c06da9928cd6c3",
     appsecret: "f4d498d87cf8641b83671a533c3999ec",
     mch_id: "1364986702",
     mch_key: "womendoushiwutaishanjingyinsidet"
 }));
+*/
 const weixin = require('../weixin').weixin;
 
 module.exports = {
@@ -47,19 +49,9 @@ module.exports = {
                     var reply = payment.replyOK();
                     logger.debug("reply to weixin OK:\n" + reply);
                     res.end(reply);
-                    //responseOK(res);
                 });
             }
         });
-
-        /*function responseOK(res) {
-            var responseBodyXML = js2xmlparser.parse("xml", {
-                return_code: "SUCCESS",
-                return_msg: "OK"
-            });
-            logger.debug("response to notification from weixin payment:" + responseBodyXML);
-            res.end(responseBodyXML);
-        }*/
     }
 };
 
