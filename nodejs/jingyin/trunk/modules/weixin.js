@@ -69,16 +69,18 @@ module.exports = function (config) {
         return js2xmlparser.parse('xml', prepay);
     }
 
-    this.sendHttpsRequest = function (options, data, callback) {
+    this.sendHttpsRequest = function (options, dataToSend, callback) {
         var req = https.request(options,
             function (res) {
                 var str = '';
                 res.on('data', function (data) {
                     str += data;
                 });
-                res.on('end', callback(str));
+                res.on('end', function(){
+                    callback(str)
+                });
             });
-        req.write(data);
+        req.write(dataToSend);
     }
 
     this.sendPrepayRequest = function (prepayOrderXML, callback) {
