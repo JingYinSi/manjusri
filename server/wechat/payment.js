@@ -11,7 +11,7 @@ module.exports = {
     index: function (req, res) {
         var code = req.query.code;
         if(!code){
-            logger.error("there is something wrong, code is undefined");
+            logger.debug("there is something wrong, code is undefined");
             res.status(400);
             res.end();
             return;
