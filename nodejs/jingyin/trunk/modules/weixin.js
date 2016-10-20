@@ -37,13 +37,9 @@ module.exports = function (config) {
         logger.debug("The Url for getting openid is:\n" + url);
         simpleget.concat(url, function (err, res, data) {
             if (err) logger.debug("There is a error when get openid:\n" + err);
-            logger.debug("Data from weixin is:" + typeof data + "----" + data);
             var obj = JSON.parse(data.toString());
-            logger.debug("convert buffer to json:" + typeof obj + "----" + JSON.stringify(obj));
-
-            var id = obj.openid;
-            logger.debug("openid is:" + id);
-            callback(null, id);
+            logger.debug("convert buffer to json:" + JSON.stringify(obj));
+            callback(null, obj.openid);
         });
     }
 
@@ -73,6 +69,18 @@ module.exports = function (config) {
         return js2xmlparser.parse('xml', prepay);
     }
 
+    this.sendHttpsRequest = function (options, data, callback) {
+        var req = https.request(options,
+            function (res) {
+                var str = '';
+                res.on('data', function (data) {
+                    str += data;
+                });
+                res.on('end', callback);
+            });
+        req.write(prepayOrderXML);
+    }
+
     this.sendPrepayRequest = function (prepayOrderXML, callback) {
         var options = {
             hostname: "api.mch.weixin.qq.com",
@@ -84,22 +92,15 @@ module.exports = function (config) {
                 "Content-Length": Buffer.byteLength(prepayOrderXML)
             }
         };
-        https.request(options,
-            function (res) {
-                var str = '';
-                res.on('data', function (data) {
-                    str += data;
-                });
-                res.on('end', function () {
-                    var doc = XML.parse(str);
-                    logger.debug("Prepay data from weixin API:" + JSON.stringify(doc));
-                    if (doc.return_msg == 'OK' && doc.result_code == 'SUCCESS') {
-                        callback(null, doc.prepay_id);
-                    } else {
-                        callback(doc.err_code_des, null);
-                    }
-                });
-            }).write(prepayOrderXML);
+        this.sendHttpsRequest(options, prepayOrderXML, function (str) {
+            var doc = XML.parse(str);
+            logger.debug("Prepay data from weixin API:" + JSON.stringify(doc));
+            if (doc.return_msg == 'OK' && doc.result_code == 'SUCCESS') {
+                callback(null, doc.prepay_id);
+            } else {
+                callback(doc.err_code_des, null);
+            }
+        });
     }
 
     this.prePay = function (openId, transId, transName, amount, callback) {
