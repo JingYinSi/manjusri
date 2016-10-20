@@ -1,5 +1,6 @@
 var querystring = require('querystring'),
-    ObjectID = require("mongodb").ObjectID,
+    //ObjectID = require("mongodb").ObjectID,
+    XML = require('pixl-xml'),
     js2xmlparser = require('js2xmlparser'),
     parseStringToJs = require('xml2js').parseString,
     Virtue = require('./models/virtue');
@@ -56,8 +57,29 @@ module.exports = {
 
         function parsePayNotify(payNotifyXml, callback) {
             logger.debug("支付结果通知:" + payNotifyXml);
+            var data = XML.parse(payNotifyXml);
+            data.isSuccess = function () {
+                return this.result_code == "SUCCESS" && this.return_code == "SUCCESS";
+            };
 
-            parseStringToJs(payNotifyXml, function (err, result) {
+            data.clone = function () {
+                return JSON.parse(JSON.stringify(this));
+            };
+
+            data.verifySign = function () {
+                var dataToSign = this.clone();
+                delete dataToSign.sign;
+                var sign = weapp.signMD5(dataToSign);
+                return this.sign == sign;
+            };
+
+            data.pass = function () {
+                if (this.isSuccess() == false)return false;
+                return this.verifySign();
+            };
+
+            callback(err, data);
+            /*parseStringToJs(payNotifyXml, function (err, result) {
                 var data = result.xml;
                 for (var p in data) {
                     data[p] = data[p][0];
@@ -84,23 +106,7 @@ module.exports = {
                 };
 
                 callback(err, result.xml);
-            });
-        }
-
-        function applyVirtuePaid(transId, callback) {
-            Virtue.findOne({"_id": ObjectID(transId)}, function (err, virtue) {
-                if (err) {
-                    logger.error(err);
-                    return;
-                }
-                if (virtue == null) {
-                    logger.error("更新交易记录为已支付状态时出错：未找到标识为" + transId + "的交易记录。");
-                    return;
-                }
-                virtue.state = "1";
-                virtue.save();
-                callback();
-            });
+            });*/
         }
 
         function responseOK(res) {
