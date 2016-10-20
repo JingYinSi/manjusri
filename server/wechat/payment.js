@@ -9,6 +9,13 @@ const weixin = require('../weixin').weixin;
 
 module.exports = {
     index: function (req, res) {
+        var code = req.query.code;
+        if(!code){
+            logger.error("there is something wrong, code is undefined");
+            res.status(400);
+            res.end();
+            logger.error("we should not run to here!!!!!");
+        }
         weixin.getOpenId(req.query.code, function (err, openId) {
             var transId = req.query.transId,
                 transName = decodeURIComponent(req.query.transName),
