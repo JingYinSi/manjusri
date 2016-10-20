@@ -18,8 +18,8 @@ module.exports = function (config) {
     this.appsecret = config.appSecret;
     this.oauth2BaseURL = config.oauth2BaseURL ||
         "https://open.weixin.qq.com/connect/oauth2/authorize";
-    this.mch_id = config.mchId,
-        this.mch_key = config.mchKey
+    this.mch_id = config.mchId;
+    this.mch_key = config.mchKey;
 
     this.createNonceStr = function () {
         return Math.random().toString(36).substr(2, 15);
@@ -136,7 +136,7 @@ module.exports = function (config) {
         data.verifySign = function () {
             logger.debug('begin verify sign:');
             logger.debug('this.sign:' + this.sign);
-            var md5sign = me.signMD5(dataToSign);
+            var md5sign = me.signMD5(dataToSign, me.mch_id);
             logger.debug('md5 sign:' + md5sign);
 
             return this.sign == md5sign;
@@ -147,7 +147,7 @@ module.exports = function (config) {
             return this.verifySign();
         };
 
-        data.getOutTradeNo = function(){
+        data.getOutTradeNo = function () {
             return this.out_trade_no;
         };
         return data;
