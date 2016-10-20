@@ -95,6 +95,7 @@ module.exports = function (config) {
             }
         };
         this.sendHttpsRequest(options, prepayOrderXML, function (str) {
+            logger.debug("Prepay xml from weixin API:\n" + str);
             var doc = XML.parse(str);
             logger.debug("Prepay data from weixin API:" + JSON.stringify(doc));
             if (doc.return_msg == 'OK' && doc.result_code == 'SUCCESS') {
