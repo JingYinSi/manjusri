@@ -39,17 +39,12 @@
         FastClick.attach(document.body);
     });
 
-    //var acting = false;
     $("#show-confirm").click(function () {
-        /*if(acting){
-            return;
-        }*/
         var amount = $('#txtAmount').val();
         if (amount == '') {
             $.toptip('请填写金额。');
             return;
         }
-        //acting = true;
         var url = window.location.href;
         $.post(url, {amount: amount})
                 .done(function (data) {
