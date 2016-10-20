@@ -98,7 +98,7 @@ describe('静音寺业务系统', function () {
                     + appid + "&secret=" + appsecret
                     + "&code=" + code + "&grant_type=authorization_code";
                 var expectedOpenId = '123456789033';
-                var dataFromWeixin = {openid: expectedOpenId};
+                var dataFromWeixin = Buffer.from(JSON.stringify({openid: expectedOpenId}));
 
                 var concatStub = sinon.stub();
                 concatStub.withArgs(url).callsArgWith(1, null, null, dataFromWeixin);
@@ -109,12 +109,12 @@ describe('静音寺业务系统', function () {
 
                 var callback = sinon.spy();
                 weixin.getOpenId(code, callback);
-                expect(callback).calledWith(expectedOpenId);
+                expect(callback).calledWith(null, expectedOpenId);
             });
 
             it('以OAuth2的形式wrap重定向Url', function () {
                 var redirectUrl = 'http://localhost/foo';
-                var appid = 'wxc93a54d2d6e5b682'; //暂时使用测试公众号的AppId
+                //var appid = 'wxc93a54d2d6e5b682'; //暂时使用测试公众号的AppId
                 var wrapedUrl = oauth2BaseURL + "?appid=" + appid + "&redirect_uri="
                     + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
                 expect(weixin.wrapRedirectURLByOath2Way(redirectUrl))
