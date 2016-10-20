@@ -4,7 +4,6 @@
 var simpleget = require('simple-get'),
     js2xmlparser = require('js2xmlparser'),
     XML = require('pixl-xml'),
-    parseStringToJs = require('xml2js').parseString,
     request = require('request'),
     https = require('https'),
     md5 = require('md5');
@@ -41,12 +40,12 @@ module.exports = function (config) {
     }
 
     this.wrapRedirectURLByOath2Way = function (url) {
-        var appid = "wxc93a54d2d6e5b682";
+        /*var appid = "wxc93a54d2d6e5b682";
         var wrapedUrl = this.oauth2BaseURL + "?appid=" + appid
-            + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";
+            + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";*/
         //todo:正式公众号暂时未配置网页授权，目前使用37行和38行代码测试，正式公众号网页授权设置后采用41和42行代码
-        /*var wrapedUrl = this.oauth2BaseURL + "?appid=" + this.appid
-         + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";*/
+        var wrapedUrl = this.oauth2BaseURL + "?appid=" + this.appid
+         + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";
         return wrapedUrl;
     }
 
@@ -95,22 +94,6 @@ module.exports = function (config) {
                     } else {
                         callback(doc.err_code_des, null);
                     }
-                    /*parseStringToJs(str, function (err, result) {
-                     var data = result.xml;
-                     for (var p in data) {
-                     data[p] = data[p][0];
-                     }
-
-                     data.isSuccess = function(){
-                     return this.return_msg == 'OK' &&this.result_code =='SUCCESS';
-                     };
-
-                     if(data.isSuccess()){
-                     callback(null, data.prepay_id);
-                     }else{
-                     callback(data.err_code_des, null);
-                     }
-                     });*/
                 });
             }).write(prepayOrderXML);
     }
