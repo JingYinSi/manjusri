@@ -76,7 +76,7 @@ module.exports = function (config) {
                 res.on('data', function (data) {
                     str += data;
                 });
-                res.on('end', function(){
+                res.on('end', function () {
                     callback(str)
                 });
             });
@@ -123,7 +123,33 @@ module.exports = function (config) {
         })
     }
 
+    this.parsePaymentNotification = function (paymentXmlResult) {
+        var me = this;
+        var data = XML.parse(paymentXmlResult);
+        var dataToSign = Object.assign({}, data);
+        delete dataToSign.sign;
+
+        data.isSuccess = function () {
+            return this.result_code == "SUCCESS" && this.return_code == "SUCCESS";
+        };
+
+        data.verifySign = function () {
+            return this.sign == me.signMD5(dataToSign);
+        };
+
+        data.pass = function () {
+            if (this.isSuccess() == false) return false;
+            return this.verifySign();
+        };
+
+        data.getOutTradeNo = function(){
+            return this.out_trade_no;
+        };
+        return data;
+    }
+
     this.signMD5 = function (data, key) {
+        if (!key) key = this.mch_id;
         var keyvaluesort = function (data) {
             var keys = new Array();
             for (var k in data) {

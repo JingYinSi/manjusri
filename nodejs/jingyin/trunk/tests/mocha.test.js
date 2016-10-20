@@ -2,6 +2,7 @@
  * Created by sony on 2016/9/26.
  */
 var mongoose = require('mongoose'),
+    XML = require('pixl-xml'),
     proxyquire = require('proxyquire');
 
 describe('静音寺业务系统', function () {
@@ -63,7 +64,7 @@ describe('静音寺业务系统', function () {
                     })
                 });
 
-                describe('捐助支付', function(done){
+                describe('捐助支付', function (done) {
                     beforeEach(function (done) {
                         Virtue.applyVirtue(transId, opendId, function (err, virtue) {
                             expect(err).not.exist;
@@ -71,8 +72,8 @@ describe('静音寺业务系统', function () {
                         })
                     });
 
-                    it('支付成功', function(done){
-                        Virtue.havePayed(transId, function(err, virtue){
+                    it('支付成功', function (done) {
+                        Virtue.havePayed(transId, function (err, virtue) {
                             expect(err).not.exist;
                             expect(virtue._id.toString()).eql(transId);
                             expect(virtue.openid).eql(opendId);
@@ -109,6 +110,8 @@ describe('静音寺业务系统', function () {
                     mchKey: mch_key
                 };
                 stubs = {};
+                weixinModule = require('../modules/weixin');
+                weixin = weixinModule(weixinConfig);
             });
 
             it("获得OpenId", function () {
@@ -133,7 +136,6 @@ describe('静音寺业务系统', function () {
 
             it('以OAuth2的形式wrap重定向Url', function () {
                 var redirectUrl = 'http://localhost/foo';
-                //var appid = 'wxc93a54d2d6e5b682'; //暂时使用测试公众号的AppId
                 var wrapedUrl = oauth2BaseURL + "?appid=" + appid + "&redirect_uri="
                     + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
                 expect(weixin.wrapRedirectURLByOath2Way(redirectUrl))
@@ -188,9 +190,6 @@ describe('静音寺业务系统', function () {
                     transName = 'transOrder description',
                     amount = 58.7;
 
-                weixinModule = require('../modules/weixin');
-                weixin = weixinModule(weixinConfig);
-
                 var prepayOrderXML = '<xml><foo>prepayOrderXML</foo></xml>';
                 var preparePrepayXmlStub = sinon.stub().withArgs(openId, transId, transName, amount).returns(prepayOrderXML);
                 weixin.preparePrepayOrderXml = preparePrepayXmlStub;
@@ -231,14 +230,14 @@ describe('静音寺业务系统', function () {
 
             it('发送微信支付下单请求', function () {
                 var resData = "<xml><return_code><![CDATA[SUCCESS]]></return_code>" +
-                "<return_msg><![CDATA[OK]]></return_msg>" +
-                " <appid><![CDATA[wx76c06da9928cd6c3]]></appid>" +
-                " <mch_id><![CDATA[1364986702]]></mch_id>" +
-                " <nonce_str><![CDATA[zaLzjsStxOwOc3YE]]></nonce_str>" +
-                " <sign><![CDATA[E54FA374A497C3E38329A3E6AEFEB53A]]></sign>" +
-                " <result_code><![CDATA[SUCCESS]]></result_code> " +
-                "<prepay_id><![CDATA[wx2016102016134724083f65cd0642279411]]></prepay_id>" +
-                " <trade_type><![CDATA[JSAPI]]></trade_type></xml>";
+                    "<return_msg><![CDATA[OK]]></return_msg>" +
+                    " <appid><![CDATA[wx76c06da9928cd6c3]]></appid>" +
+                    " <mch_id><![CDATA[1364986702]]></mch_id>" +
+                    " <nonce_str><![CDATA[zaLzjsStxOwOc3YE]]></nonce_str>" +
+                    " <sign><![CDATA[E54FA374A497C3E38329A3E6AEFEB53A]]></sign>" +
+                    " <result_code><![CDATA[SUCCESS]]></result_code> " +
+                    "<prepay_id><![CDATA[wx2016102016134724083f65cd0642279411]]></prepay_id>" +
+                    " <trade_type><![CDATA[JSAPI]]></trade_type></xml>";
                 var xmlToPost = '<xml><foo>foo</foo><fee>...</fee></xml>';
                 var options = {
                     hostname: "api.mch.weixin.qq.com",
@@ -253,8 +252,6 @@ describe('静音寺业务系统', function () {
 
                 var requestStub = sinon.stub();
                 requestStub.withArgs(options, xmlToPost).callsArgWith(2, resData);
-                weixinModule = require('../modules/weixin');
-                weixin = weixinModule(weixinConfig);
                 weixin.sendHttpsRequest = requestStub;
 
                 var callbackSpy = sinon.spy();
@@ -262,15 +259,69 @@ describe('静音寺业务系统', function () {
                 expect(callbackSpy).calledWith(null, 'wx2016102016134724083f65cd0642279411');
             });
 
-            it('MD5签名', function () {
-                var data = {
-                    sss: 1,
-                    a: 567,
-                    bbb: 2
-                };
-                var val = weixin.signMD5(data, 'wdfkwjdfkerjgirg');
-                expect(val).eql('399BCE1827E0B40C633C9A5CF892AFE6');
-            });
+            describe('MD5签名', function (){
+                var md5Stub, signResult, data;
+                beforeEach(function () {
+                    signResult = 'ddjfvndfnvdfgbsfbfg';
+                    data = {
+                        sss: 1,
+                        a: 567,
+                        bbb: 2
+                    };
+                    md5Stub = sinon.stub();
+                    stubs['md5'] = md5Stub;
+                    weixinModule = proxyquire('../modules/weixin', stubs);
+                    weixin = weixinModule(weixinConfig);
+                });
+
+                it('MD5签名-指定KEY值', function () {
+                    var key = 'wdfkwjdfkerjgirg';
+                    md5Stub.withArgs("a=567&bbb=2&sss=1&key=" + key).returns(signResult);
+                    expect(weixin.signMD5(data, key)).eql(signResult.toUpperCase());
+                });
+
+                it('MD5签名-KEY值缺省采用商户号mch_id', function () {
+                    var key = mch_id;
+                    md5Stub.withArgs("a=567&bbb=2&sss=1&key=" + key).returns(signResult);
+                    expect(weixin.signMD5(data)).eql(signResult.toUpperCase());
+                });
+            })
+
+
+            describe('检验微信支付结果', function () {
+                var paymentXml, paymentJsonToSign, signMD5Stub;
+                beforeEach(function () {
+                    paymentXml = '<xml>' +
+                        '<appid><![CDATA[wx76c06da9928cd6c3]]></appid>' +
+                        ' <attach><![CDATA[?..]]></attach>' +
+                        ' <bank_type><![CDATA[GDB_CREDIT]]></bank_type>' +
+                        ' <cash_fee><![CDATA[5]]></cash_fee>' +
+                        ' <fee_type><![CDATA[CNY]]></fee_type>' +
+                        ' <is_subscribe><![CDATA[Y]]></is_subscribe>' +
+                        ' <mch_id><![CDATA[1364986702]]></mch_id>' +
+                        ' <nonce_str><![CDATA[fmbg238xoxfde7b]]></nonce_str>' +
+                        ' <openid><![CDATA[o0ghywcfW_2Dp4oN-7NADengZAVM]]></openid>' +
+                        ' <out_trade_no><![CDATA[58088e7a253a72789bec6d98]]></out_trade_no>' +
+                        ' <result_code><![CDATA[SUCCESS]]></result_code>' +
+                        ' <return_code><![CDATA[SUCCESS]]></return_code>' +
+                        ' <sign><![CDATA[4C59A329EE4E7D35BE7FC840C599F6FE]]></sign>' +
+                        ' <time_end><![CDATA[20161020172940]]></time_end>' +
+                        ' <total_fee>5</total_fee> ' +
+                        '<trade_type><![CDATA[JSAPI]]></trade_type>' +
+                        ' <transaction_id><![CDATA[4005172001201610207217503606]]></transaction_id>' +
+                        ' </xml>';
+                    paymentJsonToSign = XML.parse(paymentXml);
+                    delete paymentJsonToSign.sign;
+                    signMD5Stub = sinon.stub().withArgs(paymentJsonToSign).returns('4C59A329EE4E7D35BE7FC840C599F6FE');
+                    weixin.signMD5 = signMD5Stub;
+                });
+
+                it('验证无误', function () {
+                    var obj = weixin.parsePaymentNotification(paymentXml);
+                    expect(obj.pass()).to.be.true;
+                    expect(obj.getOutTradeNo()).eql('58088e7a253a72789bec6d98');
+                })
+            })
         });
 
         describe('服务端控制', function () {
