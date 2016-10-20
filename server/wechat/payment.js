@@ -1,8 +1,6 @@
 var querystring = require('querystring'),
-    //ObjectID = require("mongodb").ObjectID,
     XML = require('pixl-xml'),
     js2xmlparser = require('js2xmlparser'),
-    parseStringToJs = require('xml2js').parseString,
     Virtue = require('./models/virtue');
 
 var log4js = require('log4js');
@@ -43,7 +41,7 @@ module.exports = {
         });
         req.on("end", function () {
             parsePayNotify(body, function (err, result) {
-                logger.debug("Notification the result of payment:" + JSON.stringify(result));
+                logger.debug("Notification the json result of payment:" + JSON.stringify(result));
                 if (result.pass()) {
                     Virtue.havePayed(result.out_trade_no, function () {
                     });
@@ -56,7 +54,7 @@ module.exports = {
         //---------------------------------------------------------
 
         function parsePayNotify(payNotifyXml, callback) {
-            logger.debug("支付结果通知:" + payNotifyXml);
+            logger.debug("Notification for the xml result of payment:" + payNotifyXml);
             var data = XML.parse(payNotifyXml);
             data.isSuccess = function () {
                 return this.result_code == "SUCCESS" && this.return_code == "SUCCESS";
@@ -69,44 +67,16 @@ module.exports = {
             data.verifySign = function () {
                 var dataToSign = this.clone();
                 delete dataToSign.sign;
-                var sign = weapp.signMD5(dataToSign);
+                var sign = weixin.signMD5(dataToSign);
                 return this.sign == sign;
             };
 
             data.pass = function () {
-                if (this.isSuccess() == false)return false;
+                if (this.isSuccess() == false) return false;
                 return this.verifySign();
             };
 
             callback(null, data);
-            /*parseStringToJs(payNotifyXml, function (err, result) {
-                var data = result.xml;
-                for (var p in data) {
-                    data[p] = data[p][0];
-                }
-
-                data.isSuccess = function () {
-                    return this.result_code == "SUCCESS" && this.return_code == "SUCCESS";
-                };
-
-                data.clone = function () {
-                    return JSON.parse(JSON.stringify(this));
-                };
-
-                data.verifySign = function () {
-                    var dataToSign = this.clone();
-                    delete dataToSign.sign;
-                    var sign = weapp.signMD5(dataToSign);
-                    return this.sign == sign;
-                };
-
-                data.pass = function () {
-                    if (this.isSuccess() == false)return false;
-                    return this.verifySign();
-                };
-
-                callback(err, result.xml);
-            });*/
         }
 
         function responseOK(res) {
