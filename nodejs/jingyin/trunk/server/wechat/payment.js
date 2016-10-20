@@ -45,19 +45,20 @@ module.exports = {
                 logger.debug('success of payment ...');
                 Virtue.havePayed(payment.getOutTradeNo(), function () {
                     logger.debug('db state is updated....');
-                    responseOK(res);
+                    res.end(payment.replayOK());
+                    //responseOK(res);
                 });
             }
         });
 
-        function responseOK(res) {
+        /*function responseOK(res) {
             var responseBodyXML = js2xmlparser.parse("xml", {
                 return_code: "SUCCESS",
                 return_msg: "OK"
             });
             logger.debug("response to notification from weixin payment:" + responseBodyXML);
             res.end(responseBodyXML);
-        }
+        }*/
     }
 };
 
