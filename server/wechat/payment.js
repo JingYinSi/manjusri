@@ -40,15 +40,12 @@ module.exports = {
             body += chunk;
         });
         req.on("end", function () {
-            parsePayNotify(body, function (err, result) {
-                logger.debug("Notification the json result of payment:" + JSON.stringify(result));
-                if (result.pass()) {
-                    Virtue.havePayed(result.out_trade_no, function () {
-                    });
-                } else {
-                }
-                responseOK(res);
-            });
+            var payment = weixin.parsePaymentNotification(body)
+            if(payment.pass()){
+                Virtue.havePayed(payment.getOutTradeNo(), function () {
+                    responseOK(res);
+                });
+            }
         });
 
         //---------------------------------------------------------
