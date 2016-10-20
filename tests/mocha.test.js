@@ -200,7 +200,8 @@ describe('静音寺业务系统', function () {
                 var signMD5Stub = sinon.stub().withArgs(payDataToSignMD5, mch_key).returns(paySign);
                 weixin.signMD5 = signMD5Stub;
 
-                var expectedPay = Object.assign({}, payDataToSignMD5);;
+                var expectedPay = Object.assign({}, payDataToSignMD5);
+                ;
                 expectedPay.paySign = paySign;
                 expectedPay.prepay_id = prePayId;
 
@@ -210,25 +211,36 @@ describe('静音寺业务系统', function () {
             });
 
             it('发送微信支付下单请求', function () {
+                var resData = "<xml><return_code><![CDATA[SUCCESS]]></return_code>" +
+                "<return_msg><![CDATA[OK]]></return_msg>" +
+                " <appid><![CDATA[wx76c06da9928cd6c3]]></appid>" +
+                " <mch_id><![CDATA[1364986702]]></mch_id>" +
+                " <nonce_str><![CDATA[zaLzjsStxOwOc3YE]]></nonce_str>" +
+                " <sign><![CDATA[E54FA374A497C3E38329A3E6AEFEB53A]]></sign>" +
+                " <result_code><![CDATA[SUCCESS]]></result_code> " +
+                "<prepay_id><![CDATA[wx2016102016134724083f65cd0642279411]]></prepay_id>" +
+                " <trade_type><![CDATA[JSAPI]]></trade_type></xml>";
                 var xmlToPost = '<xml><foo>foo</foo><fee>...</fee></xml>';
                 var options = {
-                    url: "https://api.mch.weixin.qq.com:443/pay/unifiedorder",
+                    hostname: "api.mch.weixin.qq.com",
+                    port: "443",
+                    path: "/pay/unifiedorder",
                     method: "POST",
                     headers: {
-                        "content-type": "application/xml",  // <--Very important!!!
-                    },
-                    body: xmlToPost
+                        'Content-Type': 'application/xml',  // <--Very important!!!
+                        "Content-Length": Buffer.byteLength(xmlToPost)
+                    }
                 };
 
-                var prepayId = 'ffdbsrt4tn4tn4';
                 var requestStub = sinon.stub();
-                requestStub.withArgs(options).callsArgWith(1, null, prepayId);
-                weixinModule = proxyquire('../modules/weixin', {request: requestStub});
+                requestStub.withArgs(options, xmlToPost).callsArgWith(2, resData);
+                weixinModule = require('../modules/weixin');
                 weixin = weixinModule(weixinConfig);
+                weixin.sendHttpsRequest = requestStub;
 
                 var callbackSpy = sinon.spy();
                 weixin.sendPrepayRequest(xmlToPost, callbackSpy);
-                expect(callbackSpy).calledWith(null, prepayId);
+                expect(callbackSpy).calledWith(null, 'wx2016102016134724083f65cd0642279411');
             });
 
             it('MD5签名', function () {
