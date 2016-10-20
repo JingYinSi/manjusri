@@ -19,7 +19,7 @@ module.exports = {
     index: function (req, res) {
         logger.debug("we are enter payment....");
         //var openid = "o0ghywcfW_2Dp4oN-7NADengZAVM";
-        weixin.getOpenid(req.query.code, function (err, openId) {
+        weixin.getOpenId(req.query.code, function (err, openId) {
             logger.debug("The openId is obtained from weixin:" + openid);
             var transId = req.query.transId,
                 transName = decodeURIComponent(req.query.transName),
