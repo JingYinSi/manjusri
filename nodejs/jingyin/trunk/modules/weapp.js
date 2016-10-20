@@ -1,6 +1,7 @@
-/**
+/*
+/!**
  * Created by sony on 2016/9/18.
- */
+ *!/
 var https = require("https"),
     wepay = require('./wepay'),
     js2xmlparser = require('js2xmlparser'),
@@ -118,3 +119,4 @@ module.exports = function (config) {
         }
     };
 };
+*/

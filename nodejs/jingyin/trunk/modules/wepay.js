@@ -1,7 +1,5 @@
-/**
- * Created by sony on 2016/10/4.
- */
-var md5 = require('md5'),
+
+/*var md5 = require('md5'),
     sha1 = require('sha1');
 
 module.exports = {
@@ -30,4 +28,4 @@ module.exports = {
         var tosign = this.keyvaluesort(data) + '&key=' + key;
         return sha1(tosign).toUpperCase();
     }
-}
+}*/
