@@ -29,8 +29,8 @@ module.exports = {
                 return;
             }
             weixin.prePay(openid, transId, transName, amount, function(payData){
-                payData.success = true;
                 logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
+                payData.success = true;
                 res.render('wechat/payment', payData);
             })
         });
@@ -47,7 +47,6 @@ module.exports = {
                     applyVirtuePaid(result.out_trade_no, function () {
                     });
                 } else {
-
                 }
                 responseOK(res);
             });
