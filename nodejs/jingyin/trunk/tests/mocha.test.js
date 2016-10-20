@@ -42,8 +42,9 @@ describe('静音寺业务系统', function () {
             });
 
             describe('功德主确认捐助', function (done) {
-                var transId;
+                var transId, opendId;
                 beforeEach(function (done) {
+                    opendId = 'foo openid';
                     Virtue.placeVirtue(amount, function (err, v) {
                         transId = v._id.toString();
                         done();
@@ -51,7 +52,6 @@ describe('静音寺业务系统', function () {
                 });
 
                 it('确认捐助', function (done) {
-                    var opendId = 'foo openid';
                     Virtue.applyVirtue(transId, opendId, function (err, virtue) {
                         expect(err).not.exist;
                         expect(virtue._id.toString()).eql(transId);
@@ -62,6 +62,25 @@ describe('静音寺业务系统', function () {
                         done();
                     })
                 });
+
+                describe('捐助支付', function(done){
+                    beforeEach(function (done) {
+                        Virtue.applyVirtue(transId, opendId, function (err, virtue) {
+                            expect(err).not.exist;
+                            done();
+                        })
+                    });
+
+                    it('支付成功', function(done){
+                        Virtue.havePayed(transId, function(err, virtue){
+                            expect(err).not.exist;
+                            expect(virtue._id.toString()).eql(transId);
+                            expect(virtue.openid).eql(opendId);
+                            expect(virtue.state).eql('payed');
+                            done();
+                        })
+                    })
+                })
             });
         });
     });

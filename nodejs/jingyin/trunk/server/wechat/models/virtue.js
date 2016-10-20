@@ -28,5 +28,13 @@ VirtueSchema.statics.applyVirtue = function (transId, openId, callback) {
     });
 };
 
+VirtueSchema.statics.havePayed = function (transId, callback) {
+    var Virtue = mongoose.model('Virtue', VirtueSchema);
+    Virtue.findById(transId, function(err, virtue){
+        virtue.state = 'payed';
+        virtue.save(callback);
+    });
+};
+
 module.exports = mongoose.model('Virtue', VirtueSchema);
 

@@ -17,10 +17,7 @@ const weixin = require('../weixin').weixin;
 
 module.exports = {
     index: function (req, res) {
-        logger.debug("we are enter payment....");
-        //var openid = "o0ghywcfW_2Dp4oN-7NADengZAVM";
         weixin.getOpenId(req.query.code, function (err, openId) {
-            logger.debug("The openId is obtained from weixin:" + openId);
             var transId = req.query.transId,
                 transName = decodeURIComponent(req.query.transName),
                 amount = req.query.amount;
@@ -36,7 +33,7 @@ module.exports = {
                     res.render('wechat/payment', payData);
                 })
             });
-        }); //TODO:当使用正式公众号时需动态获取OpenId
+        });
     },
     payNotify: function (req, res) {
         var body = "";
@@ -47,7 +44,7 @@ module.exports = {
             parsePayNotify(body, function (err, result) {
                 logger.debug("Notification the result of payment:" + JSON.stringify(result));
                 if (result.pass()) {
-                    applyVirtuePaid(result.out_trade_no, function () {
+                    Virtue.havePayed(result.out_trade_no, function () {
                     });
                 } else {
                 }
