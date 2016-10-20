@@ -44,8 +44,9 @@ module.exports = {
             if(payment.pass()){
                 logger.debug('success of payment ...');
                 Virtue.havePayed(payment.getOutTradeNo(), function () {
-                    logger.debug('db state is updated....');
-                    res.end(payment.replyOK());
+                    var reply = payment.replyOK();
+                    logger.debug("reply to weixin OK:\n" + reply);
+                    res.end(reply);
                     //responseOK(res);
                 });
             }
