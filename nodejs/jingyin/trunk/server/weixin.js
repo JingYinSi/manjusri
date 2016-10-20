@@ -13,16 +13,18 @@ module.exports = {
         apiBaseURL: "https://api.weixin.qq.com/sns/oauth2/",
         oauth2BaseURL: "https://open.weixin.qq.com/connect/oauth2/authorize"
     }),
-    sendPayUrl: function (res, payInfo) {
+
+    sendPayUrl: function (payInfo) {
         var url = payurl + '?';
         var index = 0;
+        //TODO: 以下这段代码可以优化
         for (var k in payInfo) {
             url += (index > 0) ? '&' + k + '=' + payInfo[k] : k + '=' + payInfo[k];
             index++;
         }
         url = encodeURIComponent(url);
         url = this.weixin.wrapRedirectURLByOath2Way(url);
-        res.end(url);
+        return url;
     }
 }
 

@@ -19,15 +19,6 @@ VirtueSchema.statics.placeVirtue = function (openId, amount, callback) {
     model.save(callback);
 };
 
-VirtueSchema.statics.applyVirtue = function (transId, openId, callback) {
-    var Virtue = mongoose.model('Virtue', VirtueSchema);
-    Virtue.findById(transId, function(err, virtue){
-        virtue.openid = openId;
-        virtue.state = 'applied';
-        virtue.save(callback);
-    });
-};
-
 VirtueSchema.statics.havePayed = function (transId, callback) {
     var Virtue = mongoose.model('Virtue', VirtueSchema);
     Virtue.findById(transId, function(err, virtue){
