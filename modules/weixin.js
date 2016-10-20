@@ -3,7 +3,7 @@
  */
 var simpleget = require('simple-get'),
     js2xmlparser = require('js2xmlparser'),
-    XML = require(pixl - xml),
+    XML = require('pixl-xml'),
     parseStringToJs = require('xml2js').parseString,
     request = require('request'),
     https = require('https'),
