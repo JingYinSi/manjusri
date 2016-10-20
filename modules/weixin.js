@@ -38,7 +38,9 @@ module.exports = function (config) {
         simpleget.concat(url, function (err, res, data) {
             if(err) logger.debug("There is a error when get openid:\n" + err);
             logger.debug("Data from weixin is:" + typeof data + "----" + data);
-            callback(data.openid);
+            var id = data.openid;
+            logger.debug("openid is:" + id);
+            callback(null, id);
         });
     }
 
