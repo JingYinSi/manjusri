@@ -151,7 +151,7 @@ module.exports = function (config) {
             return this.out_trade_no;
         };
 
-        data.replayOK = function(){
+        data.replyOK = function(){
             return js2xmlparser.parse("xml", {
                 return_code: "SUCCESS",
                 return_msg: "OK"

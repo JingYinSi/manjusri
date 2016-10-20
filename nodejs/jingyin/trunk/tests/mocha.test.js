@@ -322,7 +322,7 @@ describe('静音寺业务系统', function () {
                     expect(obj.pass()).to.be.true;
                     expect(obj.getOutTradeNo()).eql('58088e7a253a72789bec6d98');
                     var responseBodyXML = "<xml><return_code>SUCCESS</return_code><return_msg>OK</return_msg></xml>"
-                    expect(obj.replayOK()).xml.equal(responseBodyXML);
+                    expect(obj.replyOK()).xml.equal(responseBodyXML);
                 })
             })
         });
