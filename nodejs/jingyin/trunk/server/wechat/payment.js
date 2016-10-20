@@ -17,16 +17,16 @@ module.exports = {
             return;
         }
         weixin.getOpenId(req.query.code, function (err, openId) {
-            var transId = req.query.transId,
+            var /*transId = req.query.transId,*/
                 transName = decodeURIComponent(req.query.transName),
                 amount = req.query.amount;
 
-            Virtue.applyVirtue(transId, openId, function (err, virtue) {
+            Virtue.placeVirtue(openId, amount, function (err, virtue) {
                 if (err) {
                     logger.error(err);
                     return;
                 }
-                weixin.prePay(openId, transId, transName, amount, function (payData) {
+                weixin.prePay(openId, virtue._id, transName, amount, function (payData) {
                     logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
                     payData.success = true;
                     res.render('wechat/payment', payData);

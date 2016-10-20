@@ -13,9 +13,9 @@ var VirtueSchema = new Schema({
     state: {type: String, required: true, default: 'new'}
 });
 
-VirtueSchema.statics.placeVirtue = function (amount, callback) {
+VirtueSchema.statics.placeVirtue = function (openId, amount, callback) {
     var Virtue = mongoose.model('Virtue', VirtueSchema);
-    var model = new Virtue({amount: amount});
+    var model = new Virtue({openid:openId, amount: amount});
     model.save(callback);
 };
 
