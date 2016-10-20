@@ -17,6 +17,7 @@ const weixin = require('../weixin').weixin;
 
 module.exports = {
     index: function (req, res) {
+        logger.debug("we are enter payment....");
         //var openid = "o0ghywcfW_2Dp4oN-7NADengZAVM";
         weixin.getOpenid(req.query.code, function (err, openId) {
             logger.debug("The openId is obtained from weixin:" + openid);
