@@ -14,7 +14,7 @@ module.exports = {
             logger.error("there is something wrong, code is undefined");
             res.status(400);
             res.end();
-            logger.error("we should not run to here!!!!!");
+            return;
         }
         weixin.getOpenId(req.query.code, function (err, openId) {
             var transId = req.query.transId,
