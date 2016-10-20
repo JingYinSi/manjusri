@@ -36,9 +36,9 @@ module.exports = function (config) {
 
         logger.debug("The Url for getting openid is:\n" + url);
         simpleget.concat(url, function (err, res, data) {
-            if(err) logger.debug("There is a error when get openid:\n" + err);
+            if (err) logger.debug("There is a error when get openid:\n" + err);
             logger.debug("Data from weixin is:" + typeof data + "----" + data);
-            var id = data.openid;
+            var id = data.toJSON().openid;
             logger.debug("openid is:" + id);
             callback(null, id);
         });
@@ -46,11 +46,11 @@ module.exports = function (config) {
 
     this.wrapRedirectURLByOath2Way = function (url) {
         /*var appid = "wxc93a54d2d6e5b682";
-        var wrapedUrl = this.oauth2BaseURL + "?appid=" + appid
-            + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";*/
+         var wrapedUrl = this.oauth2BaseURL + "?appid=" + appid
+         + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";*/
         //todo:正式公众号暂时未配置网页授权，目前使用37行和38行代码测试，正式公众号网页授权设置后采用41和42行代码
         var wrapedUrl = this.oauth2BaseURL + "?appid=" + this.appid
-         + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";
+            + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";
         return wrapedUrl;
     }
 
