@@ -17,23 +17,25 @@ const weixin = require('../weixin').weixin;
 
 module.exports = {
     index: function (req, res) {
-        var openid = "o0ghywcfW_2Dp4oN-7NADengZAVM";
-        // var opendId = weapp.getOpenid(req.query.code, function(err, openId){}); //TODO:当使用正式公众号时需动态获取OpenId
-        var transId = req.query.transId,
-            transName = decodeURIComponent(req.query.transName),
-            amount = req.query.amount;
+        //var openid = "o0ghywcfW_2Dp4oN-7NADengZAVM";
+        weixin.getOpenid(req.query.code, function (err, openId) {
+            logger.debug("The openId is obtained from weixin:" + openid);
+            var transId = req.query.transId,
+                transName = decodeURIComponent(req.query.transName),
+                amount = req.query.amount;
 
-        Virtue.applyVirtue(transId, openid, function (err, virtue) {
-            if (err) {
-                logger.error(err);
-                return;
-            }
-            weixin.prePay(openid, transId, transName, amount, function(payData){
-                logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
-                payData.success = true;
-                res.render('wechat/payment', payData);
-            })
-        });
+            Virtue.applyVirtue(transId, openId, function (err, virtue) {
+                if (err) {
+                    logger.error(err);
+                    return;
+                }
+                weixin.prePay(openId, transId, transName, amount, function (payData) {
+                    logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
+                    payData.success = true;
+                    res.render('wechat/payment', payData);
+                })
+            });
+        }); //TODO:当使用正式公众号时需动态获取OpenId
     },
     payNotify: function (req, res) {
         var body = "";
