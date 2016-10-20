@@ -39,20 +39,23 @@
         FastClick.attach(document.body);
     });
 
+    var acting = false;
     $("#show-confirm").click(function () {
-        if($("#show-confirm").disabled) return;
-
+        if(acting){
+            alert("不能重复提交哦");
+            return;
+        }
         var amount = $('#txtAmount').val();
         if (amount == '') {
             $.toptip('请填写金额。');
             return;
         }
+        acting = true;
         var url = window.location.href;
         $.post(url, {amount: amount})
                 .done(function (data) {
                     window.location = data;
                 });
-        $("#show-confirm").disabled = true;
     });
 </script>
 </html>
