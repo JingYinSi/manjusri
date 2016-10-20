@@ -26,7 +26,7 @@ module.exports = {
                     logger.error(err);
                     return;
                 }
-                weixin.prePay(openId, virtue._id, transName, amount, function (payData) {
+                weixin.prePay(openId, virtue._id.toString(), transName, amount, function (payData) {
                     logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
                     payData.success = true;
                     res.render('wechat/payment', payData);
