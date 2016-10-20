@@ -50,40 +50,12 @@ module.exports = {
             }
         });
 
-        //---------------------------------------------------------
-
-        function parsePayNotify(payNotifyXml, callback) {
-            logger.debug("Notification for the xml result of payment:" + payNotifyXml);
-            var data = XML.parse(payNotifyXml);
-            data.isSuccess = function () {
-                return this.result_code == "SUCCESS" && this.return_code == "SUCCESS";
-            };
-
-            data.clone = function () {
-                return JSON.parse(JSON.stringify(this));
-            };
-
-            data.verifySign = function () {
-                var dataToSign = this.clone();
-                delete dataToSign.sign;
-                var sign = weixin.signMD5(dataToSign);
-                return this.sign == sign;
-            };
-
-            data.pass = function () {
-                if (this.isSuccess() == false) return false;
-                return this.verifySign();
-            };
-
-            callback(null, data);
-        }
-
         function responseOK(res) {
             var responseBodyXML = js2xmlparser.parse("xml", {
                 return_code: "SUCCESS",
                 return_msg: "OK"
             });
-            logger.debug("响应微信支付结果通知，响应内容为:" + responseBodyXML);
+            logger.debug("response to notification from weixin payment:" + responseBodyXML);
             res.end(responseBodyXML);
         }
     }
