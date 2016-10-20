@@ -40,6 +40,8 @@
     });
 
     $("#show-confirm").click(function () {
+        if($("#show-confirm").disabled) return;
+
         var amount = $('#txtAmount').val();
         if (amount == '') {
             $.toptip('请填写金额。');
@@ -50,7 +52,7 @@
                 .done(function (data) {
                     window.location = data;
                 });
-        $("#show-confirm").disable();
+        $("#show-confirm").disabled = true;
     });
 </script>
 </html>
