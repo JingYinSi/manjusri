@@ -5,6 +5,7 @@ var express = require('express'),
     exphbs = require('express-handlebars'),
     errorHandler = require('errorhandler'),
     session = require('express-session'),
+    favicon = require('serve-favicon'),
     router = express.Router(),
     passport = require('passport'),
     app = express(),
@@ -28,7 +29,7 @@ module.exports = function(ctx) {
     ctx.route(router);
     app.use(router);
     app.use('/', express.static(ctx.static || path.join(__dirname, '../client/public')));
-    app.use('/favicon.ico', express.static('images/icon1.jpg'));
+    app.use(favicon(__dirname + '/client/public/images/icon1.jpg'));
     if ('development' === app.get('env') || ctx.env) {
         app.use(errorHandler());
     }

@@ -38,6 +38,7 @@
     "pixl-xml": "^1.0.9",
     "querystring": "^0.2.0",
     "request": "^2.75.0",
+    "serve-favicon": "^2.3.0",
     "sha1": "^1.1.1",
     "simple-get": "^2.3.0",
     "xml2js": "^0.4.17"
