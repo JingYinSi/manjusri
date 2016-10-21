@@ -12,6 +12,9 @@ module.exports = function (router) {
         .get(wechat.hook)
         .post(wechat.receive);
 
+    router.route('/jingyin/manjusri/index')
+        .get(manjusri.home);
+
     router.route('/jingyin/manjusri')
         .get(manjusri.index);
 
