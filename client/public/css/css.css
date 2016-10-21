@@ -1,0 +1,101 @@
+/*Reset CSS*/
+*{ margin: 0; padding: 0; list-style: none; text-decoration: none; font-size: 100%; font-family: "微软雅黑"; box-sizing: border-box;}
+html,body{ width: 100%; background: #fff; margin: 0; padding: 0; font-family: "微软雅黑";}
+body { padding-bottom: 160px;}
+a { font-size: inherit; color: inherit;}
+img { display: block; border: none;}
+table{ border-collapse: collapse; border-spacing: 0; }
+.clear{ font-size: 0; margin: 0; padding: 0; clear: both; height: 0; border: 0; line-height: 0;}
+
+.public { width: 1242px; height: auto; margin: 0 auto; overflow: hidden;}
+
+.public .about { width: 100%; height: auto; padding-top: 100px;}
+.public .about_t1 { width: 100%; height: 150px; line-height: 150px; font-size: 60px; font-weight: bold; color: #000; text-align: center;}
+.public .about_t2 { width: 100%; height: auto; font-size: 34px; font-weight: bold; letter-spacing: 10px; color: #000; text-align: center;}
+.public .about_p { width: 100%; height: auto; line-height: 80px; font-size: 46px; font-weight: bold; color: #827a7a; text-align: center; padding: 100px 115px 0 115px;}
+.public .about_z { width: 100%; height: auto; padding: 180px 0;}
+.public .about_z img { width: 124px; height: 124px; margin: 0 auto;}
+
+.public .scroll { width: 100%; height: auto; border-top: 4px #fdf6d5 solid; padding: 50px 100px;}
+.public .scroll .text { width: 100%; height: auto; font-size: 48px; color: #4c4c4c; text-align: center; margin-top: 70px;}
+.public .scroll .text img { display: inline-block;}
+.public .scroll .text span { font-size: 70px; color: #ff7300;}
+.public .scroll td { height: 72px; line-height: 72px; font-size: 40px; color: #4c4c4c;}
+
+.public .footer { width: 100%; height: 570px; font-size: 30px; color: #827a7a; text-align: center; background: url("../images/copy.jpg"); background-size: 100% 100%; padding-top: 415px;}
+
+.banner { width: 1242px; height: auto; margin: 0 auto;}
+
+.list { width: 1242px; height: auto; margin: 0 auto;}
+.list .list_t { width: 100%; height: 210px; line-height: 198px; font-size: 60px; color: #f0a50c; text-decoration: underline; border-top: 6px #fdf6d5 solid; border-bottom: 6px #fdf6d5 solid; padding: 0 110px;}
+.list .list_t span { font-size: 60px; color: #f0a50c; text-decoration: none; float: right;}
+.list .list_p { width: 100%; height: auto;}
+.list .list_p li { width: 50%; height: 830px; text-align: center; border-right: 4px #fdf6d5 solid; border-bottom: 4px #fdf6d5 solid; padding-top: 30px; float: left;}
+.list .list_p li img { display: inline-block;}
+.list .list_p li .text1 { font-size: 46px; font-weight: bold; color: #827a7a; padding: 10px 0;}
+.list .list_p li .text2 { font-size: 34px; color: #bfb4b4; padding: 10px 0;}
+.list .list_p li .text3 { font-size: 36px; color: #f0a50c; padding: 10px 0;}
+.list .list_p li .text3 span { font-size: 60px;}
+
+.product { width: 1242px; height: auto; margin: 0 auto; position: relative;}
+.product ul { width: 420px; height: 140px; background: #fdf6d5; position: absolute; right: 120px; bottom: 0;}
+.product ul li { width: 140px; height: 140px; line-height: 140px; font-size: 60px; text-align: center; color: #bfb4b4; float: left;}
+.product ul .val { border-top: 1px #fdf6d5 solid; border-bottom: 1px #fdf6d5 solid; background: #fff;}
+.product_name { width: 100%; height: auto; font-size: 60px; font-weight: bold; color: #827a7a; padding: 0 120px 30px 120px;}
+.product_num { width: 100%; height: auto; font-size: 40px; color: #bfb4b4; padding: 0 120px;}
+.product_price { width: 100%; height: 140px; line-height: 200px; font-size: 48px; color: #f0a50c; padding: 0 120px;}
+.product_price span { font-size: 60px;}
+
+.btn { width: 1242px; height: auto; border-bottom: 4px #fdf6d5 solid; padding: 140px 170px; margin: 0 auto;}
+.btn a { width: 100%; height: 120px; line-height: 120px; font-size: 70px; color: #fff; text-align: center; background: #f0a50c; display: block;}
+
+
+.cardinfo { width: 1242px; height: auto; padding: 130px 0; margin: 0 auto; overflow: hidden;}
+.cardinfo .cardinfo_t1 { width: 100%; height: auto; line-height: 120px; font-size: 60px; color: #827a7a; text-align: center;}
+.cardinfo .cardinfo_t2 { width: 100%; height: auto; font-size: 34px; letter-spacing: 10px; color: #000; text-align: center;}
+.cardinfo .cardinfo_t3 { width: 100%; height: auto; line-height: 50px; font-size: 46px; color: #000; text-align: center; padding-top: 60px;}
+.cardinfo .cardinfo_name { width: 100%; height: 75px; line-height: 75px; font-size: 46px; text-align: center;}
+.cardinfo .cardinfo_num { width: 100%; height: auto; font-size: 76px; text-align: center; padding-top: 20px;}
+
+
+.content { width: 1242px; height: auto; margin: 0 auto; overflow: hidden;}
+.content .text1 { width: 1080px; height: 150px; line-height: 150px; font-size: 60px; background: #fff; padding: 0 40px; margin: 100px auto;}
+.content .text1 .a1 { float: left;}
+.content .text1 .a2 { width: 450px; height: 150px; text-align: right; border: none; padding-right: 20px; float: right;}
+.content .text1 .a3 { float: right;}
+.content .text2 { width: 1080px; height: auto; line-height: 150px; font-size: 60px; background: #fff; padding: 0 40px; margin: 0 auto; overflow: hidden;}
+.content .text2 .a1 { float: left;}
+.content .text2 .a2 { width: 750px; height: 150px; text-align: right; border: none; float: right;}
+.content .text2 .a2::-webkit-input-placeholder { font-size: 55px;}
+.content .text2 textarea { width: 100%; height: 350px; border: none; float: left;}
+.content .price { width: 100%; height: 440px; line-height: 440px; font-size: 100px; text-align: center;}
+
+.contentt { width: 1242px; height: auto; margin: 0 auto; overflow: hidden;}
+.contentt .text1 { width: 970px; height: auto; line-height: 150px; font-size: 60px; color: #670909; background: #fff; padding: 0 40px; margin: 100px auto; overflow: hidden;}
+.contentt .text1 .a1 { float: left;}
+.contentt .text1 .a2,.contentt .text1 .a5 { width: 650px; height: 130px; background: #fdf6d5; padding-right: 20px; margin-left: 20px; float: left;}
+.contentt .text1 .a2::-webkit-input-placeholder { font-size: 55px; color: #cdb198;}
+.contentt .text1 .a3 { float: right;}
+.contentt a { width: 300px; height: 120px; line-height: 120px; font-size: 60px; color: #fff; text-align: center; background: #f0a50c; margin: 0 auto 100px auto; display: block;}
+
+.contenttt { width: 1242px; height: auto; text-align: center; margin: 0 auto; overflow: hidden;}
+.contenttt img { display: inline-block; margin-top: 220px;}
+.contenttt .sucess_name { width: 100%; height: 260px; line-height: 260px; font-size: 100px; text-align: center;}
+.contenttt .sucess_text { width: 100%; height: auto; font-size: 50px; color: #646464; text-align: center;}
+.contenttt a { width: 1000px; height: 120px; line-height: 120px; font-size: 76px; color: #fff; text-align: center; background: #1bac19; margin: 180px auto; display: block;}
+
+.textttt { width: 100%; height: auto; line-height: 76px; font-size: 46px; color: #bcb3b3; text-align: center; padding-bottom: 130px;}
+
+
+.nav { width: 1242px; height: 160px; background: #f7f5f0; padding: 20px 0; margin-left: -621px; position: fixed; left: 50%; bottom: 0;}
+.nav li { width: 25%; height: 120px; line-height: 120px; font-size: 60px; color: #000; text-align: center; border-right: 4px #e6e3df solid; float: left; position: relative;}
+.nav li dl { width: 100%; height: auto; position: absolute; left: 0; bottom: 160px; display: none;}
+.nav li dl dd { width: 100%; height: 140px; line-height: 140px; border-bottom: 4px #e6e3df solid; background: #f7f5f0; padding: 0 10px;}
+
+
+.pop { width: 100%; height: 100%; background: rgba(0,0,0,0.5); padding: 500px 0; overflow-y: auto; position: fixed; left: 0; top: 0; display: none;}
+.pop .pop_content { width: 1000px; height: auto; font-size: 60px; background: #fff; padding: 50px; margin: 0 auto;}
+.pop .pop_content dt { width: 100%; height: auto; line-height: 110px; border-bottom: 3px #c8c8c8 solid; padding: 25px 50px; overflow: hidden;}
+.pop .pop_content dt input,.pop .pop_content dt textarea { width: 620px; height: 110px; border: none; background: #faf4f5; float: right;}
+.pop .pop_content dd { width: 720px; height: 130px; line-height: 130px; color: #fff; font-size: 60px; text-align: center; background: #f9a300; margin: 60px auto;}
+.pop .pop_content dd a { display: block;}

@@ -36,32 +36,15 @@
       ]
     },
     {
-      "name": "寺庙动态",
-      "sub_button": [
-        {
-          "type": "view",
-          "name": "寺庙进度",
-          "url": "http://mp.weixin.qq.com/s?__biz=MjM5NTI2NTk4OQ==mid=2650144421idx=1sn=07e11552f80d19c31b76cee99128254dscene=18#wechat_redirect",
-          "sub_button": [ ]
-        },
-        {
-          "type": "view",
-          "name": "工程回顾",
-          "url": "http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NTI2NTk4OQ==hid=7sn=442e3174f2a7234db4eb59b61d756d75#wechat_redirect",
-          "sub_button": [ ]
-        },
-        {
-          "type": "view",
-          "name": "作品征集",
-          "url": "http://mp.weixin.qq.com/mp/homepage?__biz=MjM5NTI2NTk4OQ==hid=1sn=048676d200e7908db9c7d1e6a6a868c8#wechat_redirect",
-          "sub_button": [ ]
-        }
-      ]
+      "type": "view",
+      "name": "静音善行",
+      "url": "http://jingyintemple.top/jingyin/manjusri/index",
+      "sub_button": [ ]
     },
     {
       "type": "view",
       "name": "日日善行",
-      "url": "http://121.41.93.210/jingyin/manjusri",
+      "url": "http://jingyintemple.top/jingyin/manjusri",
       "sub_button": [ ]
     }
   ]

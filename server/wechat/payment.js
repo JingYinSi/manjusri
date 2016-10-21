@@ -12,7 +12,7 @@ module.exports = {
         var code = req.query.code;
         if(!code){
             logger.debug("there is something wrong, code is undefined");
-            res.status(400);
+            res.statusCode = 400;
             res.end();
             return;
         }
