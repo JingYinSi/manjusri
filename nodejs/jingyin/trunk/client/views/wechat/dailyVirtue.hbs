@@ -15,14 +15,14 @@
     <div class="text1">
         <span class="a1">金额:</span>
         <span class="a3">元</span>
-        <input type="text" class="a2" placeholder="请点击输入数字">
+        <input id="input_amount" type="text" class="a2" placeholder="请点击输入数字">
     </div>
     <div class="text1">
         <span class="a1">回向:</span>
         <input type="text" class="a2 a4" placeholder="以此功德,回向六道众生.">
-        <textarea class="a5" style="height: 320px; display: none;"></textarea>
+        <textarea id="input_target" class="a5" style="height: 320px; display: none;"></textarea>
     </div>
-    <a href="#">确定</a>
+    <a id="show-confirm" href="#">确定</a>
 </div>
 
 <div class="public">
@@ -143,6 +143,28 @@
         }
     }
     var MyMar=setInterval(Marquee,speed);
+
+    $("#show-confirm").click(function () {
+        var amount = $('#input_amount').val();
+        var target = $('#input_target').val();
+        if (amount == '') {
+            $.toptip('请填写金额。');
+            return;
+        }
+        var url = window.location.href;
+        var dataToPost = {
+            amount: amount,
+        }
+        if(target) dataToPost.target = target;
+
+        $.post(url, dataToPost)
+                .done(function (data) {
+                    if(!data){
+                        return;
+                    }
+                    window.location = data;
+                });
+    });
 </script>
 </body>
 </html>

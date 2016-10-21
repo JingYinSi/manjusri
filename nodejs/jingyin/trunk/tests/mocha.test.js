@@ -341,12 +341,14 @@ describe('静音寺业务系统', function () {
                     var routeStub = sinon.stub();
                     routeStub.withArgs('/jingyin/wechat').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri').returns(handlerStub);
+                    routeStub.withArgs('/jingyin/manjusri/index').returns(handlerStub);
+                    routeStub.withArgs('/jingyin/manjusri/dailyvirtue').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/accuvirtue').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/pay/confirm').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/pay/notify').returns(handlerStub);
 
                     getSpy.withArgs(wechat.hook).returns(handlerStub);
-                    //getSpy.withArgs(manjusri.index).returns(handlerStub);
+                    getSpy.withArgs(accuvirtue.dailyVirtue).returns(handlerStub);
                     getSpy.withArgs(accuvirtue.index).returns(handlerStub);
                     getSpy.withArgs(payment.index).returns(handlerStub);
 
@@ -374,27 +376,34 @@ describe('静音寺业务系统', function () {
                         payurl.payUrl + '?foo=foo&fee=可能有中文&fuu=fuu');
                     var expectedOAuthUrl = 'expectedOAuthUrl';
                     var warpstub = sinon.stub();
-                    weixin.weixin = {wrapRedirectURLByOath2Way: warpstub};
                     warpstub.withArgs(expectedUrl).returns(expectedOAuthUrl);
+                    weixin.weixin = {wrapRedirectURLByOath2Way: warpstub};
 
-                    weixin.sendPayUrl({end: resEndSpy}, info);
-                    expect(resEndSpy).calledWith(expectedOAuthUrl);
+
+                    expect(weixin.sendPayUrl(info)).eql(expectedOAuthUrl);
                 });
             });
 
             describe('处理请求', function () {
-                it('显示首页', function () {
-                    var controller = require('../server/wechat/manjusri').index;
+                function showPage(controller, page){
                     var resRenderSpy = sinon.spy();
                     var resStub = {render: resRenderSpy}
-
                     controller(null, resStub);
+                    expect(resRenderSpy).calledWith(page);
+                }
 
-                    expect(resRenderSpy).calledWith('wechat/manjusri');
+                it('显示首页', function () {
+                    var controller = require('../server/wechat/manjusri').home;
+                    showPage(controller, 'wechat/index');
                 });
 
+                describe('日行一善', function(){
+                    it('显示页面', function () {
+                        var controller = require('../server/wechat/accvirtue').dailyVirtue;
+                        showPage(controller, 'wechat/dailyVirtue');
+                    });
+                })
             });
-
         })
     })
 })
