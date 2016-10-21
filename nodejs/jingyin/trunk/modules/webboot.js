@@ -28,7 +28,7 @@ module.exports = function(ctx) {
     ctx.route(router);
     app.use(router);
     app.use('/', express.static(ctx.static || path.join(__dirname, '../client/public')));
-
+    app.use('/favicon.ico', express.static('images/icon1.jpg'));
     if ('development' === app.get('env') || ctx.env) {
         app.use(errorHandler());
     }
