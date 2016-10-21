@@ -4,6 +4,10 @@ log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
 module.exports = {
+    suixi: function (req, res) {
+        res.render('wechat/dailyVirtue');
+    },
+
     index: function (req, res) {
         res.render('wechat/accuvirtue');
     },
