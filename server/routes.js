@@ -18,9 +18,9 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri')
         .get(manjusri.index);
 
-    router.route('/jingyin/manjusri/suixi')
-        .get(accuvirtue.suixi);/*
-        .post(accuvirtue.action);*/
+    router.route('/jingyin/manjusri/dailyvirtue')
+        .get(accuvirtue.dailyVirtue)
+        .post(accuvirtue.doAction);
 
     router.route('/jingyin/manjusri/accuvirtue')
         .get(accuvirtue.index)
