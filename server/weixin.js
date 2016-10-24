@@ -23,10 +23,10 @@ module.exports = {
         var index = 0;
         //TODO: 以下这段代码可以优化
         for (var k in payInfo) {
-            url += (index > 0) ? '&' + k + '=' + payInfo[k] : k + '=' + encodeURIComponent(payInfo[k]);
+            url += (index > 0) ? '&' + k + '=' + payInfo[k] : k + '=' + payInfo[k];
             index++;
         }
-        //url = encodeURIComponent(url);
+        url = encodeURIComponent(url);
         url = this.weixin.wrapRedirectURLByOath2Way(url);
         return url;
     }
