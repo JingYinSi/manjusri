@@ -22,10 +22,8 @@ module.exports = {
             res.end();
         }
         var trans = {
-            //transName: '日行一善',
-            transName: 'daily',
+            transName: '日行一善',
             amount: Math.round(req.body.amount * 100),
-            target: req.body.target
         }
         if (!trans.amount) {
             responseError(400, "amount is undefined");
@@ -35,6 +33,8 @@ module.exports = {
             responseError(400, "amount is invalid");
             return;
         }
+        var target = req.body.target;
+        if(target) trans.target = target;
 
         var url = weixin.sendPayUrl(trans);
         logger.debug("response the url to payment to client, url = " + url);

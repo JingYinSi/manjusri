@@ -2,8 +2,7 @@
  * Created by sony on 2016/10/13.
  */
 var weixinModule = require('../modules/weixin'),
-    payurl = require('./payurl').payUrl,
-    querystring = require('querystring');
+    payurl = require('./payurl').payUrl;
 const log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 const logger = log4js.getLogger();
@@ -21,7 +20,6 @@ module.exports = {
     sendPayUrl: function (payInfo) {
         var url = payurl + '?';
         var index = 0;
-        //TODO: 以下这段代码可以优化
         for (var k in payInfo) {
             url += (index > 0) ? '&' + k + '=' + payInfo[k] : k + '=' + payInfo[k];
             index++;
