@@ -10,13 +10,17 @@ const weixin = require('../weixin').weixin;
 module.exports = {
     index: function (req, res) {
         var code = req.query.code;
+        var amount = req.query.amount;
         if(!code){
             logger.debug("there is something wrong, code is undefined");
             res.statusCode = 400;
             res.end();
             return;
-        }
-        logger.debug("Redirected to payment amount:" + req.query.amount);
+        };
+
+        logger.debug("Redirected to payment amount:" + amount);
+        if(!amount) return;
+
         weixin.getOpenId(req.query.code, function (err, openId) {
             var transName = decodeURIComponent(req.query.transName),
                 amount = req.query.amount,
