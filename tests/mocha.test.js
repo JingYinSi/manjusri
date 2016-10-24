@@ -320,7 +320,6 @@ describe('静音寺业务系统', function () {
         describe('服务端控制', function () {
             describe('路由器', function () {
                 beforeEach(function () {
-
                 });
 
                 it('配置路由', function () {
@@ -367,15 +366,12 @@ describe('静音寺业务系统', function () {
                 it('向客户端发送可重定向的支付请求的1', function () {
                     var payurl = 'http://payurl';
                     var expectedUrl = 'http://expected/url';
-                    var valNeedEncode = '可能有中文';
                     var info = {
                         foo: 'foo',
-                        fee: valNeedEncode,
+                        fee: '可能有中文',
                         fuu: 'fuu',
                     };
-                    var expectedUrlToWrap = payurl + "?foo=foo&fee=" + encodeURIComponent(valNeedEncode) + "&fuu=fuu";
-                    console.log('out url:' + expectedUrlToWrap);
-
+                    var expectedUrlToWrap = encodeURIComponent(payurl + "?foo=foo&fee=可能有中文&fuu=fuu");
                     var weixin = proxyquire('../server/weixin', {
                         './payurl': {payUrl: payurl}
                     });
@@ -451,7 +447,6 @@ describe('静音寺业务系统', function () {
                             var trans = {
                                 transName: '日行一善',
                                 amount: 2458,
-                                target: undefined
                             };
                             var payurl = 'http://payurl';
                             var weixinStub = sinon.stub();
