@@ -24,7 +24,7 @@ module.exports = function (router) {
 
     router.route('/jingyin/manjusri/accuvirtue')
         .get(accuvirtue.index)
-        .post(accuvirtue.action);
+        .post(accuvirtue.doAction);
 
     router.route(payRoute)
         .get(payment.index);
