@@ -1,5 +1,6 @@
 var Virtue = require('./models/virtue'),
-    weixin = require('../weixin').weixin;
+    weixin = require('../weixin').weixin,
+    responseWrapFactory = require('../../modules/responsewrap');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -7,18 +8,22 @@ var logger = log4js.getLogger();
 
 module.exports = {
     index: function (req, res) {
+        var resWrap = responseWrapFactory(res);
         var code = req.query.code;
         if(!code){
             logger.error("Is request from weixin? there is something wrong, code is undefined");
-            res.status(400);
-            res.end();
+            resWrap.setStatus(400);
+            return;
+        };
+        var code = req.query.transName;
+        if(!code){
+            resWrap.setStatus(400, 'transaction Type(transName) is not defined');
             return;
         };
 
         weixin.getOpenId(req.query.code, function (err, openId) {
             if(err){
-                res.status(400);
-                res.end();
+                resWrap.setStatus(400);
                 return;
             }
             var transName = decodeURIComponent(req.query.transName),
