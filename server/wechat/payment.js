@@ -16,12 +16,12 @@ module.exports = {
             res.end();
             return;
         }
-
+        logger.debug("Redirected to payment amount:" + req.query.amount);
         weixin.getOpenId(req.query.code, function (err, openId) {
             var transName = decodeURIComponent(req.query.transName),
                 amount = req.query.amount,
                 target = decodeURIComponent((req.query.target));
-            logger.debug("Redirected to payment amount:" + amount);
+            //logger.debug("Redirected to payment amount:" + amount);
             logger.debug("Redirected to payment:" + JSON.stringify({
                     transName: transName,
                     amount: amount,
