@@ -19,11 +19,16 @@ module.exports = {
     }),
 
     sendPayUrl: function (payInfo) {
-
-        var url = payurl + '?' + querystring.stringify(payInfo);
-        logger.debug('the url to redirect wraped by OAth2 is: ', url);
-
-        return this.weixin.wrapRedirectURLByOath2Way(url);
+        var url = payurl + '?';
+        var index = 0;
+        //TODO: 以下这段代码可以优化
+        for (var k in payInfo) {
+            url += (index > 0) ? '&' + k + '=' + payInfo[k] : k + '=' + encodeURIComponent(payInfo[k]);
+            index++;
+        }
+        //url = encodeURIComponent(url);
+        url = this.weixin.wrapRedirectURLByOath2Way(url);
+        return url;
     }
 }
 
