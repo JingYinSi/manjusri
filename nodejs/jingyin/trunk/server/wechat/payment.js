@@ -19,8 +19,14 @@ module.exports = {
 
         weixin.getOpenId(req.query.code, function (err, openId) {
             var transName = decodeURIComponent(req.query.transName),
-                amount = req.query.amount;
-            logger.debug("Redirected to payment:" + JSON.stringify(querystring.parse(req.query)));
+                amount = req.query.amount,
+                target = decodeURIComponent((req.query.target));
+
+            logger.debug("Redirected to payment:" + JSON.stringify({
+                    transName: transName,
+                    amount: amount,
+                    targer: target
+                }));
             Virtue.placeVirtue(openId, amount, function (err, virtue) {
                 if (err) {
                     logger.error(err);
