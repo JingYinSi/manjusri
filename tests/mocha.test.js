@@ -33,7 +33,7 @@ describe('静音寺业务系统', function () {
                 });
             });
 
-            it('创建一笔捐助，未定义openId', function (done) {
+            it.skip('创建一笔捐助，未定义openId', function (done) {
                 amount = 32.8;
                 Virtue.placeVirtue(null, amount, function (err, virtue) {
                     expect(err.errors['openid'].message).to.be.eql('OpenId必须定义');
@@ -248,7 +248,7 @@ describe('静音寺业务系统', function () {
                 expect(callbackSpy).calledWith(null, 'wx2016102016134724083f65cd0642279411');
             });
 
-            describe('MD5签名', function (){
+            describe('MD5签名', function () {
                 var md5Stub, signResult, data;
                 beforeEach(function () {
                     signResult = 'ddjfvndfnvdfgbsfbfg';
@@ -385,7 +385,7 @@ describe('静音寺业务系统', function () {
             });
 
             describe('处理请求', function () {
-                function showPage(controller, page){
+                function showPage(controller, page) {
                     var resRenderSpy = sinon.spy();
                     var resStub = {render: resRenderSpy}
                     controller(null, resStub);
@@ -397,11 +397,68 @@ describe('静音寺业务系统', function () {
                     showPage(controller, 'wechat/index');
                 });
 
-                describe('日行一善', function(){
+                describe('日行一善', function () {
                     it('显示页面', function () {
                         var controller = require('../server/wechat/accvirtue').dailyVirtue;
                         showPage(controller, 'wechat/dailyVirtue');
                     });
+
+                    describe('日行一善的执行', function () {
+                        var reqStub, resStub;
+                        var statusSpy, resEndSpy;
+                        var controller;
+
+                        function checkResponseStatusCodeAndMessage(code, message) {
+                            expect(statusSpy).calledWith(code).calledOnce;
+                            expect(resStub.statusMessage).eql(message);
+                        }
+
+                        function checkResponseEnded() {
+                            expect(resEndSpy).calledOnce;
+                        }
+
+                        beforeEach(function () {
+                            reqStub = {
+                                body: {}
+                            };
+                            statusSpy = sinon.spy();
+                            resEndSpy = sinon.spy();
+                            resStub = {
+                                status: statusSpy,
+                                end: resEndSpy
+                            }
+                            controller = require('../server/wechat/accvirtue').doAction;
+                        });
+
+                        it('如果请求体中未包含金额，则应响应客户端错400', function () {
+                            controller(reqStub, resStub);
+                            checkResponseStatusCodeAndMessage(400, 'amount is undefined');
+                            checkResponseEnded();
+                        });
+
+                        it('金额非数字类型，则应响应客户端错400', function () {
+                            reqStub.body.amount = 'ssss';
+                            controller(reqStub, resStub);
+                            checkResponseStatusCodeAndMessage(400, 'amount is invalidate');
+                            checkResponseEnded();
+                        });
+
+                        it('金额小于等于零，则应响应客户端错400', function () {
+                            var us;
+                            var n1 = Number(us),
+                                n2 = Number("-2.4567"),
+                                n3 = Number("aaa"),
+                                n4 = Number("23.5"),
+                                n5 = Number(null);
+
+                            console.log("n1:" + n1 + "n1:" + n1)
+
+                            reqStub.body.amount = -2.4;
+                            controller(reqStub, resStub);
+                            checkResponseStatusCodeAndMessage(400, 'amount should greater than zero');
+                            checkResponseEnded();
+                        });
+                    })
                 })
             });
         })
