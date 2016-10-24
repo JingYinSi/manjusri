@@ -15,7 +15,7 @@ module.exports = {
     },
 
     //创建日行一善订单
-    doAction: function (req, res) {
+    action: function (req, res) {
         function responseError(code, reason) {
             res.status(code);
             res.statusMessage = reason;
@@ -40,15 +40,4 @@ module.exports = {
         logger.debug("response the url to payment to client, url = " + url);
         res.end(url);
     },
-
-    action: function (req, res) {
-        var amount = req.body.amount;
-        var trans = {
-            transName: '日行一善',
-            amount: amount
-        };
-        var url = weixin.sendPayUrl(trans);
-        logger.debug("response the url to payment to client, url = " + url);
-        res.end(url);
-    }
 };
