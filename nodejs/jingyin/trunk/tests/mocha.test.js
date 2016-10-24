@@ -364,25 +364,26 @@ describe('静音寺业务系统', function () {
                     expect(postSpy).calledWith(payment.payNotify);
                 });
 
-
-                it('向客户端发送可重定向的支付请求的', function () {
-                    var weixin = require('../server/weixin'),
-                        payurl = require('../server/payurl');
-                    var resEndSpy = sinon.spy();
+                it('向客户端发送可重定向的支付请求的1', function () {
+                    var payurl = 'http://payurl';
+                    var expectedUrl = 'http://expected/url';
+                    var valNeedEncode = '可能有中文';
                     var info = {
                         foo: 'foo',
-                        fee: '可能有中文',
+                        fee: valNeedEncode,
                         fuu: 'fuu',
-                    }
-                    var expectedUrl = encodeURIComponent(
-                        payurl.payUrl + '?foo=foo&fee=可能有中文&fuu=fuu');
-                    var expectedOAuthUrl = 'expectedOAuthUrl';
-                    var warpstub = sinon.stub();
-                    warpstub.withArgs(expectedUrl).returns(expectedOAuthUrl);
-                    weixin.weixin = {wrapRedirectURLByOath2Way: warpstub};
+                    };
+                    var expectedUrlToWrap = payurl + "?foo=foo&fee=" + encodeURIComponent(valNeedEncode) + "&fuu=fuu";
+                    console.log('out url:' + expectedUrlToWrap);
 
+                    var weixin = proxyquire('../server/weixin', {
+                        './payurl': {payUrl: payurl}
+                    });
+                    var wrapRedirectURLByOath2WayStub = sinon.stub();
+                    wrapRedirectURLByOath2WayStub.withArgs(expectedUrlToWrap).returns(expectedUrl);
+                    weixin.weixin.wrapRedirectURLByOath2Way = wrapRedirectURLByOath2WayStub;
 
-                    expect(weixin.sendPayUrl(info)).eql(expectedOAuthUrl);
+                    expect(weixin.sendPayUrl(info)).eql(expectedUrl);
                 });
             });
 
