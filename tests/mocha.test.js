@@ -442,42 +442,45 @@ describe('静音寺业务系统', function () {
                             checkResponseEnded();
                         });
 
-                        it('金额以分为单位', function () {
-                            reqStub.body.amount = '24.584';
-                            var trans = {
-                                transName: '日行一善',
-                                amount: 2458,
-                            };
-                            var payurl = 'http://payurl';
-                            var weixinStub = sinon.stub();
-                            weixinStub.withArgs(trans).returns(payurl);
-                            var stubs = {
-                                '../weixin': {sendPayUrl: weixinStub}
-                            };
-                            controller = proxyquire('../server/wechat/accvirtue', stubs);
-                            controller.doAction(reqStub, resStub);
-                            expect(resEndSpy).calledWith(payurl);
+                        describe('向客户端返回用OAuth2包装的支付服务的URL', function () {
+                            var payurl, weixinStub, stubs;
+
+                            before(function () {
+                                payurl = 'http://payurl';
+                                weixinStub = sinon.stub();
+                                stubs = {
+                                    '../weixin': {sendPayUrl: weixinStub}
+                                };
+                            });
+
+                            it('金额以分为单位', function () {
+                                reqStub.body.amount = '24.584';
+                                var trans = {
+                                    transName: '日行一善',
+                                    amount: 2458,
+                                };
+                                weixinStub.withArgs(trans).returns(payurl);
+                                controller = proxyquire('../server/wechat/accvirtue', stubs);
+                                controller.doAction(reqStub, resStub);
+                                expect(resEndSpy).calledWith(payurl);
+                            });
+
+                            it('获得回向', function () {
+                                var target = 'this is target for virtue....';
+                                reqStub.body.amount = '24.585';
+                                reqStub.body.target = target;
+                                var trans = {
+                                    transName: '日行一善',
+                                    amount: 2459,
+                                    target: target
+                                };
+                                weixinStub.withArgs(trans).returns(payurl);
+                                controller = proxyquire('../server/wechat/accvirtue', stubs);
+                                controller.doAction(reqStub, resStub);
+                                expect(resEndSpy).calledWith(payurl);
+                            });
                         });
 
-                        it('获得回向', function () {
-                            var target = 'this is target for virtue....';
-                            reqStub.body.amount = '24.585';
-                            reqStub.body.target = target;
-                            var trans = {
-                                transName: '日行一善',
-                                amount: 2459,
-                                target: target
-                            };
-                            var payurl = 'http://payurl';
-                            var weixinStub = sinon.stub();
-                            weixinStub.withArgs(trans).returns(payurl);
-                            var stubs = {
-                                '../weixin': {sendPayUrl: weixinStub}
-                            };
-                            controller = proxyquire('../server/wechat/accvirtue', stubs);
-                            controller.doAction(reqStub, resStub);
-                            expect(resEndSpy).calledWith(payurl);
-                        });
                     })
                 })
             });
