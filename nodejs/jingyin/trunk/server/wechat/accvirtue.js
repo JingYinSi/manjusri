@@ -1,4 +1,6 @@
-var weixin = require('../weixin');
+var weixin = require('../weixin'),
+    isnumeric = require('isnumeric');
+
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
@@ -14,7 +16,24 @@ module.exports = {
 
     //创建日行一善订单
     doAction: function (req, res) {
-        var amount = req.body.amount;
+        var amount = Number(req.body.amount);
+        if(!amount){
+            res.status(400);
+            res.statusMessage = "amount is undefined";
+            res.end();
+            return;
+        }
+
+        if(amount < 0){
+            res.status(400);
+            res.statusMessage = "amount is invalidate";
+            res.end();
+            return;
+        }
+
+        return
+
+
         var target = req.body.target;
         var trans = {
             transName: '日行一善',
