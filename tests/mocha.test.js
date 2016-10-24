@@ -300,8 +300,10 @@ describe('静音寺业务系统', function () {
                         ' <transaction_id><![CDATA[4005172001201610207217503606]]></transaction_id>' +
                         ' </xml>';
                     paymentJsonToSign = XML.parse(paymentXml);
-                    //delete paymentJsonToSign.sign;
-                    signMD5Stub = sinon.stub().withArgs(paymentJsonToSign).returns('4C59A329EE4E7D35BE7FC840C599F6FE');
+                    delete paymentJsonToSign.sign;
+
+                    signMD5Stub = sinon.stub();
+                    signMD5Stub.withArgs(paymentJsonToSign).returns('4C59A329EE4E7D35BE7FC840C599F6FE');
                     weixin.signMD5 = signMD5Stub;
                 });
 
@@ -436,27 +438,49 @@ describe('静音寺业务系统', function () {
                             checkResponseEnded();
                         });
 
-                        it('金额非数字类型，则应响应客户端错400', function () {
-                            reqStub.body.amount = 'ssss';
+                        it('金额不合法，则应响应客户端错400', function () {
+                            reqStub.body.amount = '-24.58';
                             controller(reqStub, resStub);
-                            checkResponseStatusCodeAndMessage(400, 'amount is invalidate');
+                            checkResponseStatusCodeAndMessage(400, 'amount is invalid');
                             checkResponseEnded();
                         });
 
-                        it('金额小于等于零，则应响应客户端错400', function () {
-                            var us;
-                            var n1 = Number(us),
-                                n2 = Number("-2.4567"),
-                                n3 = Number("aaa"),
-                                n4 = Number("23.5"),
-                                n5 = Number(null);
+                        it('金额以分为单位', function () {
+                            reqStub.body.amount = '24.584';
+                            var trans = {
+                                transName: '日行一善',
+                                amount: 2458,
+                                target: undefined
+                            };
+                            var payurl = 'http://payurl';
+                            var weixinStub = sinon.stub();
+                            weixinStub.withArgs(trans).returns(payurl);
+                            var stubs = {
+                                '../weixin': {sendPayUrl: weixinStub}
+                            };
+                            controller = proxyquire('../server/wechat/accvirtue', stubs);
+                            controller.doAction(reqStub, resStub);
+                            expect(resEndSpy).calledWith(payurl);
+                        });
 
-                            console.log("n1:" + n1 + "n1:" + n1)
-
-                            reqStub.body.amount = -2.4;
-                            controller(reqStub, resStub);
-                            checkResponseStatusCodeAndMessage(400, 'amount should greater than zero');
-                            checkResponseEnded();
+                        it('获得回向', function () {
+                            var target = 'this is target for virtue....';
+                            reqStub.body.amount = '24.585';
+                            reqStub.body.target = target;
+                            var trans = {
+                                transName: '日行一善',
+                                amount: 2459,
+                                target: target
+                            };
+                            var payurl = 'http://payurl';
+                            var weixinStub = sinon.stub();
+                            weixinStub.withArgs(trans).returns(payurl);
+                            var stubs = {
+                                '../weixin': {sendPayUrl: weixinStub}
+                            };
+                            controller = proxyquire('../server/wechat/accvirtue', stubs);
+                            controller.doAction(reqStub, resStub);
+                            expect(resEndSpy).calledWith(payurl);
                         });
                     })
                 })
