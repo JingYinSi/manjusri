@@ -1,27 +1,29 @@
-var querystring = require('querystring'),
-    js2xmlparser = require('js2xmlparser'),
-    Virtue = require('./models/virtue');
+var Virtue = require('./models/virtue'),
+    weixin = require('../weixin').weixin;
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
-const weixin = require('../weixin').weixin;
 
 module.exports = {
     index: function (req, res) {
         var code = req.query.code;
         if(!code){
-            logger.debug("there is something wrong, code is undefined");
-            res.statusCode = 400;
+            logger.error("Is request from weixin? there is something wrong, code is undefined");
+            res.status(400);
             res.end();
             return;
         };
 
         weixin.getOpenId(req.query.code, function (err, openId) {
+            if(err){
+                res.status(400);
+                res.end();
+                return;
+            }
             var transName = decodeURIComponent(req.query.transName),
                 amount = req.query.amount,
                 target = decodeURIComponent((req.query.target));
-            //logger.debug("Redirected to payment amount:" + amount);
             logger.debug("Redirected to payment:" + JSON.stringify({
                     transName: transName,
                     amount: amount,
@@ -41,6 +43,7 @@ module.exports = {
             });
         });
     },
+
     payNotify: function (req, res) {
         var body = "";
         req.on("data", function (chunk) {
