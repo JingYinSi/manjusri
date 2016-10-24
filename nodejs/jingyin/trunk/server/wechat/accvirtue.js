@@ -21,6 +21,7 @@ module.exports = {
             res.statusMessage = reason;
             res.end();
         }
+
         var trans = {
             transName: '日行一善',
             amount: Math.round(req.body.amount * 100),

@@ -384,12 +384,36 @@ describe('静音寺业务系统', function () {
             });
 
             describe('处理请求', function () {
+                var reqStub, resStub;
+                var statusSpy, resEndSpy;
+                var controller;
+
                 function showPage(controller, page) {
                     var resRenderSpy = sinon.spy();
-                    var resStub = {render: resRenderSpy}
-                    controller(null, resStub);
+                    resStub.render = resRenderSpy;
+                    controller(reqStub, resStub);
                     expect(resRenderSpy).calledWith(page);
                 }
+
+                function checkResponseStatusCodeAndMessage(code, message) {
+                    expect(statusSpy).calledWith(code).calledOnce;
+                    if (message)
+                        expect(resStub.statusMessage).eql(message);
+                }
+
+                function checkResponseEnded() {
+                    expect(resEndSpy).calledOnce;
+                }
+
+                beforeEach(function () {
+                    statusSpy = sinon.spy();
+                    resEndSpy = sinon.spy();
+
+                    resStub = {
+                        status: statusSpy,
+                        end: resEndSpy
+                    }
+                });
 
                 it('显示首页', function () {
                     var controller = require('../server/wechat/manjusri').home;
@@ -403,29 +427,11 @@ describe('静音寺业务系统', function () {
                     });
 
                     describe('日行一善的执行', function () {
-                        var reqStub, resStub;
-                        var statusSpy, resEndSpy;
-                        var controller;
-
-                        function checkResponseStatusCodeAndMessage(code, message) {
-                            expect(statusSpy).calledWith(code).calledOnce;
-                            expect(resStub.statusMessage).eql(message);
-                        }
-
-                        function checkResponseEnded() {
-                            expect(resEndSpy).calledOnce;
-                        }
-
                         beforeEach(function () {
                             reqStub = {
                                 body: {}
                             };
-                            statusSpy = sinon.spy();
-                            resEndSpy = sinon.spy();
-                            resStub = {
-                                status: statusSpy,
-                                end: resEndSpy
-                            }
+
                             controller = require('../server/wechat/accvirtue').action;
                         });
 
@@ -443,7 +449,7 @@ describe('静音寺业务系统', function () {
                         });
 
                         describe('向客户端返回用OAuth2包装的支付服务的URL', function () {
-                            var payurl, weixinStub, stubs;
+                            var payurl, weixinStub;
 
                             before(function () {
                                 payurl = 'http://payurl';
@@ -482,7 +488,41 @@ describe('静音寺业务系统', function () {
                         });
 
                     })
-                })
+                });
+
+                describe('微信支付', function () {
+                    var getOpenIdStub, stubs;
+
+                    beforeEach(function () {
+                        stubs = {}
+                        getOpenIdStub = sinon.stub();
+                    })
+                    it('请求查询参数中未包含code，则响应客户端错400', function () {
+                        reqStub.query = {};
+                        controller = require('../server/wechat/payment').index;
+                        controller(reqStub, resStub);
+                        checkResponseStatusCodeAndMessage(400);
+                        checkResponseEnded();
+                    });
+
+                    it('获取OpenId失败', function () {
+                        var code = 'foocode';
+                        var err = new Error();
+
+                        reqStub.query = {code: code};
+                        stubs['../weixin'] = {
+                            weixin: {
+                                getOpenId: getOpenIdStub
+                            }
+                        };
+                        getOpenIdStub.withArgs(code).callsArgWith(1, err);
+                        controller = proxyquire('../server/wechat/payment', stubs).index;
+
+                        controller(reqStub, resStub);
+                        checkResponseStatusCodeAndMessage(400);
+                        checkResponseEnded();
+                    });
+                });
             });
         })
     })
