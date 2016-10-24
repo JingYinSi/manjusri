@@ -75,6 +75,38 @@ describe('静音寺业务系统', function () {
         });
     });
 
+    describe('技术', function () {
+        describe('Response Wrapper', function () {
+            var wrapper, resStub;
+            var endSpy, statusSpy;
+            beforeEach(function () {
+                statusSpy = sinon.spy();
+                endSpy = sinon.spy();
+                resStub = {
+                    status: statusSpy,
+                    end: endSpy
+                }
+                wrapper = require('../modules/responsewrap')(resStub);
+            });
+
+            it('设置响应状态码并立刻将响应发送至客户端', function () {
+                var code = 400;
+                wrapper.setStatus(code);
+                expect(statusSpy).calledWith(400).calledOnce;
+                expect(endSpy).calledOnce;
+            });
+
+            it('设置响应状态码及相关原因，并立刻将响应发送至客户端', function () {
+                var code = 400;
+                var msg = 'the reason of this status';
+                wrapper.setStatus(code, msg);
+                expect(statusSpy).calledWith(400).calledOnce;
+                expect(resStub.statusMessage).eql(msg);
+                expect(endSpy).calledOnce;
+            });
+        })
+    });
+
     describe('微信公众号', function () {
         describe('微信接口', function () {
             var weixinModule, stubs, weixinConfig;
@@ -492,24 +524,45 @@ describe('静音寺业务系统', function () {
 
                 describe('微信支付', function () {
                     var getOpenIdStub, stubs;
+                    var setResStatusSpy, resWrapStub;
 
                     beforeEach(function () {
-                        stubs = {}
+                        setResStatusSpy = sinon.spy();
+                        resWrapStub = sinon.stub();
+                        resWrapStub.withArgs(resStub).returns({setStatus: setResStatusSpy});
+                        stubs = {
+                            '../../modules/responsewrap': resWrapStub
+                        }
                         getOpenIdStub = sinon.stub();
-                    })
+                    });
+
                     it('请求查询参数中未包含code，则响应客户端错400', function () {
                         reqStub.query = {};
-                        controller = require('../server/wechat/payment').index;
+                        controller = proxyquire('../server/wechat/payment', stubs).index;
                         controller(reqStub, resStub);
-                        checkResponseStatusCodeAndMessage(400);
-                        checkResponseEnded();
+
+                        expect(setResStatusSpy).calledWith(400).calledOnce;
+                    });
+
+                    it('请求查询参数中必须包含交易类型transName，否则响应客户端错400', function () {
+                        reqStub.query = {
+                            code: 'code'
+                        };
+                        controller = proxyquire('../server/wechat/payment', stubs).index;
+                        controller(reqStub, resStub);
+                        expect(setResStatusSpy).calledWith(400, 'transaction Type(transName) is not defined')
+                            .calledOnce;
                     });
 
                     it('获取OpenId失败', function () {
                         var code = 'foocode';
+                        var transName = 'fee';
                         var err = new Error();
+                        reqStub.query = {
+                            code: code,
+                            transName: transName
+                        };
 
-                        reqStub.query = {code: code};
                         stubs['../weixin'] = {
                             weixin: {
                                 getOpenId: getOpenIdStub
@@ -519,8 +572,7 @@ describe('静音寺业务系统', function () {
                         controller = proxyquire('../server/wechat/payment', stubs).index;
 
                         controller(reqStub, resStub);
-                        checkResponseStatusCodeAndMessage(400);
-                        checkResponseEnded();
+                        expect(setResStatusSpy).calledWith(400).calledOnce;
                     });
                 });
             });
