@@ -426,7 +426,7 @@ describe('静音寺业务系统', function () {
                                 status: statusSpy,
                                 end: resEndSpy
                             }
-                            controller = require('../server/wechat/accvirtue').doAction;
+                            controller = require('../server/wechat/accvirtue').action;
                         });
 
                         it('如果请求体中未包含金额，则应响应客户端错400', function () {
@@ -461,7 +461,7 @@ describe('静音寺业务系统', function () {
                                 };
                                 weixinStub.withArgs(trans).returns(payurl);
                                 controller = proxyquire('../server/wechat/accvirtue', stubs);
-                                controller.doAction(reqStub, resStub);
+                                controller.action(reqStub, resStub);
                                 expect(resEndSpy).calledWith(payurl);
                             });
 
@@ -476,7 +476,7 @@ describe('静音寺业务系统', function () {
                                 };
                                 weixinStub.withArgs(trans).returns(payurl);
                                 controller = proxyquire('../server/wechat/accvirtue', stubs);
-                                controller.doAction(reqStub, resStub);
+                                controller.action(reqStub, resStub);
                                 expect(resEndSpy).calledWith(payurl);
                             });
                         });

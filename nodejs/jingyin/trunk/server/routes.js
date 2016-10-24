@@ -20,11 +20,11 @@ module.exports = function (router) {
 
     router.route('/jingyin/manjusri/dailyvirtue')
         .get(accuvirtue.dailyVirtue)
-        .post(accuvirtue.doAction);
+        .post(accuvirtue.action);
 
     router.route('/jingyin/manjusri/accuvirtue')
         .get(accuvirtue.index)
-        .post(accuvirtue.doAction);
+        .post(accuvirtue.action);
 
     router.route(payRoute)
         .get(payment.index);
