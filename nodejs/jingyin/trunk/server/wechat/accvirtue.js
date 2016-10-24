@@ -22,7 +22,8 @@ module.exports = {
             res.end();
         }
         var trans = {
-            transName: '日行一善',
+            //transName: '日行一善',
+            transName: 'daily',
             amount: Math.round(req.body.amount * 100),
             target: req.body.target
         }
