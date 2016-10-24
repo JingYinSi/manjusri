@@ -21,7 +21,7 @@ module.exports = {
             var transName = decodeURIComponent(req.query.transName),
                 amount = req.query.amount,
                 target = decodeURIComponent((req.query.target));
-
+            logger.debug("Redirected to payment amount:" + amount);
             logger.debug("Redirected to payment:" + JSON.stringify({
                     transName: transName,
                     amount: amount,
