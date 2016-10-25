@@ -34,10 +34,8 @@ module.exports = function(ctx) {
         app.use(errorHandler());
     }
 
-    console.log("particials dir is :" + __dirname + '../client/views/partials');
     app.engine('hbs', exphbs.create({
         partialsDir: [path.join(__dirname, '../client/views/partials')],
-        //partialsDir: ['../../public/partials'],
         extname: '.hbs',
     }).engine);
     app.set('view engine', 'hbs');
