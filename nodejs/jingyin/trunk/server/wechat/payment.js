@@ -65,6 +65,11 @@ module.exports = {
                 });
             }
         });
+        logger.debug("body of payment result request:\n" + req.body.toString());
+    },
+
+    result: function (req, res) {
+        res.render('wechat/paymentResult');
     }
 };
 

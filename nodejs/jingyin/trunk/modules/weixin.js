@@ -134,12 +134,7 @@ module.exports = function (config) {
         };
 
         data.verifySign = function () {
-            logger.debug('begin verify sign:');
-            logger.debug('this.sign:' + this.sign);
-            var md5sign = me.signMD5(dataToSign);
-            logger.debug('md5 sign:' + md5sign);
-
-            return this.sign == md5sign;
+           return this.sign === me.signMD5(dataToSign);
         };
 
         data.pass = function () {
