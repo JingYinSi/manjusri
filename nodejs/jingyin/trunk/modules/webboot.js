@@ -34,7 +34,12 @@ module.exports = function(ctx) {
         app.use(errorHandler());
     }
 
-    app.engine('hbs', exphbs.create().engine);
+    console.log("particials dir is :" + __dirname + '../client/views/partials');
+    app.engine('hbs', exphbs.create({
+        partialsDir: [path.join(__dirname, '../client/views/partials')],
+        //partialsDir: ['../../public/partials'],
+        extname: '.hbs',
+    }).engine);
     app.set('view engine', 'hbs');
     var connStr = 'mongodb://' + ctx.mongodb;
     mongoose.Promise = global.Promise;
