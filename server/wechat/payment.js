@@ -11,7 +11,7 @@ module.exports = {
         var resWrap = responseWrapFactory(res);
         var code = req.query.code;
         if(!code){
-            logger.error("Is request from weixin? there is something wrong, code is undefined");
+            logger.debug("Is request from weixin? there is something wrong, code is undefined");
             resWrap.setStatus(400);
             return;
         };
@@ -65,7 +65,7 @@ module.exports = {
                 });
             }
         });
-        logger.debug("body of payment result request:\n" + req.body.toString());
+        logger.debug("body of payment result request:\n" + JSON.stringify(weixin.parsePaymentNotification(req.body)));
     },
 
     result: function (req, res) {
