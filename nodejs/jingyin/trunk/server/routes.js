@@ -3,6 +3,7 @@
  */
 const manjusri = require('./wechat/manjusri'),
     accuvirtue = require('./wechat/accvirtue'),
+    suixi = require('./wechat/suixi'),
     wechat = require('./wechat/wechat'),
     payment = require('./wechat/payment'),
     payRoute = require('./payurl').payRoute;
@@ -21,6 +22,10 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/dailyvirtue')
         .get(accuvirtue.dailyVirtue)
         .post(accuvirtue.action);
+
+    router.route('/jingyin/manjusri/suixi')
+        .get(suixi.index);/*
+        .post(accuvirtue.action);*/
 
     router.route('/jingyin/manjusri/accuvirtue')
         .get(accuvirtue.index)
