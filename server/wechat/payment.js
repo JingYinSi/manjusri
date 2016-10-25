@@ -1,5 +1,6 @@
 var Virtue = require('./models/virtue'),
     weixin = require('../weixin').weixin,
+    XML = require('pixl-xml'),
     responseWrapFactory = require('../../modules/responsewrap');
 
 var log4js = require('log4js');
@@ -65,7 +66,7 @@ module.exports = {
                 });
             }
         });
-        logger.debug("body of payment result request:\n" + JSON.stringify(weixin.parsePaymentNotification(req.body)));
+        logger.debug("body of payment result request:\n" + JSON.stringify(XML.parse(req.body)));
     },
 
     result: function (req, res) {
