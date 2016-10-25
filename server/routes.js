@@ -30,5 +30,6 @@ module.exports = function (router) {
         .get(payment.index);
 
     router.route('/jingyin/manjusri/pay/notify')
+        .get(payment.result)
         .post(payment.payNotify);
 }

@@ -308,7 +308,6 @@ describe('静音寺业务系统', function () {
                 });
             })
 
-
             describe('检验微信支付结果', function () {
                 var paymentXml, paymentJsonToSign, signMD5Stub;
                 beforeEach(function () {
@@ -384,6 +383,7 @@ describe('静音寺业务系统', function () {
                     getSpy.withArgs(accuvirtue.dailyVirtue).returns(handlerStub);
                     getSpy.withArgs(accuvirtue.index).returns(handlerStub);
                     getSpy.withArgs(payment.index).returns(handlerStub);
+                    getSpy.withArgs(payment.result).returns(handlerStub);
 
                     routes({route: routeStub});
 
@@ -575,6 +575,10 @@ describe('静音寺业务系统', function () {
                         expect(setResStatusSpy).calledWith(400).calledOnce;
                     });
                 });
+                
+                describe('响应微信支付结果', function () {
+                    
+                })
             });
         })
     })
