@@ -356,6 +356,7 @@ describe('静音寺业务系统', function () {
                 it('配置路由', function () {
                     var manjusri = require('../server/wechat/manjusri'),
                         accuvirtue = require('../server/wechat/accvirtue'),
+                        suixi = require('../server/wechat/suixi'),
                         wechat = require('../server/wechat/wechat'),
                         payment = require('../server/wechat/payment'),
                         routes = require('../server/routes');
@@ -376,12 +377,14 @@ describe('静音寺业务系统', function () {
                     routeStub.withArgs('/jingyin/manjusri/index').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/dailyvirtue').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/accuvirtue').returns(handlerStub);
+                    routeStub.withArgs('/jingyin/manjusri/suixi').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/pay/confirm').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/pay/notify').returns(handlerStub);
 
                     getSpy.withArgs(wechat.hook).returns(handlerStub);
                     getSpy.withArgs(accuvirtue.dailyVirtue).returns(handlerStub);
                     getSpy.withArgs(accuvirtue.index).returns(handlerStub);
+                    getSpy.withArgs(suixi.index).returns(handlerStub);
                     getSpy.withArgs(payment.index).returns(handlerStub);
                     getSpy.withArgs(payment.result).returns(handlerStub);
 
