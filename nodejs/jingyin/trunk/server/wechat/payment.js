@@ -61,12 +61,10 @@ module.exports = {
                 logger.debug('success of payment ...');
                 Virtue.havePayed(payment.getOutTradeNo(), function () {
                     var reply = payment.replyOK();
-                    logger.debug("reply to weixin OK:\n" + reply);
                     res.end(reply);
                 });
             }
         });
-        logger.debug("body of payment result request:\n" + JSON.stringify(XML.parse(req.body)));
     },
 
     result: function (req, res) {
