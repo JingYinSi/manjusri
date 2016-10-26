@@ -375,6 +375,7 @@ describe('静音寺业务系统', function () {
                     routeStub.withArgs('/jingyin/wechat').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/index').returns(handlerStub);
+                    routeStub.withArgs('/jingyin/manjusri/jiansi').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/dailyvirtue').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/accuvirtue').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/suixi').returns(handlerStub);
@@ -453,6 +454,11 @@ describe('静音寺业务系统', function () {
                 it('显示首页', function () {
                     var controller = require('../server/wechat/manjusri').home;
                     showPage(controller, 'wechat/index');
+                });
+
+                it('显示建寺', function () {
+                    var controller = require('../server/wechat/manjusri').jiansi;
+                    showPage(controller, 'wechat/jiansi');
                 });
 
                 describe('日行一善', function () {
