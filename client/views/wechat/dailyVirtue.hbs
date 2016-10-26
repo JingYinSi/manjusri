@@ -3,7 +3,6 @@
 {{>head}}
 <body>
 <div class="banner"><img src="/images/product_banner2.jpg"></div>
-
 <div class="contentt">
     <div class="text1">
         <span class="a1">金额:</span>
@@ -34,16 +33,17 @@
 
     $("#show-confirm").click(function () {
         var amount = $('#input_amount').val();
-        var target = $('#input_target').val();
+        var giving = $('#input_target').val();
         if (amount == '') {
             $.toptip('请填写金额。');
             return;
         }
         var url = window.location.href;
         var dataToPost = {
+            subject: 'daily',
             amount: amount,
         }
-        if(target) dataToPost.target = target;
+        if(giving) dataToPost.giving = giving;
 
         $.post(url, dataToPost)
                 .done(function (data) {

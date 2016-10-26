@@ -119,7 +119,7 @@ module.exports = function (config) {
             };
             payData.paySign = me.signMD5(payData, me.mch_key);
             payData.prepay_id = prepayId;
-            callback(payData);
+            callback(null, payData);
         })
     }
 

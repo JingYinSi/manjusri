@@ -24,11 +24,12 @@ module.exports = function (router) {
         .post(accuvirtue.action);
 
     router.route('/jingyin/manjusri/suixi')
-        .get(suixi.index);/*
-     .post(accuvirtue.action);*/
+        .get(suixi.index)
+        .post(accuvirtue.action);
 
     router.route('/jingyin/manjusri/trans/:productId')
-        .get(suixi.trans);/*
+        .get(suixi.trans);
+    /*
      .post(accuvirtue.action);*/
 
     router.route(payRoute)
@@ -39,7 +40,7 @@ module.exports = function (router) {
         .post(payment.payNotify);
 
 
-/*----------------------------old version ------------------------------------------  */
+    /*----------------------------old version ------------------------------------------  */
 
     router.route('/jingyin/manjusri')
         .get(manjusri.index);
