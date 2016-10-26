@@ -14,7 +14,18 @@ module.exports = {
 
     trans: function (req, res) {
         var productId = req.params.productId;
-        res.render('wechat/jiansi_' + productId);
+        var productNames = ['万尊文殊菩萨像（小）', '万尊文殊菩萨像（中）', '五方文殊菩萨像'];
+        var product = {
+            id: productId,
+            name:productNames[productId],
+            sold:1900,
+            left:5600,
+            price:1980.00
+        };
+        res.render('wechat/trans', {
+            title: '建寺-' + product.name,
+            product: product
+        });
     },
 
     //创建日行一善订单
