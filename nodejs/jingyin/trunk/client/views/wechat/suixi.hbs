@@ -13,7 +13,7 @@
         <input type="text" class="a2" placeholder="以此功德，回向六道众生。">
         <textarea id="input_target" class="a3" style="display: none;"></textarea>
     </div>
-    <div class="price">￥0.00</div>
+    <div class="price">￥<span class="price" id="label_amount">0.00</span></div>
 </div>
 <div class="btn" style="padding-top: 0;">
     <a id="show-confirm" href="#">随 喜</a>
@@ -23,6 +23,14 @@
 </div>
 {{>footnav}}
 <script>
+    $("input_amount").blur(function () {
+        var amount = $("input_amount").val().trim();
+        if (amount == "") {
+            amount = "0.00";
+        }
+        $("label_amount").text(amount);
+    });
+
     $("#show-confirm").click(function () {
         var amount = $('#input_amount').val();
         var giving = $('#input_target').val();
@@ -35,11 +43,11 @@
             subject: 'suixi',
             amount: amount,
         }
-        if(giving) dataToPost.giving = giving;
+        if (giving) dataToPost.giving = giving;
 
         $.post(url, dataToPost)
                 .done(function (data) {
-                    if(!data){
+                    if (!data) {
                         return;
                     }
                     window.location = data;
