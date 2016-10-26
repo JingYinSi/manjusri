@@ -7,7 +7,9 @@ var logger = log4js.getLogger();
 
 module.exports = {
     dailyVirtue: function (req, res) {
-        res.render('wechat/dailyVirtue');
+        res.render('wechat/dailyVirtue', {
+            title: '建寺-日行一善'
+        });
     },
 
     index: function (req, res) {
