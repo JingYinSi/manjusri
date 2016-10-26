@@ -1,7 +1,7 @@
 module.exports = {
     home: function (req, res) {
         res.render('wechat/index', {
-            title: '首页a'
+            title: '首页'
         });
     },
 
@@ -10,7 +10,9 @@ module.exports = {
     },
 
     jiansi: function (req, res) {
-        res.render('wechat/jiansi');
+        res.render('wechat/jiansi', {
+            title: '建寺'
+        });
     },
 };
 

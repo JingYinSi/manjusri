@@ -7,7 +7,9 @@ var logger = log4js.getLogger();
 
 module.exports = {
     index: function (req, res) {
-        res.render('wechat/suixi');
+        res.render('wechat/suixi', {
+            title: '建寺-随喜所有建庙功德'
+        });
     },
 
     trans: function (req, res) {
