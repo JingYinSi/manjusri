@@ -19,20 +19,17 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/jiansi')
         .get(manjusri.jiansi);
 
-    router.route('/jingyin/manjusri')
-        .get(manjusri.index);
-
     router.route('/jingyin/manjusri/dailyvirtue')
         .get(accuvirtue.dailyVirtue)
         .post(accuvirtue.action);
 
     router.route('/jingyin/manjusri/suixi')
         .get(suixi.index);/*
-        .post(accuvirtue.action);*/
+     .post(accuvirtue.action);*/
 
-    router.route('/jingyin/manjusri/accuvirtue')
-        .get(accuvirtue.index)
-        .post(accuvirtue.action);
+    router.route('/jingyin/manjusri/trans/:productId')
+        .get(suixi.trans);/*
+     .post(accuvirtue.action);*/
 
     router.route(payRoute)
         .get(payment.index);
@@ -40,4 +37,15 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/pay/notify')
         .get(payment.result)
         .post(payment.payNotify);
+
+
+/*----------------------------old version ------------------------------------------  */
+
+    router.route('/jingyin/manjusri')
+        .get(manjusri.index);
+
+    router.route('/jingyin/manjusri/accuvirtue')
+        .get(accuvirtue.index)
+        .post(accuvirtue.action);
+
 }

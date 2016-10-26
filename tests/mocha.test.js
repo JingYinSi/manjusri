@@ -379,6 +379,7 @@ describe('静音寺业务系统', function () {
                     routeStub.withArgs('/jingyin/manjusri/dailyvirtue').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/accuvirtue').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/suixi').returns(handlerStub);
+                    routeStub.withArgs('/jingyin/manjusri/trans/:productId').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/pay/confirm').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/pay/notify').returns(handlerStub);
 

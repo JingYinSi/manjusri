@@ -10,6 +10,11 @@ module.exports = {
         res.render('wechat/suixi');
     },
 
+    trans: function (req, res) {
+        var productId = req.params.productId;
+        res.render('wechat/jiansi_' + productId);
+    },
+
     //创建日行一善订单
     action: function (req, res) {
         function responseError(code, reason) {
