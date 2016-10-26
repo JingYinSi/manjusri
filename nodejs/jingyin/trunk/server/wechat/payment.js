@@ -16,35 +16,38 @@ module.exports = {
             resWrap.setStatus(400);
             return;
         };
-        var code = req.query.transName;
-        if(!code){
-            resWrap.setStatus(400, 'transaction Type(transName) is not defined');
-            return;
-        };
-
-        weixin.getOpenId(req.query.code, function (err, openId) {
+        weixin.getOpenId(req.query.code, function (err, trader) {
             if(err){
                 resWrap.setStatus(400);
                 return;
             }
-            var transName = decodeURIComponent(req.query.transName),
-                amount = req.query.amount,
-                target = decodeURIComponent((req.query.target));
-            logger.debug("Redirected to payment:" + JSON.stringify({
-                    transName: transName,
-                    amount: amount,
-                    targer: target
-                }));
-            Virtue.placeVirtue(openId, amount, function (err, virtue) {
+            var trans = {
+                trader: trader,
+                details:{
+                    subject: req.query.subject,
+                    num: req.query.num,
+                    price: req.query.price
+                },
+                amount: req.query.amount,
+                giving: req.query.giving
+            };
+
+            Virtue.placeVirtue(trans, function (err, virtue) {
                 if (err) {
                     logger.error(err);
+                    var code = (err.errors) ? 400 : 502;
+                    resWrap.setStatus(code);
                     return;
                 }
                 var transId = virtue._id.toString();
-                weixin.prePay(openId, transId, transName, amount, function (payData) {
+                weixin.prePay(trader, transId, trans.details.subject, trans.amount, function (err, payData) {
+                    if(err){
+                        resWrap.setStatus(502);
+                        return;
+                    }
                     logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
-                    payData.success = true;
-                    res.render('wechat/payment', payData);
+                    payData.success = true;  //TODO: 应该可以去掉????
+                    resWrap.render('wechat/payment', payData);
                 })
             });
         });

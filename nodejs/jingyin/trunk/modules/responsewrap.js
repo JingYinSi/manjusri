@@ -7,6 +7,9 @@ module.exports = function (res) {
         this.response.status(code);
         if(message) this.response.statusMessage = message;
         this.response.end();
+    };
+    this.render = function(page, data){
+        this.response.render(page, data);
     }
     return this;
 }

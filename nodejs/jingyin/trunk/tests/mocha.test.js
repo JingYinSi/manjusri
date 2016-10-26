@@ -10,10 +10,17 @@ describe('静音寺业务系统', function () {
     describe('业务', function () {
         describe('捐助交易', function () {
             var Virtue;
-            var openid, amount;
+            var trans;
             beforeEach(function (done) {
                 Virtue = require('../server/wechat/models/virtue');
-                amount = 45.8;
+                trans = {
+                    trader: 'foo trader',
+                    amount: 45.8,
+                    details: {
+                        subject: 'fee subject'
+                    }
+                }
+
                 mongoose.Promise = global.Promise;
                 if (mongoose.connection.db) return done();
                 mongoose.connect(dbURI, done);
@@ -23,40 +30,61 @@ describe('静音寺业务系统', function () {
                 clearDB(done);
             });
 
-            it('创建一笔捐助，金额应大于零', function (done) {
-                amount = 25.78;
-                openid = "foo";
-                Virtue.placeVirtue(openid, 0, function (err, virtue) {
-                    expect(err.errors['amount'].message).to.be.eql('金额应大于零');
-                    expect(virtue).not.exist;
-                    done();
+            describe('创建交易', function () {
+                it('未定义交易者trader', function (done) {
+                    delete trans.trader;
+                    Virtue.placeVirtue(trans, function (err, virtue) {
+                        expect(err.errors['trader'].message).to.be.eql('Path `trader` is required.');
+                        expect(virtue).not.exist;
+                        done();
+                    });
+                });
+
+                it('未定义交易类型subject', function (done) {
+                    delete trans.details.subject;
+                    Virtue.placeVirtue(trans, function (err, virtue) {
+                        expect(err.errors['details.subject'].message).to.be.eql('Path `details.subject` is required.');
+                        expect(virtue).not.exist;
+                        done();
+                    });
+                });
+
+                it('金额应大于零', function (done) {
+                    trans.amount = 0;
+                    Virtue.placeVirtue(trans, function (err, virtue) {
+                        expect(err.errors['amount'].message).to.be.eql('金额应大于零');
+                        expect(virtue).not.exist;
+                        done();
+                    });
+                });
+
+                it('创建一笔捐助', function (done) {
+                    var details = {
+                        subject: "foo",
+                        num: 10,
+                        price: 10.34
+                    }
+                    trans.details = details;
+                    trans.amount = 103.4;
+                    trans.giving = 'any hope for';
+                    Virtue.placeVirtue(trans, function (err, virtue) {
+                        expect(err).be.null;
+                        expect(virtue.trader).eql(trans.trader);
+                        expect(virtue._doc.details).deep.equal(details);
+                        expect(virtue.amount).to.be.equal(trans.amount);
+                        expect(virtue.giving).to.be.equal(trans.giving);
+                        expect(virtue.state).to.be.equal('new');
+                        expect(virtue.timestamp).to.be.a('date');
+                        done();
+                    })
                 });
             });
 
-            it.skip('创建一笔捐助，未定义openId', function (done) {
-                amount = 32.8;
-                Virtue.placeVirtue(null, amount, function (err, virtue) {
-                    expect(err.errors['openid'].message).to.be.eql('OpenId必须定义');
-                    expect(virtue).not.exist;
-                    done();
-                });
-            });
-
-            it('创建一笔捐助', function (done) {
-                Virtue.placeVirtue(openid, amount, function (err, virtue) {
-                    expect(err).be.null;
-                    expect(virtue.openid).eql(openid);
-                    expect(virtue.amount).to.be.equal(amount);
-                    expect(virtue.state).to.be.equal('new');
-                    expect(virtue.timestamp).to.be.a('date');
-                    done();
-                })
-            });
 
             describe('捐助支付', function (done) {
                 var transId;
                 beforeEach(function (done) {
-                    Virtue.placeVirtue(openid, amount, function (err, virtue) {
+                    Virtue.placeVirtue(trans, function (err, virtue) {
                         expect(err).not.exist;
                         transId = virtue._id.toString();
                         done();
@@ -73,18 +101,27 @@ describe('静音寺业务系统', function () {
                 })
             })
         });
+        describe('逻辑', function () {
+            describe('交易类型', function () {
+                describe('日行一善', function () {
+
+                })
+            })
+        })
     });
 
     describe('技术', function () {
         describe('Response Wrapper', function () {
             var wrapper, resStub;
-            var endSpy, statusSpy;
+            var endSpy, statusSpy, renderSpy;
             beforeEach(function () {
                 statusSpy = sinon.spy();
                 endSpy = sinon.spy();
+                renderSpy = sinon.spy();
                 resStub = {
                     status: statusSpy,
-                    end: endSpy
+                    end: endSpy,
+                    render: renderSpy
                 }
                 wrapper = require('../modules/responsewrap')(resStub);
             });
@@ -103,6 +140,14 @@ describe('静音寺业务系统', function () {
                 expect(statusSpy).calledWith(400).calledOnce;
                 expect(resStub.statusMessage).eql(msg);
                 expect(endSpy).calledOnce;
+            });
+
+            it('渲染客户端', function () {
+                var page = '../view/p1';
+                var data = {foo: 'foo data'};
+
+                wrapper.render(page, data);
+                expect(renderSpy).calledWith('../view/p1', {foo: 'foo data'}).calledOnce;
             });
         })
     });
@@ -240,13 +285,12 @@ describe('静音寺业务系统', function () {
                 weixin.signMD5 = signMD5Stub;
 
                 var expectedPay = Object.assign({}, payDataToSignMD5);
-                ;
                 expectedPay.paySign = paySign;
                 expectedPay.prepay_id = prePayId;
 
                 var callback = sinon.spy();
                 weixin.prePay(openId, transId, transName, amount, callback);
-                expect(callback).calledWith(expectedPay);
+                expect(callback).calledWith(null, expectedPay);
             });
 
             it('发送微信支付下单请求', function () {
@@ -467,127 +511,231 @@ describe('静音寺业务系统', function () {
                         var controller = require('../server/wechat/accvirtue').dailyVirtue;
                         showPage(controller, 'wechat/dailyVirtue');
                     });
-
-                    describe('日行一善的执行', function () {
-                        beforeEach(function () {
-                            reqStub = {
-                                body: {}
-                            };
-
-                            controller = require('../server/wechat/accvirtue').action;
-                        });
-
-                        it('如果请求体中未包含金额，则应响应客户端错400', function () {
-                            controller(reqStub, resStub);
-                            checkResponseStatusCodeAndMessage(400, 'amount is undefined');
-                            checkResponseEnded();
-                        });
-
-                        it('金额不合法，则应响应客户端错400', function () {
-                            reqStub.body.amount = '-24.58';
-                            controller(reqStub, resStub);
-                            checkResponseStatusCodeAndMessage(400, 'amount is invalid');
-                            checkResponseEnded();
-                        });
-
-                        describe('向客户端返回用OAuth2包装的支付服务的URL', function () {
-                            var payurl, weixinStub;
-
-                            before(function () {
-                                payurl = 'http://payurl';
-                                weixinStub = sinon.stub();
-                                stubs = {
-                                    '../weixin': {sendPayUrl: weixinStub}
-                                };
-                            });
-
-                            it('金额以分为单位', function () {
-                                reqStub.body.amount = '24.584';
-                                var trans = {
-                                    transName: '日行一善',
-                                    amount: 2458,
-                                };
-                                weixinStub.withArgs(trans).returns(payurl);
-                                controller = proxyquire('../server/wechat/accvirtue', stubs);
-                                controller.action(reqStub, resStub);
-                                expect(resEndSpy).calledWith(payurl);
-                            });
-
-                            it('获得回向', function () {
-                                var target = 'this is target for virtue....';
-                                reqStub.body.amount = '24.585';
-                                reqStub.body.target = target;
-                                var trans = {
-                                    transName: '日行一善',
-                                    amount: 2459,
-                                    target: target
-                                };
-                                weixinStub.withArgs(trans).returns(payurl);
-                                controller = proxyquire('../server/wechat/accvirtue', stubs);
-                                controller.action(reqStub, resStub);
-                                expect(resEndSpy).calledWith(payurl);
-                            });
-                        });
-
-                    })
                 });
 
+                describe('执行交易', function () {
+                    var subject;
+                    beforeEach(function () {
+                        subject = 'foo subject';
+                        reqStub = {
+                            body: {
+                                subject: subject
+                            }
+                        };
+                        controller = require('../server/wechat/accvirtue').action;
+                    });
+
+                    it('如果请求体中未包含交易类型subject，则应响应客户端错400', function () {
+                        delete reqStub.body.subject;
+                        controller(reqStub, resStub);
+                        checkResponseStatusCodeAndMessage(400, 'subject is not defined');
+                        checkResponseEnded();
+                    });
+
+                    it('如果请求体中未包含金额，则应响应客户端错400', function () {
+                        controller(reqStub, resStub);
+                        checkResponseStatusCodeAndMessage(400, 'amount is undefined');
+                        checkResponseEnded();
+                    });
+
+                    it('金额不合法，则应响应客户端错400', function () {
+                        reqStub.body.amount = '-24.58';
+                        controller(reqStub, resStub);
+                        checkResponseStatusCodeAndMessage(400, 'amount is invalid');
+                        checkResponseEnded();
+                    });
+
+                    describe('向客户端返回用OAuth2包装的支付服务的URL', function () {
+                        var payurl, weixinStub;
+
+                        before(function () {
+                            payurl = 'http://payurl';
+                            weixinStub = sinon.stub();
+                            stubs = {
+                                '../weixin': {sendPayUrl: weixinStub}
+                            };
+                        });
+
+                        it('金额以分为单位', function () {
+                            reqStub.body.amount = '24.584';
+                            var trans = {
+                                subject: subject,
+                                amount: 2458,
+                            };
+                            weixinStub.withArgs(trans).returns(payurl);
+                            controller = proxyquire('../server/wechat/accvirtue', stubs);
+                            controller.action(reqStub, resStub);
+                            expect(resEndSpy).calledWith(payurl);
+                        });
+
+                        it('获得回向', function () {
+                            var giving = 'this is giving of virtue....';
+                            reqStub.body.amount = '24.585';
+                            reqStub.body.giving = giving;
+                            var trans = {
+                                subject: subject,
+                                amount: 2459,
+                                giving: giving
+                            };
+                            weixinStub.withArgs(trans).returns(payurl);
+                            controller = proxyquire('../server/wechat/accvirtue', stubs);
+                            controller.action(reqStub, resStub);
+                            expect(resEndSpy).calledWith(payurl);
+                        });
+                    });
+                })
+
                 describe('微信支付', function () {
-                    var getOpenIdStub, stubs;
-                    var setResStatusSpy, resWrapStub;
+                    var stubs;
+                    var setResStatusSpy, resRenderSpy, resWrapStub;
 
                     beforeEach(function () {
                         setResStatusSpy = sinon.spy();
+                        resRenderSpy = sinon.spy();
                         resWrapStub = sinon.stub();
-                        resWrapStub.withArgs(resStub).returns({setStatus: setResStatusSpy});
+                        resWrapStub.withArgs(resStub).returns({
+                            setStatus: setResStatusSpy,
+                            render: resRenderSpy
+                        });
                         stubs = {
                             '../../modules/responsewrap': resWrapStub
                         }
-                        getOpenIdStub = sinon.stub();
+                        controller = proxyquire('../server/wechat/payment', stubs).index;
                     });
 
                     it('请求查询参数中未包含code，则响应客户端错400', function () {
                         reqStub.query = {};
-                        controller = proxyquire('../server/wechat/payment', stubs).index;
                         controller(reqStub, resStub);
-
                         expect(setResStatusSpy).calledWith(400).calledOnce;
                     });
 
-                    it('请求查询参数中必须包含交易类型transName，否则响应客户端错400', function () {
-                        reqStub.query = {
-                            code: 'code'
-                        };
-                        controller = proxyquire('../server/wechat/payment', stubs).index;
-                        controller(reqStub, resStub);
-                        expect(setResStatusSpy).calledWith(400, 'transaction Type(transName) is not defined')
-                            .calledOnce;
-                    });
+                    describe('获取OpenId', function () {
+                        var code;
+                        var getOpenIdStub;
 
-                    it('获取OpenId失败', function () {
-                        var code = 'foocode';
-                        var transName = 'fee';
-                        var err = new Error();
-                        reqStub.query = {
-                            code: code,
-                            transName: transName
-                        };
+                        beforeEach(function () {
+                            code = "foocode";
+                            reqStub.query.code = code;
+                            getOpenIdStub = sinon.stub();
+                            stubs['../weixin'] = {
+                                weixin: {
+                                    getOpenId: getOpenIdStub
+                                }
+                            };
+                        });
 
-                        stubs['../weixin'] = {
-                            weixin: {
-                                getOpenId: getOpenIdStub
-                            }
-                        };
-                        getOpenIdStub.withArgs(code).callsArgWith(1, err);
-                        controller = proxyquire('../server/wechat/payment', stubs).index;
+                        it('获取OpenId失败，响应客户端错400', function () {
+                            var err = new Error();
 
-                        controller(reqStub, resStub);
-                        expect(setResStatusSpy).calledWith(400).calledOnce;
+                            getOpenIdStub.withArgs(code).callsArgWith(1, err);
+                            controller = proxyquire('../server/wechat/payment', stubs).index;
+
+                            controller(reqStub, resStub);
+                            expect(setResStatusSpy).calledWith(400).calledOnce;
+                        });
+
+                        describe('创建交易', function () {
+                            var trader, subject, amount, num, price, giving;
+                            var expectedTrans;
+                            var virtueStub;
+                            beforeEach(function () {
+                                trader = 'foo';
+                                subject = 'subject';
+                                amount = 23.45;
+                                num = 20;
+                                price = 23.78;
+                                giving = 'my giving for';
+
+                                reqStub.query.subject = subject;
+                                reqStub.query.amount = amount;
+                                reqStub.query.num = num;
+                                reqStub.query.price = price;
+                                reqStub.query.giving = giving;
+
+                                getOpenIdStub.withArgs(code).callsArgWith(1, null, trader);
+                                expectedTrans = {
+                                    trader: trader,
+                                    details: {
+                                        subject: subject,
+                                        num: num,
+                                        price: price,
+                                    },
+                                    amount: amount,
+                                    giving: giving
+                                };
+
+                                virtueStub = sinon.stub();
+                                stubs['./models/virtue'] = {placeVirtue: virtueStub};
+
+                            });
+
+                            it('创建交易时由数据库导致失败， 响应Bad Gateway(502)错', function () {
+                                var err = {};
+                                virtueStub.withArgs(expectedTrans).callsArgWith(1, err);
+                                controller = proxyquire('../server/wechat/payment', stubs).index;
+
+                                controller(reqStub, resStub);
+                                expect(setResStatusSpy).calledWith(502).calledOnce;
+                            });
+
+                            it('交易数据错， 响应客户端错(400)', function () {
+                                var err = {errors: []};
+                                virtueStub.withArgs(expectedTrans).callsArgWith(1, err);
+                                controller = proxyquire('../server/wechat/payment', stubs).index;
+
+                                controller(reqStub, resStub);
+                                expect(setResStatusSpy).calledWith(400).calledOnce;
+                            });
+
+                            describe('开始支付', function () {
+                                var transId, virtue, payData;
+                                var prepayStub;
+
+                                beforeEach(function () {
+                                    transId = '1234567';
+                                    virtue = Object.assign({}, expectedTrans);
+                                    virtue._id = transId;
+                                    virtue.success = true;   // TODO: 应该去掉？？？？
+                                    virtueStub.withArgs(expectedTrans).callsArgWith(1, null, virtue);
+
+                                    payData = {foo: 'any foo'};
+                                    prepayStub = sinon.stub();
+                                });
+
+                                it('预置支付失败， 响应Bad Gateway(502)错', function () {
+                                    var err = 'some err';
+                                    prepayStub.withArgs(trader, transId, subject, amount).callsArgWith(4, err);
+                                    stubs['../weixin'].weixin.prePay = prepayStub;
+                                    controller = proxyquire('../server/wechat/payment', stubs).index;
+
+                                    controller(reqStub, resStub);
+                                    expect(setResStatusSpy).calledWith(502).calledOnce;
+                                });
+
+                                it('开始支付', function () {
+                                    var transId = '1234567';
+                                    var virtue = Object.assign({}, expectedTrans);
+                                    virtue._id = transId;
+                                    virtueStub.withArgs(expectedTrans).callsArgWith(1, null, virtue);
+
+                                    var payData = {foo: 'any foo'};
+                                    var prepayStub = sinon.stub();
+                                    prepayStub.withArgs(trader, transId, subject, amount).callsArgWith(4, null, payData);
+                                    stubs['../weixin'].weixin.prePay = prepayStub;
+                                    controller = proxyquire('../server/wechat/payment', stubs).index;
+
+                                    controller(reqStub, resStub);
+                                    var expectedRenderData = Object.assign({success: true}, payData);
+                                    expect(resRenderSpy).calledWith('wechat/payment', expectedRenderData).calledOnce;
+                                });
+                            });
+
+                        })
                     });
                 });
-                
+
                 describe('响应微信支付结果', function () {
-                    
+
                 })
             });
         })

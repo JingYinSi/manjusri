@@ -24,8 +24,14 @@ module.exports = {
             res.end();
         }
 
+        var subject = req.body.subject;
+        if (!subject) {
+            responseError(400, "subject is not defined");
+            return;
+        }
+
         var trans = {
-            transName: '日行一善',
+            subject: subject,
             amount: Math.round(req.body.amount * 100),
         }
         if (!trans.amount) {
@@ -36,8 +42,8 @@ module.exports = {
             responseError(400, "amount is invalid");
             return;
         }
-        var target = req.body.target;
-        if(target) trans.target = target;
+        var giving = req.body.giving;
+        if(giving) trans.giving = giving;
 
         var url = weixin.sendPayUrl(trans);
         logger.debug("response the url to payment to client, url = " + url);
