@@ -16,6 +16,9 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/index')
         .get(manjusri.home);
 
+    router.route('/jingyin/manjusri/jiansi')
+        .get(manjusri.jiansi);
+
     router.route('/jingyin/manjusri')
         .get(manjusri.index);
 
