@@ -17,7 +17,7 @@ module.exports = {
         var productNames = ['万尊文殊菩萨像（小）', '万尊文殊菩萨像（中）', '五方文殊菩萨像'];
         var product = {
             id: productId,
-            name:productNames[productId],
+            name:productNames[productId - 1],
             sold:1900,
             left:5600,
             price:1980.00
