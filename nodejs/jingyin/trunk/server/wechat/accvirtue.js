@@ -12,10 +12,6 @@ module.exports = {
         });
     },
 
-    index: function (req, res) {
-        res.render('wechat/accuvirtue');
-    },
-
     //创建日行一善订单
     action: function (req, res) {
         function responseError(code, reason) {

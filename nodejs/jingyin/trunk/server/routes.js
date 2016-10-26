@@ -43,10 +43,10 @@ module.exports = function (router) {
     /*----------------------------old version ------------------------------------------  */
 
     router.route('/jingyin/manjusri')
-        .get(manjusri.index);
+        .get(manjusri.home);
 
     router.route('/jingyin/manjusri/accuvirtue')
-        .get(accuvirtue.index)
+        .get(accuvirtue.dailyVirtue)
         .post(accuvirtue.action);
 
 }

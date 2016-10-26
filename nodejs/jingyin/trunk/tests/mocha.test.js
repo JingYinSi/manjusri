@@ -436,9 +436,6 @@ describe('静音寺业务系统', function () {
 
                     routes({route: routeStub});
 
-
-                    expect(getSpy).calledWith(manjusri.index);
-
                     expect(postSpy).calledWith(wechat.receive);
                     expect(postSpy).calledWith(accuvirtue.action);
                     expect(postSpy).calledWith(payment.payNotify);
