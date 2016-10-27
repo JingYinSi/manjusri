@@ -64,7 +64,7 @@ module.exports = function (config) {
             mch_id: me.mch_id,
             nonce_str: me.createNonceStr(),
             trade_type: "JSAPI"
-        }
+        };
         prepay.sign = this.signMD5(prepay, me.mch_key);
         logger.debug('Data to be sent to weixin:\n' + JSON.stringify(prepay));
         return js2xmlparser.parse('xml', prepay);

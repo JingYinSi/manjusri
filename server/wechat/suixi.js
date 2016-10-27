@@ -14,7 +14,7 @@ module.exports = {
 
     trans: function (req, res) {
         var productId = req.params.productId;
-        var productNames = ['万尊文殊菩萨像（小）', '万尊文殊菩萨像（中）', '五方文殊菩萨像'];
+        var productNames = ['万尊文殊菩萨像小', '万尊文殊菩萨像中', '五方文殊菩萨像'];
         var product = {
             id: productId,
             name:productNames[productId - 1],
