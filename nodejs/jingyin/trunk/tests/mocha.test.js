@@ -553,11 +553,11 @@ describe('静音寺业务系统', function () {
                             };
                         });
 
-                        it('金额以分为单位', function () {
+                        it('金额精确到分', function () {
                             reqStub.body.amount = '24.584';
                             var trans = {
                                 subject: subject,
-                                amount: 2458,
+                                amount: 24.58,
                             };
                             weixinStub.withArgs(trans).returns(payurl);
                             controller = proxyquire('../server/wechat/accvirtue', stubs);
@@ -571,7 +571,7 @@ describe('静音寺业务系统', function () {
                             reqStub.body.giving = giving;
                             var trans = {
                                 subject: subject,
-                                amount: 2459,
+                                amount: 24.59,
                                 giving: giving
                             };
                             weixinStub.withArgs(trans).returns(payurl);
@@ -701,7 +701,7 @@ describe('静音寺业务系统', function () {
 
                                 it('预置支付失败， 响应Bad Gateway(502)错', function () {
                                     var err = 'some err';
-                                    prepayStub.withArgs(trader, transId, subject, amount).callsArgWith(4, err);
+                                    prepayStub.withArgs(trader, transId, subject, amount*100).callsArgWith(4, err);
                                     stubs['../weixin'].weixin.prePay = prepayStub;
                                     controller = proxyquire('../server/wechat/payment', stubs).index;
 
@@ -717,7 +717,7 @@ describe('静音寺业务系统', function () {
 
                                     var payData = {foo: 'any foo'};
                                     var prepayStub = sinon.stub();
-                                    prepayStub.withArgs(trader, transId, subject, amount).callsArgWith(4, null, payData);
+                                    prepayStub.withArgs(trader, transId, subject, amount*100).callsArgWith(4, null, payData);
                                     stubs['../weixin'].weixin.prePay = prepayStub;
                                     controller = proxyquire('../server/wechat/payment', stubs).index;
 

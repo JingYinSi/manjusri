@@ -28,7 +28,7 @@ module.exports = {
 
         var trans = {
             subject: subject,
-            amount: Math.round(req.body.amount * 100),
+            amount: Math.round(req.body.amount * 100) / 100,
         }
         if (!trans.amount) {
             responseError(400, "amount is undefined");
@@ -39,7 +39,7 @@ module.exports = {
             return;
         }
         var giving = req.body.giving;
-        if(giving) trans.giving = giving;
+        if (giving) trans.giving = giving;
 
         var url = weixin.sendPayUrl(trans);
         logger.debug("response the url to payment to client, url = " + url);
