@@ -431,6 +431,7 @@ describe('静音寺业务系统', function () {
                     getSpy.withArgs(accuvirtue.dailyVirtue).returns(handlerStub);
                     getSpy.withArgs(accuvirtue.index).returns(handlerStub);
                     getSpy.withArgs(suixi.index).returns(handlerStub);
+                    getSpy.withArgs(suixi.trans).returns(handlerStub);
                     getSpy.withArgs(payment.index).returns(handlerStub);
                     getSpy.withArgs(payment.result).returns(handlerStub);
 
@@ -511,12 +512,14 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('执行交易', function () {
-                    var subject;
+                    var subject, amount;
                     beforeEach(function () {
                         subject = 'foo subject';
+                        amount = 45.34
                         reqStub = {
                             body: {
-                                subject: subject
+                                subject: subject,
+                                amount: amount
                             }
                         };
                         controller = require('../server/wechat/accvirtue').action;
@@ -530,6 +533,7 @@ describe('静音寺业务系统', function () {
                     });
 
                     it('如果请求体中未包含金额，则应响应客户端错400', function () {
+                        delete reqStub.body.amount;
                         controller(reqStub, resStub);
                         checkResponseStatusCodeAndMessage(400, 'amount is undefined');
                         checkResponseEnded();
@@ -565,20 +569,66 @@ describe('静音寺业务系统', function () {
                             expect(resEndSpy).calledWith(payurl);
                         });
 
-                        it('获得回向', function () {
-                            var giving = 'this is giving of virtue....';
-                            reqStub.body.amount = '24.585';
-                            reqStub.body.giving = giving;
-                            var trans = {
-                                subject: subject,
-                                amount: 24.59,
-                                giving: giving
-                            };
-                            weixinStub.withArgs(trans).returns(payurl);
-                            controller = proxyquire('../server/wechat/accvirtue', stubs);
-                            controller.action(reqStub, resStub);
-                            expect(resEndSpy).calledWith(payurl);
+                        describe('获得其它信息', function () {
+                            it('获得名称', function () {
+                                var name = 'subject name';
+                                reqStub.body.name = name;
+                                var trans = {
+                                    subject: subject,
+                                    name: name,
+                                    amount: amount,
+                                };
+                                weixinStub.withArgs(trans).returns(payurl);
+                                controller = proxyquire('../server/wechat/accvirtue', stubs);
+                                controller.action(reqStub, resStub);
+                                expect(resEndSpy).calledWith(payurl);
+                            });
+
+                            it('获得价格', function () {
+                                var price = 45.3;
+                                reqStub.body.price = price;
+                                var trans = {
+                                    subject: subject,
+                                    price: price,
+                                    amount: amount,
+                                };
+                                weixinStub.withArgs(trans).returns(payurl);
+                                controller = proxyquire('../server/wechat/accvirtue', stubs);
+                                controller.action(reqStub, resStub);
+                                expect(resEndSpy).calledWith(payurl);
+                            });
+
+                            it('获得数量', function () {
+                                var num = 45;
+                                reqStub.body.num = num;
+                                var trans = {
+                                    subject: subject,
+                                    num: num,
+                                    amount: amount,
+                                };
+                                weixinStub.withArgs(trans).returns(payurl);
+                                controller = proxyquire('../server/wechat/accvirtue', stubs);
+                                controller.action(reqStub, resStub);
+                                expect(resEndSpy).calledWith(payurl);
+                            });
+
+                            it('获得回向', function () {
+                                var giving = 'this is giving of virtue....';
+                                reqStub.body.giving = giving;
+
+                                var trans = {
+                                    subject: subject,
+                                    amount: amount,
+                                    giving: giving
+                                };
+                                weixinStub.withArgs(trans).returns(payurl);
+                                controller = proxyquire('../server/wechat/accvirtue', stubs);
+                                controller.action(reqStub, resStub);
+                                expect(resEndSpy).calledWith(payurl);
+                            });
+
                         });
+
                     });
                 })
 
@@ -700,7 +750,7 @@ describe('静音寺业务系统', function () {
 
                                 it('预置支付失败， 响应Bad Gateway(502)错', function () {
                                     var err = 'some err';
-                                    prepayStub.withArgs(trader, transId, subject, amount*100).callsArgWith(4, err);
+                                    prepayStub.withArgs(trader, transId, subject, amount * 100).callsArgWith(4, err);
                                     stubs['../weixin'].weixin.prePay = prepayStub;
                                     controller = proxyquire('../server/wechat/payment', stubs).index;
 
@@ -709,14 +759,18 @@ describe('静音寺业务系统', function () {
                                 });
 
                                 it('开始支付', function () {
-                                    var transId = '1234567';
-                                    var virtue = Object.assign({}, expectedTrans);
-                                    virtue._id = transId;
-                                    virtueStub.withArgs(expectedTrans).callsArgWith(1, null, virtue);
+                                    prepayStub.withArgs(trader, transId, subject, amount * 100).callsArgWith(4, null, payData);
+                                    stubs['../weixin'].weixin.prePay = prepayStub;
+                                    controller = proxyquire('../server/wechat/payment', stubs).index;
 
-                                    var payData = {foo: 'any foo'};
-                                    var prepayStub = sinon.stub();
-                                    prepayStub.withArgs(trader, transId, subject, amount*100).callsArgWith(4, null, payData);
+                                    controller(reqStub, resStub);
+                                    expect(resRenderSpy).calledWith('wechat/payment', payData).calledOnce;
+                                });
+
+                                it('开始支付-请求查询参数中包含名称', function () {
+                                    var name = 'subject name';
+                                    reqStub.query.name = name;
+                                    prepayStub.withArgs(trader, transId, name, amount * 100).callsArgWith(4, null, payData);
                                     stubs['../weixin'].weixin.prePay = prepayStub;
                                     controller = proxyquire('../server/wechat/payment', stubs).index;
 
