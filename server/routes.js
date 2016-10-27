@@ -28,9 +28,8 @@ module.exports = function (router) {
         .post(accuvirtue.action);
 
     router.route('/jingyin/manjusri/trans/:productId')
-        .get(suixi.trans);
-    /*
-     .post(accuvirtue.action);*/
+        .get(suixi.trans)
+        .post(accuvirtue.action);
 
     router.route(payRoute)
         .get(payment.index);
