@@ -66,6 +66,7 @@ module.exports = function (config) {
             trade_type: "JSAPI"
         }
         prepay.sign = this.signMD5(prepay, me.mch_key);
+        logger.debug('Data to be sent to weixin:\n' + JSON.stringify(prepay));
         return js2xmlparser.parse('xml', prepay);
     }
 
