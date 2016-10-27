@@ -692,7 +692,6 @@ describe('静音寺业务系统', function () {
                                     transId = '1234567';
                                     virtue = Object.assign({}, expectedTrans);
                                     virtue._id = transId;
-                                    virtue.success = true;   // TODO: 应该去掉？？？？
                                     virtueStub.withArgs(expectedTrans).callsArgWith(1, null, virtue);
 
                                     payData = {foo: 'any foo'};
@@ -722,8 +721,7 @@ describe('静音寺业务系统', function () {
                                     controller = proxyquire('../server/wechat/payment', stubs).index;
 
                                     controller(reqStub, resStub);
-                                    //var expectedRenderData = Object.assign({success: true}, payData);
-                                    expect(resRenderSpy).calledWith('wechat/payment', expectedRenderData).calledOnce;
+                                    expect(resRenderSpy).calledWith('wechat/payment', payData).calledOnce;
                                 });
                             });
 
