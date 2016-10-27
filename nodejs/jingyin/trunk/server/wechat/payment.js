@@ -40,7 +40,8 @@ module.exports = {
                     return;
                 }
                 var transId = virtue._id.toString();
-                weixin.prePay(trader, transId, trans.details.subject, trans.amount*100, function (err, payData) {
+                var name = req.query.name || trans.details.subject;
+                weixin.prePay(trader, transId, name, trans.amount*100, function (err, payData) {
                     if(err){
                         resWrap.setStatus(502);
                         return;

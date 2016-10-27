@@ -38,11 +38,20 @@ module.exports = {
             responseError(400, "amount is invalid");
             return;
         }
+
+        var name = req.body.name;
+        if (name) trans.name = name;
+
+        var price = req.body.price;
+        if (price) trans.price = price;
+
+        var num = req.body.num;
+        if (num) trans.num = num;
+
         var giving = req.body.giving;
         if (giving) trans.giving = giving;
 
         var url = weixin.sendPayUrl(trans);
-        logger.debug("response the url to payment to client, url = " + url);
         res.end(url);
     },
 };

@@ -41,8 +41,9 @@
         var url = window.location.href;
         var dataToPost = {
             subject: 'suixi',
+            name: '随喜',
             amount: amount,
-        }
+        };
         if (giving) dataToPost.giving = giving;
 
         $.post(url, dataToPost)
