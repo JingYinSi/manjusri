@@ -66,7 +66,7 @@ module.exports = function (config) {
             trade_type: "JSAPI"
         };
         prepay.sign = this.signMD5(prepay, me.mch_key);
-        logger.debug('Data to be sent to weixin:\n' + JSON.stringify(prepay));
+        //TODO:如何避免由于transName中包含不允许出现在XML中的字符而导致异常？
         return js2xmlparser.parse('xml', prepay);
     }
 
