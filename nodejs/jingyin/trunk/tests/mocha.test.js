@@ -722,7 +722,7 @@ describe('静音寺业务系统', function () {
                                     controller = proxyquire('../server/wechat/payment', stubs).index;
 
                                     controller(reqStub, resStub);
-                                    var expectedRenderData = Object.assign({success: true}, payData);
+                                    //var expectedRenderData = Object.assign({success: true}, payData);
                                     expect(resRenderSpy).calledWith('wechat/payment', expectedRenderData).calledOnce;
                                 });
                             });
