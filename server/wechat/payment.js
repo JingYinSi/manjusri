@@ -46,7 +46,7 @@ module.exports = {
                         return;
                     }
                     logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
-                    payData.success = true;  //TODO: 应该可以去掉????
+                    //payData.success = true;  //TODO: 应该可以去掉????
                     resWrap.render('wechat/payment', payData);
                 })
             });
