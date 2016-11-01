@@ -1,4 +1,5 @@
-var weixin = require('../weixin');
+var weixin = require('../weixin'),
+    Part = require('./models/part');
 
 
 var log4js = require('log4js');
@@ -13,6 +14,16 @@ module.exports = {
     },
 
     trans: function (req, res) {
+        var id = req.params.partId;
+        Part.findById(id, function (err, part) {
+            res.render('wechat/trans', {
+                title: '建寺-' + part.name,
+                part: part
+            });
+        });
+    },
+
+    /*trans: function (req, res) {
         var productId = req.params.productId;
         var productNames = ['万尊文殊菩萨像小', '万尊文殊菩萨像中', '五方文殊菩萨像'];
         var product = {
@@ -26,7 +37,7 @@ module.exports = {
             title: '建寺-' + product.name,
             product: product
         });
-    },
+    },*/
 
     //创建日行一善订单
     action: function (req, res) {

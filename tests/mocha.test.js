@@ -8,19 +8,8 @@ var mongoose = require('mongoose'),
 
 describe('静音寺业务系统', function () {
     describe('业务', function () {
-        describe('捐助交易', function () {
-            var Virtue;
-            var trans;
+        describe('模型', function () {
             beforeEach(function (done) {
-                Virtue = require('../server/wechat/models/virtue');
-                trans = {
-                    trader: 'foo trader',
-                    amount: 45.8,
-                    details: {
-                        subject: 'fee subject'
-                    }
-                }
-
                 mongoose.Promise = global.Promise;
                 if (mongoose.connection.db) return done();
                 mongoose.connect(dbURI, done);
@@ -30,85 +19,152 @@ describe('静音寺业务系统', function () {
                 clearDB(done);
             });
 
-            describe('创建交易', function () {
-                it('未定义交易者trader', function (done) {
-                    delete trans.trader;
-                    Virtue.placeVirtue(trans, function (err, virtue) {
-                        expect(err.errors['trader'].message).to.be.eql('Path `trader` is required.');
-                        expect(virtue).not.exist;
-                        done();
+            describe('捐助交易', function () {
+                var Virtue;
+                var trans;
+                beforeEach(function () {
+                    Virtue = require('../server/wechat/models/virtue');
+                    trans = {
+                        trader: 'foo trader',
+                        amount: 45.8,
+                        details: {
+                            subject: 'fee subject'
+                        }
+                    };
+                });
+
+                describe('创建交易', function () {
+                    it('未定义交易者trader', function (done) {
+                        delete trans.trader;
+                        Virtue.placeVirtue(trans, function (err, virtue) {
+                            expect(err.errors['trader'].message).to.be.eql('Path `trader` is required.');
+                            expect(virtue).not.exist;
+                            done();
+                        });
+                    });
+
+                    it('未定义交易类型subject', function (done) {
+                        delete trans.details.subject;
+                        Virtue.placeVirtue(trans, function (err, virtue) {
+                            expect(err.errors['details.subject'].message).to.be.eql('Path `details.subject` is required.');
+                            expect(virtue).not.exist;
+                            done();
+                        });
+                    });
+
+                    it('金额应大于零', function (done) {
+                        trans.amount = 0;
+                        Virtue.placeVirtue(trans, function (err, virtue) {
+                            expect(err.errors['amount'].message).to.be.eql('金额应大于零');
+                            expect(virtue).not.exist;
+                            done();
+                        });
+                    });
+
+                    it('创建一笔捐助', function (done) {
+                        var details = {
+                            subject: "foo",
+                            num: 10,
+                            price: 10.34
+                        }
+                        trans.details = details;
+                        trans.amount = 103.4;
+                        trans.giving = 'any hope for';
+                        Virtue.placeVirtue(trans, function (err, virtue) {
+                            expect(err).be.null;
+                            expect(virtue.trader).eql(trans.trader);
+                            expect(virtue._doc.details).deep.equal(details);
+                            expect(virtue.amount).to.be.equal(trans.amount);
+                            expect(virtue.giving).to.be.equal(trans.giving);
+                            expect(virtue.state).to.be.equal('new');
+                            expect(virtue.timestamp).to.be.a('date');
+                            done();
+                        })
                     });
                 });
 
-                it('未定义交易类型subject', function (done) {
-                    delete trans.details.subject;
-                    Virtue.placeVirtue(trans, function (err, virtue) {
-                        expect(err.errors['details.subject'].message).to.be.eql('Path `details.subject` is required.');
-                        expect(virtue).not.exist;
-                        done();
-                    });
-                });
 
-                it('金额应大于零', function (done) {
-                    trans.amount = 0;
-                    Virtue.placeVirtue(trans, function (err, virtue) {
-                        expect(err.errors['amount'].message).to.be.eql('金额应大于零');
-                        expect(virtue).not.exist;
-                        done();
+                describe('捐助支付', function (done) {
+                    var transId;
+                    beforeEach(function (done) {
+                        Virtue.placeVirtue(trans, function (err, virtue) {
+                            expect(err).not.exist;
+                            transId = virtue._id.toString();
+                            done();
+                        })
                     });
-                });
 
-                it('创建一笔捐助', function (done) {
-                    var details = {
-                        subject: "foo",
-                        num: 10,
-                        price: 10.34
-                    }
-                    trans.details = details;
-                    trans.amount = 103.4;
-                    trans.giving = 'any hope for';
-                    Virtue.placeVirtue(trans, function (err, virtue) {
-                        expect(err).be.null;
-                        expect(virtue.trader).eql(trans.trader);
-                        expect(virtue._doc.details).deep.equal(details);
-                        expect(virtue.amount).to.be.equal(trans.amount);
-                        expect(virtue.giving).to.be.equal(trans.giving);
-                        expect(virtue.state).to.be.equal('new');
-                        expect(virtue.timestamp).to.be.a('date');
-                        done();
+                    it('支付成功', function (done) {
+                        Virtue.havePayed(transId, function (err, virtue) {
+                            expect(err).not.exist;
+                            expect(virtue._id.toString()).eql(transId);
+                            expect(virtue.state).eql('payed');
+                            done();
+                        })
                     })
-                });
+                })
             });
 
-
-            describe('捐助支付', function (done) {
-                var transId;
+            describe('法物目录', function () {
+                var Part;
+                var partIdTheAlreadyInDb;
                 beforeEach(function (done) {
-                    Virtue.placeVirtue(trans, function (err, virtue) {
+                    Part = require('../server/wechat/models/part');
+                    var model = new Part({
+                        name: 'part name',
+                        desc: 'description of the part',
+                        img: '/images/aaa.img',
+                        price: 150,
+                        num: 5,
+                        sold: 1,
+                        onSale: true
+                    });
+                    model.save(function (err, part) {
                         expect(err).not.exist;
-                        transId = virtue._id.toString();
+                        partIdTheAlreadyInDb = part._id;
+                        done();
+                    });
+
+                });
+                
+                it('创建法物', function (done) {
+                    var doc = {
+                        name: 'part name',
+                        desc: 'description of the part',
+                        img: '/images/aaa.img',
+                        price: 150,
+                        num: 5,
+                        sold: 1,
+                        onSale: true
+                    };
+                    Part.create(doc, function (err, part) {
+                        expect(err).be.null;
+                        expect(part._id).exist;
+                        expect(part.seq).eql(doc.seq);
+                        expect(part.name).eql(doc.name);
+                        expect(part.desc).eql(doc.desc);
+                        expect(part.img).eql(doc.img);
+                        expect(part.price).eql(doc.price);
+                        expect(part.num).eql(doc.num);
+                        expect(part.sold).eql(doc.sold);
+                        expect(part.onSale).eql(doc.onSale);
                         done();
                     })
                 });
 
-                it('支付成功', function (done) {
-                    Virtue.havePayed(transId, function (err, virtue) {
+                it('列出法物', function (done) {
+                    Part.findById(partIdTheAlreadyInDb, function (err, part) {
                         expect(err).not.exist;
-                        expect(virtue._id.toString()).eql(transId);
-                        expect(virtue.state).eql('payed');
+                        expect(part._id).eql(partIdTheAlreadyInDb);
+                        expect(part.price).eql(150);
                         done();
-                    })
+                    });
                 })
             })
         });
-        describe('逻辑', function () {
-            describe('交易类型', function () {
-                describe('日行一善', function () {
-
-                })
-            })
-        })
     });
+
+
 
     describe('技术', function () {
         describe('Response Wrapper', function () {
@@ -403,6 +459,7 @@ describe('静音寺业务系统', function () {
                         suixi = require('../server/wechat/suixi'),
                         wechat = require('../server/wechat/wechat'),
                         payment = require('../server/wechat/payment'),
+                        part = require('../server/rest/part'),
                         routes = require('../server/routes');
                     var getSpy = sinon.stub(),
                         postSpy = sinon.spy(),
@@ -423,9 +480,11 @@ describe('静音寺业务系统', function () {
                     routeStub.withArgs('/jingyin/manjusri/dailyvirtue').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/accuvirtue').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/suixi').returns(handlerStub);
-                    routeStub.withArgs('/jingyin/manjusri/trans/:productId').returns(handlerStub);
+                    routeStub.withArgs('/jingyin/manjusri/trans/:partId').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/pay/confirm').returns(handlerStub);
                     routeStub.withArgs('/jingyin/manjusri/pay/notify').returns(handlerStub);
+
+                    routeStub.withArgs('/jingyin/biz/parts/index').returns(handlerStub);
 
                     getSpy.withArgs(wechat.hook).returns(handlerStub);
                     getSpy.withArgs(accuvirtue.dailyVirtue).returns(handlerStub);
@@ -434,6 +493,8 @@ describe('静音寺业务系统', function () {
                     getSpy.withArgs(suixi.trans).returns(handlerStub);
                     getSpy.withArgs(payment.index).returns(handlerStub);
                     getSpy.withArgs(payment.result).returns(handlerStub);
+
+                    getSpy.withArgs(part.index).returns(handlerStub);
 
                     routes({route: routeStub});
 
@@ -462,16 +523,49 @@ describe('静音寺业务系统', function () {
                 });
             });
 
+            describe("控制器", function () {
+                var stubs, controller;
+                var reqStub, resStub;
+                var resEndSpy, resStatusSpy, resRenderSpy;
+                var resWrapStub;
+
+                beforeEach(function () {
+                    resStatusSpy = sinon.spy();
+                    resRenderSpy = sinon.spy();
+                    resWrapStub = sinon.stub();
+                    resWrapStub.withArgs(resStub).returns({
+                        setStatus: resStatusSpy,
+                        render: resRenderSpy
+                    });
+                    stubs = {
+                        '../../modules/responsewrap': resWrapStub
+                    };
+                });
+
+                describe("Restful服务", function () {
+
+                });
+
+                describe('业务系统', function () {
+                    it("法物管理页面", function () {
+                        controller = require('../biz/part');
+                    })
+                });
+            });
+
             describe('处理请求', function () {
                 var reqStub, resStub;
                 var statusSpy, resEndSpy;
                 var controller;
 
-                function showPage(controller, page) {
+                function showPage(controller, page, data) {
                     var resRenderSpy = sinon.spy();
                     resStub.render = resRenderSpy;
                     controller(reqStub, resStub);
-                    expect(resRenderSpy).calledWith(page);
+                    if(data)
+                        expect(resRenderSpy).calledWith(page, data);
+                    else
+                        expect(resRenderSpy).calledWith(page);
                 }
 
                 function checkResponseStatusCodeAndMessage(code, message) {
@@ -488,6 +582,10 @@ describe('静音寺业务系统', function () {
                     statusSpy = sinon.spy();
                     resEndSpy = sinon.spy();
 
+                    reqStub = {
+                        query: {},
+                        params: {}
+                    };
                     resStub = {
                         status: statusSpy,
                         end: resEndSpy
@@ -500,14 +598,40 @@ describe('静音寺业务系统', function () {
                 });
 
                 it('显示建寺', function () {
-                    var controller = require('../server/wechat/manjusri').jiansi;
-                    showPage(controller, 'wechat/jiansi');
+                    var partslist = {foo:'fffff'};
+                    var partFindStub = sinon.stub();
+                    partFindStub.withArgs({onSale:true}).callsArgWith(1, null, partslist);
+                    var controller = proxyquire('../server/wechat/manjusri', {
+                        './models/part': {find: partFindStub}
+                    }).jiansi;
+                    showPage(controller, 'wechat/jiansi', {
+                        title: '建寺',
+                        parts: partslist
+                    });
                 });
 
                 describe('日行一善', function () {
                     it('显示页面', function () {
                         var controller = require('../server/wechat/accvirtue').dailyVirtue;
                         showPage(controller, 'wechat/dailyVirtue');
+                    });
+                });
+
+                describe('认捐法物', function () {
+                    it('显示页面', function () {
+                        var partId = 12345;
+                        var part = {name: 'foo'}
+
+                        reqStub.params.partId = partId;
+                        var partFindByIdStub = sinon.stub();
+                        partFindByIdStub.withArgs(partId).callsArgWith(1, null, part);
+                        var controller = proxyquire('../server/wechat/suixi', {
+                            './models/part': {findById: partFindByIdStub}
+                        }).trans;
+                        showPage(controller, 'wechat/trans', {
+                            title: '建寺-' + part.name,
+                            part: part
+                        });
                     });
                 });
 
@@ -630,7 +754,7 @@ describe('静音寺业务系统', function () {
                         });
 
                     });
-                })
+                });
 
                 describe('微信支付', function () {
                     var stubs;
@@ -784,9 +908,12 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('响应微信支付结果', function () {
-
+                    //TODO: 编写响应微信支付结果的测试用例
                 })
+
             });
         })
     })
+    
+
 })

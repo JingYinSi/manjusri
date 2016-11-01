@@ -1,3 +1,5 @@
+var Part = require('./models/part');
+
 module.exports = {
     home: function (req, res) {
         res.render('wechat/index', {
@@ -6,8 +8,15 @@ module.exports = {
     },
 
     jiansi: function (req, res) {
-        res.render('wechat/jiansi', {
-            title: '建寺'
+        var data = {
+            title: '建寺',
+            parts: []
+        };
+        Part.find({onSale: true}, function (err, parts) {
+            if(!err){
+                data.parts = parts;
+                res.render('wechat/jiansi', data);
+            }
         });
     },
 };
