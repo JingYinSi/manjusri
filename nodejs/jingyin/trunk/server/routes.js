@@ -6,6 +6,8 @@ const manjusri = require('./wechat/manjusri'),
     suixi = require('./wechat/suixi'),
     wechat = require('./wechat/wechat'),
     payment = require('./wechat/payment'),
+
+    part = require('./biz/part'),
     payRoute = require('./payurl').payRoute;
 
 module.exports = function (router) {
@@ -27,7 +29,7 @@ module.exports = function (router) {
         .get(suixi.index)
         .post(accuvirtue.action);
 
-    router.route('/jingyin/manjusri/trans/:productId')
+    router.route('/jingyin/manjusri/trans/:partId')
         .get(suixi.trans)
         .post(accuvirtue.action);
 
@@ -39,6 +41,7 @@ module.exports = function (router) {
         .post(payment.payNotify);
 
 
+
     /*----------------------------old version ------------------------------------------  */
 
     router.route('/jingyin/manjusri')
@@ -48,4 +51,7 @@ module.exports = function (router) {
         .get(accuvirtue.dailyVirtue)
         .post(accuvirtue.action);
 
+    /*----------------------------业务系统------------------------------------------  */
+    router.route('/jingyin/biz/parts/index')
+        .get(part.index);
 }

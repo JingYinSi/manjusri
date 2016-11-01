@@ -11,24 +11,15 @@
             <img src="/images/product1.jpg">
             <div class="text1">日行一善</div>
         </a></li>
-        <li style="border-right: none;"><a href="/jingyin/manjusri/trans/3">
-            <img src="/images/product2.jpg">
-            <div class="text1">万尊文殊菩萨像（小）</div>
-            <div class="text2">【已捐0份，剩余1000份】</div>
-            <div class="text3">¥<span>1980.00</span> /尊</div>
-        </a></li>
-        <li><a href="/jingyin/manjusri/trans/2">
-            <img src="/images/product3.jpg">
-            <div class="text1">万尊文殊菩萨像（中）</div>
-            <div class="text2">【已捐0份，剩余1000份】</div>
-            <div class="text3">¥<span>1980.00</span> /尊</div>
-        </a></li>
-        <li style="border-right: none;"><a href="/jingyin/manjusri/trans/1">
-            <img src="/images/product4.jpg">
-            <div class="text1">五方文殊菩萨像</div>
-            <div class="text2">【已捐0份，剩余1000份】</div>
-            <div class="text3">¥<span>1980.00</span> /尊</div>
-        </a></li>
+
+        {{#each parts}}
+            <li style="border-right: none;"><a href="/jingyin/manjusri/trans/{{_id}}">
+                <img src="{{img}}">
+                <div class="text1">{{name}}</div>
+                <div class="text2">【已捐{{sold}}份，剩余{{num}}份】</div>
+                <div class="text3">¥<span>{{price}}</span> /尊</div>
+            </a></li>
+        {{/each}}
     </ul>
 </div>
 <div class="cardinfo">
@@ -37,7 +28,7 @@
     <p class="cardinfo_t3">您同时可以通过银行电汇的形式护持静<br>音寺的建设，请务必在备注信息处填写<br>护持种类及护持金额。随喜！</p>
     <p class="cardinfo_name"></p>
     <p class="cardinfo_name">护 持 账 号</p>
-    <p class="cardinfo_num">6228  4616  6000  0781  611</p>
+    <p class="cardinfo_num">6228 4616 6000 0781 611</p>
     <p class="cardinfo_name"></p>
     <p class="cardinfo_name">护 持 账 户 名</p>
     <p class="cardinfo_name">魏将帅</p>

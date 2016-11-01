@@ -2,12 +2,12 @@
 <html lang="en">
 {{>head}}
 <body>
-<div class="banner"><img src="/images/product_banner1.jpg"></div>
+<div class="banner"><img src="{{part.img}}"></div>
 <div class="product">
-    <span hidden id="trans_subject">{{product.id}}</span>
-    <div class="product_name" id="trans_name">{{product.name}}</div>
-    <div class="product_num">【已捐{{product.sold}}份，剩余{{product.left}}份】</div>
-    <div class="product_price">¥<span id="trans_price">{{product.price}}</span> /尊</div>
+    <span hidden id="trans_subject">{{part._id}}</span>
+    <div class="product_name" id="trans_name">{{part.name}}</div>
+    <div class="product_num">【已捐{{part.sold}}份，剩余{{part.num}}份】</div>
+    <div class="product_price">¥<span id="trans_price">{{part.price}}</span> /尊</div>
     <ul>
         <li class="jian">-</li>
         <li id="trans_num" class="val">1</li>
