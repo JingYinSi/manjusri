@@ -17,7 +17,7 @@ db.once('open', function() {
     Part.create({
         name: '万尊文殊菩萨像小',
         img: '/images/product2.jpg',
-        price: 1980,
+        price: 1.98,
         num: 5600,
         sold: 1900,
         onSale: true
@@ -27,7 +27,7 @@ db.once('open', function() {
     Part.create({
         name: '万尊文殊菩萨像中',
         img: '/images/product3.jpg',
-        price: 2080,
+        price: 2.08,
         num: 5100,
         sold: 1300,
         onSale: true
@@ -37,7 +37,7 @@ db.once('open', function() {
     Part.create({
         name: '五方文殊菩萨像',
         img: '/images/product4.jpg',
-        price: 2180,
+        price: 2.18,
         num: 4500,
         sold: 1000,
         onSale: true
