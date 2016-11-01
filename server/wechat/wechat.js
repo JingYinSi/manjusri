@@ -7,6 +7,7 @@ var logger = log4js.getLogger();
 
 module.exports = {
     hook: function (req, res) {
+        logger.debug('receive a hook message from wechat ....')
         var token = "jingyinManjusri";
         // 微信加密签名
         var signature = req.query.signature,
@@ -32,6 +33,7 @@ module.exports = {
         res.end(rtn);
     },
     receive: function (req, res) {
+        logger.debug('receive a post request from wechat ....')
         // 微信加密签名
         var signature = req.query.signature,
         // 时间戳
