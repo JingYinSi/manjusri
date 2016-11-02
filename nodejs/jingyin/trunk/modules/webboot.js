@@ -20,7 +20,12 @@ module.exports = function (ctx) {
         'extended': true
     }));
     app.use(bodyParser.json());
-    app.use(xmlBodyParser());
+    app.use(xmlBodyParser({
+        explicitArray: false,
+        normalize: false,
+        normalizeTags: false,
+        trim: true
+    }));
 
     // Use express session support since OAuth2orize requires it
     app.use(session({
