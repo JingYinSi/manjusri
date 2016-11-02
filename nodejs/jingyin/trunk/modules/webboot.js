@@ -29,7 +29,15 @@ module.exports = function (ctx) {
 
     app.use('/jingyin/wechat', wechat('jingyinManjusri', function (req, res, next) {
         console.log('微信输入信息都在req.weixin上');
-        res.reply('hehehehe你好');
+        //res.reply('hehehehe你好');
+        res.reply([
+            {
+                title: 'Come to fetch me',
+                description: 'or you want to play in another way ?',
+                picurl: 'http://nodeapi.cloudfoundry.com/qrcode.jpg',
+                url: 'http://nodeapi.cloudfoundry.com/'
+            }
+        ]);
     }));
 
     ctx.route(router);
