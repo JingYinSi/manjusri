@@ -35,7 +35,7 @@ module.exports = function (ctx) {
     }));
 
     if(ctx.wechat){
-        app.use('/jingyin/wechat', wechat('jingyinManjusri', ctx.wechat));
+        app.use('/jingyin/wechat', wechat(ctx.wechat.token, ctx.wechat.post));
     }
 
     ctx.route(router);
