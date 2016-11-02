@@ -28,10 +28,8 @@ module.exports = function (ctx) {
     }));
 
     app.use('/jingyin/wechat', wechat('jingyinManjusri', function (req, res, next) {
-        // 微信输入信息都在req.weixin上
-        console.log('this is weixin middleware.....................................');
-        var info = req.weixin;
-        res.reply('hehe');
+        console.log('微信输入信息都在req.weixin上');
+        next(req, res);
     }));
 
     ctx.route(router);
