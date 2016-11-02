@@ -9,7 +9,7 @@ var logger = log4js.getLogger();
 
 module.exports = {
     dealWithMessage: function (req, res, next) {
-        //console.log('微信输入信息都在req.weixin上');
+        logger.debug('Message from weixin:\n' + JSON.stringify(req.weixin));
         //res.reply('hehehehe你好');
         res.reply([
             {
