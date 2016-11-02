@@ -32,6 +32,7 @@ module.exports = function (config) {
     this.dealWithMessage = function (msg, callback) {
         callback();
     }
+
     this.getOpenId = function (code, callback) {
         var url = this.apiBaseURL + "access_token?appid="
             + this.appid + "&secret=" + this.appsecret
