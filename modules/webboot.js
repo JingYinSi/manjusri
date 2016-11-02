@@ -35,15 +35,13 @@ module.exports = function (ctx) {
     }));
 
     if(ctx.wechat){
-        console.log('ebcjqebvqjevbjevwevnwenvwenvwev');
         app.use('/jingyin/wechat', wechat('jingyinManjusri', ctx.wechat));
     }
-
 
     ctx.route(router);
     app.use(router);
     app.use('/', express.static(ctx.static || path.join(__dirname, '../client/public')));
-    //app.use(favicon(__dirname + '../client/public/images/icon1.jpg'));
+    app.use(favicon(__dirname + '/images/icon1.jpg'));
     if ('development' === app.get('env') || ctx.env) {
         app.use(errorHandler());
     }
