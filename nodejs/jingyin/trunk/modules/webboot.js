@@ -39,20 +39,20 @@ module.exports = function (ctx) {
         //res.reply('hehehehe你好');
         res.reply([
             {
-                title: '静音文殊禅林',
-                description: '欢迎您关注静音文殊禅林',
+                title: '欢迎您关注静音文殊禅林',
+                description: '描述静音文殊禅林',
                 picurl: 'http://jingyintemple.top/images/banner.jpg',
                 url: 'http://jingyintemple.top/jingyin/manjusri/index'
             },
             {
-                title: '建寺',
-                description: '欢迎您关注静音文殊禅林-建寺',
+                title: '欢迎您关注静音文殊禅林-建寺',
+                description: '描述-建寺',
                 picurl: 'http://jingyintemple.top/images/jiansi.jpg',
                 url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
             },
             {
-                title: '建寺',
-                description: '欢迎您关注静音文殊禅林-每日一善',
+                title: '欢迎您关注静音文殊禅林-每日一善',
+                description: '描述-每日一善',
                 picurl: 'http://jingyintemple.top/images/jiansi.jpg',
                 url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
             },
