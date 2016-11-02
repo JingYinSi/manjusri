@@ -69,7 +69,7 @@ module.exports = {
                         + '<FromUserName><![CDATA[' + doc.ToUserName + ']</FromUserName>'
                         + '<CreateTime><![CDATA[' + doc.CreateTime + ']</CreateTime>'
                         + '<MsgType><![CDATA[text]</MsgType>'
-                        + '<Content><![CDATA[' + answer + ']</Content>';
+                        + '<Content><![CDATA[' + content + ']</Content>';
                 logger.debug(xml);
                 res.end(xml);
             })
