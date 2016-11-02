@@ -532,7 +532,7 @@ describe('静音寺业务系统', function () {
 
                     routes({route: routeStub});
 
-                    expect(postSpy).calledWith(wechat.receive);
+                    //expect(postSpy).calledWith(wechat.receive);
                     expect(postSpy).calledWith(accuvirtue.action);
                     expect(postSpy).calledWith(payment.payNotify);
                 });
@@ -635,12 +635,12 @@ describe('静音寺业务系统', function () {
                         var msg = {anyfoo: 'foo'};
                         var handler = sinon.stub();
                         handler.withArgs(msg).callsArgWith(1, null, '');
-                        stubs['../weixin'] = {
+                        /*stubs['../weixin'] = {
                             weixin: {
                                 attention: handler
                             }
                         };
-                        controller = proxyquire('../server/wechat/wechat', stubs).receive;
+                        controller = proxyquire('../server/wechat/wechat', stubs).receive;*/
 
                     });
                 });
