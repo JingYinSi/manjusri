@@ -9,7 +9,10 @@ var webboot = require('./modules/webboot'),
         env: 'development',
         secret: 'jingyinmanjusriBiz',
         mongodb: '121.41.93.210:27017/jingyin',
-        wechat: wechat.wechat,
+        wechat: {
+            token: 'jingyinManjusri',
+            post: wechat.dealWithMessage
+        },
         route: route
     };
 

@@ -4,17 +4,12 @@
 const manjusri = require('./wechat/manjusri'),
     accuvirtue = require('./wechat/accvirtue'),
     suixi = require('./wechat/suixi'),
-    //wechat = require('./wechat/wechat'),
     payment = require('./wechat/payment'),
 
     part = require('./biz/part'),
     payRoute = require('./payurl').payRoute;
 
 module.exports = function (router) {
-    /*router.route('/jingyin/wechat')
-        .get(wechat.hook)
-        /!*.post(wechat.receive)*!/;*/
-
     router.route('/jingyin/manjusri/index')
         .get(manjusri.home);
 

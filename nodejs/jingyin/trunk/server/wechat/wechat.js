@@ -8,38 +8,12 @@ log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
 module.exports = {
-    hook: function (req, res) {
-        logger.debug('receive a hook message from wechat ....')
-        var token = "jingyinManjusri";
-        // 微信加密签名
-        var signature = req.query.signature,
-            // 时间戳
-            timestamp = req.query.timestamp,
-            // 随机数
-            nonce = req.query.nonce,
-            // 随机字符串
-            echostr = req.query.echostr;
-
-        var keys = [];
-        keys.push(token);
-        keys.push(timestamp);
-        keys.push(nonce);
-        keys = keys.sort();
-        var str = keys[0] + keys[1] + keys[2];
-        var sha1val = sha1(str).toUpperCase();
-
-        var rtn = 'something wrong!!!';
-        if (signature && signature.toUpperCase() === sha1val) {
-            rtn = echostr;
-        }
-        res.end(rtn);
-    },
-    wechat: function (req, res, next) {
-        console.log('微信输入信息都在req.weixin上');
+    dealWithMessage: function (req, res, next) {
+        //console.log('微信输入信息都在req.weixin上');
         //res.reply('hehehehe你好');
         res.reply([
             {
-                title: '欢迎您关注静音文殊禅林',
+                title: '静音文殊禅林',
                 description: '描述静音文殊禅林',
                 picurl: 'http://jingyintemple.top/images/banner.jpg',
                 url: 'http://jingyintemple.top/jingyin/manjusri/index'
@@ -57,8 +31,8 @@ module.exports = {
                 url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
             },
             {
-                title: '建寺',
-                description: '欢迎您关注静音文殊禅林-随喜功德',
+                title: '欢迎您关注静音文殊禅林-随喜功德',
+                description: '描述-随喜功德',
                 picurl: 'http://jingyintemple.top/images/jiansi.jpg',
                 url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
             }
