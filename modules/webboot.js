@@ -1,6 +1,7 @@
 var express = require('express'),
     morgan = require('morgan'),
     bodyParser = require('body-parser'),
+    xmlBodyParser = require('express-xml-bodyparser'),
     path = require('path'),
     wechat = require('wechat'),
     exphbs = require('express-handlebars'),
@@ -19,6 +20,7 @@ module.exports = function (ctx) {
         'extended': true
     }));
     app.use(bodyParser.json());
+    app.use(xmlBodyParser());
 
     // Use express session support since OAuth2orize requires it
     app.use(session({
