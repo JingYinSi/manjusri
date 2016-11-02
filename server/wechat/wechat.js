@@ -49,7 +49,7 @@ module.exports = {
         });
         req.on("end", function () {
             var doc = XML.parse(body);
-            if(doc.MsgType !== 'event' & doc.Event !== 'subscribe'){
+            if(doc.MsgType !== 'event' && doc.Event !== 'subscribe'){
                 logger.debug('a ' + doc.MsgType + ' message, ignore now ....');
                 res.end('');
                 return;
