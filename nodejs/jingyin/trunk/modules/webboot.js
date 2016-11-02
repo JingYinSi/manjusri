@@ -32,10 +32,10 @@ module.exports = function (ctx) {
         //res.reply('hehehehe你好');
         res.reply([
             {
-                title: 'Come to fetch me',
-                description: 'or you want to play in another way ?',
-                picurl: 'http://nodeapi.cloudfoundry.com/qrcode.jpg',
-                url: 'http://nodeapi.cloudfoundry.com/'
+                title: '静音文殊禅林',
+                description: '欢迎您关注静音文殊禅林',
+                picurl: 'http://jingyintemple.top/images/banner.jpg',
+                url: 'http://jingyintemple.top/jingyin/manjusri.index'
             }
         ]);
     }));
