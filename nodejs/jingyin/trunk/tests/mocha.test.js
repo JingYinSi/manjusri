@@ -7,6 +7,11 @@ var mongoose = require('mongoose'),
     proxyquire = require('proxyquire');
 
 describe('静音寺业务系统', function () {
+    var stubs;
+    beforeEach(function () {
+        stubs = {}
+    });
+
     describe('业务', function () {
         describe('模型', function () {
             beforeEach(function (done) {
@@ -126,7 +131,7 @@ describe('静音寺业务系统', function () {
                     });
 
                 });
-                
+
                 it('创建法物', function (done) {
                     var doc = {
                         name: 'part name',
@@ -160,10 +165,39 @@ describe('静音寺业务系统', function () {
                         done();
                     });
                 })
-            })
+            });
+
+            describe('用户', function () {
+                var User;
+                beforeEach(function (done) {
+                    User = require('../server/wechat/models/user');
+                    done();
+                });
+
+                it('创建用户', function (done) {
+                    var doc = {
+                        name: 'user name',
+                        img: '/images/aaa.img',
+                        openid: 'ABSFHHFdjdfjfdfvd',
+                        phone: '1234567',
+                        addr: 'xxxxxxxxx',
+                        watching: true
+                    };
+                    User.create(doc, function (err, user) {
+                        expect(err).be.null;
+                        expect(user._id).exist;
+                        expect(user.name).eql(doc.name);
+                        expect(user.img).eql(doc.img);
+                        expect(user.openId).eql(doc.openId);
+                        expect(user.phone).eql(doc.phone);
+                        expect(user.addr).eql(doc.addr);
+                        expect(user.watching).eql(doc.watching);
+                        done();
+                    })
+                });
+            });
         });
     });
-
 
 
     describe('技术', function () {
@@ -562,7 +596,7 @@ describe('静音寺业务系统', function () {
                     var resRenderSpy = sinon.spy();
                     resStub.render = resRenderSpy;
                     controller(reqStub, resStub);
-                    if(data)
+                    if (data)
                         expect(resRenderSpy).calledWith(page, data);
                     else
                         expect(resRenderSpy).calledWith(page);
@@ -592,15 +626,34 @@ describe('静音寺业务系统', function () {
                     }
                 });
 
+                describe('响应微信消息', function () {
+                    beforeEach(function () {
+                        controller = require('../server/wechat/wechat');
+                    });
+
+                    describe('响应关注消息', function () {
+                        var msg = {anyfoo: 'foo'};
+                        var handler = sinon.stub();
+                        handler.withArgs(msg).callsArgWith(1, null, '');
+                        stubs['../weixin'] = {
+                            weixin: {
+                                attention: handler
+                            }
+                        };
+                        controller = proxyquire('../server/wechat/wechat', stubs).receive;
+
+                    });
+                });
+
                 it('显示首页', function () {
                     var controller = require('../server/wechat/manjusri').home;
                     showPage(controller, 'wechat/index');
                 });
 
                 it('显示建寺', function () {
-                    var partslist = {foo:'fffff'};
+                    var partslist = {foo: 'fffff'};
                     var partFindStub = sinon.stub();
-                    partFindStub.withArgs({onSale:true}).callsArgWith(1, null, partslist);
+                    partFindStub.withArgs({onSale: true}).callsArgWith(1, null, partslist);
                     var controller = proxyquire('../server/wechat/manjusri', {
                         './models/part': {find: partFindStub}
                     }).jiansi;
@@ -673,7 +726,7 @@ describe('静音寺业务系统', function () {
                     describe('向客户端返回用OAuth2包装的支付服务的URL', function () {
                         var payurl, weixinStub;
 
-                        before(function () {
+                        beforeEach(function () {
                             payurl = 'http://payurl';
                             weixinStub = sinon.stub();
                             stubs = {
@@ -757,7 +810,6 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('微信支付', function () {
-                    var stubs;
                     var setResStatusSpy, resRenderSpy, resWrapStub;
 
                     beforeEach(function () {
@@ -768,9 +820,8 @@ describe('静音寺业务系统', function () {
                             setStatus: setResStatusSpy,
                             render: resRenderSpy
                         });
-                        stubs = {
-                            '../../modules/responsewrap': resWrapStub
-                        }
+                        stubs['../../modules/responsewrap'] = resWrapStub;
+
                         controller = proxyquire('../server/wechat/payment', stubs).index;
                     });
 
@@ -914,6 +965,6 @@ describe('静音寺业务系统', function () {
             });
         })
     })
-    
+
 
 })
