@@ -36,6 +36,11 @@ module.exports = function (ctx) {
                 description: '欢迎您关注静音文殊禅林',
                 picurl: 'http://jingyintemple.top/images/banner.jpg',
                 url: 'http://jingyintemple.top/jingyin/manjusri/index'
+            },
+            {
+                title: '另一个标题',
+                description: '建寺的详细内容',
+                url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
             }
         ]);
     }));
