@@ -70,6 +70,7 @@ module.exports = {
                         + '<CreateTime><![CDATA[' + doc.CreateTime + ']</CreateTime>'
                         + '<MsgType><![CDATA[text]</MsgType>'
                         + '<Content><![CDATA[' + answer + ']</Content>';
+                logger.debug(xml);
                 res.end(xml);
             })
         });
