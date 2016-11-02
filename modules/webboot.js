@@ -38,8 +38,9 @@ module.exports = function (ctx) {
                 url: 'http://jingyintemple.top/jingyin/manjusri/index'
             },
             {
-                title: '另一个标题',
-                description: '建寺的详细内容',
+                title: '建寺',
+                description: '欢迎您关注静音文殊禅林-建寺',
+                picurl: 'http://jingyintemple.top/images/jiansi.jpg',
                 url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
             }
         ]);
