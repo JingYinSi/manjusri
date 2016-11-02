@@ -71,6 +71,10 @@ module.exports = {
                         + '<MsgType><![CDATA[text]</MsgType>'
                         + '<Content><![CDATA[' + content + ']</Content>';
                 logger.debug(xml);
+
+                res.writeHead(200, {
+                    'Content-Type': 'application/xml'
+                });
                 res.write(xml);
                 res.end();
             })
