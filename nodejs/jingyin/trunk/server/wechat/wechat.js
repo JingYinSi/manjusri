@@ -73,11 +73,12 @@ module.exports = {
                 logger.debug(xml);
 
 
-                res.write(xml);
+
                 res.writeHead(200, {
                     'Content-Type': 'application/xml',
                     'Content-Length': xml.length,
                 });
+                res.write(xml);
                 res.end();
             })
         });
