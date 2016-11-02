@@ -35,7 +35,7 @@ module.exports = function (ctx) {
                 title: '静音文殊禅林',
                 description: '欢迎您关注静音文殊禅林',
                 picurl: 'http://jingyintemple.top/images/banner.jpg',
-                url: 'http://jingyintemple.top/jingyin/manjusri.index'
+                url: 'http://jingyintemple.top/jingyin/manjusri/index'
             }
         ]);
     }));
