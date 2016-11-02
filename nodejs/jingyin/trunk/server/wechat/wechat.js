@@ -64,7 +64,7 @@ module.exports = {
             }
             logger.debug('receive a message from weixin:\n' + JSON.stringify(msg));
             weixin.dealWithMessage(msg, function (err, answer) {
-                var content = answer || doc.FromUserName + '你好!';
+                var content = answer || doc.FromUserName + 'Hello';
                 var xml = '<xml><TOUserName><![CDATA[' + doc.FromUserName + ']</TOUserName>'
                         + '<FromUserName><![CDATA[jyswscl]</FromUserName>'
                         + '<CreateTime><![CDATA[' + doc.CreateTime + ']</CreateTime>'
