@@ -2,6 +2,7 @@ var express = require('express'),
     morgan = require('morgan'),
     bodyParser = require('body-parser'),
     path = require('path'),
+    wechat = require("wechat"),
     exphbs = require('express-handlebars'),
     errorHandler = require('errorhandler'),
     session = require('express-session'),
@@ -11,7 +12,7 @@ var express = require('express'),
     app = express(),
     mongoose = require('mongoose');
 
-module.exports = function(ctx) {
+module.exports = function (ctx) {
     app.set('views', ctx.views || path.join(__dirname, '../client/views'));
     app.use(morgan('dev'));
     app.use(bodyParser.urlencoded({
@@ -28,6 +29,15 @@ module.exports = function(ctx) {
 
     ctx.route(router);
     app.use(router);
+
+
+    app.use('/jingyin/wechat', wechat('jingyinManjusri', function (req, res, next) {
+        // 微信输入信息都在req.weixin上
+        var info = req.weixin;
+        res.reply('hehe');
+    }));
+
+
     app.use('/', express.static(ctx.static || path.join(__dirname, '../client/public')));
     //app.use(favicon(__dirname + '../client/public/images/icon1.jpg'));
     if ('development' === app.get('env') || ctx.env) {
@@ -42,11 +52,11 @@ module.exports = function(ctx) {
     var connStr = 'mongodb://' + ctx.mongodb;
     mongoose.Promise = global.Promise;
     mongoose.connect(connStr);
-    mongoose.connection.on('open', function() {
+    mongoose.connection.on('open', function () {
         console.log('Mongoose:' + connStr + ' is connected!');
     });
     var port = process.env.PORT || ctx.port || 3301;
-    var server = app.listen(port, process.env.IP || "0.0.0.0", function() {
+    var server = app.listen(port, process.env.IP || "0.0.0.0", function () {
         var host = server.address().address;
         var port = server.address().port;
 
