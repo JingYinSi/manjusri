@@ -34,8 +34,11 @@ module.exports = function (ctx) {
         resave: true
     }));
 
-    if(ctx.wechat)
+    if(ctx.wechat){
+        console.log('ebcjqebvqjevbjevwevnwenvwenvwev');
         app.use('/jingyin/wechat', wechat('jingyinManjusri', ctx.wechat));
+    }
+
 
     ctx.route(router);
     app.use(router);
