@@ -42,7 +42,7 @@
     "serve-favicon": "^2.3.0",
     "sha1": "^1.1.1",
     "simple-get": "^2.3.0",
-    "weixin": "0.0.1",
+    "wechat": "^2.0.3",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
