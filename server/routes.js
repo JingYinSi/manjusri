@@ -4,7 +4,7 @@
 const manjusri = require('./wechat/manjusri'),
     accuvirtue = require('./wechat/accvirtue'),
     suixi = require('./wechat/suixi'),
-    wechat = require('./wechat/wechat'),
+    //wechat = require('./wechat/wechat'),
     payment = require('./wechat/payment'),
 
     part = require('./biz/part'),
