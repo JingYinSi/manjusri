@@ -71,7 +71,8 @@ module.exports = {
                         + '<MsgType><![CDATA[text]</MsgType>'
                         + '<Content><![CDATA[' + content + ']</Content>';
                 logger.debug(xml);
-                res.end(xml);
+                res.write(xml);
+                res.end();
             })
         });
     }
