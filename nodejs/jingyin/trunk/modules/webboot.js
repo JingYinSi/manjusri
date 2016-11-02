@@ -29,7 +29,7 @@ module.exports = function (ctx) {
 
     app.use('/jingyin/wechat', wechat('jingyinManjusri', function (req, res, next) {
         console.log('微信输入信息都在req.weixin上');
-        next(req, res);
+        res.reply('hehehehe你好');
     }));
 
     ctx.route(router);
