@@ -49,6 +49,18 @@ module.exports = function (ctx) {
                 description: '欢迎您关注静音文殊禅林-建寺',
                 picurl: 'http://jingyintemple.top/images/jiansi.jpg',
                 url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+            },
+            {
+                title: '建寺',
+                description: '欢迎您关注静音文殊禅林-每日一善',
+                picurl: 'http://jingyintemple.top/images/jiansi.jpg',
+                url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+            },
+            {
+                title: '建寺',
+                description: '欢迎您关注静音文殊禅林-随喜功德',
+                picurl: 'http://jingyintemple.top/images/jiansi.jpg',
+                url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
             }
         ]);
     }));
