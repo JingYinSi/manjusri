@@ -11,9 +11,9 @@ const manjusri = require('./wechat/manjusri'),
     payRoute = require('./payurl').payRoute;
 
 module.exports = function (router) {
-    router.route('/jingyin/wechat')
+    /*router.route('/jingyin/wechat')
         .get(wechat.hook)
-        /*.post(wechat.receive)*/;
+        /!*.post(wechat.receive)*!/;*/
 
     router.route('/jingyin/manjusri/index')
         .get(manjusri.home);
