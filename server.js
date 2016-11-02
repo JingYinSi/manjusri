@@ -1,5 +1,6 @@
 var webboot = require('./modules/webboot'),
     route = require('./server/routes'),
+    wechat = require('./server/wechat/wechat').wechat,
     ctx = {
         port: 80,
         //views: __dirname + '/client/views',
@@ -7,6 +8,7 @@ var webboot = require('./modules/webboot'),
         env: 'development',
         secret: 'jingyinmanjusriBiz',
         mongodb: '121.41.93.210:27017/jingyin',
+        wechar: wechat,
         route: route
     };
 

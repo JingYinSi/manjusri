@@ -34,9 +34,35 @@ module.exports = {
         }
         res.end(rtn);
     },
-    receive: function (req, res) {
-        var doc = req.weixin;
-        res.reply('hehehehe你好');
+    wechat: function (req, res, next) {
+        console.log('微信输入信息都在req.weixin上');
+        //res.reply('hehehehe你好');
+        res.reply([
+            {
+                title: '欢迎您关注静音文殊禅林',
+                description: '描述静音文殊禅林',
+                picurl: 'http://jingyintemple.top/images/banner.jpg',
+                url: 'http://jingyintemple.top/jingyin/manjusri/index'
+            },
+            {
+                title: '欢迎您关注静音文殊禅林-建寺',
+                description: '描述-建寺',
+                picurl: 'http://jingyintemple.top/images/jiansi.jpg',
+                url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+            },
+            {
+                title: '欢迎您关注静音文殊禅林-每日一善',
+                description: '描述-每日一善',
+                picurl: 'http://jingyintemple.top/images/jiansi.jpg',
+                url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+            },
+            {
+                title: '建寺',
+                description: '欢迎您关注静音文殊禅林-随喜功德',
+                picurl: 'http://jingyintemple.top/images/jiansi.jpg',
+                url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+            }
+        ]);
     }
 
     /*receive: function (req, res) {
