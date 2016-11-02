@@ -76,7 +76,7 @@ module.exports = {
 
                 res.writeHead(200, {
                     'Content-Type': 'text/xml',
-                    'Content-Length': xml.length,
+                    //'Content-Length': xml.length,
                 });
                 res.write(xml);
                 res.end();
