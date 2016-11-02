@@ -49,6 +49,11 @@ module.exports = {
         });
         req.on("end", function () {
             var doc = XML.parse(body);
+            if(doc.MsgType !== 'event'){
+                res.end('');
+                return;
+            }
+
             var msg = {
                 signature : signature,
                 timestamp: timestamp,
