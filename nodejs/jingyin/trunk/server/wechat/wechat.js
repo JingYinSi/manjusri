@@ -25,9 +25,10 @@ module.exports = {
                 handler(msg.ToUserName, function (err, user) {
 
                 });
+            }else{
+                res.reply('');
             }
         }
-        res.reply('');
     }
 
     /*receive: function (req, res) {
