@@ -1,42 +1,32 @@
-var sha1 = require('sha1'),
-    XML = require('pixl-xml'),
-    wechat = require('wechat'),
+var Users = require('../modules/users'),
+    welcome = require('../modules/welcome'),
+    //XML = require('pixl-xml'),
+    //wechat = require('wechat'),
     weixin = require('../weixin').weixin;
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
+var msgHandlers = {
+    subscribe: Users.register
+};
+
 module.exports = {
     dealWithMessage: function (req, res, next) {
-        logger.debug('Message from weixin:\n' + JSON.stringify(req.weixin));
-        //res.reply('hehehehe你好');
-        res.reply([
-            {
-                title: '静音文殊禅林',
-                description: '描述静音文殊禅林',
-                picurl: 'http://jingyintemple.top/images/banner.jpg',
-                url: 'http://jingyintemple.top/jingyin/manjusri/index'
-            },
-            {
-                title: '欢迎您关注静音文殊禅林-建寺',
-                description: '描述-建寺',
-                picurl: 'http://jingyintemple.top/images/jiansi.jpg',
-                url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
-            },
-            {
-                title: '欢迎您关注静音文殊禅林-每日一善',
-                description: '描述-每日一善',
-                picurl: 'http://jingyintemple.top/images/jiansi.jpg',
-                url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
-            },
-            {
-                title: '欢迎您关注静音文殊禅林-随喜功德',
-                description: '描述-随喜功德',
-                picurl: 'http://jingyintemple.top/images/jiansi.jpg',
-                url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+        var msg = req.weixin;
+        logger.debug('Message from weixin:\n' + JSON.stringify(msg));
+        if (msg.MsgType === 'event') {
+            var handler = msgHandlers[msg.Event];
+            if (handler) {
+                handler(msg.ToUserName, function (err, user) {
+                    welcome(user, function (err, answer) {
+                        res.reply(answer);
+                    })
+                })
             }
-        ]);
+        }
+        res.reply('');
     }
 
     /*receive: function (req, res) {
