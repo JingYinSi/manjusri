@@ -29,7 +29,6 @@ module.exports = {
             }
         }
     }
-
     /*receive: function (req, res) {
      logger.debug('receive a post request from wechat ....')
      // 微信加密签名
