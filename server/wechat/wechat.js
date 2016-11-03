@@ -1,8 +1,5 @@
 var Users = require('../modules/users'),
-    welcome = require('../modules/welcome'),
-    //XML = require('pixl-xml'),
-    //wechat = require('wechat'),
-    weixin = require('../weixin').weixin;
+    welcome = require('../modules/welcome');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -20,7 +17,7 @@ module.exports = {
             var handler = msgHandlers[msg.Event];
             if (handler) {
                 handler(msg.FromUserName, function (err, user) {
-                    welcome(null, function (err, answer) {
+                    welcome(user, function (err, answer) {
                         res.reply(answer);
                     });
                 });

@@ -402,7 +402,7 @@ describe('静音寺业务系统', function () {
                     var openId = 'bdhbdhfvdfb';
                     var accessToken = '233546457357';
                     var getAccessTokenStub = sinon.stub();
-                    getAccessTokenStub.withArgs(appid, appsecret).callsArgWith(2, null, accessToken);
+                    getAccessTokenStub.callsArgWith(0, null, accessToken);
 
                     var userInfo = {
                         foo:"foo"
@@ -787,7 +787,7 @@ describe('静音寺业务系统', function () {
                         controller = require('../server/wechat/wechat').dealWithMessage;
                         openid = '1234567890';
                         msg = {
-                            ToUserName: openid,
+                            FromUserName: openid,
                             MsgType: 'event',
                             Event: 'subscribe'
                         };
