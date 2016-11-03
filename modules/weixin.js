@@ -39,7 +39,7 @@ module.exports = function (config) {
     }
 
     this.getUserInfoByOpenId = function (openId, callback) {
-        this.getAccessToken(this.appid, this.appsecret, function (err, token) {
+        this.getAccessToken(function (err, token) {
             var url = 'https://api.weixin.qq.com/cgi-bin/user/info?' +
                 'access_token=' + token + '&openid=' + openId + '&lang=zh_CN';
             utils.simpleGetJson(url, function (err, data) {
