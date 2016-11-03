@@ -174,6 +174,88 @@ describe('静音寺业务系统', function () {
                     done();
                 });
 
+                describe('微信用户注册', function(done){
+                    var openid, weixinUser;
+                    var name, img, city, province;
+                    beforeEach(function (done) {
+                        openid = 'wgefwevwhebhvirvheverv';
+                        name =  "Band";
+                        img = "http://wx.qlogo.cn/mmopen/g3MonUZtNH84eavHiaiceqxibJxCfHe/0";
+                        city = "广州";
+                        province = "广东";
+
+                        weixinUser = {
+                            "subscribe": 1,
+                            "openid": openid,
+                            "nickname": name,
+                            "sex": 1,
+                            "language": "zh_CN",
+                            "city": city,
+                            "province": province,
+                            "country": "中国",
+                            "headimgurl": img,
+                            "subscribe_time": 1382694957,
+                            "unionid": " o6_bmasdasdsad6_2sgVt7hMZOPfL",
+                            "remark": "",
+                            "groupid": 0,
+                            "tagid_list": [128, 2]
+                        }
+                        done();
+                    });
+
+                    it('新用户注册', function (done) {
+                        User.registerWeixinUser(weixinUser, function (err, user) {
+                            expect(err).be.null;
+                            expect(user._id).exist;
+                            expect(user.name).eql(name);
+                            expect(user.img).eql(img);
+                            expect(user.openid).eql(openid);
+                            expect(user.subscribe).eql(1382694957);
+                            expect(user.city).eql(city);
+                            expect(user.province).eql(province);
+                            expect(user.sex).eql(1);
+                            done();
+                        });
+                    });
+
+                    it('用户已注册，则更新该用户信息', function (done) {
+                        User.registerWeixinUser(weixinUser, function (err, user) {
+                            weixinUser.nickname = 'foo';
+                            weixinUser.headimgurl = 'foo img';
+                            weixinUser.subscribe_time = 2334;
+                            weixinUser.city = 'nj';
+                            weixinUser.province = 'js';
+                            weixinUser.sex = 2;
+
+                            User.registerWeixinUser(weixinUser, function (err, updatedUser) {
+                                expect(err).be.null;
+                                expect(user._id).eql(updatedUser._id);
+                                expect(updatedUser.name).eql('foo');
+                                expect(updatedUser.img).eql('foo img');
+                                expect(user.openid).eql(updatedUser.openid);
+                                expect(updatedUser.subscribe).eql(2334);
+                                expect(updatedUser.city).eql('nj');
+                                expect(updatedUser.province).eql('js');
+                                expect(updatedUser.sex).eql(2);
+                                done();
+                            });
+                        });
+                    });
+
+                    it('用户已注册，但用户信息未变', function (done) {
+                        User.registerWeixinUser(weixinUser, function (err, user) {
+                            var userInfo = {
+                                openid : weixinUser.openid
+                            }
+                            User.registerWeixinUser(userInfo, function (err, updatedUser) {
+                                expect(err).be.null;
+                                expect(user._doc).eql(updatedUser._doc);
+                                done();
+                            });
+                        });
+                    });
+                });
+
                 it('创建用户', function (done) {
                     var doc = {
                         name: 'user name',
@@ -201,6 +283,30 @@ describe('静音寺业务系统', function () {
 
 
     describe('技术', function () {
+        describe('utils', function () {
+            it('直接从GET请求中获取JSON对象', function () {
+                var data = {
+                    foo: 'foo',
+                    fee: 'fee'
+                }
+                var url = 'http://something';
+                var buffer = new Buffer(JSON.stringify(data));
+                var simpleGetStub = sinon.stub();
+                simpleGetStub.withArgs(url).callsArgWith(1, null, null, buffer);
+                stubs['simple-get'] = {concat: simpleGetStub}
+
+                utils = proxyquire('../modules/utils', stubs);
+                var callbackIsCalled = false;
+                utils.simpleGetJson(url, function (err, obj) {
+                    callbackIsCalled = true;
+                    expect(err).to.be.null;
+                    expect(obj).eql(data);
+                });
+                expect(callbackIsCalled).to.be.true;
+
+            })    
+        });
+        
         describe('Response Wrapper', function () {
             var wrapper, resStub;
             var endSpy, statusSpy, renderSpy;
@@ -244,7 +350,7 @@ describe('静音寺业务系统', function () {
 
     describe('微信公众号', function () {
         describe('微信接口', function () {
-            var weixinModule, stubs, weixinConfig;
+            var weixinModule, weixinConfig;
             var apiBaseURL, appid, appsecret, oauth2BaseURL;
             var mch_id, mch_key;
             var weixin;
@@ -265,9 +371,59 @@ describe('静音寺业务系统', function () {
                     mchId: mch_id,
                     mchKey: mch_key
                 };
-                stubs = {};
                 weixinModule = require('../modules/weixin');
                 weixin = weixinModule(weixinConfig);
+            });
+
+            describe('获得AccessToken', function () {
+                //TODO:实现accesstoken的缓存
+                it('正确获得', function () {
+                    var accessToken = '233546457357';
+                    var data = {access_token:accessToken};
+                    var expectedUrlToGetAccessToken = 'https://api.weixin.qq.com/cgi-bin/token?' +
+                        'grant_type=client_credential&appid=' + appid + '&secret=' + appsecret;
+                    var simpleGetStub = sinon.stub();
+                    simpleGetStub.withArgs(expectedUrlToGetAccessToken).callsArgWith(1, null,data);
+                    stubs['../modules/utils'] = {simpleGetJson: simpleGetStub}
+
+                    weixin = proxyquire('../modules/weixin', stubs)(weixinConfig);
+                    var callbackIsCalled = false;
+                    weixin.getAccessToken(function (err, token) {
+                        callbackIsCalled = true;
+                        expect(err).to.be.null;
+                        expect(token).eql(accessToken);
+                    });
+                    expect(callbackIsCalled).to.be.true;
+                })
+            });
+
+            describe('获得特定OpenId的用户信息', function () {
+                it('获得用户信息', function () {
+                    var openId = 'bdhbdhfvdfb';
+                    var accessToken = '233546457357';
+                    var getAccessTokenStub = sinon.stub();
+                    getAccessTokenStub.withArgs(appid, appsecret).callsArgWith(2, null, accessToken);
+
+                    var userInfo = {
+                        foo:"foo"
+                    };
+                    var expectedUrlToGetUserInfo = 'https://api.weixin.qq.com/cgi-bin/user/info?' +
+                        'access_token=' + accessToken + '&openid=' + openId + '&lang=zh_CN';
+                    var simpleGetStub = sinon.stub();
+                    simpleGetStub.withArgs(expectedUrlToGetUserInfo).callsArgWith(1, null, userInfo);
+                    stubs['../modules/utils'] = {simpleGetJson: simpleGetStub}
+
+                    weixin = proxyquire('../modules/weixin', stubs)(weixinConfig);
+                    weixin.getAccessToken = getAccessTokenStub;
+
+                    var callbackIsCalled = false;
+                    weixin.getUserInfoByOpenId(openId, function (err, info) {
+                        callbackIsCalled = true;
+                        expect(err).to.be.null;
+                        expect(info).eql(userInfo);
+                    });
+                    expect(callbackIsCalled).to.be.true;
+                })
             });
 
             it("获得OpenId", function () {
@@ -491,7 +647,6 @@ describe('静音寺业务系统', function () {
                     var manjusri = require('../server/wechat/manjusri'),
                         accuvirtue = require('../server/wechat/accvirtue'),
                         suixi = require('../server/wechat/suixi'),
-                        wechat = require('../server/wechat/wechat'),
                         payment = require('../server/wechat/payment'),
                         part = require('../server/rest/part'),
                         routes = require('../server/routes');
@@ -520,7 +675,6 @@ describe('静音寺业务系统', function () {
 
                     routeStub.withArgs('/jingyin/biz/parts/index').returns(handlerStub);
 
-                    getSpy.withArgs(wechat.hook).returns(handlerStub);
                     getSpy.withArgs(accuvirtue.dailyVirtue).returns(handlerStub);
                     getSpy.withArgs(accuvirtue.index).returns(handlerStub);
                     getSpy.withArgs(suixi.index).returns(handlerStub);
@@ -627,21 +781,46 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('响应微信消息', function () {
+                    var openid, msg, msgReplySpy;
+
                     beforeEach(function () {
-                        controller = require('../server/wechat/wechat');
+                        controller = require('../server/wechat/wechat').dealWithMessage;
+                        openid = '1234567890';
+                        msg = {
+                            ToUserName: openid,
+                            MsgType: 'event',
+                            Event: 'subscribe'
+                        };
+                        reqStub.weixin = msg;
+
+                        msgReplySpy = sinon.spy();
+                        resStub.reply = msgReplySpy;
+                    });
+
+                    it('对于无需处理的消息，直接应答空串', function () {
+                        msg.Event = 'foo';
+                        controller(reqStub, resStub);
+                        expect(msgReplySpy).calledWith('');
                     });
 
                     describe('响应关注消息', function () {
-                        var msg = {anyfoo: 'foo'};
-                        var handler = sinon.stub();
-                        handler.withArgs(msg).callsArgWith(1, null, '');
-                        /*stubs['../weixin'] = {
-                            weixin: {
-                                attention: handler
-                            }
-                        };
-                        controller = proxyquire('../server/wechat/wechat', stubs).receive;*/
+                        it('应答欢迎信息', function () {
+                            var user = {name: 'foo'}
+                            var registerUserStub = sinon.stub();
+                            registerUserStub.withArgs(openid).callsArgWith(1, null, user);
+                            stubs['../modules/users'] = {
+                                register: registerUserStub
+                            };
 
+                            var answer = {foo: 'foo'};
+                            var welcomeStub = sinon.stub();
+                            welcomeStub.withArgs(user).callsArgWith(1, null, answer);
+                            stubs['../modules/welcome'] = welcomeStub;
+
+                            controller = proxyquire('../server/wechat/wechat', stubs).dealWithMessage;
+                            controller(reqStub, resStub);
+                            expect(msgReplySpy).calledWith(answer);
+                        });
                     });
                 });
 
@@ -963,7 +1142,83 @@ describe('静音寺业务系统', function () {
                 })
 
             });
-        })
+        });
+
+        describe('服务端业务逻辑', function () {
+            describe('欢迎图文信息', function () {
+                it('可以产生这样的欢迎图文信息', function () {
+                    var welcomeMsg = [
+                        {
+                            title: '静音文殊禅林',
+                            description: '描述静音文殊禅林',
+                            picurl: 'http://jingyintemple.top/images/banner.jpg',
+                            url: 'http://jingyintemple.top/jingyin/manjusri/index'
+                        },
+                        {
+                            title: '欢迎您关注静音文殊禅林-建寺',
+                            description: '描述-建寺',
+                            picurl: 'http://jingyintemple.top/images/jiansi.jpg',
+                            url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+                        },
+                        {
+                            title: '欢迎您关注静音文殊禅林-每日一善',
+                            description: '描述-每日一善',
+                            picurl: 'http://jingyintemple.top/images/jiansi.jpg',
+                            url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+                        },
+                        {
+                            title: '欢迎您关注静音文殊禅林-随喜功德',
+                            description: '描述-随喜功德',
+                            picurl: 'http://jingyintemple.top/images/jiansi.jpg',
+                            url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+                        }
+                    ];
+                    var welcome = require('../server/modules/welcome');
+                    welcome(null, function (err, msg) {
+                        expect(err).to.be.null;
+                        expect(msg).eql(welcomeMsg);
+                    });
+                });
+            });
+
+            describe('用户注册', function () {
+                it('成功注册', function () {
+                    var openId = 'o6_bmjrPTlm6_2sgVt7hMZOPfL2M';
+                    var userInfoToRegister = {
+                        "subscribe": 1,
+                        "openid": openId,
+                        "nickname": "Band",
+                        "sex": 1,
+                        "language": "zh_CN",
+                        "city": "广州",
+                        "province": "广东",
+                        "country": "中国",
+                        "headimgurl": "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0",
+                        "subscribe_time": 1382694957,
+                        "unionid": " o6_bmasdasdsad6_2sgVt7hMZOPfL",
+                        "remark": "",
+                        "groupid": 0
+                    }
+                    var expectedUser = {name: 'foo'}
+                    var getUserInfoStub = sinon.stub();
+                    getUserInfoStub.withArgs(openId).callsArgWith(1, null, userInfoToRegister);
+                    stubs['../weixin'] = {
+                        weixin: {getUserInfoByOpenId: getUserInfoStub}
+                    };
+
+                    var registerUserStub = sinon.stub();
+                    registerUserStub.withArgs(userInfoToRegister).callsArgWith(1, null, expectedUser);
+                    stubs['../wechat/models/user'] = {registerWeixinUser: registerUserStub};
+
+                    var users = proxyquire('../server/modules/users', stubs);
+                    users.register(openId, function (err, user) {
+                        expect(err).to.be.null;
+                        expect(user).eql(expectedUser);
+                    });
+
+                });
+            });
+        });
     })
 
 

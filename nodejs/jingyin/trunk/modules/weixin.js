@@ -1,7 +1,8 @@
 /**
  * Created by sony on 2016/10/12.
  */
-var simpleget = require('simple-get'),
+var simpleget = require('simple-get'), //TODO:待实际运行成功后再将所有对simpleget的调用转向utils.simpleGetJson
+    utils = require('../modules/utils'),
     js2xmlparser = require('js2xmlparser'),
     XML = require('pixl-xml'),
     request = require('request'),
@@ -29,8 +30,22 @@ module.exports = function (config) {
         return parseInt(new Date().getTime() / 1000) + '';
     }
 
-    this.dealWithMessage = function (msg, callback) {
-        callback();
+    this.getAccessToken = function (callback) {
+        var url =  'https://api.weixin.qq.com/cgi-bin/token?' +
+            'grant_type=client_credential&appid=' + this.appid + '&secret=' + this.appsecret;
+        utils.simpleGetJson(url, function (err, data) {
+            callback(null, data.access_token);
+        });
+    }
+
+    this.getUserInfoByOpenId = function (openId, callback) {
+        this.getAccessToken(this.appid, this.appsecret, function (err, token) {
+            var url = 'https://api.weixin.qq.com/cgi-bin/user/info?' +
+                'access_token=' + token + '&openid=' + openId + '&lang=zh_CN';
+            utils.simpleGetJson(url, function (err, data) {
+                callback(null, data);
+            });
+        });
     }
 
     this.getOpenId = function (code, callback) {
