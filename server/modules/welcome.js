@@ -28,8 +28,6 @@ var welcomeMsg = [
     }
 ];
 var welcome = function(user, callback){
-    callback(null, {
-        msg: welcomeMsg
-    });
+    callback(null, welcomeMsg);
 }
 module.exports = welcome;
