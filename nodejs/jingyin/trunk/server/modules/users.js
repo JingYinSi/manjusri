@@ -9,6 +9,7 @@ var logger = log4js.getLogger();
 
 function Users() {
 }
+
 Users.prototype.register = function (openId, callback) {
     weixin.getUserInfoByOpenId(openId, function (err, userInfo) {
         logger.debug('User info from weixin:\n' + JSON.stringify(userInfo));

@@ -19,7 +19,7 @@ module.exports = {
         if (msg.MsgType === 'event') {
             var handler = msgHandlers[msg.Event];
             if (handler) {
-                handler(msg.ToUserName, function (err, user) {
+                handler(msg.FromUserName, function (err, user) {
                     welcome(null, function (err, answer) {
                         res.reply(answer);
                     });
