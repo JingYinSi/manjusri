@@ -22,8 +22,8 @@ module.exports = {
                 handler(msg.ToUserName, function (err, user) {
                     welcome(user, function (err, answer) {
                         res.reply(answer.msg);
-                    })
-                })
+                    });
+                });
             }
         }
         res.reply('');
