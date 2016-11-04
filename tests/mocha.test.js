@@ -326,7 +326,7 @@ describe('静音寺业务系统', function () {
                         delete trans.amount;
                         request.post('/prepay')
                             .send(trans)
-                            .expect(400, done);
+                            .expect(400, 'amount is undefined', done);
                     });
 
                     it('金额不合法，则应响应客户端错400', function (done) {
@@ -334,7 +334,7 @@ describe('静音寺业务系统', function () {
                         request
                             .post('/prepay')
                             .send(trans)
-                            .expect(400, done);
+                            .expect(400, 'amount is invalid', done);
                     });
                 });
             });
