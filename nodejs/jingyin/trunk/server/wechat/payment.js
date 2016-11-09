@@ -42,6 +42,11 @@ module.exports = {
                 }
 
                 var name = virtue.subject;
+                logger.debug('------------------------going to call weixin prepay --------------------------------')
+                logger.debug('trader:' + trader);
+                logger.debug('transId:' + transId);
+                logger.debug('name:' + name);
+                logger.debug('amount:' + virtue.amount*100);
                 weixin.prePay(trader, transId, name, virtue.amount*100, function (err, payData) {
                     if(err){
                         resWrap.setStatus(502);

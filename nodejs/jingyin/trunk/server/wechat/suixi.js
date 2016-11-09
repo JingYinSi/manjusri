@@ -16,6 +16,7 @@ module.exports = {
     trans: function (req, res) {
         var id = req.params.partId;
         Part.findById(id, function (err, part) {
+
             res.render('wechat/trans', {
                 title: '建寺-' + part.name,
                 part: part
