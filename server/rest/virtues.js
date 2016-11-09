@@ -2,7 +2,7 @@
  * Created by clx on 2016/10/27.
  */
 var virtueModel = require('../wechat/models/virtue'),
-    userModel = require('../wechat/models.user'),
+    userModel = require('../wechat/models/user'),
     linkages = require('../rests'),
     weixin = require('../weixin');
 
