@@ -38,7 +38,7 @@ module.exports = function (router) {
 
 
     /*----------------------------restful--------------------------------------------------*/
-    router.route('/jingyin/rest/virtues/prepay')
+    router.route('/jingyin/rest/virtue/prepay')
         .post(virtues.prepay);
     router.route('/jingyin/rest/virtues/:id')
         .put(virtues.paid);
