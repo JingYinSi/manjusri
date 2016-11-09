@@ -1,6 +1,19 @@
 /**
  * Created by zhangjian on 16/10/9.
  */
+function parseLinksInHeader(linksInHeader) {
+    var linkages = {}
+    var links = linksInHeader.split(',');
+    links.forEach(function (str) {
+        var segs = str.split(';');
+        var linkStr = $.trim(segs[0]);
+        var relStr = $.trim(segs[1]);
+        var rel = relStr.substr(5, relStr.length - 6);
+        var link = linkStr.substr(1, linkStr.length - 2);
+        linkages[rel] = link;
+    });
+    return linkages;
+}
 
 $(function() {
     $('.nav .nav_click').click(function () {
