@@ -6,7 +6,7 @@ function validateAmount(val) {
 }
 
 var VirtueSchema = new Schema({
-    trader: {type: String},
+    lord: {type: Schema.Types.ObjectId, ref: 'User'},
     details: {
         subject: {type: String},
         num: {type: Number},
@@ -39,7 +39,15 @@ VirtueSchema.statics.place = function (obj, callback) {
     var Virtue = mongoose.model('Virtue', VirtueSchema);
     var model = new Virtue(data);
     model.save(callback);
-    ;
+};
+
+VirtueSchema.statics.pay = function (transId, userId, callback) {
+    var Virtue = mongoose.model('Virtue', VirtueSchema);
+    Virtue.findById(transId, function (err, virtue) {
+        virtue.lord = userId;
+        virtue.state = 'payed';
+        virtue.save(callback);
+    });
 };
 
 VirtueSchema.statics.havePayed = function (transId, callback) {

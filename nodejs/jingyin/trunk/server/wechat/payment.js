@@ -33,19 +33,18 @@ module.exports = {
                 }
 
                 var name = virtue.subject.name;
-                logger.debug('------------------------going to call weixin prepay --------------------------------')
-                logger.debug('trader:' + trader);
-                logger.debug('transId:' + transId);
-                logger.debug('name:' + name);
-                logger.debug('amount:' + virtue.amount*100);
                 weixin.prePay(trader, transId, name, virtue.amount*100, function (err, payData) {
                     if(err){
                         resWrap.setStatus(502);
                         return;
                     }
                     logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
-                    resWrap.render('wechat/payment', payData);
-                })
+                    resWrap.render('wechat/payment', {
+                        openId: trader,
+                        virtue: transId,
+                        payData: payData
+                    });
+                });
             });
         });
     },
@@ -57,6 +56,7 @@ module.exports = {
         });
         req.on("end", function () {
             var payment = weixin.parsePaymentNotification(body);
+            logger.debug('The result of payment from weixin:\n' + JSON.stringify(payment));
             if(payment.pass()){
                 logger.debug('success of payment ...');
                 Virtue.havePayed(payment.getOutTradeNo(), function () {
