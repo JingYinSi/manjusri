@@ -72,10 +72,8 @@ module.exports = function (config) {
         var me = this;
         var prepay = {
             out_trade_no: transId,
-            //body: transName,
-            //detail: transName,
-            body: 'aaa',
-            detail: 'aaa',
+            body: transName,
+            detail: transName,
             notify_url: "http://jingyintemple.top/jingyin/manjusri/pay/notify",
             openid: openId,
             spbill_create_ip: "121.41.93.210",

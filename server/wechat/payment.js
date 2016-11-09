@@ -41,7 +41,7 @@ module.exports = {
                     return;
                 }
 
-                var name = virtue.subject;
+                var name = virtue.subject.toString();
                 logger.debug('------------------------going to call weixin prepay --------------------------------')
                 logger.debug('trader:' + trader);
                 logger.debug('transId:' + transId);
