@@ -78,7 +78,7 @@ module.exports = function (config) {
             openid: openId,
             spbill_create_ip: "121.41.93.210",
             total_fee: amount,
-            attach: "静音",
+            attach: "jingyin",
             appid: me.appid,
             mch_id: me.mch_id,
             nonce_str: me.createNonceStr(),
