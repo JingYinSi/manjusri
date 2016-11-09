@@ -1,7 +1,13 @@
 <header class='demos-header'>
     <!--<h1 class="demos-title">支付订单生成中...</h1>-->
 </header>
-
+<body>
+<div hidden>
+    <span id="virtue">{{virtue}}</span>
+    <span id="openId">{{openId}}</span>
+    <span id="paymentNo">{{payData.prepay_id}}</span>
+</div>
+</body>
 <script type="text/javascript">
     function onBridgeReady() {
         WeixinJSBridge.invoke(
@@ -18,12 +24,12 @@
                     if (result.indexOf("ok") != -1) {
                         $.ajax({
                             type: 'PUT',
-                            url:'/jingyin/rest/virtues/{{virtue}}',
+                            url: '/jingyin/rest/virtues/' + $('#virtue').text(),
                             data: {
-                                "openId": "{{openId}}",
-                                "paymentNo": "{{payData.prepay_id}}
+                                "openId": $('#openId').text(),
+                                "paymentNo": $('#paymentNo').text()
                             },
-                            success: function(data, textStatus, request){
+                            success: function (data, textStatus, request) {
                                 window.location = "/jingyin/manjusri/pay/notify?virtue=" + data.id;
                                 return;
                             }
