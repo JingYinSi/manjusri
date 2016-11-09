@@ -21,19 +21,10 @@ module.exports = {
                 resWrap.setStatus(400);
                 return;
             }
-            /*var trans = {
-                trader: trader,
-                details:{
-                    subject: req.query.subject,
-                    num: req.query.num,
-                    price: req.query.price
-                },
-                amount: req.query.amount,
-                giving: req.query.giving
-            };*/
-
             var transId = req.query.virtue;
-            Virtue.findById(transId, function (err, virtue) {
+            Virtue.findById(transId)
+                .populate('subject', 'name')
+                exec(function (err, virtue) {
                 if (err) {
                     logger.error(err);
                     var code = (err.errors) ? 400 : 502;
@@ -41,7 +32,7 @@ module.exports = {
                     return;
                 }
 
-                var name = virtue.subject.toString();
+                var name = virtue.subject.name;
                 logger.debug('------------------------going to call weixin prepay --------------------------------')
                 logger.debug('trader:' + trader);
                 logger.debug('transId:' + transId);

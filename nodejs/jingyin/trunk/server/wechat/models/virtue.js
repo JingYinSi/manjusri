@@ -12,7 +12,7 @@ var VirtueSchema = new Schema({
         num: {type: Number},
         price: {type: Number, validate: [validateAmount, '价格应大于零']}
     },
-    subject: {type: Schema.Types.ObjectId},
+    subject: {type: Schema.Types.ObjectId, ref: 'Part'},
     num: {type: Number},
     price: {type: Number, validate: [validateAmount, '价格应大于零']},
     amount: {type: Number, validate: [validateAmount, '金额应大于零']},
