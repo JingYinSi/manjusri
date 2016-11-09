@@ -5,14 +5,15 @@
 <script type="text/javascript">
     function onBridgeReady() {
         WeixinJSBridge.invoke(
-                'getBrandWCPayRequest', {
-                    "appId": "{{appId}}",     //公众号名称，由商户传入
-                    "timeStamp": "{{timeStamp}}",         //时间戳，自1970年以来的秒数
-                    "nonceStr": "{{nonceStr}}", //随机串
-                    "package": "prepay_id={{prepay_id}}",
-                    "signType": "{{signType}}",         //微信签名方式：
-                    "paySign": "{{paySign}}" //微信签名
-                },
+                /*'getBrandWCPayRequest', {
+                    "appId": //公众号名称，由商户传入
+                    "timeStamp": //时间戳，自1970年以来的秒数
+                    "nonceStr": , //随机串
+                    "package": "prepay_id",
+                    "signType": "",         //微信签名方式：
+                    "paySign": " //微信签名
+                },*/
+                'getBrandWCPayRequest', {{payData}},
                 function (res) {
                     var result = res.err_msg; //result = 'get_brand_wcpay_request:ok
 
