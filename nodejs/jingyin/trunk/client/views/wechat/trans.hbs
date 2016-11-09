@@ -56,21 +56,14 @@
             url:url,
             data: dataToPost,
             success: function(data, textStatus, request){
-
                 var linkages = parseLinksInHeader(request.getResponseHeader('link'));
                 window.location = linkages.payment;
+                return;
             },
             error: function (request, textStatus, errorThrown) {
                 alert(textStatus);
             }
         });
-        $.post(url, dataToPost)
-                .done(function (data) {
-                    if (!data) {
-                        return;
-                    }
-                    window.location = data;
-                });
     });
 </script>
 </body>
