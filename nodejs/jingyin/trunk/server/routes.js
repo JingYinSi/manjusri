@@ -40,6 +40,8 @@ module.exports = function (router) {
     /*----------------------------restful--------------------------------------------------*/
     router.route('/jingyin/rest/virtues/prepay')
         .post(virtues.prepay);
+    router.route('/jingyin/rest/virtues/:id')
+        .put(virtues.paid);
 
     /*----------------------------old version ------------------------------------------  */
 

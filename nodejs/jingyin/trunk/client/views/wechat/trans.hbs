@@ -59,10 +59,10 @@
                 var linkages = parseLinksInHeader(request.getResponseHeader('link'));
                 window.location = linkages.pay;
                 return;
-            },
+            }/*,
             error: function (request, textStatus, errorThrown) {
                 alert(textStatus);
-            }
+            }*/
         });
     });
 </script>
