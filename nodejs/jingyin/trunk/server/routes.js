@@ -8,6 +8,8 @@ const manjusri = require('./wechat/manjusri'),
     part = require('./biz/part'),
     payRoute = require('./payurl').payRoute;
 
+const virtues = require('./rest/virtues');
+
 module.exports = function (router) {
     router.route('/jingyin/manjusri/index')
         .get(manjusri.home);
@@ -35,6 +37,9 @@ module.exports = function (router) {
         .post(payment.payNotify);
 
 
+    /*----------------------------restful--------------------------------------------------*/
+    router.route('/jingyin/rest/virtues/prepay')
+        .post(virtues.prepay);
 
     /*----------------------------old version ------------------------------------------  */
 
