@@ -22,6 +22,7 @@
                 function (res) {
                     var result = res.err_msg; //result = 'get_brand_wcpay_request:ok
                     if (result.indexOf("ok") != -1) {
+                        alert(JSON.stringify(result));
                         $.ajax({
                             type: 'PUT',
                             url: '/jingyin/rest/virtues/' + $('#virtue').text(),
@@ -30,6 +31,7 @@
                                 "paymentNo": $('#paymentNo').text()
                             },
                             success: function (data, textStatus, request) {
+                                alert(JSON.stringify(data));
                                 window.location = "/jingyin/manjusri/pay/notify?virtue=" + data.id;
                                 return;
                             }
