@@ -2,6 +2,7 @@
  * Created by clx on 2016/10/27.
  */
 var virtueModel = require('../wechat/models/virtue'),
+    userModel = require('../wechat/models.user'),
     linkages = require('../rests'),
     weixin = require('../weixin');
 
@@ -45,6 +46,21 @@ Virtues.prototype.prepay = function (req, res) {
         res.links(links);
         res.header('Location', selfUrl);
         res.status(201).json(obj);
+    });
+};
+
+Virtues.prototype.paid = function (req, res) {
+    var data = req.body;
+
+    userModel.findByOpenId(data.openId, function (err, user) {
+        virtueModel.pay(req.params.id, user.id, data.paymentNo, function (err, virtue) {
+            var selfUrl = linkages.getLink('virtue', {id: virtue.id});
+            var links = {
+                self: selfUrl,
+            }
+            res.links(links);
+            res.status(200).json(virtue);
+        });
     });
 };
 

@@ -15,10 +15,19 @@
                 },
                 function (res) {
                     var result = res.err_msg; //result = 'get_brand_wcpay_request:ok
-
                     if (result.indexOf("ok") != -1) {
-
-                        window.location = "/jingyin/manjusri/pay/notify";
+                        $.ajax({
+                            type: 'PUT',
+                            url:'/jingyin/rest/virtues/{{virtue}}',
+                            data: {
+                                "openId": "{{openId}}",
+                                "paymentNo": "{{payData.prepay_id}}
+                            },
+                            success: function(data, textStatus, request){
+                                window.location = "/jingyin/manjusri/pay/notify?virtue=" + data.id;
+                                return;
+                            }
+                        });
                     }
                     else if (result.indexOf("cancel") != -1) {
                         alert("支付被终止!");
