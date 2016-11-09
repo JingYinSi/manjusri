@@ -29,6 +29,8 @@ Virtues.prototype.prepay = function (req, res) {
     var trans = {
         subject: subject,
         amount: Math.round(obj.amount * 100) / 100,
+        price: obj.price,
+        num: obj.num
     }
     if (!trans.amount) {
         return setStatus(res, 400, "amount is undefined");
@@ -54,11 +56,8 @@ Virtues.prototype.prepay = function (req, res) {
 
 Virtues.prototype.paid = function (req, res) {
     var data = req.body;
-    logger.debug('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
     userModel.findOne({openid: data.openId}, function (err, user) {
-        logger.debug('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
         virtueModel.pay(req.params.id, user.id, data.paymentNo, function (err, virtue) {
-            logger.debug('cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccca');
             var selfUrl = linkages.getLink('virtue', {id: virtue.id});
             var links = {
                 self: selfUrl,
