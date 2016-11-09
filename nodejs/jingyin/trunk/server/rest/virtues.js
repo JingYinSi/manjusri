@@ -2,7 +2,8 @@
  * Created by clx on 2016/10/27.
  */
 var virtueModel = require('../wechat/models/virtue'),
-    linkages = require('../rests');
+    linkages = require('../rests'),
+    weixin = require('../weixin');
 
 function setStatus(response, code, errMsg) {
     response.status(code);
@@ -35,6 +36,7 @@ Virtues.prototype.prepay = function (req, res) {
     virtueModel.place(trans, function (err, obj) {
         var selfUrl = linkages.getLink('virtue', {id: obj.id});
         var payUrl = linkages.getLink('payment', {virtue: obj.id});
+        payUrl = weixin.weixin.wrapRedirectURLByOath2Way(payUrl);
         var links = {
             self: selfUrl,
             pay: payUrl

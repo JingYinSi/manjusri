@@ -21,7 +21,7 @@ module.exports = {
                 resWrap.setStatus(400);
                 return;
             }
-            var trans = {
+            /*var trans = {
                 trader: trader,
                 details:{
                     subject: req.query.subject,
@@ -30,18 +30,19 @@ module.exports = {
                 },
                 amount: req.query.amount,
                 giving: req.query.giving
-            };
+            };*/
 
-            Virtue.placeVirtue(trans, function (err, virtue) {
+            var transId = req.query.virtue;
+            Virtue.findById(transId, function (err, virtue) {
                 if (err) {
                     logger.error(err);
                     var code = (err.errors) ? 400 : 502;
                     resWrap.setStatus(code);
                     return;
                 }
-                var transId = virtue._id.toString();
-                var name = req.query.name || trans.details.subject;
-                weixin.prePay(trader, transId, name, trans.amount*100, function (err, payData) {
+
+                var name = virtue.subject;
+                weixin.prePay(trader, transId, name, virtue.amount*100, function (err, payData) {
                     if(err){
                         resWrap.setStatus(502);
                         return;
