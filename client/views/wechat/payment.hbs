@@ -11,6 +11,12 @@
 <script type="text/javascript">
     function onBridgeReady() {
         alert('wait');
+        var url = '/jingyin/rest/virtues/' + $('#virtue').text();
+        alert('url:' + url);
+        var openid = $('#openId').text();
+        alert('openid:' + openid);
+        var paymentNo = $('#paymentNo').text();
+        alert('paymentNo:' + paymentNo);
         WeixinJSBridge.invoke(
                 'getBrandWCPayRequest', {
                     "appId": "{{payData.appId}}",     //公众号名称，由商户传入
@@ -24,12 +30,7 @@
                     var result = res.err_msg; //result = 'get_brand_wcpay_request:ok
                     if (result.indexOf("ok") != -1) {
                         alert(JSON.stringify(result));
-                        var url = '/jingyin/rest/virtues/' + $('#virtue').text();
-                        alert('url:' + url);
-                        var openid = $('#openId').text();
-                        alert('openid:' + openid);
-                        var paymentNo = $('#paymentNo').text();
-                        alert('paymentNo:' + paymentNo);
+
                         $.ajax({
                             type: 'PUT',
                             url: url,
