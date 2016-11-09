@@ -86,7 +86,7 @@ module.exports = function (config) {
         };
         prepay.sign = this.signMD5(prepay, me.mch_key);
         //TODO:如何避免由于transName中包含不允许出现在XML中的字符而导致异常？
-        logger.debug(JSON.stringify(prepay));
+        logger.debug('the content to be parse by js2xmlparser:\n' + JSON.stringify(prepay));
         return js2xmlparser.parse('xml', prepay);
     }
 
