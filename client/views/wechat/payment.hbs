@@ -2,7 +2,7 @@
     <!--<h1 class="demos-title">支付订单生成中...</h1>-->
 </header>
 <body>
-<div hidden>
+<div>
     <span id="virtue">{{virtue}}</span>
     <span id="openId">{{openId}}</span>
     <span id="paymentNo">{{payData.prepay_id}}</span>
@@ -10,6 +10,7 @@
 </body>
 <script type="text/javascript">
     function onBridgeReady() {
+        alert('wait');
         WeixinJSBridge.invoke(
                 'getBrandWCPayRequest', {
                     "appId": "{{payData.appId}}",     //公众号名称，由商户传入
