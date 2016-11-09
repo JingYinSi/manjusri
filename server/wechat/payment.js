@@ -24,7 +24,7 @@ module.exports = {
             var transId = req.query.virtue;
             Virtue.findById(transId)
                 .populate('subject', 'name')
-                exec(function (err, virtue) {
+                .exec(function (err, virtue) {
                 if (err) {
                     logger.error(err);
                     var code = (err.errors) ? 400 : 502;
