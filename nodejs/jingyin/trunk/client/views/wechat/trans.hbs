@@ -57,8 +57,8 @@
             data: dataToPost,
             success: function(data, textStatus, request){
                 var linkages = parseLinksInHeader(request.getResponseHeader('link'));
-                alert(JSON.stringify(linkages));
-                window.location = linkages.payment;
+                alert(linkages.pay);
+                window.location = linkages.pay;
                 return;
             },
             error: function (request, textStatus, errorThrown) {

@@ -36,7 +36,7 @@ ResourceRegistry.prototype.getLink = function (resourceId, params) {
     }
     if(resourceId === 'virtue')
         return '/jingyin/rest/virtues/' + params.id;
-    if(resourceId === 'payment')
+    if(resourceId === 'pay')
         return 'http://jingyintemple.top/jingyin/manjusri/pay/confirm?virtue=' + params.virtue;
 }
 
