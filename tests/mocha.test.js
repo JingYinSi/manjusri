@@ -2,6 +2,7 @@
  * Created by sony on 2016/9/26.
  */
 var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
     XML = require('pixl-xml'),
     js2xmlparser = require('js2xmlparser'),
     proxyquire = require('proxyquire');
@@ -39,24 +40,6 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('创建交易', function () {
-                    it('未定义交易者trader', function (done) {
-                        delete trans.trader;
-                        Virtue.placeVirtue(trans, function (err, virtue) {
-                            expect(err.errors['trader'].message).to.be.eql('Path `trader` is required.');
-                            expect(virtue).not.exist;
-                            done();
-                        });
-                    });
-
-                    it('未定义交易类型subject', function (done) {
-                        delete trans.details.subject;
-                        Virtue.placeVirtue(trans, function (err, virtue) {
-                            expect(err.errors['details.subject'].message).to.be.eql('Path `details.subject` is required.');
-                            expect(virtue).not.exist;
-                            done();
-                        });
-                    });
-
                     it('金额应大于零', function (done) {
                         trans.amount = 0;
                         Virtue.placeVirtue(trans, function (err, virtue) {
@@ -85,6 +68,32 @@ describe('静音寺业务系统', function () {
                             expect(virtue.timestamp).to.be.a('date');
                             done();
                         })
+                    });
+
+                    it('预置一笔捐助', function (done) {
+                        var partName = 'foo part';
+                        var Part = require('../server/wechat/models/part');
+                        Part.create({name: partName}, function (err, part) {
+                            trans = {
+                                subject: part.id,
+                                amount: 30.69,
+                                price: 10.23,
+                                num: 3,
+                                giving: 'any giving string'
+                            }
+                            Virtue.place(trans, function (err, virtue) {
+                                expect(err).be.null;
+                                expect(virtue.trader).to.be.undefined;
+                                expect(virtue.subject).to.be.eql(part._id);
+                                expect(virtue.price).to.be.eql(trans.price);
+                                expect(virtue.num).to.be.eql(trans.num);
+                                expect(virtue.amount).to.be.eql(trans.amount);
+                                expect(virtue.giving).to.be.eql(trans.giving);
+                                expect(virtue.state).to.be.eql('new');
+                                expect(virtue.timestamp).to.be.a('date');
+                                done();
+                            });
+                        });
                     });
                 });
 
@@ -282,19 +291,21 @@ describe('静音寺业务系统', function () {
 
         describe("Restful服务", function () {
             var request, express, app, bodyParser;
+            var requestAgent;
 
             before(function () {
                 bodyParser = require('body-parser');
-                var requestAgent = require('supertest');
+                requestAgent = require('supertest');
                 express = require('express');
-                app = express();
-                request = requestAgent(app);
-                app.use(bodyParser.json());
+
             });
 
             describe('virtues', function () {
                 var virtues;
                 beforeEach(function () {
+                    app = express();
+                    request = requestAgent(app);
+                    app.use(bodyParser.json());
                     virtues = require('../server/rest/virtues');
                 });
 
@@ -304,7 +315,6 @@ describe('静音寺业务系统', function () {
 
                     beforeEach(function () {
                         prepay = virtues.prepay;
-                        app.post('/prepay', prepay);
 
                         subject = 'foo subject';
                         amount = 45.67;
@@ -316,14 +326,15 @@ describe('静音寺业务系统', function () {
 
                     it('未包含交易对象subject，则应响应客户端错400', function (done) {
                         delete trans.subject;
-                        request
-                            .post('/prepay')
+                        app.post('/prepay', prepay);
+                        request.post('/prepay')
                             .send(trans)
                             .expect(400, 'subject is not defined', done);
                     });
 
                     it('未包含金额，则应响应客户端错400', function (done) {
                         delete trans.amount;
+                        app.post('/prepay', prepay);
                         request.post('/prepay')
                             .send(trans)
                             .expect(400, 'amount is undefined', done);
@@ -331,15 +342,47 @@ describe('静音寺业务系统', function () {
 
                     it('金额不合法，则应响应客户端错400', function (done) {
                         trans.amount = '-24.58';
-                        request
-                            .post('/prepay')
+                        app.post('/prepay', prepay);
+                        request.post('/prepay')
                             .send(trans)
                             .expect(400, 'amount is invalid', done);
                     });
+
+                    it('成功', function (done) {
+                        var id = 1235566;
+                        var obj = {
+                            id: id,
+                            others: 'others'
+                        }
+                        var virtueModelPlaceStub = sinon.stub();
+                        virtueModelPlaceStub.withArgs(trans).callsArgWith(1, null, obj);
+                        stubs['../wechat/models/virtue'] = {place: virtueModelPlaceStub};
+
+                        var self = 'self/link';
+                        var payUrl = 'weixin/pay';
+                        var getLinkStub = sinon.stub();
+                        getLinkStub.withArgs('virtue', {id: id}).returns(self);
+                        getLinkStub.withArgs('payment', {virtue: id}).returns(payUrl);
+                        stubs['../rests'] = {getLink: getLinkStub};
+
+                        virtues = proxyquire('../server/rest/virtues', stubs);
+                        prepay = virtues.prepay;
+                        app.post('/prepay', prepay);
+
+                        request
+                            .post('/prepay')
+                            .send(trans)
+                            //TODO: 根据资源定义由framework中间件实现
+                            //.expect('Content-Type', 'application/json; charset=utf-8')
+                            //.expect('link', '<http://jingyintemple.top/rest/profile>; rel="profile", <http://jingyintemple.top/rest/profile>; rel="self"')
+                            //------------------------------------------------------------------------
+
+                            .expect('link', '<' + self + '>; rel="self", <' + payUrl + '>; rel="pay"')
+                            .expect('Location', self)
+                            .expect(201, obj, done);
+                    });
                 });
             });
-
-
         });
 
         describe('技术', function () {
@@ -735,6 +778,8 @@ describe('静音寺业务系统', function () {
 
                         routeStub.withArgs('/jingyin/biz/parts/index').returns(handlerStub);
 
+                        routeStub.withArgs('/jingyin/rest/virtues/prepay').returns(handlerStub);
+
                         getSpy.withArgs(accuvirtue.dailyVirtue).returns(handlerStub);
                         getSpy.withArgs(accuvirtue.index).returns(handlerStub);
                         getSpy.withArgs(suixi.index).returns(handlerStub);
@@ -769,6 +814,15 @@ describe('静音寺业务系统', function () {
 
                         expect(weixin.sendPayUrl(info)).eql(expectedUrl);
                     });
+                });
+
+                describe('资源注册', function(){
+                   it('getLink', function(){
+                       var linkage = require('../server/rests');
+                       expect(linkage.getLink("virtue", {id:234567})).eql("/jingyin/rest/virtues/234567");
+                       expect(linkage.getLink("payment", {virtue:234567}))
+                           .eql("http://jingyintemple.top/jingyin/manjusri/pay/confirm?virtue=234567");
+                   });
                 });
 
                 describe("控制器", function () {
