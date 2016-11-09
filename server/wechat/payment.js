@@ -9,7 +9,6 @@ var logger = log4js.getLogger();
 
 module.exports = {
     index: function (req, res) {
-        logger('enter payment.........................................................');
         var resWrap = responseWrapFactory(res);
         var code = req.query.code;
         if(!code){
