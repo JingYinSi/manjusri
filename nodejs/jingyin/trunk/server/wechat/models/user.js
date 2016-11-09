@@ -49,5 +49,6 @@ UserSchema.statics.create = function (obj, callback) {
     model.save(callback);
 };
 
+
 module.exports = mongoose.model('User', UserSchema);
 

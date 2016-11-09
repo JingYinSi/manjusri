@@ -5,6 +5,9 @@ var virtueModel = require('../wechat/models/virtue'),
     userModel = require('../wechat/models/user'),
     linkages = require('../rests'),
     weixin = require('../weixin');
+var log4js = require('log4js');
+log4js.configure("log4js.conf", {reloadSecs: 300});
+var logger = log4js.getLogger();
 
 function setStatus(response, code, errMsg) {
     response.status(code);
@@ -51,9 +54,11 @@ Virtues.prototype.prepay = function (req, res) {
 
 Virtues.prototype.paid = function (req, res) {
     var data = req.body;
-
-    userModel.findByOpenId(data.openId, function (err, user) {
+    logger.debug('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    userModel.findOne({openid: data.openId}, function (err, user) {
+        logger.debug('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
         virtueModel.pay(req.params.id, user.id, data.paymentNo, function (err, virtue) {
+            logger.debug('cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccca');
             var selfUrl = linkages.getLink('virtue', {id: virtue.id});
             var links = {
                 self: selfUrl,
