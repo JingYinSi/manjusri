@@ -23,12 +23,18 @@
                     var result = res.err_msg; //result = 'get_brand_wcpay_request:ok
                     if (result.indexOf("ok") != -1) {
                         alert(JSON.stringify(result));
+                        var url = '/jingyin/rest/virtues/' + $('#virtue').text();
+                        alert('url:' + url);
+                        var openid =  $('#openId').text();
+                        alert('openid:' + openid);
+                        var paymentNo = $('#paymentNo').text();
+                        alert('paymentNo:' + paymentNo);
                         $.ajax({
                             type: 'PUT',
-                            url: '/jingyin/rest/virtues/' + $('#virtue').text(),
+                            url: url,
                             data: {
-                                "openId": $('#openId').text(),
-                                "paymentNo": $('#paymentNo').text()
+                                openId: openid,
+                                paymentNo: paymentNo
                             },
                             success: function (data, textStatus, request) {
                                 alert(JSON.stringify(data));
