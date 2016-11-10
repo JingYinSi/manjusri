@@ -15,10 +15,26 @@ function setStatus(response, code, errMsg) {
     response.end();
 }
 
+
 function Virtues() {
 }
 
+var virtueListQuery = virtueModel
+    .find({state:'payed'})
+    .limit(30)
+    .sort({timestamp: -1})
+    .populate('lord', 'name')
+    .populate('subject', 'name')
+    .select('timestamp num amount');
+
+
 //TODO:显示滚动部分
+Virtues.prototype.list = function (req, res) {
+    virtueListQuery.exec(function (err, virtues) {
+        res.status(200).json(virtues);
+    });
+};
+
 //TODO:交易成功后需扣减数量
 
 Virtues.prototype.prepay = function (req, res) {

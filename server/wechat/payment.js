@@ -1,6 +1,5 @@
 var Virtue = require('./models/virtue'),
     weixin = require('../weixin').weixin,
-    //XML = require('pixl-xml'),
     responseWrapFactory = require('../../modules/responsewrap');
 
 var log4js = require('log4js');

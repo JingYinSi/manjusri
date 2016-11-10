@@ -7,11 +7,6 @@ function validateAmount(val) {
 
 var VirtueSchema = new Schema({
     lord: {type: Schema.Types.ObjectId, ref: 'User'},
-    details: {
-        subject: {type: String},
-        num: {type: Number},
-        price: {type: Number, validate: [validateAmount, '价格应大于零']}
-    },
     subject: {type: Schema.Types.ObjectId, ref: 'Part'},
     num: {type: Number},
     price: {type: Number, validate: [validateAmount, '价格应大于零']},
