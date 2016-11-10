@@ -2,6 +2,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var PartSchema = new Schema({
+    type: String,
     name: String,
     desc: String,
     img: String,

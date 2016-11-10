@@ -37,8 +37,6 @@
         };
         dataToPost.amount = dataToPost.price * dataToPost.num;
 
-
-
         $.ajax({
             type: 'POST',
             url:url,
@@ -47,10 +45,7 @@
                 var linkages = parseLinksInHeader(request.getResponseHeader('link'));
                 window.location = linkages.pay;
                 return;
-            }/*,
-            error: function (request, textStatus, errorThrown) {
-                alert(textStatus);
-            }*/
+            }
         });
     });
 </script>
