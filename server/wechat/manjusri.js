@@ -19,7 +19,7 @@ module.exports = {
             virtues.forEach(function (v) {
                data.virtues.push({
                    date: v.timestamp,
-                   lord: v.lord.name,
+                   lord: v.lord,    //v.lord.name,
                    subject: v.subject.name,
                    num: v.num,
                    amount: v.amount
