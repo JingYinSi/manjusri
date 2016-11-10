@@ -52,9 +52,7 @@ module.exports = function (ctx) {
         extname: '.hbs',
         helpers:{
             dateMMDD:function(timestamp){
-                var m = moment(timestamp);
-                return m.format('MM-DD');
-                //return m.month() + '/' + m.day();
+                return moment(timestamp).format('MM-DD');
             }
         }
     }).engine);
