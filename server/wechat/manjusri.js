@@ -20,7 +20,7 @@ module.exports = {
                data.virtues.push({
                    date: v.timestamp,
                    lord: v.lord,    //v.lord.name,
-                   subject: v.subject.name,
+                   subject: v.subject, //.name,
                    num: v.num,
                    amount: v.amount
                });
