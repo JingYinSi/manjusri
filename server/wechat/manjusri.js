@@ -1,10 +1,32 @@
-var Part = require('./models/part');
+var Part = require('./models/part'),
+    Virtue = require('./models/virtue');
+
+var virtueListQuery = Virtue
+    .find({state:'payed'})
+    .limit(30)
+    .sort({timestamp: -1})
+    .populate('lord', 'name')
+    .populate('subject', 'name')
+    .select('timestamp num amount');
 
 module.exports = {
     home: function (req, res) {
-        res.render('wechat/index', {
-            title: '首页'
+        var data = {
+            title: '首页',
+            virtues: []
+        };
+        virtueListQuery.exec(function (err, virtues) {
+            virtues.forEach(function (v) {
+               data.virtues.push({
+                   date: v.timestamp,
+                   lord: v.lord.name,
+                   subject: v.subject.name,
+                   num: v.num,
+                   amount: v.amount
+               });
+            });
         });
+        res.render('wechat/index', data);
     },
 
     jiansi: function (req, res) {
