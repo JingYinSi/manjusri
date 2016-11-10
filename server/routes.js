@@ -2,8 +2,6 @@
  * Created by sony on 2016/10/13.
  */
 const manjusri = require('./wechat/manjusri'),
-    accuvirtue = require('./wechat/accvirtue'),
-    suixi = require('./wechat/suixi'),
     payment = require('./wechat/payment'),
     part = require('./biz/part'),
     payRoute = require('./payurl').payRoute;
