@@ -18,6 +18,16 @@
         }
     }
     var MyMar=setInterval(Marquee,speed);
+
+    var url = '/jingyin/rest/virtues';
+    $.ajax({
+        type: 'GET',
+        url:url,
+        success: function(data, textStatus, request){
+            alert(JSON.stringify(data));
+            return;
+        }
+    });
 </script>
 </body>
 </html>
