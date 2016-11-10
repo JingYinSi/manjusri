@@ -47,11 +47,25 @@ module.exports = {
     dailyVirtue: function (req, res) {
         var data = {
             title: '建寺-日行一善',
+            virtues: []
         };
         Part.findOne({type: 'daily', onSale: true}, function (err, part) {
             if(!err){
                 data.part = part;
-                res.render('wechat/dailyVirtue', data);
+                virtueListQuery.exec(function (err, virtues) {
+                    virtues.forEach(function (v) {
+                        if(!v.subject) console.log(JSON.stringify(v));
+                        var d = {
+                            date: v.timestamp,
+                            lord: v.lord.name,
+                            subject: v.subject.name,
+                            num: v.num,
+                            amount: v.amount
+                        }
+                        data.virtues.push(d);
+                    });
+                    res.render('wechat/dailyVirtue', data);
+                });
             }
         });
     },
