@@ -3,66 +3,14 @@
         <div id=demo style="width: 100%; height: 400px; overflow: hidden;">
             <div id=demo1>
                 <table width="100%">
-                    <tr>
-                        <td width="210">10月07日</td>
-                        <td width="310">富二狗</td>
-                        <td width="380">砖1份</td>
-                        <td>计30元</td>
-                    </tr>
-                    <tr>
-                        <td width="210">10月07日</td>
-                        <td width="310">富二狗</td>
-                        <td width="380">砖1份</td>
-                        <td>计30元</td>
-                    </tr>
-                    <tr>
-                        <td width="210">10月07日</td>
-                        <td width="310">富二狗</td>
-                        <td width="380">砖1份</td>
-                        <td>计30元</td>
-                    </tr>
-                    <tr>
-                        <td width="210">10月07日</td>
-                        <td width="310">富二狗</td>
-                        <td width="380">砖1份</td>
-                        <td>计30元</td>
-                    </tr>
-                    <tr>
-                        <td width="210">10月07日</td>
-                        <td width="310">富二狗</td>
-                        <td width="380">砖1份</td>
-                        <td>计30元</td>
-                    </tr>
-                    <tr>
-                        <td width="210">10月07日</td>
-                        <td width="310">富二狗</td>
-                        <td width="380">砖1份</td>
-                        <td>计30元</td>
-                    </tr>
-                    <tr>
-                        <td width="210">10月07日</td>
-                        <td width="310">富二狗</td>
-                        <td width="380">砖1份</td>
-                        <td>计30元</td>
-                    </tr>
-                    <tr>
-                        <td width="210">10月07日</td>
-                        <td width="310">富二狗</td>
-                        <td width="380">砖1份</td>
-                        <td>计30元</td>
-                    </tr>
-                    <tr>
-                        <td width="210">10月07日</td>
-                        <td width="310">富二狗</td>
-                        <td width="380">砖1份</td>
-                        <td>计30元</td>
-                    </tr>
-                    <tr>
-                        <td width="210">10月07日</td>
-                        <td width="310">富二狗</td>
-                        <td width="380">砖1份</td>
-                        <td>计30元</td>
-                    </tr>
+                    {{#each virtues}}
+                        <tr>
+                            <td width="210">{{date}}</td>
+                            <td width="310">{{lord}}</td>
+                            <td width="380">{{subject}}{{num}}份</td>
+                            <td>计{{amount}}元</td>
+                        </tr>
+                    {{/each}}
                 </table>
             </div>
             <div id=demo2></div>
