@@ -5,6 +5,7 @@ var express = require('express'),
     path = require('path'),
     wechat = require('wechat'),
     exphbs = require('express-handlebars'),
+    moment = require('moment'),
     errorHandler = require('errorhandler'),
     session = require('express-session'),
     favicon = require('serve-favicon'),
@@ -49,6 +50,12 @@ module.exports = function (ctx) {
     app.engine('hbs', exphbs.create({
         partialsDir: [path.join(__dirname, '../client/views/partials')],
         extname: '.hbs',
+        helpers:{
+            dateMMDD:function(timestamp){
+                var m = moment(timestamp);
+                return m.month() + '/' + m.day();
+            }
+        }
     }).engine);
     app.set('view engine', 'hbs');
     var connStr = 'mongodb://' + ctx.mongodb;
