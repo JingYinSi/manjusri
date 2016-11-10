@@ -18,23 +18,19 @@ module.exports = function (router) {
         .get(manjusri.jiansi);
 
     router.route('/jingyin/manjusri/dailyvirtue')
-        .get(accuvirtue.dailyVirtue);
-        //.post(accuvirtue.action);
+        .get(manjusri.dailyVirtue);
 
     router.route('/jingyin/manjusri/suixi')
-        .get(suixi.index);
-        //.post(accuvirtue.action);
+        .get(manjusri.suixi);
 
     router.route('/jingyin/manjusri/trans/:partId')
-        .get(suixi.trans);
-        //.post(accuvirtue.action);
+        .get(manjusri.trans);
 
     router.route(payRoute)
-        .get(payment.index);
+        .get(payment.pay);
 
     router.route('/jingyin/manjusri/pay/notify')
         .get(payment.result);
-        //.post(payment.payNotify);
 
 
     /*----------------------------restful--------------------------------------------------*/
@@ -42,15 +38,6 @@ module.exports = function (router) {
         .post(virtues.prepay);
     router.route('/jingyin/rest/virtues/:id')
         .put(virtues.paid);
-
-    /*----------------------------old version ------------------------------------------  */
-
-    /*router.route('/jingyin/manjusri')
-        .get(manjusri.home);
-
-    router.route('/jingyin/manjusri/accuvirtue')
-        .get(accuvirtue.dailyVirtue)
-        .post(accuvirtue.action);*/
 
     /*----------------------------业务系统------------------------------------------  */
     router.route('/jingyin/biz/parts/index')

@@ -1,11 +1,7 @@
 /**
  * Created by sony on 2016/10/13.
  */
-var weixinModule = require('../modules/weixin');/*,
-    payurl = require('./payurl').payUrl*/
-/*const log4js = require('log4js');
-log4js.configure("log4js.conf", {reloadSecs: 300});
-const logger = log4js.getLogger();*/
+var weixinModule = require('../modules/weixin');
 
 module.exports = {
     weixin: weixinModule({
@@ -16,18 +12,6 @@ module.exports = {
         apiBaseURL: "https://api.weixin.qq.com/sns/oauth2/",
         oauth2BaseURL: "https://open.weixin.qq.com/connect/oauth2/authorize"
     }),
-
-    /*sendPayUrl: function (payInfo) {
-        var url = payurl + '?';
-        var index = 0;
-        for (var k in payInfo) {
-            url += (index > 0) ? '&' + k + '=' + payInfo[k] : k + '=' + payInfo[k];
-            index++;
-        }
-        url = encodeURIComponent(url);
-        url = this.weixin.wrapRedirectURLByOath2Way(url);
-        return url;
-    }*/
 }
 
 
