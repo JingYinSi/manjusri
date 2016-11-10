@@ -6,37 +6,26 @@ var logger = log4js.getLogger();
 
 module.exports = {
     index: function (req, res) {
-        res.render('wechat/suixi', {
-            title: '建寺-随喜所有建庙功德'
+        var data = {
+            title: '建寺-随喜所有建庙功德',
+        };
+        Part.findOne({type: 'suixi', onSale: true}, function (err, part) {
+            if(!err){
+                data.part = part;
+                res.render('wechat/suixi', data);
+            }
         });
     },
 
     trans: function (req, res) {
         var id = req.params.partId;
         Part.findById(id, function (err, part) {
-
             res.render('wechat/trans', {
                 title: '建寺-' + part.name,
                 part: part
             });
         });
     },
-
-    /*trans: function (req, res) {
-        var productId = req.params.productId;
-        var productNames = ['万尊文殊菩萨像小', '万尊文殊菩萨像中', '五方文殊菩萨像'];
-        var product = {
-            id: productId,
-            name:productNames[productId - 1],
-            sold:1900,
-            left:5600,
-            price:1980.00
-        };
-        res.render('wechat/trans', {
-            title: '建寺-' + product.name,
-            product: product
-        });
-    },*/
 
     //创建日行一善订单
     action: function (req, res) {

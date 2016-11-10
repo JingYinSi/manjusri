@@ -4,6 +4,7 @@
 <body style="background: #fdf6d5;">
 <div class="content">
     <div class="text1">
+        <span id="subject" hidden>{{part.id}}</span>
         <span class="a1">金额</span>
         <span class="a3">元</span>
         <input id="input_amount" type="text" class="a2">
@@ -38,21 +39,23 @@
             $.toptip('请填写金额。');
             return;
         }
-        var url = window.location.href;
         var dataToPost = {
-            subject: 'suixi',
-            name: '随喜',
+            subject: $('#subject').text(),
             amount: amount,
-        };
-        if (giving) dataToPost.giving = giving;
+        }
+        if(giving) dataToPost.giving = giving;
 
-        $.post(url, dataToPost)
-                .done(function (data) {
-                    if (!data) {
-                        return;
-                    }
-                    window.location = data;
-                });
+        var url = '/jingyin/rest/virtues/prepay';
+        $.ajax({
+            type: 'POST',
+            url:url,
+            data: dataToPost,
+            success: function(data, textStatus, request){
+                var linkages = parseLinksInHeader(request.getResponseHeader('link'));
+                window.location = linkages.pay;
+                return;
+            }
+        });
     });
 </script>
 </body>

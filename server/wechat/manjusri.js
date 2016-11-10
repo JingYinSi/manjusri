@@ -12,7 +12,7 @@ module.exports = {
             title: '建寺',
             parts: []
         };
-        Part.find({onSale: true}, function (err, parts) {
+        Part.find({type: 'part', onSale: true}, function (err, parts) {
             if(!err){
                 data.parts = parts;
                 res.render('wechat/jiansi', data);
