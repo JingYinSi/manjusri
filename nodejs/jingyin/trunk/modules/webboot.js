@@ -53,7 +53,8 @@ module.exports = function (ctx) {
         helpers:{
             dateMMDD:function(timestamp){
                 var m = moment(timestamp);
-                return m.month() + '/' + m.day();
+                return m.format('MM-DD');
+                //return m.month() + '/' + m.day();
             }
         }
     }).engine);
