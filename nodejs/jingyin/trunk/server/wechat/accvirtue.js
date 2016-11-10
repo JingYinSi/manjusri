@@ -1,4 +1,4 @@
-var weixin = require('../weixin'),
+var /*weixin = require('../weixin'),*/
     Part = require('./models/part');
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
