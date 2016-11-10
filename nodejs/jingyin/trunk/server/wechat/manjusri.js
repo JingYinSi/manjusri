@@ -6,8 +6,7 @@ var virtueListQuery = Virtue
     .limit(30)
     .sort({timestamp: -1})
     .populate('lord', 'name')
-    .populate('subject', 'name')
-    .select('timestamp num amount');
+    .populate('subject', 'name');
 
 module.exports = {
     home: function (req, res) {
@@ -17,16 +16,19 @@ module.exports = {
         };
         virtueListQuery.exec(function (err, virtues) {
             virtues.forEach(function (v) {
-               data.virtues.push({
-                   date: v.timestamp,
-                   lord: v.lord,    //v.lord.name,
-                   subject: v.subject, //.name,
-                   num: v.num,
-                   amount: v.amount
-               });
+                if(!v.subject) console.log(JSON.stringify(v));
+                var d = {
+                    date: v.timestamp,
+                    lord: v.lord.name,
+                    subject: v.subject.name,
+                    num: v.num,
+                    amount: v.amount
+                }
+               data.virtues.push(d);
             });
+            res.render('wechat/index', data);
         });
-        res.render('wechat/index', data);
+
     },
 
     jiansi: function (req, res) {
