@@ -18,7 +18,7 @@ module.exports = {
     },
 
     //创建日行一善订单
-    action: function (req, res) {
+    /*action: function (req, res) {
         function responseError(code, reason) {
             res.status(code);
             res.statusMessage = reason;
@@ -58,5 +58,5 @@ module.exports = {
 
         var url = weixin.sendPayUrl(trans);
         res.end(url);
-    },
+    },*/
 };

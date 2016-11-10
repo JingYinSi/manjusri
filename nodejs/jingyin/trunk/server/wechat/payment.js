@@ -49,7 +49,7 @@ module.exports = {
         });
     },
 
-    payNotify: function (req, res) {
+   /* payNotify: function (req, res) {
         var body = "";
         req.on("data", function (chunk) {
             body += chunk;
@@ -65,7 +65,7 @@ module.exports = {
                 });
             }
         });
-    },
+    },*/
 
     result: function (req, res) {
         res.render('wechat/paymentResult');
