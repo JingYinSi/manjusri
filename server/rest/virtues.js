@@ -18,6 +18,9 @@ function setStatus(response, code, errMsg) {
 function Virtues() {
 }
 
+//TODO:显示滚动部分
+//TODO:交易成功后需扣减数量
+
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
     var subject = obj.subject;
