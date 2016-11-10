@@ -1,8 +1,8 @@
 /**
  * Created by sony on 2016/10/13.
  */
-/*var weixinModule = require('../modules/weixin'),
-    payurl = require('./payurl').payUrl;*/
+var weixinModule = require('../modules/weixin');/*,
+    payurl = require('./payurl').payUrl*/
 /*const log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 const logger = log4js.getLogger();*/
