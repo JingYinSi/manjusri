@@ -28,7 +28,7 @@ var virtueListQuery = virtueModel
     .select('timestamp num amount');
 
 
-//TODO:显示滚动部分
+//TODO:显示随缘乐助人次
 Virtues.prototype.list = function (req, res) {
     virtueListQuery.exec(function (err, virtues) {
         res.status(200).json(virtues);
