@@ -58,7 +58,7 @@ module.exports = {
                 if (!err) {
                     data.part = part;
                     data.title = '建寺-日行一善';
-                    res.render('wechat/index', data);
+                    res.render('wechat/dailyVirtue', data);
                 }
             });
         });
