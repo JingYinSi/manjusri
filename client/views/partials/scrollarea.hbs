@@ -1,19 +1,20 @@
 <div class="public">
     <div class="scroll" style="height: 500px;">
-        <div id=demo style="width: 100%; height: 400px; overflow: hidden;">
-            <div id="demo1">
-                <table width="100%">
-                    {{#each virtues}}
-                        <tr>
-                            <td width="150">{{dateMMDD date}}</td>
-                            <td width="200">{{lord}}</td>
-                            <td width="500">{{subject}}{{num}}份</td>
-                            <td>计{{amount}}元</td>
-                        </tr>
-                    {{/each}}
-                </table>
-            </div>
+        <div id="scrollBody" style="width: 100%; height: 400px; overflow: hidden;">
+            <table width="100%">
+                {{#each virtues}}
+                    <tr>
+                        <td width="150">{{dateMMDD date}}</td>
+                        <td width="200">{{lord}}</td>
+                        <td width="500">{{subject}}{{num}}份</td>
+                        <td>计{{amount}}元</td>
+                    </tr>
+                {{/each}}
+            </table>
         </div>
     </div>
-    <div class="text"><img src="/images/icon1.jpg">随缘乐助<span>1111</span>人次，功德无量！</div>
+
+    <div class="scroll">
+        <div class="text"><img src="/images/icon1.jpg">随缘乐助<span>1111</span>人次，功德无量！</div>
+    </div>
 </div>
