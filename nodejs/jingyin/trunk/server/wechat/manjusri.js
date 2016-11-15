@@ -2,33 +2,41 @@ var Part = require('./models/part'),
     Virtue = require('./models/virtue');
 
 var virtueListQuery = Virtue
-    .find({state:'payed'})
+    .find({state: 'payed'})
     .limit(30)
     .sort({timestamp: -1})
     .populate('lord', 'name')
     .populate('subject', 'name');
 
+function listVirtuesAndTotalTimes(callback) {
+    var data = {
+        virtues: []
+    };
+    virtueListQuery.exec(function (err, virtues) {
+        virtues.forEach(function (v) {
+            if (!v.subject) console.log(JSON.stringify(v));
+            var d = {
+                date: v.timestamp,
+                lord: v.lord.name,
+                subject: v.subject.name,
+                num: v.num,
+                amount: v.amount
+            }
+            data.virtues.push(d);
+        });
+        Virtue.count({state: 'payed'}, function (err, times) {
+            data.times = times;
+            callback(null, data);
+        });
+    });
+}
+
 module.exports = {
     home: function (req, res) {
-        var data = {
-            title: '首页',
-            virtues: []
-        };
-        virtueListQuery.exec(function (err, virtues) {
-            virtues.forEach(function (v) {
-                if(!v.subject) console.log(JSON.stringify(v));
-                var d = {
-                    date: v.timestamp,
-                    lord: v.lord.name,
-                    subject: v.subject.name,
-                    num: v.num,
-                    amount: v.amount
-                }
-               data.virtues.push(d);
-            });
+        listVirtuesAndTotalTimes(function (err, data) {
+            data.title = '首页';
             res.render('wechat/index', data);
         });
-
     },
 
     jiansi: function (req, res) {
@@ -37,7 +45,7 @@ module.exports = {
             parts: []
         };
         Part.find({type: 'part', onSale: true}, function (err, parts) {
-            if(!err){
+            if (!err) {
                 data.parts = parts;
                 res.render('wechat/jiansi', data);
             }
@@ -45,28 +53,14 @@ module.exports = {
     },
 
     dailyVirtue: function (req, res) {
-        var data = {
-            title: '建寺-日行一善',
-            virtues: []
-        };
-        Part.findOne({type: 'daily', onSale: true}, function (err, part) {
-            if(!err){
-                data.part = part;
-                virtueListQuery.exec(function (err, virtues) {
-                    virtues.forEach(function (v) {
-                        if(!v.subject) console.log(JSON.stringify(v));
-                        var d = {
-                            date: v.timestamp,
-                            lord: v.lord.name,
-                            subject: v.subject.name,
-                            num: v.num,
-                            amount: v.amount
-                        }
-                        data.virtues.push(d);
-                    });
-                    res.render('wechat/dailyVirtue', data);
-                });
-            }
+        listVirtuesAndTotalTimes(function (err, data) {
+            Part.findOne({type: 'daily', onSale: true}, function (err, part) {
+                if (!err) {
+                    data.part = part;
+                    data.title = '建寺-日行一善';
+                    res.render('wechat/index', data);
+                }
+            });
         });
     },
 
@@ -75,7 +69,7 @@ module.exports = {
             title: '建寺-随喜所有建庙功德',
         };
         Part.findOne({type: 'suixi', onSale: true}, function (err, part) {
-            if(!err){
+            if (!err) {
                 data.part = part;
                 res.render('wechat/suixi', data);
             }
