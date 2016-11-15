@@ -20,18 +20,7 @@
 {{>scrollarea}}
 {{>aboutmanjusri}}
 {{>footnav}}
-<script>
-    var speed=10;
-    demo2.innerHTML=demo1.innerHTML;
-    function Marquee(){
-        if(demo2.offsetTop-demo.scrollTop<=0)
-            demo.scrollTop-=demo1.offsetHeight;
-        else{
-            demo.scrollTop++
-        }
-    }
-    var MyMar=setInterval(Marquee,speed);
-
+<script type="text/javascript">
     $("#show-confirm").click(function () {
         var amount = $('#input_amount').val();
         var giving = $('#input_target').val();
@@ -41,20 +30,25 @@
         }
         var dataToPost = {
             subject: $('#subject').text(),
-            amount: amount,
-        }
-        if(giving) dataToPost.giving = giving;
+            amount: amount
+        };
+        if (giving) dataToPost.giving = giving;
 
         var url = '/jingyin/rest/virtues/prepay';
         $.ajax({
             type: 'POST',
-            url:url,
+            url: url,
             data: dataToPost,
-            success: function(data, textStatus, request){
+            success: function (data, textStatus, request) {
                 var linkages = parseLinksInHeader(request.getResponseHeader('link'));
                 window.location = linkages.pay;
-                return;
             }
+        });
+    });
+
+    $(function () {
+        $('#scrollBody').liMarquee({
+            direction: 'up'
         });
     });
 </script>
