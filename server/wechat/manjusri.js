@@ -21,7 +21,7 @@ function listVirtuesAndTotalTimes(callback) {
                 subject: v.subject.name,
                 num: v.num,
                 amount: v.amount
-            }
+            };
             data.virtues.push(d);
         });
         Virtue.count({state: 'payed'}, function (err, times) {
@@ -66,7 +66,7 @@ module.exports = {
 
     suixi: function (req, res) {
         var data = {
-            title: '建寺-随喜所有建庙功德',
+            title: '建寺-随喜所有建庙功德'
         };
         Part.findOne({type: 'suixi', onSale: true}, function (err, part) {
             if (!err) {
@@ -84,6 +84,6 @@ module.exports = {
                 part: part
             });
         });
-    },
+    }
 };
 
