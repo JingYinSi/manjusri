@@ -73,8 +73,8 @@ Virtues.prototype.prepay = function (req, res) {
     virtueModel.place(trans, function (err, virtue) {
         if(trans.num){
             partModel.findById(subject, function (err, part) {
-                part.num = part.num - num;
-                part.sold = part.sold + num;
+                part.num = part.num - trans.num;
+                part.sold = part.sold + trans.num;
                 part.save(function (err) {
                     if(!err){
                         return responseVirtue(virtue);
