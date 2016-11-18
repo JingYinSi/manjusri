@@ -5,7 +5,7 @@
 const querystring = require('querystring');
 var urlMap = {
     virtue: '/jingyin/rest/virtues/:id',
-    payment: 'http://jingyintemple.top/jingyin/manjusri/pay/confirm'
+    pay: 'http://jingyintemple.top/jingyin/manjusri/pay/confirm'
 };
 function ResourceRegistry() {
 }
