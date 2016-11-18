@@ -27,15 +27,12 @@ var virtueListQuery = virtueModel
     .populate('subject', 'name')
     .select('timestamp num amount');
 
-
-//TODO:显示随缘乐助人次
 Virtues.prototype.list = function (req, res) {
     virtueListQuery.exec(function (err, virtues) {
         res.status(200).json(virtues);
     });
 };
 
-//TODO:交易成功后需扣减数量
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
     var subject = obj.subject;
@@ -59,9 +56,9 @@ Virtues.prototype.prepay = function (req, res) {
         return setStatus(res, 400, "amount is invalid");
     }
 
-    virtueModel.place(trans, function (err, obj) {
-        var selfUrl = linkages.getLink('virtue', {id: obj.id});
-        var payUrl = linkages.getLink('pay', {virtue: obj.id});
+    function responseVirtue(virtue) {
+        var selfUrl = linkages.getLink('virtue', {id: virtue.id});
+        var payUrl = linkages.getLink('pay', {virtue: virtue.id});
         payUrl = encodeURIComponent(payUrl);
         payUrl = weixin.weixin.wrapRedirectURLByOath2Way(payUrl);
         var links = {
@@ -70,7 +67,23 @@ Virtues.prototype.prepay = function (req, res) {
         }
         res.links(links);
         res.header('Location', selfUrl);
-        res.status(201).json(obj);
+        res.status(201).json(virtue);
+    }
+
+    virtueModel.place(trans, function (err, virtue) {
+        if(num){
+            partModel.findById(subject, function (err, part) {
+                part.num = part.num - num;
+                part.sold = part.sold + num;
+                part.save(function (err) {
+                    if(!err){
+                        return responseVirtue(virtue);
+                    }
+                })
+            })
+        } else {
+            return responseVirtue(virtue);
+        }
     });
 };
 
@@ -78,20 +91,12 @@ Virtues.prototype.paid = function (req, res) {
     var data = req.body;
     userModel.findOne({openid: data.openId}, function (err, user) {
         virtueModel.pay(req.params.id, user.id, data.paymentNo, function (err, virtue) {
-            partModel.findById(virtue.subject, function (err, part) {
-                part.num --;
-                part.sold ++;
-                part.save(function (err) {
-                    if(!err){
-                        var selfUrl = linkages.getLink('virtue', {id: virtue.id});
-                        var links = {
-                            self: selfUrl,
-                        }
-                        res.links(links);
-                        res.status(200).json(virtue);
-                    }
-                })
-            });
+            var selfUrl = linkages.getLink('virtue', {id: virtue.id});
+            var links = {
+                self: selfUrl,
+            }
+            res.links(links);
+            res.status(200).json(virtue);
         });
     });
 };
