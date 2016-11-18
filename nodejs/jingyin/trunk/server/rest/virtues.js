@@ -36,7 +36,6 @@ Virtues.prototype.list = function (req, res) {
 };
 
 //TODO:交易成功后需扣减数量
-
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
     var subject = obj.subject;

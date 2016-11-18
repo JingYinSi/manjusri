@@ -13,16 +13,9 @@ var VirtueSchema = new Schema({
     amount: {type: Number, validate: [validateAmount, '金额应大于零']},
     giving: String,
     paymentNo: String,
-    timestamp: {type: Date, 'default': Date.now()},
+    timestamp: {type: Date, default: Date.now()},
     state: {type: String, required: true, default: 'new'}
 });
-
-//TODO: 将被place方法替代
-VirtueSchema.statics.placeVirtue = function (obj, callback) {
-    var Virtue = mongoose.model('Virtue', VirtueSchema);
-    var model = new Virtue(obj);
-    model.save(callback);
-};
 
 VirtueSchema.statics.place = function (obj, callback) {
     var data = {
@@ -42,14 +35,6 @@ VirtueSchema.statics.pay = function (transId, userId, paymentNo, callback) {
     Virtue.findById(transId, function (err, virtue) {
         virtue.lord = userId;
         virtue.paymentNo = paymentNo;
-        virtue.state = 'payed';
-        virtue.save(callback);
-    });
-};
-
-VirtueSchema.statics.havePayed = function (transId, callback) {
-    var Virtue = mongoose.model('Virtue', VirtueSchema);
-    Virtue.findById(transId, function (err, virtue) {
         virtue.state = 'payed';
         virtue.save(callback);
     });
