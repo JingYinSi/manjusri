@@ -71,7 +71,7 @@ Virtues.prototype.prepay = function (req, res) {
     }
 
     virtueModel.place(trans, function (err, virtue) {
-        if(num){
+        if(num > 0){
             partModel.findById(subject, function (err, part) {
                 part.num = part.num - num;
                 part.sold = part.sold + num;
@@ -79,8 +79,8 @@ Virtues.prototype.prepay = function (req, res) {
                     if(!err){
                         return responseVirtue(virtue);
                     }
-                })
-            })
+                });
+            });
         } else {
             return responseVirtue(virtue);
         }
