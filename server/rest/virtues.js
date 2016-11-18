@@ -3,6 +3,7 @@
  */
 var virtueModel = require('../wechat/models/virtue'),
     userModel = require('../wechat/models/user'),
+    partModel = require('../wechat/models/part'),
     linkages = require('../rests'),
     weixin = require('../weixin');
 var log4js = require('log4js');
@@ -14,7 +15,6 @@ function setStatus(response, code, errMsg) {
     if (errMsg) response.send(errMsg);
     response.end();
 }
-
 
 function Virtues() {
 }
@@ -78,12 +78,20 @@ Virtues.prototype.paid = function (req, res) {
     var data = req.body;
     userModel.findOne({openid: data.openId}, function (err, user) {
         virtueModel.pay(req.params.id, user.id, data.paymentNo, function (err, virtue) {
-            var selfUrl = linkages.getLink('virtue', {id: virtue.id});
-            var links = {
-                self: selfUrl,
-            }
-            res.links(links);
-            res.status(200).json(virtue);
+            partModel.findById(virtue.subject, function (err, part) {
+                part.num --;
+                part.sold ++;
+                part.save(function (err) {
+                    if(!err){
+                        var selfUrl = linkages.getLink('virtue', {id: virtue.id});
+                        var links = {
+                            self: selfUrl,
+                        }
+                        res.links(links);
+                        res.status(200).json(virtue);
+                    }
+                })
+            });
         });
     });
 };
