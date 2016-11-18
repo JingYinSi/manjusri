@@ -15,7 +15,9 @@ describe('静音寺业务系统', function () {
 
     describe('业务', function () {
         describe('模型', function () {
+            var ObjectID;
             beforeEach(function (done) {
+                ObjectID = require('mongodb').ObjectID;
                 mongoose.Promise = global.Promise;
                 if (mongoose.connection.db) return done();
                 mongoose.connect(dbURI, done);
@@ -31,87 +33,51 @@ describe('静音寺业务系统', function () {
                 beforeEach(function () {
                     Virtue = require('../server/wechat/models/virtue');
                     trans = {
-                        trader: 'foo trader',
-                        amount: 45.8,
-                        details: {
-                            subject: 'fee subject'
-                        }
+                        subject: new ObjectID(),
+                        amount: 45.8
                     };
                 });
 
                 describe('创建交易', function () {
                     it('金额应大于零', function (done) {
                         trans.amount = 0;
-                        Virtue.placeVirtue(trans, function (err, virtue) {
+                        Virtue.place(trans, function (err, virtue) {
                             expect(err.errors['amount'].message).to.be.eql('金额应大于零');
                             expect(virtue).not.exist;
                             done();
                         });
                     });
 
-                    it('创建一笔捐助', function (done) {
-                        var details = {
-                            subject: "foo",
-                            num: 10,
-                            price: 10.34
-                        }
-                        trans.details = details;
-                        trans.amount = 103.4;
-                        trans.giving = 'any hope for';
-                        Virtue.placeVirtue(trans, function (err, virtue) {
+                    it('预置一笔捐助', function (done) {
+                        Virtue.place(trans, function (err, virtue) {
                             expect(err).be.null;
-                            expect(virtue.trader).eql(trans.trader);
-                            expect(virtue._doc.details).deep.equal(details);
                             expect(virtue.amount).to.be.equal(trans.amount);
-                            expect(virtue.giving).to.be.equal(trans.giving);
                             expect(virtue.state).to.be.equal('new');
                             expect(virtue.timestamp).to.be.a('date');
                             done();
                         })
                     });
-
-                    it('预置一笔捐助', function (done) {
-                        var partName = 'foo part';
-                        var Part = require('../server/wechat/models/part');
-                        Part.create({name: partName}, function (err, part) {
-                            trans = {
-                                subject: part.id,
-                                amount: 30.69,
-                                price: 10.23,
-                                num: 3,
-                                giving: 'any giving string'
-                            }
-                            Virtue.place(trans, function (err, virtue) {
-                                expect(err).be.null;
-                                expect(virtue.trader).to.be.undefined;
-                                expect(virtue.subject).to.be.eql(part._id);
-                                expect(virtue.price).to.be.eql(trans.price);
-                                expect(virtue.num).to.be.eql(trans.num);
-                                expect(virtue.amount).to.be.eql(trans.amount);
-                                expect(virtue.giving).to.be.eql(trans.giving);
-                                expect(virtue.state).to.be.eql('new');
-                                expect(virtue.timestamp).to.be.a('date');
-                                done();
-                            });
-                        });
-                    });
                 });
 
 
                 describe('捐助支付', function (done) {
-                    var transId;
+                    var transId, userId, paymentNo;
                     beforeEach(function (done) {
-                        Virtue.placeVirtue(trans, function (err, virtue) {
+                        Virtue.place(trans, function (err, virtue) {
                             expect(err).not.exist;
-                            transId = virtue._id.toString();
+                            transId = virtue.id;
+                            userId = new ObjectID();
+                            paymentNo = 'csdwevrevwervv';
                             done();
                         })
                     });
 
                     it('支付成功', function (done) {
-                        Virtue.havePayed(transId, function (err, virtue) {
+                        Virtue.pay(transId, userId, paymentNo, function (err, virtue) {
                             expect(err).not.exist;
-                            expect(virtue._id.toString()).eql(transId);
+                            expect(virtue.id).eql(transId);
+                            expect(virtue.lord).eql(userId);
+                            expect(virtue.paymentNo).eql(paymentNo);
                             expect(virtue.state).eql('payed');
                             done();
                         })
@@ -362,7 +328,7 @@ describe('静音寺业务系统', function () {
                         var payUrl = 'weixin/pay';
                         var getLinkStub = sinon.stub();
                         getLinkStub.withArgs('virtue', {id: id}).returns(self);
-                        getLinkStub.withArgs('payment', {virtue: id}).returns(payUrl);
+                        getLinkStub.withArgs('pay', {virtue: id}).returns(payUrl);
                         stubs['../rests'] = {getLink: getLinkStub};
 
                         virtues = proxyquire('../server/rest/virtues', stubs);
@@ -574,7 +540,7 @@ describe('静音寺业务系统', function () {
                         openid: openId,
                         spbill_create_ip: "121.41.93.210",
                         total_fee: amount,
-                        attach: "静音",
+                        attach: "jingyin",
                         appid: appid,
                         mch_id: mch_id,
                         nonce_str: nonceStr,
