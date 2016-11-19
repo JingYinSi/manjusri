@@ -28,7 +28,8 @@ module.exports = function (router) {
         .get(payment.pay);
 
     router.route('/jingyin/manjusri/pay/notify')
-        .get(payment.result);
+        .get(payment.result)
+        .post(payment.paidNotify);
 
 
     /*----------------------------restful--------------------------------------------------*/

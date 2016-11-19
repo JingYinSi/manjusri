@@ -50,6 +50,10 @@ module.exports = {
 
     result: function (req, res) {
         res.render('wechat/paymentResult');
+    },
+
+    paidNotify: function (req, res) {
+        logger.info('Paid notify from weixin:\n', req.body);
     }
 };
 
