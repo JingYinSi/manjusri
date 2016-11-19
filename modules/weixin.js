@@ -144,9 +144,9 @@ module.exports = function (config) {
         })
     }
 
-    this.parsePaymentNotification = function (paymentXmlResult) {
+    this.parsePaymentNotification = function (data) {
         var me = this;
-        var data = XML.parse(paymentXmlResult);
+        //var data = XML.parse(paymentXmlResult);
         var dataToSign = Object.assign({}, data);
         delete dataToSign.sign;
 
