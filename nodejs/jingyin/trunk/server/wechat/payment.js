@@ -55,8 +55,8 @@ module.exports = {
     },
 
     paidNotify: function (req, res) {
-        //var notify = weixin.parsePaymentNotification(req.body);
-        var notify = req.body.xml;
+        var notify = weixin.parsePaymentNotification(req.body.xml);
+        //var notify = req.body.xml;
         logger.info('Paid notify from weixin:\n', JSON.stringify(notify));
         userModel.findOne({openid: notify.openid}, function (err, user) {
             if(!user){
