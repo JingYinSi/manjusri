@@ -22,6 +22,7 @@
                 function (res) {
                     var result = res.err_msg; //result = 'get_brand_wcpay_request:ok
                     if (result.indexOf("ok") != -1) {
+                        //TODO:restful已支付服务是否有必要保留？
                         /*var url = '/jingyin/rest/virtues/' + $('#virtue').text();
                         var openid = $('#openId').text();
                         var paymentNo = $('#paymentNo').text();
