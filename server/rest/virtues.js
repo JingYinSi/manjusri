@@ -5,6 +5,7 @@ var virtueModel = require('../wechat/models/virtue'),
     userModel = require('../wechat/models/user'),
     partModel = require('../wechat/models/part'),
     linkages = require('../rests'),
+    usersModule = require('../modules/users'),
     weixin = require('../weixin');
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -106,7 +107,7 @@ Virtues.prototype.paid = function (req, res) {
     userModel.findOne({openid: data.openId}, function (err, user) {
         if(!user){
             logger.info('Can not found user with openid:' + data.openId);
-            userModel.register(data.openId, function (err, userAdded) {
+            usersModule.register(data.openId, function (err, userAdded) {
                 if(err){
                     logger.error('register user failed:' + err);
                     return;
