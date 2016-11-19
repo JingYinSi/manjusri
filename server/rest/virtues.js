@@ -71,6 +71,10 @@ Virtues.prototype.prepay = function (req, res) {
     }
 
     virtueModel.place(trans, function (err, virtue) {
+        if(err){
+            logger.error('Place virtue failed:\n' + err);
+            return setStatus(res, 500, err);
+        }
         if(trans.num){
             partModel.findById(subject, function (err, part) {
                 part.num = part.num - trans.num;
