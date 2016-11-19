@@ -21,7 +21,7 @@ function listVirtuesAndTotalTimes(callback) {
             if (!v.subject) console.log(JSON.stringify(v));
             var d = {
                 date: v.timestamp,
-                lord: v.lord.name,
+                lord: v.lord ? v.lord.name : '未知',
                 subject: v.subject.name,
                 num: v.num,
                 amount: v.amount
