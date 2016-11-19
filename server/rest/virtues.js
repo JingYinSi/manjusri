@@ -104,7 +104,7 @@ Virtues.prototype.paid = function (req, res) {
         });
     }
     userModel.findOne({openid: data.openId}, function (err, user) {
-        if(err){
+        if(!user){
             logger.info('Can not found user with openid:' + data.openId);
             userModel.register(data.openId, function (err, userAdded) {
                 if(err){
