@@ -95,7 +95,12 @@ Virtues.prototype.paid = function (req, res) {
     var data = req.body;
     userModel.findOne({openid: data.openId}, function (err, user) {
         if(err){
+            logger.info('Can not found user with openid:' + data.openId);
             userModel.register(data.openId, function (err, userAdded) {
+                if(err){
+                    logger.error('register user failed:' + err);
+                    return;
+                }
                 doPay(userAdded);
             });
             return;
