@@ -93,6 +93,16 @@ Virtues.prototype.prepay = function (req, res) {
 
 Virtues.prototype.paid = function (req, res) {
     var data = req.body;
+    function doPay(user) {
+        virtueModel.pay(req.params.id, user.id, data.paymentNo, function (err, virtue) {
+            var selfUrl = linkages.getLink('virtue', {id: virtue.id});
+            var links = {
+                self: selfUrl,
+            }
+            res.links(links);
+            res.status(200).json(virtue);
+        });
+    }
     userModel.findOne({openid: data.openId}, function (err, user) {
         if(err){
             logger.info('Can not found user with openid:' + data.openId);
@@ -107,16 +117,7 @@ Virtues.prototype.paid = function (req, res) {
         }
         doPay(user);
     });
-    function doPay(user) {
-        virtueModel.pay(req.params.id, user.id, data.paymentNo, function (err, virtue) {
-            var selfUrl = linkages.getLink('virtue', {id: virtue.id});
-            var links = {
-                self: selfUrl,
-            }
-            res.links(links);
-            res.status(200).json(virtue);
-        });
-    }
+
 };
 
 module.exports = new Virtues();
