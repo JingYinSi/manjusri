@@ -1,5 +1,6 @@
 var Virtue = require('./models/virtue'),
     userModel = require('./models/user'),
+    usersModule = require('../modules/users'),
     weixin = require('../weixin').weixin,
     responseWrapFactory = require('../../modules/responsewrap');
 
@@ -54,7 +55,8 @@ module.exports = {
     },
 
     paidNotify: function (req, res) {
-        var notify = weixin.parsePaymentNotification(req.body);
+        //var notify = weixin.parsePaymentNotification(req.body);
+        var notify = req.body.xml;
         logger.info('Paid notify from weixin:\n', JSON.stringify(notify));
         userModel.findOne({openid: notify.openid}, function (err, user) {
             if(!user){
@@ -71,7 +73,7 @@ module.exports = {
             doPay(user);
         });
         function doPay(user) {
-            virtueModel.pay(notify.out_trade_no, user.id, notify.transaction_id, function (err, virtue) {
+            Virtue.pay(notify.out_trade_no, user.id, notify.transaction_id, function (err, virtue) {
                 res.end(notify.replyOK());
             });
         }
