@@ -1,4 +1,5 @@
 var Virtue = require('./models/virtue'),
+    userModel = require('./models/user'),
     weixin = require('../weixin').weixin,
     responseWrapFactory = require('../../modules/responsewrap');
 
@@ -53,7 +54,27 @@ module.exports = {
     },
 
     paidNotify: function (req, res) {
-        logger.info('Paid notify from weixin:\n', req.body);
+        var notify = weixin.parsePaymentNotification(req.body);
+        logger.info('Paid notify from weixin:\n', JSON.stringify(notify));
+        userModel.findOne({openid: notify.openid}, function (err, user) {
+            if(!user){
+                logger.info('Can not found user with openid:' + notify.openid);
+                usersModule.register(notify.openid, function (err, userAdded) {
+                    if(err){
+                        logger.error('register user failed:' + err);
+                        return;
+                    }
+                    doPay(userAdded);
+                });
+                return;
+            }
+            doPay(user);
+        });
+        function doPay(user) {
+            virtueModel.pay(notify.out_trade_no, user.id, notify.transaction_id, function (err, virtue) {
+                res.end(notify.replyOK());
+            });
+        }
     }
 };
 
