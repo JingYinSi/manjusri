@@ -92,6 +92,8 @@ Virtues.prototype.prepay = function (req, res) {
     });
 };
 
+//TODO: restful已支付服务是否有必要保留？
+//TODO: 如果保留，那么这里的代码与../wechat/payment.js的paidNotify存在重复
 Virtues.prototype.paid = function (req, res) {
     var data = req.body;
     function doPay(user) {
