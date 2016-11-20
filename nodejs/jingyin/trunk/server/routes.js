@@ -37,8 +37,8 @@ module.exports = function (router) {
         .post(virtues.prepay);
     router.route('/jingyin/rest/virtues/:id')
         .put(virtues.paid);
-    router.route('/jingyin/rest/virtues')
-        .get(virtues.list);
+    /*router.route('/jingyin/rest/virtues')
+        .get(virtues.list);*/
 
     /*----------------------------业务系统------------------------------------------  */
     router.route('/jingyin/biz/parts/index')
