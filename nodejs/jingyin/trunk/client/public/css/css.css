@@ -22,6 +22,11 @@ table{ border-collapse: collapse; border-spacing: 0; }
 .public .scroll .text span { font-size: 70px; color: #ff7300;}
 .public .scroll td { height: 72px; line-height: 72px; font-size: 40px; color: #4c4c4c;}
 
+.public .summary { width: 100%; height: auto; border-top: 4px #fdf6d5 solid; padding: 20px 100px;}
+.public .summary .text { width: 100%; height: auto; font-size: 42px; color: #4c4c4c; text-align: center; margin-top: 20px;}
+.public .summary .text img { display: inline-block;}
+.public .summary .text span { font-size: 60px; color: #ff7300;}
+
 .public .footer { width: 100%; height: 570px; font-size: 30px; color: #827a7a; text-align: center; background: url("../images/copy.jpg"); background-size: 100% 100%; padding-top: 415px;}
 
 .banner { width: 1242px; height: auto; margin: 0 auto;}
