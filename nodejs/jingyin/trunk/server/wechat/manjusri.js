@@ -39,7 +39,6 @@ module.exports = {
     home: function (req, res) {
         listVirtuesAndTotalTimes(function (err, data) {
             data.title = '首页';
-            logger.debug()
             res.render('wechat/index', data);
         });
     },
