@@ -1,22 +1,31 @@
 var Part = require('./models/part'),
-    Virtue = require('./models/virtue');
+    Virtue = require('./models/virtue'),
+    virtuesModule = require('../modules/virtues');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
-var virtueListQuery = Virtue
+/*var virtueListQuery = Virtue
     .find({state: 'payed'})
     .limit(30)
     .sort({timestamp: -1})
     .populate('lord', 'name')
-    .populate('subject', 'name');
+    .populate('subject', 'name');*/
 
 function listVirtuesAndTotalTimes(callback) {
     var data = {
         virtues: []
     };
-    virtueListQuery.exec(function (err, virtues) {
+    virtuesModule.listLastVirtues(30, function (err, list) {
+        data.virtues = list;
+        Virtue.count({state: 'payed'}, function (err, times) {
+            data.times = times;
+            callback(null, data);
+        });
+    });
+
+    /*virtueListQuery.exec(function (err, virtues) {
         virtues.forEach(function (v) {
             if (!v.subject) console.log(JSON.stringify(v));
             var d = {
@@ -32,7 +41,7 @@ function listVirtuesAndTotalTimes(callback) {
             data.times = times;
             callback(null, data);
         });
-    });
+    });*/
 }
 
 module.exports = {
