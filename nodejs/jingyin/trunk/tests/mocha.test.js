@@ -905,6 +905,7 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('处理请求', function () {
+                    var stubs;
                     var reqStub, resStub;
                     var statusSpy, resEndSpy;
                     var controller;
@@ -930,6 +931,7 @@ describe('静音寺业务系统', function () {
                     }
 
                     beforeEach(function () {
+                        stubs = {};
                         statusSpy = sinon.spy();
                         resEndSpy = sinon.spy();
 
@@ -1005,11 +1007,30 @@ describe('静音寺业务系统', function () {
                         });
                     });
 
-                    //TODO:修正日行一善测试用例
                     describe('日行一善', function () {
                         it('显示页面', function () {
-                            var controller = require('../server/wechat/manjusri').dailyVirtue;
-                            showPage(controller, 'wechat/dailyVirtue');
+                            var virtuesList = [{}, {}];
+                            var virtueListStub = sinon.stub();
+                            virtueListStub.withArgs(30).callsArgWith(1, null, virtuesList);
+                            stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+
+                            var times = 10;
+                            var countStub = sinon.stub();
+                            countStub.withArgs({state: 'payed'}).callsArgWith(1, null, times);
+                            stubs['./models/virtue'] = {count: countStub};
+
+                            var part = {foo:'part'};
+                            var findOneStub = sinon.stub();
+                            findOneStub.withArgs({type: 'daily', onSale: true}).callsArgWith(1, null, part);
+                            stubs['./models/part'] = {findOne: findOneStub};
+
+                            var controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                            showPage(controller, 'wechat/dailyVirtue', {
+                                virtues: virtuesList,
+                                times: 10,
+                                part: part,
+                                title: '建寺-日行一善'
+                            });
                         });
                     });
 
