@@ -7,7 +7,7 @@
         <span id="subject" hidden>{{part.id}}</span>
         <span class="a1">金额:</span>
         <span class="a3">元</span>
-        <input id="input_amount" type="number" class="a2" maxlength="10">
+        <input id="input_amount" type="number" class="a2" maxlength="10" min="0.1">
     </div>
     <div class="text2">
         <span class="a1">回向:</span>
@@ -25,6 +25,15 @@
 {{>footnav}}
 <script>
     $("#input_amount").keyup(function () {
+        var amount = $("#input_amount").val().trim();
+        if (amount == '') {
+            amount = "0.00";
+        }
+        amount = parseFloat(Math.round(amount * 100) / 100).toFixed(2);
+        $("#label_amount").text(amount);
+    });
+
+    $("#input_amount").change(function () {
         var amount = $("#input_amount").val().trim();
         if (amount == '') {
             amount = "0.00";
