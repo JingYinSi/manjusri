@@ -59,7 +59,6 @@ describe('静音寺业务系统', function () {
                     });
                 });
 
-
                 describe('捐助支付', function (done) {
                     var transId, userId, paymentNo;
                     beforeEach(function (done) {
@@ -82,7 +81,8 @@ describe('静音寺业务系统', function () {
                             done();
                         })
                     })
-                })
+                });
+
             });
 
             describe('法物目录', function () {
@@ -255,6 +255,108 @@ describe('静音寺业务系统', function () {
             });
         });
 
+        describe('业务对象', function () {
+            function initDB(done) {
+                var VirtueModel, PartModel, UserModel;
+                var virtues, parts, users;
+
+                PartModel = require('../server/wechat/models/part');
+                UserModel = require('../server/wechat/models/user');
+                VirtueModel = require('../server/wechat/models/virtue');
+
+                var partsData = [
+                    {
+                        "type": "daily",
+                        "name": "每日一善",
+                        "img": "/images/product_banner2.jpg",
+                        "onSale": true,
+                    },
+                    {
+                        "type": "suixi",
+                        "name": "随喜",
+                        "onSale": true,
+                    },
+                    {
+                        "type": "part",
+                        "name": "万尊文殊菩萨像小",
+                        "img": "/images/product2.jpg",
+                        "price": 1000,
+                        "num": 50,
+                        "onSale": true,
+                        "sold": 10,
+                    }
+                ];
+                parts = [];
+                var usersData = [
+                    {
+                        "name": "陈立新",
+                        "openid": "o0ghywcfW_2Dp4oN-7NADengZAVM",
+                    },
+                    {
+                        "name": "Susan孙英",
+                        "openid": "o0ghywYninpxeXtUPk-lTFx2cK9Q",
+                    }
+                ];
+                users = [];
+                virtues = [];
+
+                var tasks = [];
+                partsData.forEach(function (item) {
+                    tasks.push(function (callback) {
+                        new PartModel(item).save(function (err, data) {
+                            if (err) return (err);
+                            parts.push(data);
+                            callback();
+                        });
+                    });
+                });
+
+                usersData.forEach(function (item) {
+                    tasks.push(function (callback) {
+                        new UserModel(item).save(function (err, data) {
+                            if (err) return (err);
+                            users.push(data);
+                            callback();
+                        });
+                    });
+                });
+
+                tasks.push(function (callback) {
+                    new VirtueModel({
+                        "lord": users[0].id,
+                        "subject": parts[0].id,
+                        "amount": 20,
+                        "state": "payed",
+                    }).save(function (err, data) {
+                        if (err) return (err);
+                        virtues.push(data);
+                        callback();
+                    });
+                });
+
+                var async = require('async');
+                async.series(tasks, function (err) {
+                    expect(err).to.be.null;
+                    done();
+                });
+            }
+
+            describe('功德', function () {
+                beforeEach(function (done) {
+                    initDB(done);
+                });
+
+                it('列出最近的捐助交易', function (done) {
+                    var virtues = require('../server/modules/virtues');
+                    virtues.listLastVirtues(1, function (err, list) {
+                        expect(list.length).eql(1);
+                        var doc = list[0];
+                        done();
+                    });
+                });
+            });
+        });
+
         describe("Restful服务", function () {
             var request, express, app, bodyParser;
             var requestAgent;
@@ -331,6 +433,11 @@ describe('静音寺业务系统', function () {
                         getLinkStub.withArgs('pay', {virtue: id}).returns(payUrl);
                         stubs['../rests'] = {getLink: getLinkStub};
 
+                        var wrapedPayUrl = 'wraped/url';
+                        var wrapRedirectURLByOath2WayStub = sinon.stub();
+                        wrapRedirectURLByOath2WayStub.withArgs(encodeURIComponent(payUrl)).returns(wrapedPayUrl);
+                        stubs['../weixin'] = {weixin: {wrapRedirectURLByOath2Way: wrapRedirectURLByOath2WayStub}};
+
                         virtues = proxyquire('../server/rest/virtues', stubs);
                         prepay = virtues.prepay;
                         app.post('/prepay', prepay);
@@ -343,7 +450,7 @@ describe('静音寺业务系统', function () {
                             //.expect('link', '<http://jingyintemple.top/rest/profile>; rel="profile", <http://jingyintemple.top/rest/profile>; rel="self"')
                             //------------------------------------------------------------------------
 
-                            .expect('link', '<' + self + '>; rel="self", <' + payUrl + '>; rel="pay"')
+                            .expect('link', '<' + self + '>; rel="self", <' + wrapedPayUrl + '>; rel="pay"')
                             .expect('Location', self)
                             .expect(201, obj, done);
                     });
@@ -782,13 +889,13 @@ describe('静音寺业务系统', function () {
                     });
                 });
 
-                describe('资源注册', function(){
-                   it('getLink', function(){
-                       var linkage = require('../server/rests');
-                       expect(linkage.getLink("virtue", {id:234567})).eql("/jingyin/rest/virtues/234567");
-                       expect(linkage.getLink("payment", {virtue:234567}))
-                           .eql("http://jingyintemple.top/jingyin/manjusri/pay/confirm?virtue=234567");
-                   });
+                describe('资源注册', function () {
+                    it('getLink', function () {
+                        var linkage = require('../server/rests');
+                        expect(linkage.getLink("virtue", {id: 234567})).eql("/jingyin/rest/virtues/234567");
+                        expect(linkage.getLink("pay", {virtue: 234567}))
+                            .eql("http://jingyintemple.top/jingyin/manjusri/pay/confirm?virtue=234567");
+                    });
                 });
 
                 describe("控制器", function () {
@@ -918,9 +1025,10 @@ describe('静音寺业务系统', function () {
                         });
                     });
 
+                    //TODO:修正日行一善测试用例
                     describe('日行一善', function () {
                         it('显示页面', function () {
-                            var controller = require('../server/wechat/accvirtue').dailyVirtue;
+                            var controller = require('../server/wechat/manjusri').dailyVirtue;
                             showPage(controller, 'wechat/dailyVirtue');
                         });
                     });

@@ -20,20 +20,6 @@ function setStatus(response, code, errMsg) {
 function Virtues() {
 }
 
-var virtueListQuery = virtueModel
-    .find({state: 'payed'})
-    .limit(30)
-    .sort({timestamp: -1})
-    .populate('lord', 'name')
-    .populate('subject', 'name')
-    .select('timestamp num amount');
-
-Virtues.prototype.list = function (req, res) {
-    virtueListQuery.exec(function (err, virtues) {
-        res.status(200).json(virtues);
-    });
-};
-
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
     var subject = obj.subject;
@@ -45,10 +31,7 @@ Virtues.prototype.prepay = function (req, res) {
     var trans = {
         subject: subject,
         amount: Math.round(obj.amount * 100) / 100,
-        price: obj.price,
-        num: obj.num,
-        giving: obj.giving,
-        timestamp: Date.now()
+        //timestamp: Date.now()
     }
     if (!trans.amount) {
         return setStatus(res, 400, "amount is undefined");
@@ -56,6 +39,10 @@ Virtues.prototype.prepay = function (req, res) {
     if (trans.amount <= 0) {
         return setStatus(res, 400, "amount is invalid");
     }
+
+    if(obj.price) trans.price = obj.price;
+    if(obj.num) trans.num = obj.num;
+    if(obj.giving) trans.giving = obj.giving;
 
     function responseVirtue(virtue) {
         var selfUrl = linkages.getLink('virtue', {id: virtue.id});
