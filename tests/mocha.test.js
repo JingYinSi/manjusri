@@ -990,17 +990,31 @@ describe('静音寺业务系统', function () {
                     });
 
                     it('显示首页', function () {
-                        var controller = require('../server/wechat/manjusri').home;
-                        showPage(controller, 'wechat/index');
+                        var virtuesList = [{}, {}];
+                        var virtueListStub = sinon.stub();
+                        virtueListStub.withArgs(30).callsArgWith(1, null, virtuesList);
+                        stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+
+                        var times = 10;
+                        var countStub = sinon.stub();
+                        countStub.withArgs({state: 'payed'}).callsArgWith(1, null, times);
+                        stubs['./models/virtue'] = {count: countStub};
+
+                        var controller = proxyquire('../server/wechat/manjusri', stubs).home;
+                        showPage(controller, 'wechat/index', {
+                            virtues: virtuesList,
+                            times: 10,
+                            title: '首页'
+                        });
                     });
 
                     it('显示建寺', function () {
-                        var partslist = {foo: 'fffff'};
+                        var partslist = [{foo: 'fffff'}, {}];
                         var partFindStub = sinon.stub();
-                        partFindStub.withArgs({onSale: true}).callsArgWith(1, null, partslist);
-                        var controller = proxyquire('../server/wechat/manjusri', {
-                            './models/part': {find: partFindStub}
-                        }).jiansi;
+                        partFindStub.withArgs({type: 'part', onSale: true}).callsArgWith(1, null, partslist);
+                        stubs[ './models/part'] = {find: partFindStub};
+                        var controller = proxyquire('../server/wechat/manjusri', stubs).jiansi;
+
                         showPage(controller, 'wechat/jiansi', {
                             title: '建寺',
                             parts: partslist
@@ -1019,7 +1033,7 @@ describe('静音寺业务系统', function () {
                             countStub.withArgs({state: 'payed'}).callsArgWith(1, null, times);
                             stubs['./models/virtue'] = {count: countStub};
 
-                            var part = {foo:'part'};
+                            var part = {foo: 'part'};
                             var findOneStub = sinon.stub();
                             findOneStub.withArgs({type: 'daily', onSale: true}).callsArgWith(1, null, part);
                             stubs['./models/part'] = {findOne: findOneStub};
