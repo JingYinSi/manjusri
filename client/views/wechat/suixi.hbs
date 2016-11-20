@@ -5,14 +5,14 @@
 <div class="content">
     <div class="text1">
         <span id="subject" hidden>{{part.id}}</span>
-        <span class="a1">金额</span>
+        <span class="a1">金额:</span>
         <span class="a3">元</span>
-        <input id="input_amount" type="text" class="a2">
+        <input id="input_amount" type="number" class="a2" maxlength="10">
     </div>
     <div class="text2">
-        <span class="a1">回向</span>
-        <input type="text" class="a2" placeholder="以此功德，回向六道众生。">
-        <textarea id="input_target" class="a3" style="display: none;"></textarea>
+        <span class="a1">回向:</span>
+        <input type="text" class="a2"   placeholder="以此功德，回向六道众生。">
+        <textarea id="input_target" class="a3" style="display: none;" placeholder="以此功德，回向六道众生。"></textarea>
     </div>
     <div class="price">￥<span class="price" id="label_amount">0.00</span></div>
 </div>
@@ -24,11 +24,12 @@
 </div>
 {{>footnav}}
 <script>
-    $("#input_amount").blur(function () {
+    $("#input_amount").keyup(function () {
         var amount = $("#input_amount").val().trim();
         if (amount == '') {
             amount = "0.00";
         }
+        amount = parseFloat(Math.round(amount * 100) / 100).toFixed(2);
         $("#label_amount").text(amount);
     });
 
@@ -41,9 +42,12 @@
         }
         var dataToPost = {
             subject: $('#subject').text(),
-            amount: amount,
+            amount: amount
+        };
+
+        if(giving) {
+            dataToPost.giving = giving;
         }
-        if(giving) dataToPost.giving = giving;
 
         var url = '/jingyin/rest/virtues/prepay';
         $.ajax({
