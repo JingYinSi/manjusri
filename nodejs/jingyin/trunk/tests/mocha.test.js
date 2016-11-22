@@ -256,13 +256,48 @@ describe('静音寺业务系统', function () {
         });
 
         describe('业务对象', function () {
-            function initDB(done) {
-                var VirtueModel, PartModel, UserModel;
+            function insertDocsInSequential(model, docs, callback) {
+                var result = [];
+
+                function iterate(index) {
+                    if (index === docs.length) return callback(null, result);
+                    new model(docs[index]).save(function (err, data) {
+                        if (err) return callback(err, result);
+                        result.push(data);
+                        iterate(index + 1);
+                    });
+                }
+
+                iterate(0);
+            }
+
+            function insertDocsInParallel(model, docs, callback) {
+                var result = [];
+                var finished = 0, errored = false;
+
+                function done(err, data) {
+                    if(err){
+                        errored = true;
+                        return callback(err);
+                    }
+                    result.push(data);
+                    ++finished;
+                    if(finished === docs.length && !errored){
+                        return callback(null, result);
+                    }
+                }
+
+                docs.forEach(function (item) {
+                    new model(item).save(done);
+                });
+            }
+
+            function initDB(insertDocs, callback) {
                 var virtues, parts, users;
 
-                PartModel = require('../server/wechat/models/part');
-                UserModel = require('../server/wechat/models/user');
-                VirtueModel = require('../server/wechat/models/virtue');
+                var PartModel = require('../server/wechat/models/part');
+                var UserModel = require('../server/wechat/models/user');
+                var VirtueModel = require('../server/wechat/models/virtue');
 
                 var partsData = [
                     {
@@ -286,7 +321,6 @@ describe('静音寺业务系统', function () {
                         "sold": 10,
                     }
                 ];
-                parts = [];
                 var usersData = [
                     {
                         "name": "陈立新",
@@ -297,53 +331,39 @@ describe('静音寺业务系统', function () {
                         "openid": "o0ghywYninpxeXtUPk-lTFx2cK9Q",
                     }
                 ];
-                users = [];
-                virtues = [];
 
-                var tasks = [];
-                partsData.forEach(function (item) {
-                    tasks.push(function (callback) {
-                        new PartModel(item).save(function (err, data) {
-                            if (err) return (err);
-                            parts.push(data);
-                            callback();
+                insertDocs(PartModel, partsData, function (err, docs) {
+                    if (err) return callback(err);
+                    parts = docs;
+                    insertDocs(UserModel, usersData, function (err, docs) {
+                        if (err) return callback(err);
+                        users = docs;
+                        var virtuesData = [
+                            {
+                                "lord": users[0].id,
+                                "subject": parts[0].id,
+                                "amount": 20,
+                                "state": "payed",
+                            }
+                        ];
+                        insertDocs(VirtueModel, virtuesData, function (err, docs) {
+                            if (err) return callback(err);
+                            virtues = docs;
+                            return callback();
                         });
                     });
-                });
-
-                usersData.forEach(function (item) {
-                    tasks.push(function (callback) {
-                        new UserModel(item).save(function (err, data) {
-                            if (err) return (err);
-                            users.push(data);
-                            callback();
-                        });
-                    });
-                });
-
-                tasks.push(function (callback) {
-                    new VirtueModel({
-                        "lord": users[0].id,
-                        "subject": parts[0].id,
-                        "amount": 20,
-                        "state": "payed",
-                    }).save(function (err, data) {
-                        if (err) return (err);
-                        virtues.push(data);
-                        callback();
-                    });
-                });
-
-                var async = require('async');
-                async.series(tasks, function (err) {
-                    expect(err).to.be.null;
-                    done();
                 });
             }
 
             describe('功德', function () {
                 beforeEach(function (done) {
-                    initDB(done);
+                    //initDB(insertDocsInSequential, done);
+                    initDB(insertDocsInParallel, done);
+                });
+
+                afterEach(function (done) {
+                    clearDB(done);
+                    //done();
                 });
 
                 it('列出最近的捐助交易', function (done) {
@@ -1012,7 +1032,7 @@ describe('静音寺业务系统', function () {
                         var partslist = [{foo: 'fffff'}, {}];
                         var partFindStub = sinon.stub();
                         partFindStub.withArgs({type: 'part', onSale: true}).callsArgWith(1, null, partslist);
-                        stubs[ './models/part'] = {find: partFindStub};
+                        stubs['./models/part'] = {find: partFindStub};
                         var controller = proxyquire('../server/wechat/manjusri', stubs).jiansi;
 
                         showPage(controller, 'wechat/jiansi', {

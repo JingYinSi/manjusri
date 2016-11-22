@@ -3,9 +3,7 @@ var Part = require('./models/part'),
     virtuesModule = require('../modules/virtues');
 
 function listVirtuesAndTotalTimes(callback) {
-    var data = {
-        virtues: []
-    };
+    var data = {};
     virtuesModule.listLastVirtues(30, function (err, list) {
         data.virtues = list;
         Virtue.count({state: 'payed'}, function (err, times) {
