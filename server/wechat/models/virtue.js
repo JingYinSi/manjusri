@@ -24,7 +24,7 @@ VirtueSchema.statics.place = function (obj, callback) {
         num: obj.num,
         amount: obj.amount,
         giving: obj.giving,
-        datetime: Date.now()
+        timestamp: Date.now()
     }
     var Virtue = mongoose.model('Virtue', VirtueSchema);
     var model = new Virtue(data);
