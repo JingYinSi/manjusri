@@ -31,7 +31,6 @@ Virtues.prototype.prepay = function (req, res) {
     var trans = {
         subject: subject,
         amount: Math.round(obj.amount * 100) / 100,
-        //timestamp: Date.now()
     }
     if (!trans.amount) {
         return setStatus(res, 400, "amount is undefined");

@@ -12,6 +12,7 @@
   "dependencies": {
     "async": "^2.1.2",
     "bcrypt-nodejs": "0.0.3",
+    "bluebird": "^3.4.6",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
     "errorhandler": "^1.4.3",
