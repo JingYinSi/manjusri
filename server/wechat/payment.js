@@ -14,7 +14,7 @@ module.exports = {
         var code = req.query.code;
         if(!code){
             logger.debug("Is request from weixin? there is something wrong, code is undefined");
-            resWrap.setStatus(400);
+            resWrap.setError(400);
             return;
         };
         weixin.getOpenId(req.query.code, function (err, trader) {
