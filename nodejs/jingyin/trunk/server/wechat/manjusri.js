@@ -39,24 +39,33 @@ module.exports = {
             title: '建寺',
             parts: []
         };
-        Part.find({type: 'part', onSale: true}, function (err, parts) {
-            if (!err) {
-                data.parts = parts;
-                res.render('wechat/jiansi', data);
-            }
-        });
+        var res = createResponseWrap(res);
+        return Part.find({type: 'part', onSale: true})
+            .then(function (parts) {
+                    data.parts = parts;
+                    return res.render('wechat/jiansi', data);
+                }, function (err) {
+                    return res.setError(500, null, err);
+                }
+            );
     },
 
     dailyVirtue: function (req, res) {
+        var data;
+        var res = createResponseWrap(res);
         return listVirtuesAndTotalTimes()
-            .then(function (data) {
-                Part.findOne({type: 'daily', onSale: true}, function (err, part) {
-                    if (!err) {
-                        data.part = part;
-                        data.title = '建寺-日行一善';
-                        return res.render('wechat/dailyVirtue', data);
-                    }
-                });
+            .then(function (result) {
+                data = result;
+                return Part.findOne({type: 'daily', onSale: true});
+            })
+            .then(function (part) {
+                if (!part) return res.setError(500, '日行一善相关信息未建立');
+                data.part = part;
+                data.title = '建寺-日行一善';
+                return res.render('wechat/dailyVirtue', data);
+            })
+            .catch(function (err) {
+                return res.setError(500, null, err);
             });
     },
 
@@ -64,22 +73,32 @@ module.exports = {
         var data = {
             title: '建寺-随喜所有建庙功德'
         };
-        Part.findOne({type: 'suixi', onSale: true}, function (err, part) {
-            if (!err) {
+        var res = createResponseWrap(res);
+        return Part.findOne({type: 'suixi', onSale: true})
+            .then(function (part) {
+                if (!part) return res.setError(500, '随喜相关信息未建立');
                 data.part = part;
-                res.render('wechat/suixi', data);
-            }
-        });
+                return res.render('wechat/suixi', data);
+            }, function (err) {
+                return res.setError(500, null, err);
+            });
     },
 
     trans: function (req, res) {
         var id = req.params.partId;
-        Part.findById(id, function (err, part) {
-            res.render('wechat/trans', {
-                title: '建寺-' + part.name,
-                part: part
+        var res = createResponseWrap(res);
+        return Part.findById(id)
+            .then(function (part) {
+                if (!part) {
+                    return res.setError(404, 'part ' + id.toString() + ' is not found');
+                }
+                return res.render('wechat/trans', {
+                    title: '建寺-' + part.name,
+                    part: part
+                });
+            }, function (err) {
+                return res.setError(500, null, err);
             });
-        });
     }
 };
 

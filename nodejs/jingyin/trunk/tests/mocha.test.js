@@ -952,6 +952,7 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('处理请求', function () {
+                    var err;
                     var reqStub, resStub;
                     var statusSpy, resEndSpy, resSendSyp, resRenderSpy;
                     var controller;
@@ -977,6 +978,7 @@ describe('静音寺业务系统', function () {
                     }
 
                     beforeEach(function () {
+                        err = new Error();
                         statusSpy = sinon.spy();
                         resSendSyp = sinon.spy();
                         resEndSpy = sinon.spy();
@@ -1041,11 +1043,8 @@ describe('静音寺业务系统', function () {
                     describe('显示首页', function () {
                         var virtuesList, virtueListStub;
                         var times, countStub;
-                        var err;
 
                         beforeEach(function () {
-                            err = 'this is the err';
-
                             virtuesList = [{}, {}];
                             virtueListStub = createProxyStub([30], [virtuesList]);
                             stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
@@ -1059,19 +1058,18 @@ describe('静音寺业务系统', function () {
                             virtueListStub = createProxyStub([30], null, err);
                             stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
 
-                            var controller = proxyquire('../server/wechat/manjusri', stubs).home;
+                            controller = proxyquire('../server/wechat/manjusri', stubs).home;
                             return controller(reqStub, resStub)
                                 .then(function () {
                                     checkResponseStatusCodeAndMessage(500, null, err);
                                 });
-
                         });
 
                         it('未能列出捐助交易总数', function () {
                             countStub = createProxyStub([{state: 'payed'}], null, err);
                             stubs['./models/virtue'] = {count: countStub};
 
-                            var controller = proxyquire('../server/wechat/manjusri', stubs).home;
+                            controller = proxyquire('../server/wechat/manjusri', stubs).home;
                             return controller(reqStub, resStub)
                                 .then(function () {
                                     checkResponseStatusCodeAndMessage(500, null, err);
@@ -1079,7 +1077,7 @@ describe('静音寺业务系统', function () {
                         });
 
                         it('正确显示', function () {
-                            var controller = proxyquire('../server/wechat/manjusri', stubs).home;
+                            controller = proxyquire('../server/wechat/manjusri', stubs).home;
                             return controller(reqStub, resStub)
                                 .then(function () {
                                     expect(resRenderSpy).calledWith('wechat/index', {
@@ -1091,61 +1089,213 @@ describe('静音寺业务系统', function () {
                         });
                     });
 
-                    it('显示建寺', function () {
-                        var partslist = [{foo: 'fffff'}, {}];
-                        var partFindStub = sinon.stub();
-                        partFindStub.withArgs({type: 'part', onSale: true}).callsArgWith(1, null, partslist);
-                        stubs['./models/part'] = {find: partFindStub};
-                        var controller = proxyquire('../server/wechat/manjusri', stubs).jiansi;
+                    describe('显示建寺', function () {
+                        var partFindStub, partslist;
 
-                        showPage(controller, 'wechat/jiansi', {
-                            title: '建寺',
-                            parts: partslist
+                        beforeEach(function () {
+                            partslist = [{foo: 'fffff'}, {}];
+                            partFindStub = createProxyStub([{type: 'part', onSale: true}], [partslist]);
+                            stubs['./models/part'] = {find: partFindStub};
+                        });
+
+                        it('未能列出当前上架的法物', function () {
+                            partFindStub = createProxyStub([{type: 'part', onSale: true}], null, err);
+                            stubs['./models/part'] = {find: partFindStub};
+                            controller = proxyquire('../server/wechat/manjusri', stubs).jiansi;
+
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+                        });
+
+                        it('正确显示', function () {
+                            controller = proxyquire('../server/wechat/manjusri', stubs).jiansi;
+
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    expect(resRenderSpy).calledWith('wechat/jiansi', {
+                                        title: '建寺',
+                                        parts: partslist
+                                    });
+                                });
                         });
                     });
 
                     describe('日行一善', function () {
-                        it('显示页面', function () {
-                            var virtuesList = [{}, {}];
-                            var virtueListStub = sinon.stub();
-                            virtueListStub.withArgs(30).callsArgWith(1, null, virtuesList);
+                        var virtuesList, virtueListStub;
+                        var times, countStub;
+                        var part, findOneStub;
+
+                        beforeEach(function () {
+                            virtuesList = [{}, {}];
+                            virtueListStub = createProxyStub([30], [virtuesList]);
                             stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
 
-                            var times = 10;
-                            var countStub = sinon.stub();
-                            countStub.withArgs({state: 'payed'}).callsArgWith(1, null, times);
+                            times = 10;
+                            countStub = createProxyStub([{state: 'payed'}], [times]);
                             stubs['./models/virtue'] = {count: countStub};
 
-                            var part = {foo: 'part'};
-                            var findOneStub = sinon.stub();
-                            findOneStub.withArgs({type: 'daily', onSale: true}).callsArgWith(1, null, part);
+                            part = new Object();
+                            findOneStub = createProxyStub([{type: 'daily', onSale: true}], [part]);
+                            stubs['./models/part'] = {findOne: findOneStub};
+                        });
+
+                        it('未能列出最近的捐助交易', function () {
+                            virtueListStub = createProxyStub([30], null, err);
+                            stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+
+                            controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+                        });
+
+                        it('未能列出捐助交易总数', function () {
+                            countStub = createProxyStub([{state: 'payed'}], null, err);
+                            stubs['./models/virtue'] = {count: countStub};
+
+                            controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+                        });
+
+                        it('访问日行一善的相关信息失败', function () {
+                            findOneStub = createProxyStub([{type: 'daily', onSale: true}], null, err);
                             stubs['./models/part'] = {findOne: findOneStub};
 
-                            var controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
-                            showPage(controller, 'wechat/dailyVirtue', {
-                                virtues: virtuesList,
-                                times: 10,
-                                part: part,
-                                title: '建寺-日行一善'
-                            });
+                            controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+                        });
+
+                        it('未能获得日行一善的相关信息', function () {
+                            findOneStub = createProxyStub([{type: 'daily', onSale: true}], [null]);
+                            stubs['./models/part'] = {findOne: findOneStub};
+
+                            controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, '日行一善相关信息未建立');
+                                });
+                        });
+
+                        it('正确显示', function () {
+                            controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    expect(resRenderSpy).calledWith('wechat/dailyVirtue', {
+                                        virtues: virtuesList,
+                                        times: 10,
+                                        part: part,
+                                        title: '建寺-日行一善'
+                                    });
+                                });
+                        });
+                    });
+
+                    describe('随喜', function () {
+                        var part, findOneStub;
+
+                        beforeEach(function () {
+                            part = new Object();
+                            findOneStub = createProxyStub([{type: 'suixi', onSale: true}], [part]);
+                            stubs['./models/part'] = {findOne: findOneStub};
+                        });
+
+                        it('访问随喜的相关信息失败', function () {
+                            findOneStub = createProxyStub([{type: 'daily', onSale: true}], null, err);
+                            stubs['./models/part'] = {findOne: findOneStub};
+
+                            controller = proxyquire('../server/wechat/manjusri', stubs).suixi;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+                        });
+
+                        it('未能获得随喜的相关信息', function () {
+                            findOneStub = createProxyStub([{type: 'suixi', onSale: true}], [null]);
+                            stubs['./models/part'] = {findOne: findOneStub};
+
+                            controller = proxyquire('../server/wechat/manjusri', stubs).suixi;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, '随喜相关信息未建立');
+                                });
+                        });
+
+                        it('正确显示', function () {
+                            controller = proxyquire('../server/wechat/manjusri', stubs).suixi;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    expect(resRenderSpy).calledWith('wechat/suixi', {
+                                        part: part,
+                                        title: '建寺-随喜所有建庙功德'
+                                    });
+                                });
                         });
                     });
 
                     describe('认捐法物', function () {
-                        it('显示页面', function () {
+                        var partId, part, partFindByIdStub;
+
+                        beforeEach(function () {
+                            partId = 12345;
+                            part = {name: 'foo'}
+
+                            reqStub.params.partId = partId;
+                            partFindByIdStub = createProxyStub([partId], [part]);
+                            stubs['./models/part'] = {findById: partFindByIdStub};
+                        });
+
+                        it('访问法物的相关信息失败', function () {
+                            var partId = 12345;
+                            reqStub.params.partId = partId;
+                            var partFindByIdStub = createProxyStub([partId], null, err);
+                            stubs['./models/part'] = {findById: partFindByIdStub};
+
+                            controller = proxyquire('../server/wechat/manjusri', stubs).trans;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+                        });
+
+                        it('指定法物不存在', function () {
+                            var partId = 12345;
+                            reqStub.params.partId = partId;
+                            var partFindByIdStub = createProxyStub([partId], [null]);
+                            stubs['./models/part'] = {findById: partFindByIdStub};
+
+                            controller = proxyquire('../server/wechat/manjusri', stubs).trans;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(404, 'part ' + partId.toString() + ' is not found');
+                                });
+                        });
+
+                        it('正确显示', function () {
                             var partId = 12345;
                             var part = {name: 'foo'}
 
                             reqStub.params.partId = partId;
-                            var partFindByIdStub = sinon.stub();
-                            partFindByIdStub.withArgs(partId).callsArgWith(1, null, part);
-                            var controller = proxyquire('../server/wechat/suixi', {
-                                './models/part': {findById: partFindByIdStub}
-                            }).trans;
-                            showPage(controller, 'wechat/trans', {
-                                title: '建寺-' + part.name,
-                                part: part
-                            });
+                            var partFindByIdStub = createProxyStub([partId], [part]);
+                            stubs['./models/part'] = {findById: partFindByIdStub};
+
+                            controller = proxyquire('../server/wechat/manjusri', stubs).trans;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    expect(resRenderSpy).calledWith('wechat/trans', {
+                                        title: '建寺-' + part.name,
+                                        part: part
+                                    });
+                                });
                         });
                     });
 
