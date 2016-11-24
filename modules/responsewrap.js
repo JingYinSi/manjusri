@@ -9,7 +9,7 @@ function ResponseWrap(res) {
 ResponseWrap.prototype.setError = function (code, msg, err) {
     this.res.status(code);
     if (msg) this.res.statusMessage = msg;
-    err ? this.res.send(err) : this.res.end();
+    err ? this.res.send(err) : msg ? this.res.send(msg) : this.res.end();
 }
 
 ResponseWrap.prototype.render = function (page, data) {

@@ -16,20 +16,23 @@ var virtueListQuery = VirtueSchema
 Virtues.prototype.listLastVirtues = function (count) {
     return new Promise(function (resolve, reject) {
         var list = [];
-        virtueListQuery.limit(count).exec(function (err, virtues) {
-            if (err) return reject(err);
-            virtues.forEach(function (v) {
-                var d = {
-                    date: v.timestamp,
-                    lord: v.lord ? v.lord.name : '未知',
-                    subject: v.subject.name,
-                    num: v.num,
-                    amount: v.amount
-                };
-                list.push(d);
+        virtueListQuery.limit(count).exec()
+            .then(function (virtues) {
+                virtues.forEach(function (v) {
+                    var d = {
+                        date: v.timestamp,
+                        lord: v.lord ? v.lord.name : '未知',
+                        subject: v.subject.name,
+                        num: v.num,
+                        amount: v.amount
+                    };
+                    list.push(d);
+                });
+                return resolve(list);
+            },
+            function (err) {
+                return reject(err);
             });
-            return resolve(list);
-        });
     });
 }
 

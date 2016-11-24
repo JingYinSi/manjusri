@@ -1,32 +1,37 @@
 var Part = require('./models/part'),
     Virtue = require('./models/virtue'),
     virtuesModule = require('../modules/virtues'),
+    Promise = require('bluebird'),
     createResponseWrap = require('../../modules/responsewrap');
 
-function listVirtuesAndTotalTimes(callback) {
-    var data = {};
-    virtuesModule.listLastVirtues(30)
-        .then(function (list) {
-            data.virtues = list;
-            return Virtue.count({state: 'payed'});
-        })
-        .then(function (times) {
-            data.times = times;
-            return callback(null, data);
-        })
-        .catch(function (err) {
-            return callback(err);
-        });
+function listVirtuesAndTotalTimes() {
+    return new Promise(function (resolve, reject) {
+        var data = {};
+        return virtuesModule.listLastVirtues(30)
+            .then(function (list) {
+                data.virtues = list;
+                return Virtue.count({state: 'payed'});
+            })
+            .then(function (times) {
+                data.times = times;
+                return resolve(data);
+            })
+            .catch(function (err) {
+                return reject(err);
+            });
+    });
 }
 
 module.exports = {
     home: function (req, res) {
         var res = createResponseWrap(res);
-        listVirtuesAndTotalTimes(function (err, data) {
-            if (err) return res.setError(500, null, err);
-            data.title = '首页';
-            res.render('wechat/index', data);
-        });
+        return listVirtuesAndTotalTimes()
+            .then(function (data) {
+                data.title = '首页';
+                res.render('wechat/index', data);
+            }, function (err) {
+                return res.setError(500, null, err);
+            });
     },
 
     jiansi: function (req, res) {

@@ -550,7 +550,7 @@ describe('静音寺业务系统', function () {
                     wrapper.setError(code, msg);
                     expect(statusSpy).calledWith(400).calledOnce;
                     expect(resStub.statusMessage).eql(msg);
-                    expect(endSpy).calledOnce;
+                    expect(resSendSpy).calledWith(msg).calledOnce;
                 });
 
                 it('设置响应状态码及相关原因，响应体中包含详细错误', function () {
@@ -928,7 +928,7 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe("控制器", function () {
-                    var stubs, controller;
+                    var controller;
                     var reqStub, resStub;
                     var resEndSpy, resStatusSpy, resRenderSpy;
                     var resWrapStub;
@@ -941,9 +941,7 @@ describe('静音寺业务系统', function () {
                             setStatus: resStatusSpy,
                             render: resRenderSpy
                         });
-                        stubs = {
-                            '../../modules/responsewrap': resWrapStub
-                        };
+                        stubs['../../modules/responsewrap'] = resWrapStub;
                     });
 
                     describe('业务系统', function () {
@@ -955,12 +953,10 @@ describe('静音寺业务系统', function () {
 
                 describe('处理请求', function () {
                     var reqStub, resStub;
-                    var statusSpy, resEndSpy, resSendSyp;
+                    var statusSpy, resEndSpy, resSendSyp, resRenderSpy;
                     var controller;
 
                     function showPage(controller, page, data) {
-                        var resRenderSpy = sinon.spy();
-                        resStub.render = resRenderSpy;
                         controller(reqStub, resStub);
                         if (data)
                             expect(resRenderSpy).calledWith(page, data);
@@ -984,6 +980,7 @@ describe('静音寺业务系统', function () {
                         statusSpy = sinon.spy();
                         resSendSyp = sinon.spy();
                         resEndSpy = sinon.spy();
+                        resRenderSpy = sinon.spy();
 
                         reqStub = {
                             query: {},
@@ -991,6 +988,7 @@ describe('静音寺业务系统', function () {
                         };
                         resStub = {
                             status: statusSpy,
+                            render: resRenderSpy,
                             send: resSendSyp,
                             end: resEndSpy
                         }
@@ -1062,8 +1060,11 @@ describe('静音寺业务系统', function () {
                             stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
 
                             var controller = proxyquire('../server/wechat/manjusri', stubs).home;
-                            controller(reqStub, resStub);
-                            checkResponseStatusCodeAndMessage(500, null, err);
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+
                         });
 
                         it('未能列出捐助交易总数', function () {
@@ -1071,17 +1072,22 @@ describe('静音寺业务系统', function () {
                             stubs['./models/virtue'] = {count: countStub};
 
                             var controller = proxyquire('../server/wechat/manjusri', stubs).home;
-                            controller(reqStub, resStub);
-                            checkResponseStatusCodeAndMessage(500, null, err);
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
                         });
 
                         it('正确显示', function () {
                             var controller = proxyquire('../server/wechat/manjusri', stubs).home;
-                            showPage(controller, 'wechat/index', {
-                                virtues: virtuesList,
-                                times: 10,
-                                title: '首页'
-                            });
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    expect(resRenderSpy).calledWith('wechat/index', {
+                                        virtues: virtuesList,
+                                        times: 10,
+                                        title: '首页'
+                                    });
+                                });
                         });
                     });
 
