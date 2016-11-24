@@ -6,16 +6,11 @@ var virtueModel = require('../wechat/models/virtue'),
     partModel = require('../wechat/models/part'),
     linkages = require('../rests'),
     usersModule = require('../modules/users'),
+    createResponseWrap = require('../../modules/responsewrap'),
     weixin = require('../weixin');
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
-
-function setStatus(response, code, errMsg) {
-    response.status(code);
-    if (errMsg) response.send(errMsg);
-    response.end();
-}
 
 function Virtues() {
 }
@@ -23,9 +18,9 @@ function Virtues() {
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
     var subject = obj.subject;
+    var resWrap = createResponseWrap(res);
     if (!subject) {
-        setStatus(res, 400, "subject is not defined");
-        return;
+        return resWrap.setError(400, "subject is not defined");
     }
 
     var trans = {
@@ -33,10 +28,10 @@ Virtues.prototype.prepay = function (req, res) {
         amount: Math.round(obj.amount * 100) / 100,
     }
     if (!trans.amount) {
-        return setStatus(res, 400, "amount is undefined");
+        return resWrap.setError(400, "amount is undefined");
     }
     if (trans.amount <= 0) {
-        return setStatus(res, 400, "amount is invalid");
+        return resWrap.setError(400, "amount is invalid");
     }
 
     if(obj.price) trans.price = obj.price;
@@ -60,7 +55,7 @@ Virtues.prototype.prepay = function (req, res) {
     virtueModel.place(trans, function (err, virtue) {
         if (err) {
             logger.error('Place virtue failed:\n' + err);
-            return setStatus(res, 500, err);
+            return resWrap.setError(500, 'place virtue failed', err);
         }
         if (trans.num) {
             partModel.findById(subject, function (err, part) {
