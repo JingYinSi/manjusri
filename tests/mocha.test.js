@@ -7,6 +7,23 @@ var mongoose = require('mongoose'),
     js2xmlparser = require('js2xmlparser'),
     proxyquire = require('proxyquire');
 
+function createProxyStub(withArgs, resolves, err) {
+    var stub = sinon.stub();
+    var promise = stub.returnsPromise();
+
+    if (withArgs && withArgs.length > 0) {
+        stub = stub.withArgs.apply(stub, withArgs);
+    }
+    if (err) {
+        promise.rejects(err);
+        return stub;
+    }
+    if (resolves) {
+        promise.resolves.apply(promise, resolves);
+    }
+    return stub;
+}
+
 describe('静音寺业务系统', function () {
     var stubs;
     beforeEach(function () {
@@ -276,13 +293,13 @@ describe('静音寺业务系统', function () {
                 var finished = 0, errored = false;
 
                 function done(err, data) {
-                    if(err){
+                    if (err) {
                         errored = true;
                         return callback(err);
                     }
                     result.push(data);
                     ++finished;
-                    if(finished === docs.length && !errored){
+                    if (finished === docs.length && !errored) {
                         return callback(null, result);
                     }
                 }
@@ -357,8 +374,8 @@ describe('静音寺业务系统', function () {
 
             describe('功德', function () {
                 beforeEach(function (done) {
-                    //initDB(insertDocsInSequential, done);
-                    initDB(insertDocsInParallel, done);
+                    initDB(insertDocsInSequential, done);
+                    //initDB(insertDocsInParallel, done);
                 });
 
                 afterEach(function (done) {
@@ -366,13 +383,13 @@ describe('静音寺业务系统', function () {
                     //done();
                 });
 
-                it('列出最近的捐助交易', function (done) {
+                it('列出最近的捐助交易', function () {
                     var virtues = require('../server/modules/virtues');
-                    virtues.listLastVirtues(1, function (err, list) {
-                        expect(list.length).eql(1);
-                        var doc = list[0];
-                        done();
-                    });
+                    return virtues.listLastVirtues(1)
+                        .then(function (list) {
+                            expect(list.length).eql(1);
+                            var doc = list[0];
+                        });
                 });
             });
         });
@@ -505,22 +522,24 @@ describe('静音寺业务系统', function () {
 
             describe('Response Wrapper', function () {
                 var wrapper, resStub;
-                var endSpy, statusSpy, renderSpy;
+                var endSpy, statusSpy, renderSpy, resSendSpy;
                 beforeEach(function () {
                     statusSpy = sinon.spy();
                     endSpy = sinon.spy();
                     renderSpy = sinon.spy();
+                    resSendSpy = sinon.spy();
                     resStub = {
                         status: statusSpy,
                         end: endSpy,
-                        render: renderSpy
+                        render: renderSpy,
+                        send: resSendSpy
                     }
                     wrapper = require('../modules/responsewrap')(resStub);
                 });
 
                 it('设置响应状态码并立刻将响应发送至客户端', function () {
                     var code = 400;
-                    wrapper.setStatus(code);
+                    wrapper.setError(code);
                     expect(statusSpy).calledWith(400).calledOnce;
                     expect(endSpy).calledOnce;
                 });
@@ -528,10 +547,20 @@ describe('静音寺业务系统', function () {
                 it('设置响应状态码及相关原因，并立刻将响应发送至客户端', function () {
                     var code = 400;
                     var msg = 'the reason of this status';
-                    wrapper.setStatus(code, msg);
+                    wrapper.setError(code, msg);
                     expect(statusSpy).calledWith(400).calledOnce;
                     expect(resStub.statusMessage).eql(msg);
                     expect(endSpy).calledOnce;
+                });
+
+                it('设置响应状态码及相关原因，响应体中包含详细错误', function () {
+                    var code = 400;
+                    var err = new Error();
+                    var msg = 'the reason of this status';
+                    wrapper.setError(code, msg, err);
+                    expect(statusSpy).calledWith(400).calledOnce;
+                    expect(resStub.statusMessage).eql(msg);
+                    expect(resSendSpy).calledWith(err).calledOnce;
                 });
 
                 it('渲染客户端', function () {
@@ -925,9 +954,8 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('处理请求', function () {
-                    var stubs;
                     var reqStub, resStub;
-                    var statusSpy, resEndSpy;
+                    var statusSpy, resEndSpy, resSendSyp;
                     var controller;
 
                     function showPage(controller, page, data) {
@@ -940,10 +968,12 @@ describe('静音寺业务系统', function () {
                             expect(resRenderSpy).calledWith(page);
                     }
 
-                    function checkResponseStatusCodeAndMessage(code, message) {
+                    function checkResponseStatusCodeAndMessage(code, message, err) {
                         expect(statusSpy).calledWith(code).calledOnce;
                         if (message)
                             expect(resStub.statusMessage).eql(message);
+                        if (err)
+                            expect(resSendSyp).calledWith(err);
                     }
 
                     function checkResponseEnded() {
@@ -951,8 +981,8 @@ describe('静音寺业务系统', function () {
                     }
 
                     beforeEach(function () {
-                        stubs = {};
                         statusSpy = sinon.spy();
+                        resSendSyp = sinon.spy();
                         resEndSpy = sinon.spy();
 
                         reqStub = {
@@ -961,6 +991,7 @@ describe('静音寺业务系统', function () {
                         };
                         resStub = {
                             status: statusSpy,
+                            send: resSendSyp,
                             end: resEndSpy
                         }
                     });
@@ -1009,22 +1040,48 @@ describe('静音寺业务系统', function () {
                         });
                     });
 
-                    it('显示首页', function () {
-                        var virtuesList = [{}, {}];
-                        var virtueListStub = sinon.stub();
-                        virtueListStub.withArgs(30).callsArgWith(1, null, virtuesList);
-                        stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+                    describe('显示首页', function () {
+                        var virtuesList, virtueListStub;
+                        var times, countStub;
+                        var err;
 
-                        var times = 10;
-                        var countStub = sinon.stub();
-                        countStub.withArgs({state: 'payed'}).callsArgWith(1, null, times);
-                        stubs['./models/virtue'] = {count: countStub};
+                        beforeEach(function () {
+                            err = 'this is the err';
 
-                        var controller = proxyquire('../server/wechat/manjusri', stubs).home;
-                        showPage(controller, 'wechat/index', {
-                            virtues: virtuesList,
-                            times: 10,
-                            title: '首页'
+                            virtuesList = [{}, {}];
+                            virtueListStub = createProxyStub([30], [virtuesList]);
+                            stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+
+                            times = 10;
+                            countStub = createProxyStub([{state: 'payed'}], [times]);
+                            stubs['./models/virtue'] = {count: countStub};
+                        });
+
+                        it('未能列出最近的捐助交易', function () {
+                            virtueListStub = createProxyStub([30], null, err);
+                            stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+
+                            var controller = proxyquire('../server/wechat/manjusri', stubs).home;
+                            controller(reqStub, resStub);
+                            checkResponseStatusCodeAndMessage(500, null, err);
+                        });
+
+                        it('未能列出捐助交易总数', function () {
+                            countStub = createProxyStub([{state: 'payed'}], null, err);
+                            stubs['./models/virtue'] = {count: countStub};
+
+                            var controller = proxyquire('../server/wechat/manjusri', stubs).home;
+                            controller(reqStub, resStub);
+                            checkResponseStatusCodeAndMessage(500, null, err);
+                        });
+
+                        it('正确显示', function () {
+                            var controller = proxyquire('../server/wechat/manjusri', stubs).home;
+                            showPage(controller, 'wechat/index', {
+                                virtues: virtuesList,
+                                times: 10,
+                                title: '首页'
+                            });
                         });
                     });
 

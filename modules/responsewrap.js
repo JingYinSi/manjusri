@@ -1,15 +1,21 @@
 /**
  * Created by clx on 2016/10/24.
  */
-module.exports = function (res) {
-    this.response = res;
-    this.setStatus = function (code, message) {
-        this.response.status(code);
-        if(message) this.response.statusMessage = message;
-        this.response.end();
-    };
-    this.render = function(page, data){
-        this.response.render(page, data);
-    }
-    return this;
+
+function ResponseWrap(res) {
+    this.res = res;
+}
+
+ResponseWrap.prototype.setError = function (code, msg, err) {
+    this.res.status(code);
+    if (msg) this.res.statusMessage = msg;
+    err ? this.res.send(err) : this.res.end();
+}
+
+ResponseWrap.prototype.render = function (page, data) {
+    this.res.render(page, data);
+}
+
+module.exports = function(res){
+    return new ResponseWrap(res);
 }
