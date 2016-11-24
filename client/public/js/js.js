@@ -15,6 +15,19 @@ function parseLinksInHeader(linksInHeader) {
     return linkages;
 }
 
+function requestDoTansaction(data) {
+    var url = '/jingyin/rest/virtues/prepay';
+    $.ajax({
+        type: 'POST',
+        url: url,
+        data: data,
+        success: function (data, textStatus, request) {
+            var linkages = parseLinksInHeader(request.getResponseHeader('link'));
+            window.location = linkages.pay;
+        }
+    });
+}
+
 $(function() {
     $('.nav .nav_click').click(function () {
         $(this).find('dl').toggle();

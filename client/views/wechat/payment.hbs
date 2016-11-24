@@ -22,22 +22,6 @@
                 function (res) {
                     var result = res.err_msg; //result = 'get_brand_wcpay_request:ok
                     if (result.indexOf("ok") != -1) {
-
-                        /*var url = '/jingyin/rest/virtues/' + $('#virtue').text();
-                        var openid = $('#openId').text();
-                        var paymentNo = $('#paymentNo').text();
-                        $.ajax({
-                            type: 'PUT',
-                            url: url,
-                            data: {
-                                openId: openid,
-                                paymentNo: paymentNo
-                            },
-                            success: function (data, textStatus, request) {
-                                window.location = "/jingyin/manjusri/pay/notify?virtue=" + data.id;
-                                return;
-                            }
-                        });*/
                         window.location = "/jingyin/manjusri/pay/notify";
                         return;
                     }
