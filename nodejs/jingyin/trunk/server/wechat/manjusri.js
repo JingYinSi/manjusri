@@ -28,7 +28,7 @@ module.exports = {
         return listVirtuesAndTotalTimes()
             .then(function (data) {
                 data.title = '首页';
-                res.render('wechat/index', data);
+                return res.render('wechat/index', data);
             }, function (err) {
                 return res.setError(500, null, err);
             });
@@ -48,15 +48,16 @@ module.exports = {
     },
 
     dailyVirtue: function (req, res) {
-        listVirtuesAndTotalTimes(function (err, data) {
-            Part.findOne({type: 'daily', onSale: true}, function (err, part) {
-                if (!err) {
-                    data.part = part;
-                    data.title = '建寺-日行一善';
-                    res.render('wechat/dailyVirtue', data);
-                }
+        return listVirtuesAndTotalTimes()
+            .then(function (data) {
+                Part.findOne({type: 'daily', onSale: true}, function (err, part) {
+                    if (!err) {
+                        data.part = part;
+                        data.title = '建寺-日行一善';
+                        return res.render('wechat/dailyVirtue', data);
+                    }
+                });
             });
-        });
     },
 
     suixi: function (req, res) {
