@@ -29,7 +29,6 @@
 </div>-->
 <script>
     $("#show-confirm").click(function () {
-        var url = '/jingyin/rest/virtues/prepay';
         var dataToPost = {
             subject: $('#trans_subject').text(),
             price:$('#trans_price').text() * 1,
@@ -37,16 +36,7 @@
         };
         dataToPost.amount = dataToPost.price * dataToPost.num;
 
-        $.ajax({
-            type: 'POST',
-            url:url,
-            data: dataToPost,
-            success: function(data, textStatus, request){
-                var linkages = parseLinksInHeader(request.getResponseHeader('link'));
-                window.location = linkages.pay;
-                return;
-            }
-        });
+        requestDoTansaction(dataToPost);
     });
 </script>
 </body>

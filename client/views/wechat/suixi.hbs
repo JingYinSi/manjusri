@@ -58,17 +58,7 @@
             dataToPost.giving = giving;
         }
 
-        var url = '/jingyin/rest/virtues/prepay';
-        $.ajax({
-            type: 'POST',
-            url:url,
-            data: dataToPost,
-            success: function(data, textStatus, request){
-                var linkages = parseLinksInHeader(request.getResponseHeader('link'));
-                window.location = linkages.pay;
-                return;
-            }
-        });
+        requestDoTansaction(dataToPost);
     });
 </script>
 </body>
