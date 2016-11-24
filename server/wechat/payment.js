@@ -19,7 +19,7 @@ module.exports = {
         };
         weixin.getOpenId(req.query.code, function (err, trader) {
             if(err){
-                resWrap.setStatus(400);
+                resWrap.setError(400);
                 return;
             }
             var transId = req.query.virtue;
@@ -29,14 +29,14 @@ module.exports = {
                 if (err) {
                     logger.error(err);
                     var code = (err.errors) ? 400 : 502;
-                    resWrap.setStatus(code);
+                    resWrap.setError(code);
                     return;
                 }
 
                 var name = virtue.subject.name;
                 weixin.prePay(trader, transId, name, virtue.amount*100, function (err, payData) {
                     if(err){
-                        resWrap.setStatus(502);
+                        resWrap.setError(502);
                         return;
                     }
                     logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
