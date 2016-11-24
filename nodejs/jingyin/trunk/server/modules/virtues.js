@@ -1,7 +1,8 @@
 /**
  * Created by clx on 2016/11/20.
  */
-const VirtueSchema = require('../wechat/models/virtue');
+const VirtueSchema = require('../wechat/models/virtue'),
+    Promise = require('bluebird');
 
 function Virtues() {
 }
@@ -12,22 +13,23 @@ var virtueListQuery = VirtueSchema
     .populate('lord', 'name')
     .populate('subject', 'name');
 
-Virtues.prototype.listLastVirtues = function (count, callback) {
-    var list = [];
-    virtueListQuery.limit(count).exec(function (err, virtues) {
-        if (err) return callback(err);
-
-        virtues.forEach(function (v) {
-            var d = {
-                date: v.timestamp,
-                lord: v.lord ? v.lord.name : '未知',
-                subject: v.subject.name,
-                num: v.num,
-                amount: v.amount
-            };
-            list.push(d);
+Virtues.prototype.listLastVirtues = function (count) {
+    return new Promise(function (resolve, reject) {
+        var list = [];
+        virtueListQuery.limit(count).exec(function (err, virtues) {
+            if (err) return reject(err);
+            virtues.forEach(function (v) {
+                var d = {
+                    date: v.timestamp,
+                    lord: v.lord ? v.lord.name : '未知',
+                    subject: v.subject.name,
+                    num: v.num,
+                    amount: v.amount
+                };
+                list.push(d);
+            });
+            return resolve(list);
         });
-        callback(null, list);
     });
 }
 

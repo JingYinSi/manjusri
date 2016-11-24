@@ -57,6 +57,7 @@
     "should": "^11.1.1",
     "sinon": "^1.17.6",
     "sinon-chai": "^2.8.0",
+    "sinon-stub-promise": "^4.0.0",
     "supertest": "^2.0.1"
   }
 }

@@ -6,6 +6,9 @@ var chai = require('chai'),
     chaiXml = require('chai-xml'),
     sinonChai = require('sinon-chai');
 
+var sinonStubPromise = require('sinon-stub-promise');
+sinonStubPromise(sinon);
+
 global.dbURI = 'mongodb://121.41.93.210:27017/test';
 global.clearDB = require('mocha-mongoose')(dbURI);
 

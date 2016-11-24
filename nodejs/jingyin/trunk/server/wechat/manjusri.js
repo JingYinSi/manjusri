@@ -1,21 +1,29 @@
 var Part = require('./models/part'),
     Virtue = require('./models/virtue'),
-    virtuesModule = require('../modules/virtues');
+    virtuesModule = require('../modules/virtues'),
+    createResponseWrap = require('../../modules/responsewrap');
 
 function listVirtuesAndTotalTimes(callback) {
     var data = {};
-    virtuesModule.listLastVirtues(30, function (err, list) {
-        data.virtues = list;
-        Virtue.count({state: 'payed'}, function (err, times) {
+    virtuesModule.listLastVirtues(30)
+        .then(function (list) {
+            data.virtues = list;
+            return Virtue.count({state: 'payed'});
+        })
+        .then(function (times) {
             data.times = times;
-            callback(null, data);
+            return callback(null, data);
+        })
+        .catch(function (err) {
+            return callback(err);
         });
-    });
 }
 
 module.exports = {
     home: function (req, res) {
+        var res = createResponseWrap(res);
         listVirtuesAndTotalTimes(function (err, data) {
+            if (err) return res.setError(500, null, err);
             data.title = '首页';
             res.render('wechat/index', data);
         });
