@@ -1,7 +1,8 @@
 /**
  * Created by clx on 2016/10/27.
  */
-var virtueModel = require('../wechat/models/virtue'),
+var virtues = require('../modules/virtues'),
+    parts = require('../modules/parts'),
     userModel = require('../wechat/models/user'),
     partModel = require('../wechat/models/part'),
     linkages = require('../rests'),
@@ -17,26 +18,7 @@ function Virtues() {
 
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
-    var subject = obj.subject;
     var resWrap = createResponseWrap(res);
-    if (!subject) {
-        return resWrap.setError(400, "subject is not defined");
-    }
-
-    var trans = {
-        subject: subject,
-        amount: Math.round(obj.amount * 100) / 100,
-    }
-    if (!trans.amount) {
-        return resWrap.setError(400, "amount is undefined");
-    }
-    if (trans.amount <= 0) {
-        return resWrap.setError(400, "amount is invalid");
-    }
-
-    if(obj.price) trans.price = obj.price;
-    if(obj.num) trans.num = obj.num;
-    if(obj.giving) trans.giving = obj.giving;
 
     function responseVirtue(virtue) {
         var selfUrl = linkages.getLink('virtue', {id: virtue.id});
@@ -52,25 +34,39 @@ Virtues.prototype.prepay = function (req, res) {
         res.status(201).json(virtue);
     }
 
-    virtueModel.place(trans, function (err, virtue) {
-        if (err) {
-            logger.error('Place virtue failed:\n' + err);
-            return resWrap.setError(500, 'place virtue failed', err);
-        }
-        if (trans.num) {
-            partModel.findById(subject, function (err, part) {
-                part.num = part.num - trans.num * 1;
-                part.sold = part.sold + trans.num * 1;
-                part.save(function (err) {
-                    if (!err) {
-                        return responseVirtue(virtue);
-                    }
+    //TODO:在确保virtues.place函数完整实现后提交一次
+    var details = null;
+    if(obj.num) details = {price:obj.price, num: obj.num};
+    return virtues.place(obj.subject, obj.amount, details, obj.giving)
+        .then(function (virtue) {
+            if (!details || !details.num) {
+                return responseVirtue(virtue);
+            }
+            return parts.updatePartNum(obj.subject, obj.num * 1)
+                .then(function () {
+                    return responseVirtue(virtue);
                 });
-            });
-        } else {
-            return responseVirtue(virtue);
-        }
-    });
+        })
+        .catch(function (err) {
+            return resWrap.setError(500, err);
+        });
+
+    /*return virtues.place(trans)
+     .then(function (virtue) {
+     if (!trans.num) return responseVirtue(virtue);
+     return PartModel.findById(subject);
+     })
+     .then(function (part) {
+     part.num = part.num - trans.num * 1;
+     part.sold = part.sold + trans.num * 1;
+     return part.save();
+     })
+     .then(function () {
+     return responseVirtue(virtue);
+     })
+     .catch(function (err) {
+     return resWrap.setError(500, 'place virtue failed', err);
+     });*/
 };
 
 //TODO: 调整菜单

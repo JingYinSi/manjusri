@@ -18,5 +18,10 @@ PartSchema.statics.create = function (obj, callback) {
     model.save(callback);
 };
 
+PartSchema.methods.updateNum = function(n){
+    this.num -= n;
+    this.sold += n;
+}
+
 module.exports = mongoose.model('Part', PartSchema);
 
