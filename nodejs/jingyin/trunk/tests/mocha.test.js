@@ -810,6 +810,7 @@ describe('静音寺业务系统', function () {
     });
 
     describe('微信公众号', function () {
+
         describe('微信接口', function () {
             var weixinModule, weixinConfig;
             var apiBaseURL, appid, appsecret, oauth2BaseURL;
@@ -1101,58 +1102,6 @@ describe('静音寺业务系统', function () {
         });
 
         describe('服务端控制', function () {
-            describe('路由器', function () {
-                beforeEach(function () {
-                });
-
-                xit('配置路由', function () {
-                    var manjusri = require('../server/wechat/manjusri'),
-                        payment = require('../server/wechat/payment'),
-                        part = require('../server/rest/virtues'),
-                        routes = require('../server/routes');
-                    var getSpy = sinon.stub(),
-                        postSpy = sinon.spy(),
-                        putSpy = sinon.stub(),
-                        deleteSpy = sinon.stub();
-
-                    var handlerStub = {
-                        get: getSpy,
-                        post: postSpy,
-                        put: postSpy,
-                        delete: deleteSpy
-                    }
-                    var routeStub = sinon.stub();
-                    routeStub.withArgs('/jingyin/wechat').returns(handlerStub);
-                    routeStub.withArgs('/jingyin/manjusri').returns(handlerStub);
-                    routeStub.withArgs('/jingyin/manjusri/index').returns(handlerStub);
-                    routeStub.withArgs('/jingyin/manjusri/jiansi').returns(handlerStub);
-                    routeStub.withArgs('/jingyin/manjusri/dailyvirtue').returns(handlerStub);
-                    routeStub.withArgs('/jingyin/manjusri/accuvirtue').returns(handlerStub);
-                    routeStub.withArgs('/jingyin/manjusri/suixi').returns(handlerStub);
-                    routeStub.withArgs('/jingyin/manjusri/trans/:partId').returns(handlerStub);
-                    routeStub.withArgs('/jingyin/manjusri/pay/confirm').returns(handlerStub);
-                    routeStub.withArgs('/jingyin/manjusri/pay/notify').returns(handlerStub);
-
-                    routeStub.withArgs('/jingyin/biz/parts/index').returns(handlerStub);
-
-                    routeStub.withArgs('/jingyin/rest/virtues/prepay').returns(handlerStub);
-
-                    getSpy.withArgs(manjusri.dailyVirtue).returns(handlerStub);
-                    getSpy.withArgs(manjusri.index).returns(handlerStub);
-                    getSpy.withArgs(suixi.index).returns(handlerStub);
-                    getSpy.withArgs(suixi.trans).returns(handlerStub);
-                    getSpy.withArgs(payment.index).returns(handlerStub);
-                    getSpy.withArgs(payment.result).returns(handlerStub);
-
-                    getSpy.withArgs(part.index).returns(handlerStub);
-
-                    routes({route: routeStub});
-
-                    //expect(postSpy).calledWith(wechat.receive);
-                    expect(postSpy).calledWith(accuvirtue.action);
-                    expect(postSpy).calledWith(payment.payNotify);
-                });
-            });
 
             describe('资源注册', function () {
                 it('getLink', function () {
@@ -1160,30 +1109,6 @@ describe('静音寺业务系统', function () {
                     expect(linkage.getLink("virtue", {id: 234567})).eql("/jingyin/rest/virtues/234567");
                     expect(linkage.getLink("pay", {virtue: 234567}))
                         .eql("http://jingyintemple.top/jingyin/manjusri/pay/confirm?virtue=234567");
-                });
-            });
-
-            describe("控制器", function () {
-                var controller;
-                var reqStub, resStub;
-                var resEndSpy, resStatusSpy, resRenderSpy;
-                var resWrapStub;
-
-                beforeEach(function () {
-                    resStatusSpy = sinon.spy();
-                    resRenderSpy = sinon.spy();
-                    resWrapStub = sinon.stub();
-                    resWrapStub.withArgs(resStub).returns({
-                        setStatus: resStatusSpy,
-                        render: resRenderSpy
-                    });
-                    stubs['../../modules/responsewrap'] = resWrapStub;
-                });
-
-                describe('业务系统', function () {
-                    it("法物管理页面", function () {
-                        controller = require('../biz/part');
-                    })
                 });
             });
 
@@ -1615,6 +1540,7 @@ describe('静音寺业务系统', function () {
                 });
             });
         });
+
     });
 });
 
