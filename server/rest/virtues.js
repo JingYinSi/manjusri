@@ -34,7 +34,6 @@ Virtues.prototype.prepay = function (req, res) {
         res.status(201).json(virtue);
     }
 
-    //TODO:在确保virtues.place函数完整实现后提交一次
     var details = null;
     if(obj.num) details = {price:obj.price, num: obj.num};
     return virtues.place(obj.subject, obj.amount, details, obj.giving)
@@ -50,23 +49,6 @@ Virtues.prototype.prepay = function (req, res) {
         .catch(function (err) {
             return resWrap.setError(500, err);
         });
-
-    /*return virtues.place(trans)
-     .then(function (virtue) {
-     if (!trans.num) return responseVirtue(virtue);
-     return PartModel.findById(subject);
-     })
-     .then(function (part) {
-     part.num = part.num - trans.num * 1;
-     part.sold = part.sold + trans.num * 1;
-     return part.save();
-     })
-     .then(function () {
-     return responseVirtue(virtue);
-     })
-     .catch(function (err) {
-     return resWrap.setError(500, 'place virtue failed', err);
-     });*/
 };
 
 //TODO: 调整菜单

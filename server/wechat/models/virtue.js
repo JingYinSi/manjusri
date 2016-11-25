@@ -37,20 +37,6 @@ var VirtueSchema = new Schema({
     state: {type: String, default: 'new', enum: ['new', 'payed']}
 });
 
-VirtueSchema.statics.place = function (obj, callback) {
-    var data = {
-        subject: obj.subject,
-        price: obj.price,
-        num: obj.num,
-        amount: obj.amount,
-        giving: obj.giving,
-        timestamp: Date.now()
-    }
-    var Virtue = mongoose.model('Virtue', VirtueSchema);
-    var model = new Virtue(data);
-    model.save(callback);
-};
-
 VirtueSchema.statics.pay = function (transId, userId, paymentNo, callback) {
     var Virtue = mongoose.model('Virtue', VirtueSchema);
     Virtue.findById(transId, function (err, virtue) {
