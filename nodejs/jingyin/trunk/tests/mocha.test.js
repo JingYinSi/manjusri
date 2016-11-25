@@ -443,7 +443,6 @@ describe('静音寺业务系统', function () {
             });
 
             describe('功德', function () {
-                //TODO:继续完善../server/modules/virtues的测试用例和实现
                 describe('预置捐助交易', function () {
                     var virtues, subject, timestamp, timestampStub;
 
