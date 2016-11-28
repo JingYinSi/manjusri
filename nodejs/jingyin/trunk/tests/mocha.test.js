@@ -1116,24 +1116,12 @@ describe('静音寺业务系统', function () {
                 var statusSpy, resEndSpy, resSendSyp, resRenderSpy;
                 var controller;
 
-                function showPage(controller, page, data) {
-                    controller(reqStub, resStub);
-                    if (data)
-                        expect(resRenderSpy).calledWith(page, data);
-                    else
-                        expect(resRenderSpy).calledWith(page);
-                }
-
                 function checkResponseStatusCodeAndMessage(code, message, err) {
                     expect(statusSpy).calledWith(code).calledOnce;
                     if (message)
                         expect(resStub.statusMessage).eql(message);
                     if (err)
                         expect(resSendSyp).calledWith(err);
-                }
-
-                function checkResponseEnded() {
-                    expect(resEndSpy).calledOnce;
                 }
 
                 beforeEach(function () {
@@ -1455,6 +1443,23 @@ describe('静音寺业务系统', function () {
                                 });
                             });
                     });
+                });
+
+                describe('微信支付', function () {
+                    var code;
+                    beforeEach(function () {
+                        code = '12345678';
+                        reqStub.query.code = code;
+                    })
+
+                    it('请求中未包含code的查询变量', function () {
+                        delete reqStub.query.code;
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(400);
+                            });
+                    })
                 });
 
                 describe('响应微信支付结果', function () {
