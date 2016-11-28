@@ -8,15 +8,16 @@ var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
+//TODO:重构payment
 module.exports = {
     pay: function (req, res) {
         var resWrap = responseWrapFactory(res);
         var code = req.query.code;
         if(!code){
             logger.debug("Is request from weixin? there is something wrong, code is undefined");
-            resWrap.setError(400);
-            return;
+            return resWrap.setError(400);
         };
+        //TODO:重构weixin.getOpenId
         weixin.getOpenId(req.query.code, function (err, trader) {
             if(err){
                 resWrap.setError(400);
@@ -33,6 +34,7 @@ module.exports = {
                     return;
                 }
 
+                //TODO:重构weixin.prePay
                 var name = virtue.subject.name;
                 weixin.prePay(trader, transId, name, virtue.amount*100, function (err, payData) {
                     if(err){
