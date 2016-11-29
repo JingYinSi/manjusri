@@ -29,13 +29,15 @@
 </div>-->
 <script>
     $("#show-confirm").click(function () {
+        var price = $('#trans_price').text() * 1;
+        var num = $('#trans_num').text() * 1;
         var dataToPost = {
             subject: $('#trans_subject').text(),
-            price:$('#trans_price').text() * 1,
-            num: $('#trans_num').text() * 1,
+            price:price,
+            num: num
         };
         alert(JSON.stringify(dataToPost));
-        dataToPost.amount = dataToPost.price * dataToPost.num;
+        dataToPost.amount = price * num;
         alert(JSON.stringify(dataToPost));
         requestDoTansaction(dataToPost);
     });
