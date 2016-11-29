@@ -34,8 +34,9 @@
             price:$('#trans_price').text() * 1,
             num: $('#trans_num').text() * 1,
         };
+        alert(JSON.stringify(dataToPost));
         dataToPost.amount = dataToPost.price * dataToPost.num;
-
+        alert(JSON.stringify(dataToPost));
         requestDoTansaction(dataToPost);
     });
 </script>

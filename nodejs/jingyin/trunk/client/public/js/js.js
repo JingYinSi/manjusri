@@ -23,7 +23,6 @@ function requestDoTansaction(data) {
         data: data,
         success: function (data, textStatus, request) {
             var linkages = parseLinksInHeader(request.getResponseHeader('link'));
-            alert(linkages.pay);
             window.location = linkages.pay;
         }
     });
