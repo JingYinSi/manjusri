@@ -36,9 +36,7 @@
             price:price,
             num: num
         };
-        alert(JSON.stringify(dataToPost));
         dataToPost.amount = Math.round(price * num * 100)/100;
-        alert(JSON.stringify(dataToPost));
         requestDoTansaction(dataToPost);
     });
 </script>
