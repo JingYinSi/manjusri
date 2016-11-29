@@ -36,6 +36,12 @@ module.exports = {
 
                 //TODO:重构weixin.prePay
                 var name = virtue.subject.name;
+                    logger.debug('prePay data for test:\n' + JSON.stringify({
+                            trader: trader,
+                            transId: transId,
+                            name: name,
+                            amount:virtue.amount*100
+                        }));
                 weixin.prePay(trader, transId, name, virtue.amount*100, function (err, payData) {
                     if(err){
                         resWrap.setError(502);
