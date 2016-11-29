@@ -3,6 +3,7 @@
  */
 var simpleget = require('simple-get'), //TODO:待实际运行成功后再将所有对simpleget的调用转向utils.simpleGetJson
     utils = require('../modules/utils'),
+    httpRequest = require('../modules/httprequest'),
     js2xmlparser = require('js2xmlparser'),
     XML = require('pixl-xml'),
     request = require('request'),
