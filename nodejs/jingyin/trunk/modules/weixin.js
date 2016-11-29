@@ -36,7 +36,6 @@ module.exports = function (config) {
             'grant_type=client_credential&appid=' + this.appid + '&secret=' + this.appsecret;
         return httpRequest.concat({url: url, json: true})
             .then(function (data) {
-                //var data = JSON.parse(buf.toString());
                 return callback(null, data.access_token);
             })
             .catch(function (err) {
@@ -48,9 +47,13 @@ module.exports = function (config) {
         this.getAccessToken(function (err, token) {
             var url = 'https://api.weixin.qq.com/cgi-bin/user/info?' +
                 'access_token=' + token + '&openid=' + openId + '&lang=zh_CN';
-            utils.simpleGetJson(url, function (err, data) {
-                callback(null, data);
-            });
+            return httpRequest.concat(url)
+                .then(function (data) {
+                    return callback(null, data);
+                })
+                .catch(function (err) {
+                    return callback(err);
+                });
         });
     }
 
@@ -59,13 +62,13 @@ module.exports = function (config) {
             + this.appid + "&secret=" + this.appsecret
             + "&code=" + code + "&grant_type=authorization_code";
 
-        logger.debug("The Url for getting openid is:\n" + url);
-        simpleget.concat(url, function (err, res, data) {
-            if (err) logger.debug("There is a error when get openid:\n" + err);
-            var obj = JSON.parse(data.toString());
-            logger.debug("convert buffer to json:" + JSON.stringify(obj));
-            callback(null, obj.openid);
-        });
+        return httpRequest.concat({url: url, json: true})
+            .then(function (data) {
+                return callback(null, data.openid);
+            })
+            .catch(function (err) {
+                return callback(err);
+            });
     }
 
     this.wrapRedirectURLByOath2Way = function (url) {
