@@ -13,13 +13,14 @@ module.exports = {
     pay: function (req, res) {
         var resWrap = responseWrapFactory(res);
         var code = req.query.code;
-        if(!code){
+        if (!code) {
             logger.debug("Is request from weixin? there is something wrong, code is undefined");
             return resWrap.setError(400);
-        };
+        }
+        ;
         //TODO:重构weixin.getOpenId
         weixin.getOpenId(req.query.code, function (err, trader) {
-            if(err){
+            if (err) {
                 resWrap.setError(400);
                 return;
             }
@@ -27,34 +28,34 @@ module.exports = {
             Virtue.findById(transId)
                 .populate('subject', 'name')
                 .exec(function (err, virtue) {
-                if (err) {
-                    logger.error(err);
-                    var code = (err.errors) ? 400 : 502;
-                    resWrap.setError(code);
-                    return;
-                }
+                    if (err) {
+                        logger.error(err);
+                        var code = (err.errors) ? 400 : 502;
+                        resWrap.setError(code);
+                        return;
+                    }
 
-                //TODO:重构weixin.prePay
-                var name = virtue.subject.name;
+                    //TODO:重构weixin.prePay
+                    var name = virtue.subject.name;
                     logger.debug('prePay data for test:\n' + JSON.stringify({
                             trader: trader,
                             transId: transId,
                             name: name,
-                            amount:virtue.amount*100
+                            amount: virtue.amount * 100
                         }));
-                weixin.prePay(trader, transId, name, virtue.amount*100, function (err, payData) {
-                    if(err){
-                        resWrap.setError(502);
-                        return;
-                    }
-                    logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
-                    resWrap.render('wechat/payment', {
-                        openId: trader,
-                        virtue: transId,
-                        payData: payData
+                    weixin.prePay(trader, transId, name, virtue.amount * 100, function (err, payData) {
+                        if (err) {
+                            resWrap.setError(502);
+                            return;
+                        }
+                        logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
+                        resWrap.render('wechat/payment', {
+                            openId: trader,
+                            virtue: transId,
+                            payData: payData
+                        });
                     });
                 });
-            });
         });
     },
 
@@ -67,10 +68,10 @@ module.exports = {
         //var notify = req.body.xml;
         logger.info('Paid notify from weixin:\n', JSON.stringify(notify));
         userModel.findOne({openid: notify.openid}, function (err, user) {
-            if(!user){
+            if (!user) {
                 logger.info('Can not found user with openid:' + notify.openid);
                 usersModule.register(notify.openid, function (err, userAdded) {
-                    if(err){
+                    if (err) {
                         logger.error('register user failed:' + err);
                         return;
                     }
