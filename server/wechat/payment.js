@@ -11,6 +11,7 @@ var logger = log4js.getLogger();
 //TODO:重构payment
 module.exports = {
     pay: function (req, res) {
+        logger.debug('begin pay................................................');
         var resWrap = responseWrapFactory(res);
         var code = req.query.code;
         if (!code) {
