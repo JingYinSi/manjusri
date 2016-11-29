@@ -24,6 +24,7 @@ module.exports = {
                 resWrap.setError(400);
                 return;
             }
+            logger.debug('info for test: open id is:' + trader);
             var transId = req.query.virtue;
             Virtue.findById(transId)
                 .populate('subject', 'name')
