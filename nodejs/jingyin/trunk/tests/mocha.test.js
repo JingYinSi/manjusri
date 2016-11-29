@@ -885,9 +885,9 @@ describe('静音寺业务系统', function () {
                     var data = {access_token: accessToken};
                     var expectedUrlToGetAccessToken = 'https://api.weixin.qq.com/cgi-bin/token?' +
                         'grant_type=client_credential&appid=' + appid + '&secret=' + appsecret;
-                    var simpleGetStub = sinon.stub();
-                    simpleGetStub.withArgs(expectedUrlToGetAccessToken).callsArgWith(1, null, data);
-                    stubs['../modules/utils'] = {simpleGetJson: simpleGetStub}
+
+                    var simpleGetStub = createPromiseStub([{url:expectedUrlToGetAccessToken, json:true}], data);
+                    stubs['../modules/httprequest'] = {concat: simpleGetStub}
 
                     weixin = proxyquire('../modules/weixin', stubs)(weixinConfig);
                     var callbackIsCalled = false;
