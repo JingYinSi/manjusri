@@ -32,11 +32,16 @@ module.exports = function (config) {
     }
 
     this.getAccessToken = function (callback) {
-        var url =  'https://api.weixin.qq.com/cgi-bin/token?' +
+        var url = 'https://api.weixin.qq.com/cgi-bin/token?' +
             'grant_type=client_credential&appid=' + this.appid + '&secret=' + this.appsecret;
-        utils.simpleGetJson(url, function (err, data) {
-            callback(null, data.access_token);
-        });
+        return httpRequest.concat(url)
+            .then(function (buf) {
+                var data = JSON.parse(buf.toString());
+                return callback(null, data.access_token);
+            })
+            .catch(function (err) {
+                return callback(err);
+            });
     }
 
     this.getUserInfoByOpenId = function (openId, callback) {
