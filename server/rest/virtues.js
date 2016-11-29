@@ -29,6 +29,7 @@ Virtues.prototype.prepay = function (req, res) {
             self: selfUrl,
             pay: payUrl
         }
+        logger.debug('begin write http head......................................');
         res.links(links);
         res.header('Location', selfUrl);
         res.status(201).json(virtue);
