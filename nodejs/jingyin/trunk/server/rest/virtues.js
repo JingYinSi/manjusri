@@ -34,7 +34,7 @@ Virtues.prototype.prepay = function (req, res) {
         res.status(201).json(virtue);
     }
 
-    logger.debug('enter into prepay ------------------------------------------------------');
+
     var details = null;
     if(obj.num) details = {price:obj.price, num: obj.num};
     return virtues.place(obj.subject, obj.amount, details, obj.giving)
@@ -48,7 +48,7 @@ Virtues.prototype.prepay = function (req, res) {
                 });
         })
         .catch(function (err) {
-            return resWrap.setError(500, err);
+            return resWrap.setError(500, null, err);
         });
 };
 

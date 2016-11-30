@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
     PartModel = require('./part');
 
 function validateAmount(val) {
-    return Number.isInteger(val*100) && val > 0;
+    return Number.isInteger(Math.round(val*100)) && val > 0;
 }
 
 function validateSubjectMustExist(subject, res) {
