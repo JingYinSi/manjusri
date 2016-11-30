@@ -47,7 +47,7 @@ module.exports = function (config) {
         this.getAccessToken(function (err, token) {
             var url = 'https://api.weixin.qq.com/cgi-bin/user/info?' +
                 'access_token=' + token + '&openid=' + openId + '&lang=zh_CN';
-            return httpRequest.concat(url)
+            return httpRequest.concat({url:url, json:true})
                 .then(function (data) {
                     return callback(null, data);
                 })

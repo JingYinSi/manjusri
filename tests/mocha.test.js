@@ -947,9 +947,9 @@ describe('静音寺业务系统', function () {
                 beforeEach(function () {
                     code = '1234';
                     urlToGetOpenId = 'https:/api.weixin.qq.com/cgi-bin/getopenid...';
-                    requestStub = sinon.stub();
-                    requestStub.withArgs(code).returns(urlToGetOpenId);
-                    weixinConfig.getUrlToGetOpenId = requestStub;
+                    var getUrlToGetOpenIdStub = sinon.stub();
+                    getUrlToGetOpenIdStub.withArgs(code).returns(urlToGetOpenId);
+                    weixinConfig.getUrlToGetOpenId = getUrlToGetOpenIdStub;
                 });
 
                 it('微信接口访问失败', function () {
@@ -985,6 +985,50 @@ describe('静音寺业务系统', function () {
             })
 
             describe('获得特定OpenId的用户信息', function () {
+                var openid, accesstoken, getAccessTokenStub;
+                var requestStub;
+
+                beforeEach(function () {
+                    openid = '123457744333';
+                    accesstoken = 'cehqdcqeceqeg4h66n';
+
+                    urlToGetUserInfo = 'https:/api.weixin.qq.com/cgi-bin/getuserinfo...';
+                    var getUrlToGetOpenIdStub = sinon.stub();
+                    getUrlToGetOpenIdStub.withArgs(accesstoken, openid).returns(urlToGetUserInfo);
+                    weixinConfig.getUrlToGetOpenId = getUrlToGetOpenIdStub;
+                })
+
+                it('获取accesstoken失败', function () {
+                    getAccessTokenStub = createPromiseStub(null, null, err);
+                    weixinFactory = proxyquire('../modules/weixinfactory', stubs);
+                    weixin = weixinFactory(weixinConfig);
+                    weixin.getAccessToken = getAccessTokenStub;
+
+                    return weixin.getUserInfoByOpenId(openid)
+                        .then(function () {
+                            throw 'should not goes here';
+                        }, function (error) {
+                            expect(error).eql(err);
+                        });
+                });
+
+                it('获取用户信息失败', function () {
+                    getAccessTokenStub = createPromiseStub(null, [accesstoken]);
+                    requestStub = createPromiseStub([{url: urlToGetUserInfo, json: true}], [dataFromWeixin]);
+                    stubs['./httprequest'] = {concat: requestStub}
+
+                    weixinFactory = proxyquire('../modules/weixinfactory', stubs);
+                    weixin = weixinFactory(weixinConfig);
+                    weixin.getAccessToken = getAccessTokenStub;
+
+                    return weixin.getUserInfoByOpenId(openid)
+                        .then(function () {
+                            throw 'should not goes here';
+                        }, function (error) {
+                            expect(error).eql(err);
+                        });
+                });
+
                 it('获得用户信息', function () {
                     var openId = 'bdhbdhfvdfb';
                     var accessToken = '233546457357';

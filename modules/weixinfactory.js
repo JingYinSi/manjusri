@@ -33,6 +33,10 @@ Weixin.prototype.getOpenId = function (code) {
     });
 }
 
+Weixin.prototype.getUserInfoByOpenId = function (openid) {
+    return this.getAccessToken();
+}
+
 module.exports = function (configObj) {
     config = configObj;
     return new Weixin();
