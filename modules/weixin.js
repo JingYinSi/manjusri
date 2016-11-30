@@ -104,7 +104,7 @@ module.exports = function (config) {
 
     this.sendPrepayRequest = function (prepayOrderXML, callback) {
         var options = {
-            url: 'https://api.mch.weixin.qq.com:443//pay/unifiedorder',
+            url: 'https://api.mch.weixin.qq.com:443/pay/unifiedorder',
             method: 'POST',
             body: prepayOrderXML,
             headers: {
@@ -113,13 +113,9 @@ module.exports = function (config) {
             }
         };
         return httpRequest.concat(options)
-            .then(function (data, res) {
+            .then(function (data) {
                 var str = data.toString();
-                logger.debug('res:-----------------------------\n' + JSON.stringify(res));
-                if(res.status >= 400){
-                    logger.error("Error message of prepay xml from weixin API:\n" + str);
-                    return callback(new Error(str));
-                }
+                logger.error("Prepay xml from weixin API:\n" + str);
                 var doc = XML.parse(str);
                 logger.debug("Prepay data from weixin API:" + JSON.stringify(doc));
                 if (doc.return_msg == 'OK' && doc.result_code == 'SUCCESS') {
