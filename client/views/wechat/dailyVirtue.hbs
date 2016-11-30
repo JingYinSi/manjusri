@@ -28,12 +28,14 @@
             $.toptip('请填写金额。');
             return;
         }
+
         var dataToPost = {
             subject: $('#subject').text(),
             amount: amount
         };
         if (giving) dataToPost.giving = giving;
 
+        alert(dataToPost);
         requestDoTansaction(dataToPost);
     });
 
