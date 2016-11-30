@@ -29,13 +29,13 @@
             return;
         }
 
+        amount = Math.round(amount * 100) / 100;
         var dataToPost = {
             subject: $('#subject').text(),
-            amount: amount * 1
+            amount: amount
         };
         if (giving) dataToPost.giving = giving;
 
-        alert(JSON.stringify(dataToPost));
         requestDoTansaction(dataToPost);
     });
 
