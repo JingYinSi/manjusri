@@ -749,7 +749,7 @@ describe('静音寺业务系统', function () {
 
             it('请求失败', function () {
                 simpleGetStub.withArgs(opt).callsArgWith(1, err);
-                stubs['simple-get'] ={concat: simpleGetStub};
+                stubs['simple-get'] = {concat: simpleGetStub};
                 request = proxyquire('../modules/httprequest', stubs);
                 return request.concat(opt)
                     .then(function (responseData) {
@@ -761,7 +761,7 @@ describe('静音寺业务系统', function () {
 
             it('请求成功', function () {
                 simpleGetStub.withArgs(opt).callsArgWith(1, null, null, data);
-                stubs['simple-get'] ={concat: simpleGetStub};
+                stubs['simple-get'] = {concat: simpleGetStub};
                 request = proxyquire('../modules/httprequest', stubs);
                 return request.concat(opt)
                     .then(function (responseData) {
@@ -851,6 +851,360 @@ describe('静音寺业务系统', function () {
 
 
     describe('微信公众号', function () {
+        describe('微信接口配置', function () {
+            var config;
+            var appid, appsecret, mch_id, mch_key;
+            var apiBaseURL, oauth2BaseURL;
+
+            beforeEach(function () {
+                appid = 'appid';
+                appsecret = 'appsecret';
+                mch_id = 'eveqveqfvfvff';
+                mch_key = 'womendoushiwutaishanjingyinsidet';
+                apiBaseURL = 'apiBaseURL';
+                oauth2BaseURL = 'oauth2BaseURL';
+
+                config = require('../modules/weixinconfig')({
+                    apiBaseURL: apiBaseURL,
+                    appId: appid,
+                    appSecret: appsecret,
+                    oauth2BaseURL: oauth2BaseURL,
+                    mchId: mch_id,
+                    mchKey: mch_key
+                });
+            });
+
+            it('获得accesstoken的Url', function () {
+                var url = 'https://api.weixin.qq.com/cgi-bin/token?' +
+                    'grant_type=client_credential&appid=' + appid + '&secret=' + appsecret;
+                expect(config.getUrlToGetAccessToken()).eql(url);
+            });
+
+            it('获得openid的Url', function () {
+                var code = '1234534566';
+                var url = apiBaseURL + "access_token?appid="
+                    + appid + "&secret=" + appsecret
+                    + "&code=" + code + "&grant_type=authorization_code";
+                expect(config.getUrlToGetOpenId(code)).eql(url);
+            })
+        });
+
+        describe('微信接口Promise实现', function () {
+            var weixinConfig, weixinFactory, weixin;
+
+
+            beforeEach(function () {
+                weixinConfig = {}
+            });
+
+            describe('获取AccessToken', function () {
+                var requestStub, urlToGetAccessToken;
+
+                beforeEach(function () {
+                    urlToGetAccessToken = 'https:/api.weixin.qq.com/cgi-bin/...';
+                    requestStub = sinon.stub();
+                    requestStub.returns(urlToGetAccessToken);
+                    weixinConfig.getUrlToGetAccessToken = requestStub;
+                });
+
+                it('微信接口访问失败', function () {
+                    var requestStub = createPromiseStub([{url: urlToGetAccessToken, json: true}], null, err);
+                    stubs['./httprequest'] = {concat: requestStub}
+
+                    weixinFactory = proxyquire('../modules/weixinfactory', stubs);
+                    weixin = weixinFactory(weixinConfig);
+                    return weixin.getAccessToken()
+                        .then(function () {
+                            throw 'get accesstoken should rejected!';
+                        }, function (error) {
+                            expect(error).eql(err);
+                        });
+                });
+
+                //TODO:实现accesstoken的缓存
+                it('正确获得', function () {
+                    var accessToken = '233546457357';
+                    var data = {access_token: accessToken};
+
+                    var requestStub = createPromiseStub([{url: urlToGetAccessToken, json: true}], [data]);
+                    stubs['./httprequest'] = {concat: requestStub}
+
+                    weixinFactory = proxyquire('../modules/weixinfactory', stubs);
+                    weixin = weixinFactory(weixinConfig);
+                    return weixin.getAccessToken()
+                        .then(function (token) {
+                            expect(token).eql(accessToken);
+                        }, function (error) {
+                            expect(err).to.be.null;
+                        });
+                })
+            });
+
+            describe('获得openId', function () {
+                var requestStub, urlToGetOpenId;
+                var code;
+
+                beforeEach(function () {
+                    code = '1234';
+                    urlToGetOpenId = 'https:/api.weixin.qq.com/cgi-bin/getopenid...';
+                    requestStub = sinon.stub();
+                    requestStub.withArgs(code).returns(urlToGetOpenId);
+                    weixinConfig.getUrlToGetOpenId = requestStub;
+                });
+
+                it('微信接口访问失败', function () {
+                    var requestStub = createPromiseStub([{url: urlToGetOpenId, json: true}], null, err);
+                    stubs['./httprequest'] = {concat: requestStub}
+
+                    weixinFactory = proxyquire('../modules/weixinfactory', stubs);
+                    weixin = weixinFactory(weixinConfig);
+                    return weixin.getOpenId(code)
+                        .then(function () {
+                            throw 'get openid should rejected!';
+                        }, function (error) {
+                            expect(error).eql(err);
+                        });
+                });
+
+                it("获得OpenId", function () {
+                    var expectedOpenId = '123456789033';
+                    var dataFromWeixin = {openid: expectedOpenId};
+
+                    var requestStub = createPromiseStub([{url: urlToGetOpenId, json: true}], [dataFromWeixin]);
+                    stubs['./httprequest'] = {concat: requestStub}
+
+                    weixinFactory = proxyquire('../modules/weixinfactory', stubs);
+                    weixin = weixinFactory(weixinConfig);
+                    return weixin.getOpenId(code)
+                        .then(function (data) {
+                            expect(data).eql(expectedOpenId);
+                        }, function (error) {
+                            throw 'get openid should be resolve';
+                        });
+                });
+            })
+
+            describe('获得特定OpenId的用户信息', function () {
+                it('获得用户信息', function () {
+                    var openId = 'bdhbdhfvdfb';
+                    var accessToken = '233546457357';
+                    var getAccessTokenStub = sinon.stub();
+                    getAccessTokenStub.callsArgWith(0, null, accessToken);
+
+                    var userInfo = {
+                        foo: "foo"
+                    };
+                    var expectedUrlToGetUserInfo = 'https://api.weixin.qq.com/cgi-bin/user/info?' +
+                        'access_token=' + accessToken + '&openid=' + openId + '&lang=zh_CN';
+                    var simpleGetStub = createPromiseStub([expectedUrlToGetUserInfo], [userInfo]);
+                    stubs['../modules/httprequest'] = {concat: simpleGetStub}
+
+                    weixin = proxyquire('../modules/weixin', stubs)(weixinConfig);
+                    weixin.getAccessToken = getAccessTokenStub;
+
+                    var callbackIsCalled = false;
+                    weixin.getUserInfoByOpenId(openId, function (err, info) {
+                        callbackIsCalled = true;
+                        expect(err).to.be.null;
+                        expect(info).eql(userInfo);
+                    });
+                    expect(callbackIsCalled).to.be.true;
+                })
+            });
+
+
+            it('以OAuth2的形式wrap重定向Url', function () {
+                var redirectUrl = 'http://localhost/foo';
+                var wrapedUrl = oauth2BaseURL + "?appid=" + appid + "&redirect_uri="
+                    + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
+                expect(weixin.wrapRedirectURLByOath2Way(redirectUrl))
+                    .eql(wrapedUrl);
+            });
+
+            it('准备微信支付单', function () {
+                var openId = 'foo-openid',
+                    transId = 'transOrderNo',
+                    transName = 'transOrder description',
+                    amount = 58.7;
+                var nonceStr = 'foo noncestr';
+                var paySign = 'vefnnvqjenvrgn3rngqrgqrngqerngr';
+                var prepayXml = '<xml><foo>prepayOrderXML</foo></xml>';
+
+                var prepayOrderToSign = {
+                    out_trade_no: transId,
+                    body: transName,
+                    detail: transName,
+                    notify_url: "http://jingyintemple.top/jingyin/manjusri/pay/notify",
+                    openid: openId,
+                    spbill_create_ip: "121.41.93.210",
+                    total_fee: amount,
+                    attach: "jingyin",
+                    appid: appid,
+                    mch_id: mch_id,
+                    nonce_str: nonceStr,
+                    trade_type: "JSAPI",
+                };
+                var prepayOrderToXml = Object.assign({}, prepayOrderToSign);
+                prepayOrderToXml.sign = paySign;
+
+                var createNonceStrStub = sinon.stub().returns(nonceStr);
+                var signMD5Stub = sinon.stub().withArgs(prepayOrderToSign, mch_key).returns(paySign);
+                var parseStub = sinon.stub();
+                parseStub.withArgs("xml", prepayOrderToXml).returns(prepayXml);
+
+                stubs.js2xmlparser = {'parse': parseStub};
+                weixinModule = proxyquire('../modules/weixin', stubs);
+                weixin = weixinModule(weixinConfig);
+                weixin.createNonceStr = createNonceStrStub;
+                weixin.signMD5 = signMD5Stub;
+
+                var result = weixin.preparePrepayOrderXml(openId, transId, transName, amount);
+                expect(result).xml.to.be.equal(prepayXml);
+            });
+
+            it('微信下单', function () {
+                var prePayId = 'prePayId';
+                var openId = 'foo-openid',
+                    transId = 'transOrderNo',
+                    transName = 'transOrder description',
+                    amount = 58.7;
+
+                var prepayOrderXML = '<xml><foo>prepayOrderXML</foo></xml>';
+                var preparePrepayXmlStub = sinon.stub().withArgs(openId, transId, transName, amount).returns(prepayOrderXML);
+                weixin.preparePrepayOrderXml = preparePrepayXmlStub;
+
+                var prePayRequestSenderStub = sinon.stub();
+                prePayRequestSenderStub.withArgs(prepayOrderXML)
+                    .callsArgWith(1, null, prePayId);
+                weixin.sendPrepayRequest = prePayRequestSenderStub;
+
+                var nonceStr = 'foo noncestr';
+                var createNonceStrStub = sinon.stub().returns(nonceStr);
+                weixin.createNonceStr = createNonceStrStub;
+
+                var timestamp = '123456788'
+                var createTimeStampStub = sinon.stub().returns(timestamp);
+                weixin.createTimeStamp = createTimeStampStub;
+
+                var payDataToSignMD5 = {
+                    "appId": appid,
+                    "timeStamp": timestamp,
+                    "nonceStr": nonceStr,
+                    "package": "prepay_id=" + prePayId,
+                    "signType": "MD5"
+                };
+                var paySign = 'vefnnvqjenvrgn3rngqrgqrngqerngr';
+                var signMD5Stub = sinon.stub().withArgs(payDataToSignMD5, mch_key).returns(paySign);
+                weixin.signMD5 = signMD5Stub;
+
+                var expectedPay = Object.assign({}, payDataToSignMD5);
+                expectedPay.paySign = paySign;
+                expectedPay.prepay_id = prePayId;
+
+                var callback = sinon.spy();
+                weixin.prePay(openId, transId, transName, amount, callback);
+                expect(callback).calledWith(null, expectedPay);
+            });
+
+            it('发送微信支付下单请求', function () {
+                var resData = "<xml><return_code><![CDATA[SUCCESS]]></return_code>" +
+                    "<return_msg><![CDATA[OK]]></return_msg>" +
+                    " <appid><![CDATA[wx76c06da9928cd6c3]]></appid>" +
+                    " <mch_id><![CDATA[1364986702]]></mch_id>" +
+                    " <nonce_str><![CDATA[zaLzjsStxOwOc3YE]]></nonce_str>" +
+                    " <sign><![CDATA[E54FA374A497C3E38329A3E6AEFEB53A]]></sign>" +
+                    " <result_code><![CDATA[SUCCESS]]></result_code> " +
+                    "<prepay_id><![CDATA[wx2016102016134724083f65cd0642279411]]></prepay_id>" +
+                    " <trade_type><![CDATA[JSAPI]]></trade_type></xml>";
+                var xmlToPost = '<xml><foo>foo</foo><fee>...</fee></xml>';
+                var options = {
+                    hostname: "api.mch.weixin.qq.com",
+                    port: "443",
+                    path: "/pay/unifiedorder",
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/xml',  // <--Very important!!!
+                        "Content-Length": Buffer.byteLength(xmlToPost)
+                    }
+                };
+
+                var requestStub = sinon.stub();
+                requestStub.withArgs(options, xmlToPost).callsArgWith(2, resData);
+                weixin.sendHttpsRequest = requestStub;
+
+                var callbackSpy = sinon.spy();
+                weixin.sendPrepayRequest(xmlToPost, callbackSpy);
+                expect(callbackSpy).calledWith(null, 'wx2016102016134724083f65cd0642279411');
+            });
+
+            describe('MD5签名', function () {
+                var md5Stub, signResult, data;
+                beforeEach(function () {
+                    signResult = 'ddjfvndfnvdfgbsfbfg';
+                    data = {
+                        sss: 1,
+                        a: 567,
+                        bbb: 2
+                    };
+                    md5Stub = sinon.stub();
+                    stubs['md5'] = md5Stub;
+                    weixinModule = proxyquire('../modules/weixin', stubs);
+                    weixin = weixinModule(weixinConfig);
+                });
+
+                it('MD5签名-指定KEY值', function () {
+                    var key = 'wdfkwjdfkerjgirg';
+                    md5Stub.withArgs("a=567&bbb=2&sss=1&key=" + key).returns(signResult);
+                    expect(weixin.signMD5(data, key)).eql(signResult.toUpperCase());
+                });
+
+                it('MD5签名-KEY值缺省采用商户号mch_id', function () {
+                    var key = mch_key;
+                    md5Stub.withArgs("a=567&bbb=2&sss=1&key=" + key).returns(signResult);
+                    expect(weixin.signMD5(data)).eql(signResult.toUpperCase());
+                });
+            })
+
+            describe('检验微信支付结果', function () {
+                var paymentXml, payment, paymentJsonToSign, signMD5Stub;
+                beforeEach(function () {
+                    paymentXml = '<xml>' +
+                        '<appid><![CDATA[wx76c06da9928cd6c3]]></appid>' +
+                        ' <attach><![CDATA[?..]]></attach>' +
+                        ' <bank_type><![CDATA[GDB_CREDIT]]></bank_type>' +
+                        ' <cash_fee><![CDATA[5]]></cash_fee>' +
+                        ' <fee_type><![CDATA[CNY]]></fee_type>' +
+                        ' <is_subscribe><![CDATA[Y]]></is_subscribe>' +
+                        ' <mch_id><![CDATA[1364986702]]></mch_id>' +
+                        ' <nonce_str><![CDATA[fmbg238xoxfde7b]]></nonce_str>' +
+                        ' <openid><![CDATA[o0ghywcfW_2Dp4oN-7NADengZAVM]]></openid>' +
+                        ' <out_trade_no><![CDATA[58088e7a253a72789bec6d98]]></out_trade_no>' +
+                        ' <result_code><![CDATA[SUCCESS]]></result_code>' +
+                        ' <return_code><![CDATA[SUCCESS]]></return_code>' +
+                        ' <sign><![CDATA[4C59A329EE4E7D35BE7FC840C599F6FE]]></sign>' +
+                        ' <time_end><![CDATA[20161020172940]]></time_end>' +
+                        ' <total_fee>5</total_fee> ' +
+                        '<trade_type><![CDATA[JSAPI]]></trade_type>' +
+                        ' <transaction_id><![CDATA[4005172001201610207217503606]]></transaction_id>' +
+                        ' </xml>';
+                    payment = XML.parse(paymentXml);
+                    paymentJsonToSign = Object.assign({}, payment);
+                    delete paymentJsonToSign.sign;
+
+                    signMD5Stub = sinon.stub();
+                    signMD5Stub.withArgs(paymentJsonToSign).returns('4C59A329EE4E7D35BE7FC840C599F6FE');
+                    weixin.signMD5 = signMD5Stub;
+                });
+
+                it('验证无误', function () {
+                    var obj = weixin.parsePaymentNotification(payment);
+                    expect(obj.pass()).to.be.true;
+                    expect(obj.getOutTradeNo()).eql('58088e7a253a72789bec6d98');
+                    var responseBodyXML = "<xml><return_code>SUCCESS</return_code><return_msg>OK</return_msg></xml>"
+                    expect(obj.replyOK()).xml.equal(responseBodyXML);
+                })
+            })
+        });
 
         describe('微信接口', function () {
             var weixinModule, weixinConfig;
@@ -886,7 +1240,7 @@ describe('静音寺业务系统', function () {
                     var expectedUrlToGetAccessToken = 'https://api.weixin.qq.com/cgi-bin/token?' +
                         'grant_type=client_credential&appid=' + appid + '&secret=' + appsecret;
 
-                    var simpleGetStub = createPromiseStub([{url:expectedUrlToGetAccessToken, json:true}], data);
+                    var simpleGetStub = createPromiseStub([{url: expectedUrlToGetAccessToken, json: true}], [data]);
                     stubs['../modules/httprequest'] = {concat: simpleGetStub}
 
                     weixin = proxyquire('../modules/weixin', stubs)(weixinConfig);
@@ -912,9 +1266,8 @@ describe('静音寺业务系统', function () {
                     };
                     var expectedUrlToGetUserInfo = 'https://api.weixin.qq.com/cgi-bin/user/info?' +
                         'access_token=' + accessToken + '&openid=' + openId + '&lang=zh_CN';
-                    var simpleGetStub = sinon.stub();
-                    simpleGetStub.withArgs(expectedUrlToGetUserInfo).callsArgWith(1, null, userInfo);
-                    stubs['../modules/utils'] = {simpleGetJson: simpleGetStub}
+                    var simpleGetStub = createPromiseStub([expectedUrlToGetUserInfo], [userInfo]);
+                    stubs['../modules/httprequest'] = {concat: simpleGetStub}
 
                     weixin = proxyquire('../modules/weixin', stubs)(weixinConfig);
                     weixin.getAccessToken = getAccessTokenStub;
@@ -935,11 +1288,10 @@ describe('静音寺业务系统', function () {
                     + appid + "&secret=" + appsecret
                     + "&code=" + code + "&grant_type=authorization_code";
                 var expectedOpenId = '123456789033';
-                var dataFromWeixin = Buffer.from(JSON.stringify({openid: expectedOpenId}));
+                var dataFromWeixin = {openid: expectedOpenId};
 
-                var concatStub = sinon.stub();
-                concatStub.withArgs(url).callsArgWith(1, null, null, dataFromWeixin);
-                stubs['simple-get'] = {concat: concatStub};
+                var concatStub = createPromiseStub([{url: url, json: true}], [dataFromWeixin]);
+                stubs['../modules/httprequest'] = {concat: concatStub}
 
                 weixinModule = proxyquire('../modules/weixin', stubs);
                 weixin = weixinModule(weixinConfig);
@@ -1497,10 +1849,8 @@ describe('静音寺业务系统', function () {
                     it('请求中未包含code的查询变量', function () {
                         delete reqStub.query.code;
                         controller = proxyquire('../server/wechat/payment', stubs).pay;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(400);
-                            });
+                        controller(reqStub, resStub);
+                        checkResponseStatusCodeAndMessage(400);
                     })
                 });
 
