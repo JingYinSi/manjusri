@@ -102,43 +102,6 @@ module.exports = function (config) {
         return js2xmlparser.parse('xml', prepay);
     }
 
-    /*this.sendHttpsRequest = function (options, dataToSend, callback) {
-     var req = https.request(options,
-     function (res) {
-     var str = '';
-     res.on('data', function (data) {
-     str += data;
-     });
-     res.on('end', function () {
-     callback(str)
-     });
-     });
-     req.write(dataToSend);
-     }
-
-     this.sendPrepayRequest = function (prepayOrderXML, callback) {
-     var options = {
-     hostname: "api.mch.weixin.qq.com",
-     port: "443",
-     path: "/pay/unifiedorder",
-     method: "POST",
-     headers: {
-     'Content-Type': 'application/xml',
-     "Content-Length": Buffer.byteLength(prepayOrderXML)
-     }
-     };
-     this.sendHttpsRequest(options, prepayOrderXML, function (str) {
-     logger.debug("Prepay xml from weixin API:\n" + str);
-     var doc = XML.parse(str);
-     logger.debug("Prepay data from weixin API:" + JSON.stringify(doc));
-     if (doc.return_msg == 'OK' && doc.result_code == 'SUCCESS') {
-     callback(null, doc.prepay_id);
-     } else {
-     callback(doc.err_code_des, null);
-     }
-     });
-     }*/
-
     this.sendPrepayRequest = function (prepayOrderXML, callback) {
         var options = {
             url: 'https://api.mch.weixin.qq.com:443/pay/unifiedorder',
