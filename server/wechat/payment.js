@@ -11,14 +11,13 @@ var logger = log4js.getLogger();
 //TODO:重构payment
 module.exports = {
     pay: function (req, res) {
-        logger.debug('begin pay................................................');
         var resWrap = responseWrapFactory(res);
         var code = req.query.code;
         if (!code) {
             logger.debug("Is request from weixin? there is something wrong, code is undefined");
             return resWrap.setError(400);
         }
-        ;
+
         //TODO:重构weixin.getOpenId
         weixin.getOpenId(req.query.code, function (err, trader) {
             if (err) {
