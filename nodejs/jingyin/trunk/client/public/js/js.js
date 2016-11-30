@@ -17,6 +17,7 @@ function parseLinksInHeader(linksInHeader) {
 
 function requestDoTansaction(data) {
     var url = '/jingyin/rest/virtues/prepay';
+    alert(JSON.stringify(data));
     $.ajax({
         type: 'POST',
         url: url,
