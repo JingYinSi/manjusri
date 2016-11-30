@@ -508,7 +508,7 @@ describe('静音寺业务系统', function () {
                                 },
                                 function (err) {
                                     expect(err.errors['price'].message)
-                                        .eql('price为金额最多两位小数且大于零');
+                                        .eql('price:[23.345], 为金额最多两位小数且大于零');
                                 });
                     });
 
@@ -519,7 +519,7 @@ describe('静音寺业务系统', function () {
                                 },
                                 function (err) {
                                     expect(err.errors['price'].message)
-                                        .eql('price为金额最多两位小数且大于零');
+                                        .eql('price:[-23.34], 为金额最多两位小数且大于零');
                                 });
                     });
 
@@ -541,7 +541,7 @@ describe('静音寺业务系统', function () {
                                 },
                                 function (err) {
                                     expect(err.errors['amount'].message)
-                                        .eql('amount为金额最多两位小数且大于零');
+                                        .eql('amount:[23.345], 为金额最多两位小数且大于零');
                                 });
                     });
 
@@ -552,7 +552,7 @@ describe('静音寺业务系统', function () {
                                 },
                                 function (err) {
                                     expect(err.errors['amount'].message)
-                                        .eql('amount为金额最多两位小数且大于零');
+                                        .eql('amount:[-23.34], 为金额最多两位小数且大于零');
                                 });
                     });
 
@@ -886,6 +886,14 @@ describe('静音寺业务系统', function () {
                     + appid + "&secret=" + appsecret
                     + "&code=" + code + "&grant_type=authorization_code";
                 expect(config.getUrlToGetOpenId(code)).eql(url);
+            });
+
+            it('获得微信用户信息的Url', function () {
+                var token = '1234534566';
+                var openid = 'hfcqehcehrv3f42f24yf34f';
+                var url =  'https://api.weixin.qq.com/cgi-bin/user/info?' +
+                    'access_token=' + token + '&openid=' + openid + '&lang=zh_CN';
+                expect(config.getUrlToGetUserInfo(token, openid)).eql(url);
             })
         });
 
@@ -953,7 +961,7 @@ describe('静音寺业务系统', function () {
                 });
 
                 it('微信接口访问失败', function () {
-                    var requestStub = createPromiseStub([{url: urlToGetOpenId, json: true}], null, err);
+                    requestStub = createPromiseStub([{url: urlToGetOpenId, json: true}], null, err);
                     stubs['./httprequest'] = {concat: requestStub}
 
                     weixinFactory = proxyquire('../modules/weixinfactory', stubs);
@@ -970,7 +978,7 @@ describe('静音寺业务系统', function () {
                     var expectedOpenId = '123456789033';
                     var dataFromWeixin = {openid: expectedOpenId};
 
-                    var requestStub = createPromiseStub([{url: urlToGetOpenId, json: true}], [dataFromWeixin]);
+                    requestStub = createPromiseStub([{url: urlToGetOpenId, json: true}], [dataFromWeixin]);
                     stubs['./httprequest'] = {concat: requestStub}
 
                     weixinFactory = proxyquire('../modules/weixinfactory', stubs);
@@ -979,23 +987,24 @@ describe('静音寺业务系统', function () {
                         .then(function (data) {
                             expect(data).eql(expectedOpenId);
                         }, function (error) {
-                            throw 'get openid should be resolve';
+                            throw 'should not goes here';
                         });
                 });
             })
 
             describe('获得特定OpenId的用户信息', function () {
                 var openid, accesstoken, getAccessTokenStub;
-                var requestStub;
+                var requestStub, userInfo;
 
                 beforeEach(function () {
                     openid = '123457744333';
                     accesstoken = 'cehqdcqeceqeg4h66n';
+                    userInfo = {foo:'foo user info'}
 
                     urlToGetUserInfo = 'https:/api.weixin.qq.com/cgi-bin/getuserinfo...';
-                    var getUrlToGetOpenIdStub = sinon.stub();
-                    getUrlToGetOpenIdStub.withArgs(accesstoken, openid).returns(urlToGetUserInfo);
-                    weixinConfig.getUrlToGetOpenId = getUrlToGetOpenIdStub;
+                    var getUrlToGetUserInfoStub = sinon.stub();
+                    getUrlToGetUserInfoStub.withArgs(accesstoken, openid).returns(urlToGetUserInfo);
+                    weixinConfig.getUrlToGetUserInfo = getUrlToGetUserInfoStub;
                 })
 
                 it('获取accesstoken失败', function () {
@@ -1014,7 +1023,7 @@ describe('静音寺业务系统', function () {
 
                 it('获取用户信息失败', function () {
                     getAccessTokenStub = createPromiseStub(null, [accesstoken]);
-                    requestStub = createPromiseStub([{url: urlToGetUserInfo, json: true}], [dataFromWeixin]);
+                    requestStub = createPromiseStub([{url: urlToGetUserInfo, json: true}], null, err);
                     stubs['./httprequest'] = {concat: requestStub}
 
                     weixinFactory = proxyquire('../modules/weixinfactory', stubs);
@@ -1030,29 +1039,20 @@ describe('静音寺业务系统', function () {
                 });
 
                 it('获得用户信息', function () {
-                    var openId = 'bdhbdhfvdfb';
-                    var accessToken = '233546457357';
-                    var getAccessTokenStub = sinon.stub();
-                    getAccessTokenStub.callsArgWith(0, null, accessToken);
+                    getAccessTokenStub = createPromiseStub(null, [accesstoken]);
+                    requestStub = createPromiseStub([{url: urlToGetUserInfo, json: true}], [userInfo]);
+                    stubs['./httprequest'] = {concat: requestStub}
 
-                    var userInfo = {
-                        foo: "foo"
-                    };
-                    var expectedUrlToGetUserInfo = 'https://api.weixin.qq.com/cgi-bin/user/info?' +
-                        'access_token=' + accessToken + '&openid=' + openId + '&lang=zh_CN';
-                    var simpleGetStub = createPromiseStub([expectedUrlToGetUserInfo], [userInfo]);
-                    stubs['../modules/httprequest'] = {concat: simpleGetStub}
-
-                    weixin = proxyquire('../modules/weixin', stubs)(weixinConfig);
+                    weixinFactory = proxyquire('../modules/weixinfactory', stubs);
+                    weixin = weixinFactory(weixinConfig);
                     weixin.getAccessToken = getAccessTokenStub;
 
-                    var callbackIsCalled = false;
-                    weixin.getUserInfoByOpenId(openId, function (err, info) {
-                        callbackIsCalled = true;
-                        expect(err).to.be.null;
-                        expect(info).eql(userInfo);
-                    });
-                    expect(callbackIsCalled).to.be.true;
+                    return weixin.getUserInfoByOpenId(openid)
+                        .then(function (data) {
+                            expect(data).eql(userInfo);
+                        }, function (error) {
+                            throw 'should not goes here';
+                        });
                 })
             });
 

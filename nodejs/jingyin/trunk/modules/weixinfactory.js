@@ -34,7 +34,11 @@ Weixin.prototype.getOpenId = function (code) {
 }
 
 Weixin.prototype.getUserInfoByOpenId = function (openid) {
-    return this.getAccessToken();
+    return this.getAccessToken()
+        .then(function (token) {
+            var url = config.getUrlToGetUserInfo(token, openid);
+            return httpRequest.concat({url:url, json:true})
+        });
 }
 
 module.exports = function (configObj) {
