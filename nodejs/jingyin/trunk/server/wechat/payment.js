@@ -38,14 +38,16 @@ module.exports = {
 
                     //TODO:重构weixin.prePay
                     var name = virtue.subject.name;
+                    var amount = Math.round(virtue.amount * 100);
                     logger.debug('prePay data for test:\n' + JSON.stringify({
                             trader: trader,
                             transId: transId,
                             name: name,
-                            amount: virtue.amount * 100
+                            amount: amount
                         }));
-                    weixin.prePay(trader, transId, name, virtue.amount * 100, function (err, payData) {
+                    weixin.prePay(trader, transId, name, amount, function (err, payData) {
                         if (err) {
+                            logger.error('微信预支付错:' + err.message);
                             resWrap.setError(502);
                             return;
                         }
