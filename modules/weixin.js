@@ -141,7 +141,7 @@ module.exports = function (config) {
 
     this.sendPrepayRequest = function (prepayOrderXML, callback) {
         var options = {
-            url: 'https://api.mch.weixin.qq.com:443//pay/unifiedorder',
+            url: 'https://api.mch.weixin.qq.com:443/pay/unifiedorder',
             method: 'POST',
             body: prepayOrderXML,
             headers: {
