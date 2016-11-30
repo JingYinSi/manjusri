@@ -115,7 +115,7 @@ module.exports = function (config) {
         return httpRequest.concat(options)
             .then(function (data) {
                 var str = data.toString();
-                logger.error("Prepay xml from weixin API:\n" + str);
+                logger.debug("Prepay xml from weixin API:\n" + str);
                 var doc = XML.parse(str);
                 logger.debug("Prepay data from weixin API:" + JSON.stringify(doc));
                 if (doc.return_msg == 'OK' && doc.result_code == 'SUCCESS') {
