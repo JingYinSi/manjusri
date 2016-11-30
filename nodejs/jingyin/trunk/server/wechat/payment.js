@@ -14,7 +14,6 @@ module.exports = {
         var resWrap = responseWrapFactory(res);
         var code = req.query.code;
         if (!code) {
-            logger.debug("Is request from weixin? there is something wrong, code is undefined");
             return resWrap.setError(400);
         }
 
