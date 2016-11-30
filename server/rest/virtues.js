@@ -48,6 +48,7 @@ Virtues.prototype.prepay = function (req, res) {
                 });
         })
         .catch(function (err) {
+            logger.error('微信预支付出错:' + err.toString());
             if(err.name === 'ValidationError'){
                 return resWrap.setError(400, null, err);
             }
