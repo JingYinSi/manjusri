@@ -23,7 +23,7 @@ function requestDoTansaction(data) {
         url: url,
         data: data,
         success: function (data, textStatus, request) {
-            alert(JSON.stringify(data));
+            console.log('checkkkkkkkkkkkkk:\n' + JSON.stringify(data));
             var linkages = parseLinksInHeader(request.getResponseHeader('link'));
             window.location = linkages.pay;
         }
