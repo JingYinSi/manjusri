@@ -39,6 +39,7 @@ module.exports = function (config) {
                 return callback(null, data.access_token);
             })
             .catch(function (err) {
+                logger.error('Fail of getting accesstoken:' + err.message);
                 return callback(err);
             });
     }
@@ -52,6 +53,7 @@ module.exports = function (config) {
                     return callback(null, data);
                 })
                 .catch(function (err) {
+                    logger.error('Fail of getting user information:' + err.message);
                     return callback(err);
                 });
         });
@@ -67,6 +69,7 @@ module.exports = function (config) {
                 return callback(null, data.openid);
             })
             .catch(function (err) {
+                logger.error('Fail of getting openid:' + err.message);
                 return callback(err);
             });
     }
