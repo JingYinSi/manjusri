@@ -3,7 +3,7 @@ var mongoose = require('mongoose'),
     PartModel = require('./part');
 
 function validateAmount(val) {
-    return Number.isInteger(Math.round(val*100)) && val > 0;
+    return Math.round(val*100)/100 === val && val > 0;
 }
 
 function validateSubjectMustExist(subject, res) {
@@ -30,7 +30,7 @@ var VirtueSchema = new Schema({
         validate: [validateNum, '{PATH}必须为正整数']
     },
     price: {type: Number, validate: [validateAmount, '{PATH}为金额最多两位小数且大于零']},
-    amount: {type: Number, required: true, validate: [validateAmount, '{PATH}为金额最多两位小数且大于零']},
+    amount: {type: Number, required: true, validate: [validateAmount, '{PATH}:[{VALUE}], 为金额最多两位小数且大于零']},
     giving: String,
     paymentNo: String,
     timestamp: {type: Date, default: Date.now()},
