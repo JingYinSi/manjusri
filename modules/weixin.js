@@ -115,7 +115,8 @@ module.exports = function (config) {
         return httpRequest.concat(options)
             .then(function (data, res) {
                 var str = data.toString();
-                if(res.statusCode >= 400){
+                logger.debug('res:-----------------------------\n' + JSON.stringify(res));
+                if(res.status >= 400){
                     logger.error("Error message of prepay xml from weixin API:\n" + str);
                     return callback(new Error(str));
                 }
