@@ -4,6 +4,11 @@
 const VirtueSchema = require('../wechat/models/virtue'),
     Promise = require('bluebird');
 
+var log4js = require('log4js');
+log4js.configure("log4js.conf", {reloadSecs: 300});
+var logger = log4js.getLogger();
+
+
 function Virtues() {
     this.getTimestamp = function () {
         return Date.now();
@@ -34,6 +39,7 @@ Virtues.prototype.listLastVirtues = function (count) {
                     return resolve(list);
                 },
                 function (err) {
+                    logger.error('Virtues list error:' + err.message);
                     return reject(err);
                 });
     });

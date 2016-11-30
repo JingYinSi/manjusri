@@ -17,6 +17,12 @@ WeixinConfig.prototype.getUrlToGetOpenId = function (code) {
     return url;
 }
 
+WeixinConfig.prototype.getUrlToGetUserInfo = function (token, openid) {
+    var url = 'https://api.weixin.qq.com/cgi-bin/user/info?' +
+        'access_token=' + token + '&openid=' + openid + '&lang=zh_CN';
+    return url;
+}
+
 module.exports = function (configData) {
     config = configData;
     urlToGetAccessToken = 'https://api.weixin.qq.com/cgi-bin/token?' +
