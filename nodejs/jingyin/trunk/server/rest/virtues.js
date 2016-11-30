@@ -48,6 +48,9 @@ Virtues.prototype.prepay = function (req, res) {
                 });
         })
         .catch(function (err) {
+            if(err.name === 'ValidationError'){
+                return resWrap.setError(400, null, err);
+            }
             return resWrap.setError(500, null, err);
         });
 };
