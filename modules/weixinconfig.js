@@ -91,6 +91,12 @@ WeixinConfig.prototype.generatePayData = function (prepayId) {
     return payData;
 }
 
+WeixinConfig.prototype.wrapRedirectURLByOath2Way = function (url) {
+    var wrapedUrl = this.oauth2BaseURL + "?appid=" + this.appid
+        + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";
+    return wrapedUrl;
+}
+
 WeixinConfig.prototype.parsePaymentNotification = function (paydata) {
     var result = {
         pass: false,
