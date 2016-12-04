@@ -117,7 +117,6 @@ module.exports = function (config) {
                 var str = data.toString();
                 logger.debug("Prepay xml from weixin API:\n" + str);
                 var doc = XML.parse(str);
-                logger.debug("Prepay data from weixin API:" + JSON.stringify(doc));
                 if (doc.return_msg == 'OK' && doc.result_code == 'SUCCESS') {
                     return callback(null, doc.prepay_id);
                 }
@@ -148,7 +147,6 @@ module.exports = function (config) {
 
     this.parsePaymentNotification = function (data) {
         var me = this;
-        //var data = XML.parse(paymentXmlResult);
         var dataToSign = Object.assign({}, data);
         delete dataToSign.sign;
 

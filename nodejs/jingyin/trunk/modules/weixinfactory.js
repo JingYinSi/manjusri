@@ -2,7 +2,11 @@
  * Created by clx on 2016/11/29.
  */
 var Promise = require('bluebird'),
+    XML = require('pixl-xml'),
     httpRequest = require('./httprequest');
+var log4js = require('log4js');
+log4js.configure("log4js.conf", {reloadSecs: 300});
+var logger = log4js.getLogger();
 
 var config;
 
@@ -38,6 +42,20 @@ Weixin.prototype.getUserInfoByOpenId = function (openid) {
         .then(function (token) {
             var url = config.getUrlToGetUserInfo(token, openid);
             return httpRequest.concat({url:url, json:true})
+        });
+}
+
+Weixin.prototype.prepay = function (openId, transId, transName, amount) {
+    var opt = config.getPrepayRequestOption(openId, transId, transName, amount);
+    return httpRequest.concat(opt)
+        .then(function (data) {
+            var str = data.toString();
+            logger.debug("Prepay xml from weixin API:\n" + str);
+            var doc = XML.parse(str);
+            if (doc.return_msg === 'OK' && doc.result_code === 'SUCCESS') {
+                return config.generatePayData(doc.prepay_id);
+            }
+            return Promise.reject(new Error(doc.err_code_desc));
         });
 }
 

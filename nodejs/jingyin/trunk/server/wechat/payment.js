@@ -1,6 +1,9 @@
 var Virtue = require('./models/virtue'),
     userModel = require('./models/user'),
     usersModule = require('../modules/users'),
+    wx = require('../weixin').weixinService,
+    virtues = require('../modules/virtues'),
+    Promise = require('bluebird'),
     weixin = require('../weixin').weixin,
     responseWrapFactory = require('../../modules/responsewrap');
 
@@ -8,8 +11,47 @@ var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
-//TODO:重构payment
 module.exports = {
+    toPay: function (req, res) {
+        var resWrap = responseWrapFactory(res);
+        var code = req.query.code;
+        if (!code) {
+            return resWrap.setError(400, null, new Error('code is not found in query'));
+        }
+        var virtueId = req.query.virtue;
+        if (!virtueId) {
+            return resWrap.setError(400, null, new Error('virtue is not found in query'));
+        }
+        var openId, subjectName, amount;
+        var tasks = [
+            wx.getOpenId(code)
+                .then(function (data) {
+                    return openId = data;
+                }),
+            virtues.findNewVirtueById(virtueId)
+                .then(function (doc) {
+                    if(!doc) return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
+
+                    subjectName = doc.subject.name;
+                    amount = doc.amount;
+                })];
+        return Promise.all(tasks)
+            .then(function () {
+                return wx.prepay(openId, virtueId, subjectName, amount);
+            })
+            .then(function (payData) {
+                logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
+                resWrap.render('wechat/payment', {
+                    openId: openId,
+                    virtue: virtueId,
+                    payData: payData
+                });
+            })
+            .catch(function (err) {
+                return resWrap.setError(400, null, err);
+            });
+    },
+
     pay: function (req, res) {
         var resWrap = responseWrapFactory(res);
         var code = req.query.code;
@@ -38,7 +80,7 @@ module.exports = {
                     //TODO:重构weixin.prePay
                     var name = virtue.subject.name;
                     var amount = Math.round(virtue.amount * 100);
-                    logger.debug('prePay data for test:\n' + JSON.stringify({
+                    logger.debug('Prepay parameters:\n' + JSON.stringify({
                             trader: trader,
                             transId: transId,
                             name: name,
@@ -67,7 +109,6 @@ module.exports = {
 
     paidNotify: function (req, res) {
         var notify = weixin.parsePaymentNotification(req.body.xml);
-        //var notify = req.body.xml;
         logger.info('Paid notify from weixin:\n', JSON.stringify(notify));
         userModel.findOne({openid: notify.openid}, function (err, user) {
             if (!user) {
