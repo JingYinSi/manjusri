@@ -13,7 +13,7 @@ var logger = log4js.getLogger();
 function Users() {
 }
 
-Users.prototype.registerWeixinUser = function (openId) {
+Users.prototype.register = function (openId) {
     return UserModel.findOne({openid: openId})
         .then(function (user) {
             if (user) {
@@ -36,15 +36,6 @@ Users.prototype.registerWeixinUser = function (openId) {
                     return model.save();
                 });
         });
-}
-
-Users.prototype.register = function (openId, callback) {
-    weixin.getUserInfoByOpenId(openId, function (err, userInfo) {
-        logger.debug('User info from weixin:\n' + JSON.stringify(userInfo));
-        UserModel.registerWeixinUser(userInfo, function (err, user) {
-            callback(err, user);
-        });
-    });
 }
 
 module.exports = new Users();
