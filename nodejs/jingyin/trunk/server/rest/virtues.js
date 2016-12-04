@@ -71,6 +71,8 @@ Virtues.prototype.paidNotify = function (req, res) {
     var virtueId = notify.virtueId;
     var paymentNo = notify.paymentNo;
 
+    var lord;
+
     return userModel.findOne({openid: openId})
         .then(function (user) {
             if (user) {
@@ -94,10 +96,11 @@ Virtues.prototype.paidNotify = function (req, res) {
                 });
         })
         .then(function (user) {
+            lord = user;
             return virtueModel.findById(virtueId);
         })
         .then(function (virtue) {
-            virtue.lord = user.id;
+            virtue.lord = lord.id;
             virtue.paymentNo = paymentNo;
             virtue.state = 'payed';
             logger.debug('virtue is found, update virtue...............');
