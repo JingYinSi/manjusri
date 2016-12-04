@@ -6,6 +6,7 @@ log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
 var msgHandlers = {
+    //subscribe: Users.register
     subscribe: Users.registerWeixinUser
 };
 
@@ -29,7 +30,7 @@ module.exports = function (req, res, next) {
     }
 }
 
-module.exports = {
+/*module.exports = {
     dealWithMessage: function (req, res, next) {
         var msg = req.weixin;
         logger.debug('Message from weixin:\n' + JSON.stringify(msg));
@@ -46,4 +47,4 @@ module.exports = {
             }
         }
     }
-};
+};*/
