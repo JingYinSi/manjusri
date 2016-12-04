@@ -56,7 +56,7 @@ WeixinConfig.prototype.getPrepayRequestOption = function (openId, transId, trans
         notify_url: payNotifyUrl,
         openid: openId,
         spbill_create_ip: payServerIp,
-        total_fee: amount,
+        total_fee: Math.round(amount * 100),
         attach: "jingyin",
         appid: appId,
         mch_id: mchId,
