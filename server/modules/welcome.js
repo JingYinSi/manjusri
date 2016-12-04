@@ -1,6 +1,8 @@
 /**
  * Created by clx on 2016/11/3.
  */
+var Promise = require('bluebird');
+
 var welcomeMsg = [
     {
         title: '静音文殊禅林',
@@ -30,4 +32,8 @@ var welcomeMsg = [
 var welcome = function(user, callback){
     callback(null, welcomeMsg);
 }
-module.exports = welcome;
+//module.exports = welcome;
+
+module.exports = function (user) {
+    return Promise.resolve(welcomeMsg);
+};
