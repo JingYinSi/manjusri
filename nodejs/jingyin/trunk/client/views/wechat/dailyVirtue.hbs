@@ -2,14 +2,58 @@
 <html lang="en">
 {{>head}}
 <body>
-<div align="center" class="banner"><img src="{{part.img}}"></div>
+<div align="center" class="banner"><img src="{{part.img}}" width="1242" height="1240"></div>
 <div class="contentt">
     <div class="text1">
         <span id="subject" hidden>{{part.id}}</span>
         <span class="a1">金额:</span>
         <span class="a3">元</span>
-        <input id="input_amount" type="text" class="a2" placeholder="请点击输入数字">
+        <input id="input_amount" type="text" class="a2" placeholder="请点击输入数字" style="text-align: center;">
     </div>
+
+    <!--moneySelector-->
+    <table id="moneySelector" class="moneySelector" target="input_amount">
+        <tr>
+            <td amount="1" onclick="selectMoney(this);" onmouseover="moneyItemOver(this)" onmouseout="moneyItemOut(this);">
+                <span>1</span>元
+            </td>
+            <td amount="3" onclick="selectMoney(this);" onmouseover="moneyItemOver(this)" onmouseout="moneyItemOut(this);">
+                <span>3</span>元
+            </td>
+            <td amount="5" onclick="selectMoney(this);" onmouseover="moneyItemOver(this)" onmouseout="moneyItemOut(this);">
+                <span>5</span>元
+            </td>
+        </tr>
+        <tr>
+            <td amount="10" onclick="selectMoney(this);" onmouseover="moneyItemOver(this)" onmouseout="moneyItemOut(this);">
+                <span>10</span>元
+            </td>
+            <td amount="88" onclick="selectMoney(this);" onmouseover="moneyItemOver(this)" onmouseout="moneyItemOut(this);">
+                <span>88</span>元
+            </td>
+            <td amount="99" onclick="selectMoney(this);" onmouseover="moneyItemOver(this)" onmouseout="moneyItemOut(this);">
+                <span>99</span>元
+            </td>
+        </tr>
+    </table>
+
+    <script type="text/javascript">
+        function selectMoney(item) {
+            var targetId = document.getElementById("moneySelector").getAttribute("target");
+            document.getElementById(targetId).value = item.getAttribute('amount');
+            //alert('您选择了' + item.getAttribute('amount') + '元');
+        }
+
+        function moneyItemOver(item) {
+            item.setAttribute('class', 'moneyItemOver');
+        }
+
+        function moneyItemOut(item) {
+            item.setAttribute('class', 'moneyItemOut');
+        }
+    </script>
+    <!--moneySelector-->
+
     <div class="text1">
         <span class="a1">回向:</span>
         <input type="text" class="a2 a4" placeholder="以此功德,回向六道众生.">
