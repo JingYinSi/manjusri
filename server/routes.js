@@ -25,22 +25,24 @@ module.exports = function (router) {
         .get(manjusri.trans);
 
     router.route(payRoute)
-        .get(payment.pay);
+        //.get(payment.pay);
+        .get(payment.toPay);
 
     router.route('/jingyin/manjusri/pay/notify')
         .get(payment.result)
-        .post(payment.paidNotify);
+        .post(virtues.paidNotify);
+        //.post(payment.paidNotify);
 
 
     /*----------------------------restful--------------------------------------------------*/
     router.route('/jingyin/rest/virtues/prepay')
         .post(virtues.prepay);
-    router.route('/jingyin/rest/virtues/:id')
-        .put(virtues.paid);
+    /*router.route('/jingyin/rest/virtues/:id')
+        .put(virtues.paid);*/
     /*router.route('/jingyin/rest/virtues')
         .get(virtues.list);*/
 
     /*----------------------------业务系统------------------------------------------  */
-    router.route('/jingyin/biz/parts/index')
-        .get(part.index);
+   /* router.route('/jingyin/biz/parts/index')
+        .get(part.index);*/
 }

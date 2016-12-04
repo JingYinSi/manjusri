@@ -15,6 +15,20 @@ function Virtues() {
     }
 }
 
+Virtues.prototype.findNewVirtueById = function (virtueId) {
+    return VirtueSchema.findById(virtueId)
+        .populate('subject')
+        .exec()
+        .then(function (doc) {
+            if (!doc) return null;
+            if (doc.state !== 'new') {
+                logger.error('we are finding a new virtue, but what we are found is ' + doc.state + ' ???');
+                return null;
+            }
+            return doc;
+        });
+}
+
 var virtueListQuery = VirtueSchema
     .find({state: 'payed'})
     .sort({timestamp: -1})
@@ -50,13 +64,13 @@ Virtues.prototype.place = function (subject, amount, detail, giving) {
     var data = {
         timestamp: self.getTimestamp()
     };
-    if(subject) data.subject = subject;
-    if(amount) data.amount = amount;
+    if (subject) data.subject = subject;
+    if (amount) data.amount = amount;
     if (detail) {
         if (detail.price) data.price = detail.price;
         if (detail.num) data.num = detail.num;
     }
-    if(giving) data.giving = giving;
+    if (giving) data.giving = giving;
 
     return new VirtueSchema(data).save();
 }
