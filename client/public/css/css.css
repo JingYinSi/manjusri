@@ -104,3 +104,34 @@ table{ border-collapse: collapse; border-spacing: 0; }
 .pop .pop_content dt input,.pop .pop_content dt textarea { width: 620px; height: 110px; border: none; background: #faf4f5; float: right;}
 .pop .pop_content dd { width: 720px; height: 130px; line-height: 130px; color: #fff; font-size: 60px; text-align: center; background: #f9a300; margin: 60px auto;}
 .pop .pop_content dd a { display: block;}
+
+.moneySelector {
+    width: 100%;
+}
+
+.moneySelector td {
+    background-color: #FFF6D1;;
+    border-radius: 15px;
+    -moz-border-radius: 15px;
+
+    height: 150px;
+    text-align: center;
+    font-family: SimSun;
+    font-size: 46px;
+    font-weight: bold;
+    color: #C6B3AD;
+
+    cursor: pointer;
+}
+
+.moneySelector td span{
+    font-family: "Microsoft YaHei" ! important;
+    font-size: 46px;
+}
+.moneyItemOver {
+    border: 1px solid cornflowerblue;
+}
+
+.moneyItemOut {
+    border: 1px solid #ffffff;
+}
