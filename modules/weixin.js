@@ -1,7 +1,7 @@
 /**
  * Created by sony on 2016/10/12.
  */
-var simpleget = require('simple-get'), //TODO:待实际运行成功后再将所有对simpleget的调用转向utils.simpleGetJson
+/*var simpleget = require('simple-get'), //TODO:待实际运行成功后再将所有对simpleget的调用转向utils.simpleGetJson
     utils = require('../modules/utils'),
     httpRequest = require('../modules/httprequest'),
     js2xmlparser = require('js2xmlparser'),
@@ -196,4 +196,4 @@ module.exports = function (config) {
         return md5(tosign).toUpperCase();
     }
     return this;
-}
+}*/
