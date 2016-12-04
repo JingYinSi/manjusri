@@ -25,13 +25,11 @@ module.exports = function (router) {
         .get(manjusri.trans);
 
     router.route(payRoute)
-        //.get(payment.pay);
-        .get(payment.toPay);
+        .get(payment.pay);
 
     router.route('/jingyin/manjusri/pay/notify')
         .get(payment.result)
         .post(virtues.paidNotify);
-        //.post(payment.paidNotify);
 
 
     /*----------------------------restful--------------------------------------------------*/
