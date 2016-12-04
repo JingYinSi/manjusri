@@ -28,7 +28,7 @@ Virtues.prototype.prepay = function (req, res) {
         var selfUrl = linkages.getLink('virtue', {id: virtue.id});
         var payUrl = linkages.getLink('pay', {virtue: virtue.id});
         payUrl = encodeURIComponent(payUrl);
-        payUrl = weixin.weixin.wrapRedirectURLByOath2Way(payUrl);
+        payUrl = weixinConfig.wrapRedirectURLByOath2Way(payUrl);
         var links = {
             self: selfUrl,
             pay: payUrl
