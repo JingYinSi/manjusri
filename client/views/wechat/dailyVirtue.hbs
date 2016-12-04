@@ -12,6 +12,7 @@
     </div>
 
     <!--moneySelector-->
+    <div align="center">
     <table id="moneySelector" class="moneySelector" target="input_amount" align="center">
         <tr>
             <td amount="1" onclick="selectMoney(this);" onmouseover="moneyItemOver(this)" onmouseout="moneyItemOut(this);">
@@ -36,7 +37,7 @@
             </td>
         </tr>
     </table>
-
+    </div>
     <script type="text/javascript">
         function selectMoney(item) {
             var targetId = document.getElementById("moneySelector").getAttribute("target");
