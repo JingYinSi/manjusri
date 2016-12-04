@@ -21,6 +21,7 @@ module.exports = function (req, res, next) {
                 welcome(user);
             })
             .then(function (answer) {
+                logger.debug('welcome information should be shown:' + JSON.stringify(answer));
                 return res.reply(answer);
             })
             .catch(function (err) {
