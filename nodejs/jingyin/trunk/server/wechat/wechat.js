@@ -18,7 +18,7 @@ module.exports = function (req, res, next) {
         if (!handler) return res.reply('');
         return handler(msg.FromUserName)
             .then(function (user) {
-                welcome(user);
+                return welcome(user);
             })
             .then(function (answer) {
                 logger.debug('welcome information should be shown:' + JSON.stringify(answer));
