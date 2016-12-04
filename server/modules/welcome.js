@@ -29,10 +29,6 @@ var welcomeMsg = [
         url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
     }
 ];
-var welcome = function(user, callback){
-    callback(null, welcomeMsg);
-}
-//module.exports = welcome;
 
 module.exports = function (user) {
     return Promise.resolve(welcomeMsg);

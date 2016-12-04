@@ -12,7 +12,6 @@ var webboot = require('./modules/webboot'),
         wechat: {
             token: 'jingyinManjusri',
             post: wechat
-            //post: wechat.dealWithMessage
         },
         route: route
     };
