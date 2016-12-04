@@ -74,7 +74,6 @@ Virtues.prototype.paidNotify = function (req, res) {
     return userModel.findOne({openid: openId})
         .then(function (user) {
             if (user) {
-                logger.debug('update virtue ...........');
                 return Promise.resolve(user);
             }
             logger.info('Can not found user with openid:' + notify.openid
@@ -101,7 +100,7 @@ Virtues.prototype.paidNotify = function (req, res) {
             virtue.lord = user.id;
             virtue.paymentNo = paymentNo;
             virtue.state = 'payed';
-            virtue.save();
+            return virtue.save();
         })
         .then(function () {
             return res.end(notify.replyOK());
