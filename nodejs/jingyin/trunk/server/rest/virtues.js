@@ -100,10 +100,15 @@ Virtues.prototype.paidNotify = function (req, res) {
             virtue.lord = user.id;
             virtue.paymentNo = paymentNo;
             virtue.state = 'payed';
+            logger.debug('virtue is found, update virtue...............');
             return virtue.save();
         })
         .then(function () {
+            logger.debug('update virtue success ...........');
             return res.end(notify.replyOK());
+        })
+        .catch(function () {
+            return resWrap.setError(500);
         });
 }
 
