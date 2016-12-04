@@ -5,9 +5,9 @@ var virtues = require('../modules/virtues'),
     parts = require('../modules/parts'),
     userModel = require('../wechat/models/user'),
     virtueModel = require('../wechat/models/virtue'),
-    partModel = require('../wechat/models/part'),
+    //partModel = require('../wechat/models/part'),
     linkages = require('../rests'),
-    usersModule = require('../modules/users'),
+    //usersModule = require('../modules/users'),
     createResponseWrap = require('../../modules/responsewrap'),
     weixin = require('../weixin'),
     weixinConfig = weixin.weixinConfig,
@@ -37,7 +37,6 @@ Virtues.prototype.prepay = function (req, res) {
         res.header('Location', selfUrl);
         res.status(201).json(virtue);
     }
-
 
     var details = null;
     if (obj.num) details = {price: obj.price, num: obj.num};
@@ -116,35 +115,35 @@ Virtues.prototype.paidNotify = function (req, res) {
 //TODO: 调整菜单
 //TODO: restful已支付服务是否有必要保留？
 //TODO: 如果保留，那么这里的代码与../wechat/payment.js的paidNotify存在重复
-Virtues.prototype.paid = function (req, res) {
-    var data = req.body;
+/*Virtues.prototype.paid = function (req, res) {
+ var data = req.body;
 
-    function doPay(user) {
-        virtueModel.pay(req.params.id, user.id, data.paymentNo, function (err, virtue) {
-            var selfUrl = linkages.getLink('virtue', {id: virtue.id});
-            var links = {
-                self: selfUrl,
-            }
-            res.links(links);
-            res.status(200).json(virtue);
-        });
-    }
+ function doPay(user) {
+ virtueModel.pay(req.params.id, user.id, data.paymentNo, function (err, virtue) {
+ var selfUrl = linkages.getLink('virtue', {id: virtue.id});
+ var links = {
+ self: selfUrl,
+ }
+ res.links(links);
+ res.status(200).json(virtue);
+ });
+ }
 
-    userModel.findOne({openid: data.openId}, function (err, user) {
-        if (!user) {
-            logger.info('Can not found user with openid:' + data.openId);
-            usersModule.register(data.openId, function (err, userAdded) {
-                if (err) {
-                    logger.error('register user failed:' + err);
-                    return;
-                }
-                doPay(userAdded);
-            });
-            return;
-        }
-        doPay(user);
-    });
+ userModel.findOne({openid: data.openId}, function (err, user) {
+ if (!user) {
+ logger.info('Can not found user with openid:' + data.openId);
+ usersModule.register(data.openId, function (err, userAdded) {
+ if (err) {
+ logger.error('register user failed:' + err);
+ return;
+ }
+ doPay(userAdded);
+ });
+ return;
+ }
+ doPay(user);
+ });
 
-};
+ };*/
 
 module.exports = new Virtues();

@@ -1,7 +1,7 @@
 /**
  * Created by sony on 2016/10/13.
  */
-var weixinModule = require('../modules/weixin'),
+var /*weixinModule = require('../modules/weixin'),*/
     weixinConfigFactory = require('../modules/weixinconfig'),
     weixinServiceFactory = require('../modules/weixinfactory');
 
@@ -19,7 +19,7 @@ const configData = {
 var weixinConfigObj = weixinConfigFactory(configData);
 
 module.exports = {
-    weixin: weixinModule(configData),
+    //weixin: weixinModule(configData),
     weixinConfig: weixinConfigObj,
     weixinService: weixinServiceFactory(weixinConfigObj)
 }

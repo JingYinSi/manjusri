@@ -14,7 +14,7 @@ var UserSchema = new Schema({
     watching: Boolean
 });
 
-UserSchema.statics.registerWeixinUser = function (obj, callback) {
+/*UserSchema.statics.registerWeixinUser = function (obj, callback) {
     var data = {
         name: obj.nickname,
         openid: obj.openid,
@@ -47,7 +47,7 @@ UserSchema.statics.create = function (obj, callback) {
     var User = mongoose.model('User', UserSchema);
     var model = new User(obj);
     model.save(callback);
-};
+};*/
 
 
 module.exports = mongoose.model('User', UserSchema);
