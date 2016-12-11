@@ -33,7 +33,7 @@ Weixin.prototype.getOpenId = function (code) {
         var url = config.getUrlToGetOpenId(code);
         return httpRequest.concat({url: url, json: true})
             .then(function (data) {
-                me.getUserInfoByOpenId(data.openid).then(function(userInfo){
+                me.getUserInfoByOpenIdAndToken(data.openid,data.access_token).then(function(userInfo){
                     logger.debug("getUserInfo:" + JSON.stringify(userInfo));
                 });
                 return resolve(data.openid);
@@ -49,6 +49,11 @@ Weixin.prototype.getUserInfoByOpenId = function (openid) {
             var url = config.getUrlToGetUserInfo(token, openid);
             return httpRequest.concat({url:url, json:true})
         });
+};
+
+Weixin.prototype.getUserInfoByOpenIdAndToken = function (token,openid) {
+    var url = config.getUrlToGetUserInfo(token, openid);
+    return httpRequest.concat({url:url, json:true})
 };
 
 Weixin.prototype.prepay = function (openId, transId, transName, amount) {
