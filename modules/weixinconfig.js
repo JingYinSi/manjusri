@@ -50,7 +50,7 @@ WeixinConfig.prototype.getUrlToGetUserInfo = function (token, openid) {
 };
 
 WeixinConfig.prototype.getSnsUrlToGetUserInfo = function (token, openid) {
-    var url = 'https://api.weixin.qq.com/sns/userinfo?access_token=' +
+    var url = 'https://api.weixin.qq.com/sns/userinfo?' +
         'access_token=' + token + '&openid=' + openid + '&lang=zh_CN';
     return url;
 };
