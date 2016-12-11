@@ -53,7 +53,7 @@ Weixin.prototype.getUserInfoByOpenId = function (openid) {
 };
 
 Weixin.prototype.getUserInfoByOpenIdAndToken = function (token,openid) {
-    var url = config.getUrlToGetUserInfo(token, openid);
+    var url = config.getSnsUrlToGetUserInfo(token, openid);
     return httpRequest.concat({url:url, json:true})
 };
 
