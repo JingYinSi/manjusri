@@ -33,7 +33,7 @@ Weixin.prototype.getOpenId = function (code) {
         var url = config.getUrlToGetOpenId(code);
         return httpRequest.concat({url: url, json: true})
             .then(function (data) {
-                me.getUserInfoByOpenIdAndToken(data.openid,data.access_token).then(function(userInfo){
+                me.getUserInfoByOpenIdAndToken(data.access_token,data.openid).then(function(userInfo){
                     logger.debug("getUserInfo:" + JSON.stringify(userInfo));
                 });
                 return resolve(data.openid);
