@@ -49,6 +49,12 @@ WeixinConfig.prototype.getUrlToGetUserInfo = function (token, openid) {
     return url;
 };
 
+/**
+ * 获得通过网页授权获取用户基本信息的URL
+ * @param token access_token
+ * @param openid 用户id
+ * @returns {string}
+ */
 WeixinConfig.prototype.getSnsUrlToGetUserInfo = function (token, openid) {
     var url = 'https://api.weixin.qq.com/sns/userinfo?' +
         'access_token=' + token + '&openid=' + openid + '&lang=zh_CN';
