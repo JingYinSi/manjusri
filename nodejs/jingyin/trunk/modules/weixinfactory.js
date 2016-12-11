@@ -30,6 +30,7 @@ Weixin.prototype.getOpenId = function (code) {
         var url = config.getUrlToGetOpenId(code);
         return httpRequest.concat({url: url, json: true})
             .then(function (data) {
+                logger.debug("snsapi_userinfo:" + JSON.stringify(data));
                 return resolve(data.openid);
             }, function (err) {
                 return reject(err);
