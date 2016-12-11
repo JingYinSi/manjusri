@@ -33,8 +33,8 @@ Weixin.prototype.getOpenId = function (code) {
         var url = config.getUrlToGetOpenId(code);
         return httpRequest.concat({url: url, json: true})
             .then(function (data) {
-                var userInfo =  me.getUserInfoByOpenId(data.openid);
-                console.log("getUserInfo:" + userInfo);
+                /*var userInfo =  me.getUserInfoByOpenId(data.openid);
+                console.log("getUserInfo:" + userInfo);*/
                 return resolve(data.openid);
             }, function (err) {
                 return reject(err);
