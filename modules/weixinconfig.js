@@ -1,5 +1,6 @@
 /**
  * Created by clx on 2016/11/29.
+ *
  */
 var signMd5 = require('./weixinsignmd5'),
     js2xmlparser = require('js2xmlparser');
@@ -22,31 +23,37 @@ function WeixinConfig() {
 
 WeixinConfig.prototype.setNonceGenerator = function (nonceGenerator) {
     nonceGen = nonceGenerator;
-}
+};
 
 WeixinConfig.prototype.setTimestampGenerator = function (timestampGenerator) {
     timestampGen = timestampGenerator;
-}
+};
 
 WeixinConfig.prototype.setSignMD5 = function (weixinSignMd5) {
     signMd5 = weixinSignMd5;
-}
+};
 
 WeixinConfig.prototype.getUrlToGetAccessToken = function () {
     return urlToGetAccessToken;
-}
+};
 
 WeixinConfig.prototype.getUrlToGetOpenId = function (code) {
     var url = apiBaseURL + "access_token?appid="
         + appId + "&secret=" + appSecret + "&code=" + code + "&grant_type=authorization_code";
     return url;
-}
+};
 
-WeixinConfig.prototype.getUrlToGetUserInfo = function (token, openid) {
+/*WeixinConfig.prototype.getUrlToGetUserInfo = function (token, openid) {
     var url = 'https://api.weixin.qq.com/cgi-bin/user/info?' +
         'access_token=' + token + '&openid=' + openid + '&lang=zh_CN';
     return url;
-}
+};*/
+
+WeixinConfig.prototype.getUrlToGetUserInfo = function (token, openid) {
+    var url = 'https://api.weixin.qq.com/sns/userinfo?access_token=' +
+        'access_token=' + token + '&openid=' + openid + '&lang=zh_CN';
+    return url;
+};
 
 WeixinConfig.prototype.getPrepayRequestOption = function (openId, transId, transName, amount) {
     var order = {
@@ -89,7 +96,7 @@ WeixinConfig.prototype.generatePayData = function (prepayId) {
     payData.paySign = signMd5(payData, mchKey);
     payData.prepay_id = prepayId;
     return payData;
-}
+};
 
 WeixinConfig.prototype.wrapRedirectURLByOath2Way = function (url) {
     /*var wrapedUrl = oauth2BaseURL + "?appid=" + appId
@@ -97,7 +104,7 @@ WeixinConfig.prototype.wrapRedirectURLByOath2Way = function (url) {
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId
         + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";
     return wrapedUrl;
-}
+};
 
 WeixinConfig.prototype.parsePaymentNotification = function (paydata) {
     var result = {
@@ -111,7 +118,7 @@ WeixinConfig.prototype.parsePaymentNotification = function (paydata) {
                 return_msg: "OK"
             });
         }
-    }
+    };
 
     if (paydata.result_code === "SUCCESS" && paydata.return_code === "SUCCESS") {
         var tosign = Object.assign({}, paydata);
@@ -120,7 +127,7 @@ WeixinConfig.prototype.parsePaymentNotification = function (paydata) {
             result.pass = true;
     }
     return result;
-}
+};
 
 module.exports = function (configData) {
     apiBaseURL = configData.apiBaseURL;
@@ -135,4 +142,4 @@ module.exports = function (configData) {
     urlToGetAccessToken = 'https://api.weixin.qq.com/cgi-bin/token?' +
         'grant_type=client_credential&appid=' + appId + '&secret=' + appSecret;
     return new WeixinConfig();
-}
+};

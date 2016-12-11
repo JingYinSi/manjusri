@@ -1,5 +1,6 @@
 /**
  * Created by clx on 2016/11/29.
+ *
  */
 var Promise = require('bluebird'),
     XML = require('pixl-xml'),
@@ -10,8 +11,9 @@ var logger = log4js.getLogger();
 
 var config;
 
-function Weixin() {
-}
+var Weixin  = function() {
+    //构造函数
+};
 
 Weixin.prototype.getAccessToken = function () {
     return new Promise(function (resolve, reject) {
@@ -23,20 +25,22 @@ Weixin.prototype.getAccessToken = function () {
                 return reject(err);
             });
     })
-}
+};
 
 Weixin.prototype.getOpenId = function (code) {
+    var me = this;
     return new Promise(function (resolve, reject) {
         var url = config.getUrlToGetOpenId(code);
         return httpRequest.concat({url: url, json: true})
             .then(function (data) {
-                logger.debug("snsapi_userinfo:" + JSON.stringify(data));
+                var userInfo =  this.getUserInfoByOpenId(data.openid);
+                console.log("getUserInfo:" + userInfo);
                 return resolve(data.openid);
             }, function (err) {
                 return reject(err);
             });
     });
-}
+};
 
 Weixin.prototype.getUserInfoByOpenId = function (openid) {
     return this.getAccessToken()
@@ -44,7 +48,7 @@ Weixin.prototype.getUserInfoByOpenId = function (openid) {
             var url = config.getUrlToGetUserInfo(token, openid);
             return httpRequest.concat({url:url, json:true})
         });
-}
+};
 
 Weixin.prototype.prepay = function (openId, transId, transName, amount) {
     var opt = config.getPrepayRequestOption(openId, transId, transName, amount);
@@ -58,9 +62,9 @@ Weixin.prototype.prepay = function (openId, transId, transName, amount) {
             }
             return Promise.reject(new Error(doc.err_code_desc));
         });
-}
+};
 
 module.exports = function (configObj) {
     config = configObj;
     return new Weixin();
-}
+};
