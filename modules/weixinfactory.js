@@ -33,9 +33,9 @@ Weixin.prototype.getOpenId = function (code) {
         var url = config.getUrlToGetOpenId(code);
         return httpRequest.concat({url: url, json: true})
             .then(function (data) {
-                logger.debug("getOpenId:" + JSON.stringify(data));
+                logger.debug("getOpenId111111111111111:" + JSON.stringify(data));
                 me.getUserInfoByOpenIdAndToken(data.access_token,data.openid).then(function(userInfo){
-                    logger.debug("getUserInfo:" + JSON.stringify(userInfo));
+                    logger.debug("getUserInfo222222:" + JSON.stringify(userInfo));
                 });
                 return resolve(data.openid);
             }, function (err) {
@@ -54,6 +54,7 @@ Weixin.prototype.getUserInfoByOpenId = function (openid) {
 
 Weixin.prototype.getUserInfoByOpenIdAndToken = function (token,openid) {
     var url = config.getSnsUrlToGetUserInfo(token, openid);
+    logger.debug("getUserInfoByOpenIdAndToken URL" + url);
     return httpRequest.concat({url:url, json:true})
 };
 
