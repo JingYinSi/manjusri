@@ -105,10 +105,10 @@ WeixinConfig.prototype.generatePayData = function (prepayId) {
 };
 
 WeixinConfig.prototype.wrapRedirectURLByOath2Way = function (url) {
-    /*var wrapedUrl = oauth2BaseURL + "?appid=" + appId
-        + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";*/
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId
-        + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";
+        + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";
+    /*var wrapedUrl = oauth2BaseURL + "?appid=" + appId
+        + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";*/
     return wrapedUrl;
 };
 
