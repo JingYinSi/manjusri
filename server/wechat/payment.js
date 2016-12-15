@@ -24,6 +24,9 @@ module.exports = {
             wx.getOpenId(code)
                 .then(function (data) {
                     openId = data.openid;
+                    logger.debug('...........................................................................');
+                    logger.debug('we are going to call register user:\n' + JSON.stringify(data));
+                    logger.debug('...........................................................................');
                     return users.register(data.access_token, openId);
                 }),
             virtues.findNewVirtueById(virtueId)
