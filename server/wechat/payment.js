@@ -1,5 +1,6 @@
 var wx = require('../weixin').weixinService,
     virtues = require('../modules/virtues'),
+    users = require('../modules/users'),
     Promise = require('bluebird'),
     responseWrapFactory = require('../../modules/responsewrap');
 
@@ -22,12 +23,13 @@ module.exports = {
         var tasks = [
             wx.getOpenId(code)
                 .then(function (data) {
-                    return openId = data;
+                    openId = data.openid;
+                    return users.register(data.access_token, openId);
                 }),
             virtues.findNewVirtueById(virtueId)
                 .then(function (doc) {
-                    if(!doc) return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
-
+                    if(!doc)
+                        return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
                     subjectName = doc.subject.name;
                     amount = doc.amount;
                 })];
