@@ -23,7 +23,6 @@ Users.prototype.register = function (accessToken, openId) {
             (accessToken ? weixinService.getUserInfoByOpenIdAndToken(accessToken, openId)
                 : weixinService.getUserInfoByOpenId(openId))
                 .then(function (userInfo) {
-                    logger.debug('User info from weixin:\n' + JSON.stringify(userInfo));
                     var model = user;
                     if (!model) {
                         var data = {
@@ -36,6 +35,17 @@ Users.prototype.register = function (accessToken, openId) {
                             subscribe: userInfo.subscribe_time
                         }
                         model = new UserModel(data);
+                        logger.debug('a new user is registered:\n' + JSON.stringify(userInfo));
+                    } else {
+                        model.name = userInfo.nickname;
+                        model.openid = userInfo.openid;
+                        model.img = userInfo.headimgurl;
+                        model.city = userInfo.city;
+                        model.province = userInfo.province;
+                        model.sex = userInfo.sex;
+                        model.subscribe = userInfo.subscribe_time;
+                        model.increment();
+                        logger.debug('the user info is updated:\n' + JSON.stringify(userInfo));
                     }
 
                     return model.save();
