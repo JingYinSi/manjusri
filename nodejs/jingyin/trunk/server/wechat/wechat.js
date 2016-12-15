@@ -12,10 +12,11 @@ var msgHandlers = {
 module.exports = function (req, res, next) {
     var msg = req.weixin;
     logger.debug('Message from weixin:\n' + JSON.stringify(msg));
+
     if (msg.MsgType === 'event') {
         var handler = msgHandlers[msg.Event];
         if (!handler) return res.reply('');
-        return handler(msg.FromUserName)
+        return handler(null, msg.FromUserName)
             .then(function (user) {
                 return welcome(user);
             })

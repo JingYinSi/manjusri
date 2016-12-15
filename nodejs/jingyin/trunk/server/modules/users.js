@@ -13,26 +13,31 @@ var logger = log4js.getLogger();
 function Users() {
 }
 
-Users.prototype.register = function (openId) {
+Users.prototype.register = function (accessToken, openId) {
     return UserModel.findOne({openid: openId})
         .then(function (user) {
-            if (user) {
+            if (user && user.name && user.subscribe) {
                 logger.debug('The user with openid[' + openId + '] is already registered!');
                 return Promise.resolve(user);
             }
-            return weixinService.getUserInfoByOpenId(openId)
+            (accessToken ? weixinService.getUserInfoByOpenIdAndToken(accessToken, openId)
+                : weixinService.getUserInfoByOpenId(openId))
                 .then(function (userInfo) {
                     logger.debug('User info from weixin:\n' + JSON.stringify(userInfo));
-                    var data = {
-                        name: userInfo.nickname,
-                        openid: userInfo.openid,
-                        img: userInfo.headimgurl,
-                        city: userInfo.city,
-                        province: userInfo.province,
-                        sex: userInfo.sex,
-                        subscribe: userInfo.subscribe_time
+                    var model = user;
+                    if (!model) {
+                        var data = {
+                            name: userInfo.nickname,
+                            openid: userInfo.openid,
+                            img: userInfo.headimgurl,
+                            city: userInfo.city,
+                            province: userInfo.province,
+                            sex: userInfo.sex,
+                            subscribe: userInfo.subscribe_time
+                        }
+                        model = new UserModel(data);
                     }
-                    var model = new UserModel(data);
+
                     return model.save();
                 });
         });

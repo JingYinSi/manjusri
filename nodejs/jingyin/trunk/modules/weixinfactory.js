@@ -11,8 +11,7 @@ var logger = log4js.getLogger();
 
 var config;
 
-var Weixin  = function() {
-    //构造函数
+var Weixin = function () {
 };
 
 Weixin.prototype.getAccessToken = function () {
@@ -28,13 +27,19 @@ Weixin.prototype.getAccessToken = function () {
 };
 
 Weixin.prototype.getOpenId = function (code) {
+        var url = config.getUrlToGetOpenId(code);
+        return httpRequest.concat({url: url, json: true});
+};
+
+/*Weixin.prototype.getOpenId = function (code) {
     var me = this;
     return new Promise(function (resolve, reject) {
         var url = config.getUrlToGetOpenId(code);
         return httpRequest.concat({url: url, json: true})
             .then(function (data) {
                 logger.debug("getOpenId:" + JSON.stringify(data));
-                me.getUserInfoByOpenIdAndToken(data.access_token,data.openid).then(function(userInfo){
+                //TODO: 什么时机获取用户信息？
+                me.getUserInfoByOpenIdAndToken(data.access_token, data.openid).then(function (userInfo) {
                     logger.debug("getUserInfo:" + JSON.stringify(userInfo));
                 });
                 return resolve(data.openid);
@@ -42,13 +47,13 @@ Weixin.prototype.getOpenId = function (code) {
                 return reject(err);
             });
     });
-};
+};*/
 
 Weixin.prototype.getUserInfoByOpenId = function (openid) {
     return this.getAccessToken()
         .then(function (token) {
             var url = config.getUrlToGetUserInfo(token, openid);
-            return httpRequest.concat({url:url, json:true})
+            return httpRequest.concat({url: url, json: true})
         });
 };
 
@@ -57,9 +62,9 @@ Weixin.prototype.getUserInfoByOpenId = function (openid) {
  * @param token access_token
  * @param openid openid
  */
-Weixin.prototype.getUserInfoByOpenIdAndToken = function (token,openid) {
+Weixin.prototype.getUserInfoByOpenIdAndToken = function (token, openid) {
     var url = config.getSnsUrlToGetUserInfo(token, openid);
-    return httpRequest.concat({url:url, json:true});
+    return httpRequest.concat({url: url, json: true});
 };
 
 Weixin.prototype.prepay = function (openId, transId, transName, amount) {

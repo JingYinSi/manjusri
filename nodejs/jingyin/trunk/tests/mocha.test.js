@@ -475,7 +475,7 @@ describe('静音寺业务系统', function () {
                     wrapedPayUrl = 'wraped/url';
                     wrapRedirectURLByOath2WayStub = sinon.stub();
                     wrapRedirectURLByOath2WayStub.withArgs(encodeURIComponent(payUrl)).returns(wrapedPayUrl);
-                    stubs['../weixin'] = {weixin: {wrapRedirectURLByOath2Way: wrapRedirectURLByOath2WayStub}};
+                    stubs['../weixin'] = {weixinConfig: {wrapRedirectURLByOath2Way: wrapRedirectURLByOath2WayStub}};
                 });
 
                 it('预置捐助交易失败', function (done) {
@@ -777,14 +777,15 @@ describe('静音寺业务系统', function () {
                     notify_url: payNotifyUrl,
                     openid: openId,
                     spbill_create_ip: payServerIp,
-                    total_fee: amount,
+                    total_fee: Math.round(amount * 100),
                     attach: "jingyin",
                     appid: appid,
                     mch_id: mch_id,
                     nonce_str: nonce,
                     trade_type: "JSAPI",
                 };
-                var order = Object.assign({sign: sign}, orderToSign);
+                var order = Object.assign({}, orderToSign);
+                order.sign = sign;
                 var prepayOrderXML = js2xmlparser.parse('xml', order);
 
                 var expectedOption = {
@@ -1143,46 +1144,6 @@ describe('静音寺业务系统', function () {
                 weixinModule = require('../modules/weixin');
                 weixin = weixinModule(weixinConfig);
             });
-
-            describe('检验微信支付结果', function () {
-                var paymentXml, payment, paymentJsonToSign, signMD5Stub;
-                beforeEach(function () {
-                    paymentXml = '<xml>' +
-                        '<appid><![CDATA[wx76c06da9928cd6c3]]></appid>' +
-                        ' <attach><![CDATA[?..]]></attach>' +
-                        ' <bank_type><![CDATA[GDB_CREDIT]]></bank_type>' +
-                        ' <cash_fee><![CDATA[5]]></cash_fee>' +
-                        ' <fee_type><![CDATA[CNY]]></fee_type>' +
-                        ' <is_subscribe><![CDATA[Y]]></is_subscribe>' +
-                        ' <mch_id><![CDATA[1364986702]]></mch_id>' +
-                        ' <nonce_str><![CDATA[fmbg238xoxfde7b]]></nonce_str>' +
-                        ' <openid><![CDATA[o0ghywcfW_2Dp4oN-7NADengZAVM]]></openid>' +
-                        ' <out_trade_no><![CDATA[58088e7a253a72789bec6d98]]></out_trade_no>' +
-                        ' <result_code><![CDATA[SUCCESS]]></result_code>' +
-                        ' <return_code><![CDATA[SUCCESS]]></return_code>' +
-                        ' <sign><![CDATA[4C59A329EE4E7D35BE7FC840C599F6FE]]></sign>' +
-                        ' <time_end><![CDATA[20161020172940]]></time_end>' +
-                        ' <total_fee>5</total_fee> ' +
-                        '<trade_type><![CDATA[JSAPI]]></trade_type>' +
-                        ' <transaction_id><![CDATA[4005172001201610207217503606]]></transaction_id>' +
-                        ' </xml>';
-                    payment = XML.parse(paymentXml);
-                    paymentJsonToSign = Object.assign({}, payment);
-                    delete paymentJsonToSign.sign;
-
-                    signMD5Stub = sinon.stub();
-                    signMD5Stub.withArgs(paymentJsonToSign).returns('4C59A329EE4E7D35BE7FC840C599F6FE');
-                    weixin.signMD5 = signMD5Stub;
-                });
-
-                it('验证无误', function () {
-                    var obj = weixin.parsePaymentNotification(payment);
-                    expect(obj.pass()).to.be.true;
-                    expect(obj.getOutTradeNo()).eql('58088e7a253a72789bec6d98');
-                    var responseBodyXML = "<xml><return_code>SUCCESS</return_code><return_msg>OK</return_msg></xml>"
-                    expect(obj.replyOK()).xml.equal(responseBodyXML);
-                })
-            })
         });
 
         describe('服务端控制', function () {
@@ -1234,7 +1195,7 @@ describe('静音寺业务系统', function () {
                     var openid, msg, msgReplySpy;
 
                     beforeEach(function () {
-                        controller = require('../server/wechat/wechat').dealWithMessage;
+                        controller = require('../server/wechat/wechat');
                         openid = '1234567890';
                         msg = {
                             FromUserName: openid,
@@ -1256,18 +1217,16 @@ describe('静音寺业务系统', function () {
                     describe('响应关注消息', function () {
                         it('应答欢迎信息', function () {
                             var user = {name: 'foo'}
-                            var registerUserStub = sinon.stub();
-                            registerUserStub.withArgs(openid).callsArgWith(1, null, user);
+                            var registerUserStub = createPromiseStub([openid], [user]);
                             stubs['../modules/users'] = {
                                 register: registerUserStub
                             };
 
                             var answer = {foo: 'foo'};
-                            var welcomeStub = sinon.stub();
-                            welcomeStub.withArgs(user).callsArgWith(1, null, answer);
+                            var welcomeStub = createPromiseStub([user], [answer]);
                             stubs['../modules/welcome'] = welcomeStub;
 
-                            controller = proxyquire('../server/wechat/wechat', stubs).dealWithMessage;
+                            controller = proxyquire('../server/wechat/wechat', stubs);
                             controller(reqStub, resStub);
                             expect(msgReplySpy).calledWith(answer);
                         });
@@ -1553,24 +1512,24 @@ describe('静音寺业务系统', function () {
 
                     it('请求中未包含code的查询变量', function () {
                         delete reqStub.query.code;
-                        controller = proxyquire('../server/wechat/payment', stubs).toPay;
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
                         controller(reqStub, resStub);
                         return checkResponseStatusCodeAndMessage(400, null, new Error('code is not found in query'));
                     });
 
                     it('请求中未包含virtue的查询变量', function () {
                         delete reqStub.query.virtue;
-                        controller = proxyquire('../server/wechat/payment', stubs).toPay;
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
                         controller(reqStub, resStub);
                         return checkResponseStatusCodeAndMessage(400, null, new Error('virtue is not found in query'));
                     });
 
                     it('获取openid失败', function () {
                         getOpenIdStub = createPromiseStub([code], null, err);
-                        stubs['../weixin'] = {getOpenId: getOpenIdStub};
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
                         findNewVirtueByIdStub = createPromiseStub([virtueId], [virtue]);
                         stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
-                        controller = proxyquire('../server/wechat/payment', stubs).toPay;
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
                         return controller(reqStub, resStub)
                             .then(function () {
                                 checkResponseStatusCodeAndMessage(400, null, err);
@@ -1583,7 +1542,7 @@ describe('静音寺业务系统', function () {
                         findNewVirtueByIdStub = createPromiseStub([virtueId], null, err);
                         stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
 
-                        controller = proxyquire('../server/wechat/payment', stubs).toPay;
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
                         return controller(reqStub, resStub)
                             .then(function () {
                                 checkResponseStatusCodeAndMessage(400, null, err);
@@ -1596,7 +1555,7 @@ describe('静音寺业务系统', function () {
                         findNewVirtueByIdStub = createPromiseStub([virtueId], [null]);
                         stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
 
-                        controller = proxyquire('../server/wechat/payment', stubs).toPay;
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
                         return controller(reqStub, resStub)
                             .then(function () {
                                 var error = new Error('The virtue[id=' + virtueId + '] is not found');
@@ -1606,13 +1565,13 @@ describe('静音寺业务系统', function () {
 
                     it('预置微信支付操作失败', function () {
                         getOpenIdStub = createPromiseStub([code], [openId]);
-                        stubs['../weixin'] = {getOpenId: getOpenIdStub};
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
                         findNewVirtueByIdStub = createPromiseStub([virtueId], [virtue]);
                         stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
                         prepayStub = createPromiseStub([openId, virtueId, 'foo', 300], null, err);
-                        stubs['../weixin'].prepay = prepayStub;
+                        stubs['../weixin'].weixinService.prepay = prepayStub;
 
-                        controller = proxyquire('../server/wechat/payment', stubs).toPay;
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
                         return controller(reqStub, resStub)
                             .then(function () {
                                 checkResponseStatusCodeAndMessage(400, null, err);
@@ -1621,13 +1580,13 @@ describe('静音寺业务系统', function () {
 
                     it('渲染前端进行微信支付', function () {
                         getOpenIdStub = createPromiseStub([code], [openId]);
-                        stubs['../weixin'] = {getOpenId: getOpenIdStub};
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
                         findNewVirtueByIdStub = createPromiseStub([virtueId], [virtue]);
                         stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
                         prepayStub = createPromiseStub([openId, virtueId, 'foo', 300], [payData]);
-                        stubs['../weixin'].prepay = prepayStub;
+                        stubs['../weixin'].weixinService.prepay = prepayStub;
 
-                        controller = proxyquire('../server/wechat/payment', stubs).toPay;
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
                         return controller(reqStub, resStub)
                             .then(function () {
                                 expect(resRenderSpy).calledWith('wechat/payment', {
