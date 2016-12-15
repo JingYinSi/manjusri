@@ -16,10 +16,10 @@ function Users() {
 Users.prototype.register = function (accessToken, openId) {
     return UserModel.findOne({openid: openId})
         .then(function (user) {
-            /*if (user && user.name && user.subscribe) {
+            if (user && user.name && user.subscribe) {
                 logger.debug('The user with openid[' + openId + '] is already registered!');
                 return Promise.resolve(user);
-            }*/
+            }
             (accessToken ? weixinService.getUserInfoByOpenIdAndToken(accessToken, openId)
                 : weixinService.getUserInfoByOpenId(openId))
                 .then(function (userInfo) {
