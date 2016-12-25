@@ -11,8 +11,10 @@
 
         .myProfileEditor {
             width: 100%;
+            line-height: 160px;;
             margin-top: 10px;
-            margin-bottom: 3px;
+            margin-bottom: 5px;
+            padding-left: 20px;;
             background-color: #FFF;
             overflow: hidden;
         }
@@ -24,78 +26,54 @@
             overflow: hidden;
         }
 
-        .myProfileEditor .content .space {
-            float: left;
-            width: 76px;
-        }
-
-        .myProfileEditor .content .name {
-            float: left;
-            width: 260px;
-            line-height: 260px;
-            margin-left: 5px;
-            vertical-align: middle;
-            font-size: 42px;
-        }
         .myProfileEditor .content .icon {
-            float: right;
-            width:150px;
+            float: left;
+            width: 150px;
             line-height: 260px;
-            margin-right: 20%;
             vertical-align: middle;
             background-image: url("images/touxiang150_2.png");
             background-repeat: no-repeat;
             background-position: center;
         }
 
-        .navItem {
+        .myProfileEditor .content .nickName {
+            float: left;
+            line-height: 260px;
+            padding-left: 5%;
+            vertical-align: middle;
+            font-size: 42px;
+        }
+
+        .formItem {
             width: 100%;
+            line-height: 160px;;
             margin-bottom: 3px;
+            padding-left: 20px;;
+            vertical-align: middle;
             background-color: #FFF;
             overflow: hidden;
         }
 
-        .navItem .content {
+        .formItem .label {
             float: left;
-            line-height: 180px;
-            margin-left: 10%;
-        }
-
-        .navItem .content .name {
-            float: left;
+            width: 220px;
+            line-height: 160px;;
             font-size: 42px;
-            margin-left: 5px;
-            vertical-align: middle;
-            width: 260px;
-        }
-
-        .navItem .content .value {
-            float: left;
-            font-size: 42px;
-            margin-left: 44px;
+            margin-left: 15px;
             vertical-align: middle;
         }
 
-        .navItem .nav {
-            float: right;
-            margin: 0 5%;
-        }
-
-        .navItem .nav .icon {
-            float: right;
+        .formItem .editor {
+            width: 60%;
+            line-height: 78px;;
+            padding:0;
             font-size: 42px;
-            line-height: 180px;;
-            margin-left: 50px;
-        }
-
-        .navItem .nav .e {
-            float: right;
-            margin-top: 6%;
+            vertical-align: middle;
         }
 
         .nickNameIcon {
             float: left;
-            line-height: 180px;
+            line-height: 160px;
             background-image: url("images/xing.png");
             background-repeat: no-repeat;
             background-position: center;
@@ -104,26 +82,8 @@
 
         .realNameIcon {
             float: left;
-            line-height: 180px;
+            line-height: 160px;
             background-image: url("images/ren.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 76px;
-        }
-
-        .sexIcon {
-            float: left;
-            line-height: 180px;
-            background-image: url("images/heart.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 76px;
-        }
-
-        .birthdayIcon {
-            float: left;
-            line-height: 180px;
-            background-image: url("images/rili.png");
             background-repeat: no-repeat;
             background-position: center;
             width: 76px;
@@ -131,17 +91,8 @@
 
         .mobileIcon {
             float: left;
-            line-height: 180px;
+            line-height: 160px;
             background-image: url("images/shouji.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 76px;
-        }
-
-        .emailIcon {
-            float: left;
-            line-height: 180px;
-            background-image: url("images/mail.png");
             background-repeat: no-repeat;
             background-position: center;
             width: 76px;
@@ -149,11 +100,38 @@
 
         .addressIcon {
             float: left;
-            line-height: 180px;
+            line-height: 160px;
             background-image: url("images/fang.png");
             background-repeat: no-repeat;
             background-position: center;
             width: 76px;
+        }
+
+        .emailIcon {
+            float: left;
+            line-height: 160px;
+            background-image: url("images/mail.png");
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 76px;
+        }
+
+        .form-tool{
+            width: 100%;
+            line-height: 160px;;
+            margin-bottom: 3px;
+            padding-left: 20px;;
+            text-align: right;
+            vertical-align: middle;
+            background-color: #FFF;
+            overflow: hidden;
+        }
+
+        .form-tool .ok{
+            line-height: 160px;;
+            font-size: 42px;
+            vertical-align: middle;
+            margin-right: 50px;
         }
     </style>
 </head>
@@ -162,94 +140,45 @@
 
 <div class="myProfileEditor">
     <div class="content">
-        <div class="space">&nbsp;</div>
-        <div class="name">头像</div>
         <div class="icon">&nbsp;</div>
+        <div class="nickName">陌林</div>
     </div>
 </div>
 
-<div class="navItem">
-    <div class="content">
-        <div class="nickNameIcon">&nbsp;</div>
-        <div class="name">昵称</div>
-        <div class="value">陌林</div>
-    </div>
-    <div class="nav">
-        <div class="icon"> >></div>
-        <div class="e"></div>
-    </div>
+<div class="formItem">
+    <div class="nickNameIcon">&nbsp;</div>
+    <div class="label">昵称</div>
+    <input class="editor" type="text" value="陌林"/>
 </div>
 
-<div class="navItem">
-    <div class="content">
-        <div class="realNameIcon">&nbsp;</div>
-        <div class="name">真实姓名</div>
-        <div class="value">张晓林</div>
-    </div>
-    <div class="nav">
-        <div class="icon"> >></div>
-        <div class="e"></div>
-    </div>
+<div class="formItem">
+    <div class="realNameIcon">&nbsp;</div>
+    <div class="label">真实姓名</div>
+    <input class="editor" type="text" value="张晓林"/>
 </div>
 
-<div class="navItem">
-    <div class="content">
-        <div class="sexIcon">&nbsp;</div>
-        <div class="name">性别</div>
-        <div class="value">男</div>
-    </div>
-    <div class="nav">
-        <div class="icon"> >></div>
-        <div class="e"></div>
-    </div>
-</div>
-
-<div class="navItem">
-    <div class="content">
-        <div class="birthdayIcon">&nbsp;</div>
-        <div class="name">生日</div>
-        <div class="value">1990-01-01</div>
-    </div>
-    <div class="nav">
-        <div class="icon"> >></div>
-        <div class="e"></div>
-    </div>
-</div>
-
-<div class="navItem">
+<div class="formItem">
     <div class="content">
         <div class="mobileIcon">&nbsp;</div>
-        <div class="name">手机号</div>
-        <div class="value">13851890970</div>
-    </div>
-    <div class="nav">
-        <div class="icon"> >></div>
-        <div class="e"></div>
+        <div class="label">手机号</div>
+        <input class="editor" type="text" value="13851890970"/>
     </div>
 </div>
 
-<div class="navItem">
-    <div class="content">
-        <div class="emailIcon">&nbsp;</div>
-        <div class="name">邮箱</div>
-        <div class="value">fu@sohu.com</div>
-    </div>
-    <div class="nav">
-        <div class="icon"> >></div>
-        <div class="e"></div>
-    </div>
+<div class="formItem">
+    <div class="addressIcon">&nbsp;</div>
+    <div class="label">地址</div>
+    <input class="editor" type="text" value="南京市XX区XX"/>
 </div>
 
-<div class="navItem">
-    <div class="content">
-        <div class="addressIcon">&nbsp;</div>
-        <div class="name">地址</div>
-        <div class="value">南京市XX区XX</div>
-    </div>
-    <div class="nav">
-        <div class="icon"> >></div>
-        <div class="e"></div>
-    </div>
+<div class="formItem">
+    <div class="emailIcon">&nbsp;</div>
+    <div class="label">邮箱</div>
+    <input class="editor" type="text" value="fu@sohu.com"/>
+</div>
+
+<div class="form-tool">
+    <input type="button" class="ok" value="填好了"/>
 </div>
 </body>
 </html>
