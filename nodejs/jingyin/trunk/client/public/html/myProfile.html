@@ -16,50 +16,53 @@
         }
 
         .myProfileEditor {
-            overflow: hidden;
             width: 100%;
             margin-top: 10px;
-            background-color: #FFF;
             margin-bottom: 3px;
+            background-color: #FFF;
+            overflow: hidden;
         }
 
         .myProfileEditor .content {
-            overflow: hidden;
-            font-size: 42px;
             line-height: 260px;
-            margin-left: 5%;
+            margin-left: 10%;
             vertical-align: middle;
+            overflow: hidden;
         }
 
-        .myProfileEditor .content .icon {
+        .myProfileEditor .content .space {
             float: left;
-            font-size: 42px;
+            width: 76px;
+        }
+
+        .myProfileEditor .content .name {
+            float: left;
+            width: 260px;
             line-height: 260px;
-            display: inline;
+            margin-left: 5px;
+            vertical-align: middle;
+            font-size: 42px;
+        }
+        .myProfileEditor .content .icon {
+            float: right;
+            width:150px;
+            line-height: 260px;
+            margin-right: 20%;
             vertical-align: middle;
             background-image: url("images/touxiang150_2.png");
             background-repeat: no-repeat;
             background-position: center;
-            width: 150px;
-        }
-
-        .myProfileEditor .content .nickName {
-            float: left;
-            font-size: 42px;
-            vertical-align: middle;
-            margin-left: 50px;;
         }
 
         .navItem {
-            overflow: hidden;
             width: 100%;
             margin-bottom: 3px;
             background-color: #FFF;
+            overflow: hidden;
         }
 
         .navItem .content {
             float: left;
-            font-size: 42px;
             line-height: 180px;
             margin-left: 10%;
         }
@@ -67,7 +70,6 @@
         .navItem .content .name {
             float: left;
             font-size: 42px;
-            line-height: 180px;;
             margin-left: 5px;
             vertical-align: middle;
             width: 260px;
@@ -76,7 +78,6 @@
         .navItem .content .value {
             float: left;
             font-size: 42px;
-            line-height: 180px;;
             margin-left: 44px;
             vertical-align: middle;
         }
@@ -167,8 +168,9 @@
 
 <div class="myProfileEditor">
     <div class="content">
+        <div class="space">&nbsp;</div>
+        <div class="name">头像</div>
         <div class="icon">&nbsp;</div>
-        <div class="nickName">陌林</div>
     </div>
 </div>
 
