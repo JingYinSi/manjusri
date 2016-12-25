@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>我</title>
+    <title>随想</title>
     <style type="text/css">
         body {
             margin: 0;
@@ -22,42 +22,85 @@
             overflow: hidden;
         }
 
-        .myProfile .content {
-            overflow: hidden;
-            line-height: 260px;
-            margin-left: 8%;
-            vertical-align: middle;
-        }
-
-        .myProfile .content .icon {
+        .myProfile .icon {
             float: left;
-
             width: 150px;
             line-height: 260px;
+            margin-left: 3%;
             background-image: url("images/touxiang150_2.png");
             background-repeat: no-repeat;
             background-position: center;
         }
 
-        .myProfile .content .nickName {
-            float: left;
-            font-size: 42px;
-            margin-left: 8%;
+        .myProfile .content {
+            margin-left: 22%;
             vertical-align: middle;
+            height: 260px;
+            overflow: hidden;
+        }
+
+        .myProfile .content .nickName {
+            margin-top: 60px;
+            vertical-align: middle;
+            font-size: 42px;
+        }
+
+        .myProfile .content .summary {
+            margin-top: 30px;
+            vertical-align: middle;
+            font-size: 32px;
+        }
+
+        .myAccuvirtue {
+            width: 100%;
+            margin-top: 3px;
+            padding-left: 5px;
+            background-color: #FFF;
+            font-size: 38px;
+            overflow: hidden;
+        }
+
+        .myAccuvirtueList  {
+            background-color: #FFF;
+        }
+
+        .myAccuvirtueList li {
+            margin-left: 3%;
+            background-color: #FFF;
+            font-size: 32px;
         }
     </style>
-
 </head>
 
 <body>
 
 <div class="myProfile">
-    <a href="myProfile.html">
-        <div class="content">
-            <div class="icon">&nbsp;</div>
-            <div class="nickName">陌林</div>
+    <div class="icon">&nbsp;</div>
+    <div class="content">
+        <div class="nickName"><a href="myProfile.html">陌林</a></div>
+        <div class="summary">
+            您随喜了99次，一共随喜了990元。
         </div>
-    </a>
+    </div>
 </div>
+
+<div class="myAccuvirtue">您的随喜明细</div>
+
+<ul class="myAccuvirtueList">
+    <li>￥10.0/2016-12-25</li>
+    <li>￥10.0/2016-12-24</li>
+    <li>￥10.0/2016-12-23</li>
+    <li>￥10.0/2016-12-22</li>
+    <li>￥10.0/2016-12-21</li>
+    <li>￥10.0/2016-12-20</li>
+    <li>￥10.0/2016-12-19</li>
+    <li>￥10.0/2016-12-18</li>
+    <li>￥10.0/2016-12-17</li>
+    <li>￥10.0/2016-12-16</li>
+    <li>￥10.0/2016-12-15</li>
+    <li>￥10.0/2016-12-14</li>
+    <li>￥10.0/2016-12-13</li>
+</ul>
+
 </body>
 </html>
