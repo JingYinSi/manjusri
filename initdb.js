@@ -36,7 +36,7 @@ db.once('open', function() {
         price: 0.1,
         num: 5600,
         sold: 1900,
-        onSale: true
+        onSale: false
     }, function (err, part) {
         if(!err) console.log('万尊文殊菩萨像小 is added to db');
     });
@@ -47,7 +47,7 @@ db.once('open', function() {
         price: 0.11,
         num: 5100,
         sold: 1300,
-        onSale: true
+        onSale: false
     }, function (err, part) {
         if(!err) console.log('万尊文殊菩萨像中 is added to db');
     });
@@ -58,7 +58,7 @@ db.once('open', function() {
         price: 0.12,
         num: 4500,
         sold: 1000,
-        onSale: true
+        onSale: false
     }, function (err, part) {
         if(!err) console.log('五方文殊菩萨像 is added to db');
         db.close(function () {
