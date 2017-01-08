@@ -28,7 +28,7 @@ module.exports = function (ctx) {
         trim: true
     }));
 
-    // Use express session support since OAuth2orize requires it
+     // Use express session support since OAuth2orize requires it
     app.use(session({
         secret: ctx.secret || 'super secret for OAuth2orize',
         saveUninitialized: true,
