@@ -9,7 +9,7 @@ var chai = require('chai'),
 var sinonStubPromise = require('sinon-stub-promise');
 sinonStubPromise(sinon);
 
-global.dbURI = 'mongodb://121.41.93.210:27017/test';
+global.dbURI = 'mongodb://121.41.93.210:17914/test';
 global.clearDB = require('mocha-mongoose')(dbURI);
 
 global.expect = chai.expect;
