@@ -8,7 +8,7 @@ var webboot = require('./modules/webboot'),
         //'static': __dirname + '/client/public',
         env: 'development',
         secret: 'jingyinmanjusriBiz',
-        mongodb: 'shitongming:jingyin#$&^(!@121.41.93.210:17914/jingyin',
+        mongodb: 'shitongming:jIngyIn228793@121.41.93.210:17914/jingyin',
         wechat: {
             token: 'jingyinManjusri',
             post: wechat
