@@ -3,8 +3,8 @@ const mongoose = require('mongoose'),
     userModule = require('./server/modules/users');
 
 mongoose.Promise = require('bluebird');
-//var connStr = 'mongodb://121.41.93.210:27017/jingyin';
-var connStr = 'mongodb://121.41.93.210:27017/test';
+//var connStr = 'mongodb://121.41.93.210:17914/jingyin';
+var connStr = 'mongodb://121.41.93.210:17914/test';
 mongoose.connect(connStr, function (err) {
     if (err) {
         console.log('Mongoose:' + connStr + ' is failed connect!');
