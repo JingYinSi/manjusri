@@ -31,6 +31,8 @@ module.exports = function (router) {
         .get(payment.result)
         .post(virtues.paidNotify);
 
+    router.route('/jingyin/manjusri/lordvirtues')
+        .get(manjusri.lordVirtues);
 
     /*----------------------------restful--------------------------------------------------*/
     router.route('/jingyin/rest/virtues/prepay')

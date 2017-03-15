@@ -99,6 +99,10 @@ module.exports = {
             }, function (err) {
                 return res.setError(500, null, err);
             });
+    },
+
+    lordVirtues: function (req, res) {
+        return res.render('wechat/lordVirtues')
     }
 };
 
