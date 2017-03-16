@@ -970,7 +970,7 @@ describe('静音寺业务系统', function () {
                     weixin = weixinFactory(weixinConfig);
                     return weixin.getOpenId(code)
                         .then(function (data) {
-                            expect(data).eql(expectedOpenId);
+                            expect(data).eql(dataFromWeixin);
                         }, function (error) {
                             throw 'should not goes here';
                         });
@@ -1216,8 +1216,8 @@ describe('静音寺业务系统', function () {
 
                     describe('响应关注消息', function () {
                         it('应答欢迎信息', function () {
-                            var user = {name: 'foo'}
-                            var registerUserStub = createPromiseStub([openid], [user]);
+                            var user = {name: 'foo'};
+                            var registerUserStub = createPromiseStub([null, openid], [user]);
                             stubs['../modules/users'] = {
                                 register: registerUserStub
                             };
@@ -1564,7 +1564,7 @@ describe('静音寺业务系统', function () {
                     });
 
                     it('预置微信支付操作失败', function () {
-                        getOpenIdStub = createPromiseStub([code], [openId]);
+                        getOpenIdStub = createPromiseStub([code], [{openid: openId}]);
                         stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
                         findNewVirtueByIdStub = createPromiseStub([virtueId], [virtue]);
                         stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
@@ -1579,7 +1579,7 @@ describe('静音寺业务系统', function () {
                     });
 
                     it('渲染前端进行微信支付', function () {
-                        getOpenIdStub = createPromiseStub([code], [openId]);
+                        getOpenIdStub = createPromiseStub([code], [{openid: openId}]);
                         stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
                         findNewVirtueByIdStub = createPromiseStub([virtueId], [virtue]);
                         stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
