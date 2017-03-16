@@ -102,7 +102,7 @@ module.exports = {
     },
 
     lordVirtues: function (req, res) {
-        return res.render('wechat/lordVirtues')
+        return res.render('wechat/lordVirtues');
     }
 };
 
