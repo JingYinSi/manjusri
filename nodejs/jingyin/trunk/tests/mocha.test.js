@@ -1602,6 +1602,19 @@ describe('静音寺业务系统', function () {
                     //TODO: 编写响应微信支付结果的测试用例
                 })
 
+                describe('功德主', function () {
+                    it('请求未包含查询参数code，需要重定向，以便获得当前用户的OpenId', function () {
+                        var redirctSpy = sinon.spy();
+                        resStub.redirect = redirctSpy;
+                        var auth2WrapedUrl = 'url to redirect';
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+                })
             });
         });
 
