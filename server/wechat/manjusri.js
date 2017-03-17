@@ -116,24 +116,26 @@ module.exports = {
                 'Location': redirectUrl
             });
             return res.end();
+        } else {
+            logger.debug("out of redirect");
+            var resWrap = createResponseWrap(res);
+            return wx.weixinService.getOpenId(code)
+                .then(function (data) {
+                    var openid = data.openid;
+                    logger.debug("The openid is: " + openid);
+                    return UserModel.findOne({openid: openid});
+                })
+                .then(function (lord) {
+                    var data = {lord: lord};
+                    logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(data));
+                    return res.render('wechat/lordVirtues', data);
+                })
+                .catch(function (err) {
+                    logger.debug("error:" + err);
+                    return resWrap.setError(400, null, err);
+                });
         }
-        logger.debug("out of redirect");
-        var resWrap = createResponseWrap(res);
-        return wx.weixinService.getOpenId(code)
-            .then(function (data) {
-                var openid = data.openid;
-                logger.debug("The openid is: " + openid);
-                return UserModel.findOne({openid: openid});
-            })
-            .then(function (lord) {
-                var data = {lord: lord};
-                logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(data));
-                return res.render('wechat/lordVirtues', data);
-            })
-            .catch(function (err) {
-                logger.debug("error:" + err);
-                return resWrap.setError(400, null, err);
-            });
+
     }
 };
 
