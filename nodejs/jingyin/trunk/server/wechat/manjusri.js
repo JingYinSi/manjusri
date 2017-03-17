@@ -127,14 +127,14 @@ module.exports = {
                     logger.debug("error:" + err);
                     return resWrap.setError(400, null, err);
                 });
+        } else {
+            logger.debug("begin redirect");
+            var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
+            res.writeHead(302, {
+                'Location': redirectUrl
+            });
+            return res.end();
         }
-        logger.debug("begin redirect");
-        var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
-        res.writeHead(302, {
-            'Location': redirectUrl
-        });
-        return res.end();
-
     }
 };
 
