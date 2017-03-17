@@ -114,7 +114,7 @@ module.exports = {
         }
         var lordVirtuesUrl = "http://jingyintemple.top" + req.originalUrl;
         logger.debug("the original url is: " + lordVirtuesUrl);
-        var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2Way(lordVirtuesUrl);
+        var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(lordVirtuesUrl);
         logger.debug("begin redirect to " + redirectUrl);
         return res.redirect(redirectUrl);
         //return res.setError(404, 'redirect err');
