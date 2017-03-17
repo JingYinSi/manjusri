@@ -119,9 +119,11 @@ module.exports = {
         return wx.weixinService.getOpenId(code)
             .then(function (data) {
                 var openid = data.openid;
+                logger.debug("The openid is: " + JSON.stringify(data));
                 return UserModel.findOne(openid);
             })
             .then(function (lord) {
+
                 var data = {lord: lord};
                 logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(data));
                 return res.render('wechat/lordVirtues', data);
