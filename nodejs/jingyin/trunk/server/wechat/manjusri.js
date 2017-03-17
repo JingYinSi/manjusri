@@ -121,6 +121,7 @@ module.exports = {
             })
             .then(function (lord) {
                 var data = {lord: lord};
+                logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(data));
                 return res.render('wechat/lordVirtues', data);
             })
             .catch(function (err) {
