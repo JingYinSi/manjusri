@@ -110,9 +110,11 @@ module.exports = {
     lordVirtues: function (req, res) {
         var code = req.query.code;
         if(!code){
+            logger.debug("begin redirect");
             var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
             return res.redirect(redirectUrl);
         }
+        logger.debug("out of redirect");
         var resWrap = createResponseWrap(res);
         return wx.weixinService.getOpenId(code)
             .then(function (data) {
