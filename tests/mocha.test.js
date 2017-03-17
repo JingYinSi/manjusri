@@ -1625,7 +1625,22 @@ describe('静音寺业务系统', function () {
                 })
 
                 describe('功德主', function () {
+                    var code, openid, lord, viewdata;
+                    var getOpenIdStub, getUserByOpenIdStub;
+
+                    beforeEach(function () {
+                        code = '12345678';
+                        openid = 'gfghhfhjfjkfkfkf';
+                        lord = {
+                            name: 'foo'
+                        }
+                        viewdata = {lord: lord};
+
+                        reqStub.query.code = code;
+                    });
+
                     it('请求未包含查询参数code，需要重定向，以便获得当前用户的OpenId', function () {
+                        delete reqStub.query.code;
                         var url = "jingyin/foourl";
                         reqStub.originalUrl = url;
                         var auth2WrapedUrl = 'url/to/redirect';
@@ -1639,7 +1654,42 @@ describe('静音寺业务系统', function () {
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
                         controller(reqStub, resStub);
                         expect(redirctSpy).calledOnce.calledWith(auth2WrapedUrl)
+                    });
 
+                    it('获得当前用户的OpenId失败', function () {
+                        getOpenIdStub = createPromiseStub([code], null, err);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+                        controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(400, null, err);
+                            });
+                    });
+
+                    it('未能成功获得当前用户', function () {
+                        getOpenIdStub = createPromiseStub([code], [{openid: openid}]);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+
+                        getUserByOpenIdStub = createPromiseStub([openid], null, err);
+                        stubs['./models/user'] = {findOne: getUserByOpenIdStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(400, null, err);
+                            });
+                    });
+
+                    it('成功显示功德主页面', function () {
+                        getOpenIdStub = createPromiseStub([code], [{openid: openid}]);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+
+                        getUserByOpenIdStub = createPromiseStub([openid], [lord]);
+                        stubs['./models/user'] = {findOne: getUserByOpenIdStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
+                        controller(reqStub, resStub);
+                        expect(resRenderSpy).calledOnce.calledWith('wechat/lordVirtues', {lord: lord});
                     });
                 })
             });
