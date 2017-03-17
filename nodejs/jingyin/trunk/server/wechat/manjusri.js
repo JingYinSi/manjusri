@@ -5,6 +5,7 @@ var Part = require('./models/part'),
     createResponseWrap = require('../../modules/responsewrap'),
     UserModel = require('./models/user'),
     VirtueModel = require('./models/virtue'),
+    mongoose = require('mongoose'),
     wx = require('../weixin');
 
 var log4js = require('log4js');
@@ -122,7 +123,8 @@ module.exports = {
                 })
                 .then(function (lord) {
                     viewdata = {lord: lord};
-                    return VirtueModel.find({lord:ObjectId(lord._id)});
+                    var lordid = mongoose.Types.ObjectId(lord._id);
+                    return VirtueModel.find({lord: lordid});
                 })
                 .then(function (virtues) {
                     viewdata.virtues = virtues;
@@ -138,9 +140,9 @@ module.exports = {
             var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
             res.redirect(redirectUrl);
             /*res.writeHead(302, {
-                'Location': redirectUrl
-            });
-            return res.end();*/
+             'Location': redirectUrl
+             });
+             return res.end();*/
         }
     }
 };
