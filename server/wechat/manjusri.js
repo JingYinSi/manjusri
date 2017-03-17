@@ -123,7 +123,6 @@ module.exports = {
                 return UserModel.findOne({openid: openid});
             })
             .then(function (lord) {
-
                 var data = {lord: lord};
                 logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(data));
                 return res.render('wechat/lordVirtues', data);
