@@ -157,7 +157,6 @@ describe('静音寺业务系统', function () {
         });
 
         describe('业务对象', function () {
-
             describe('法物', function () {
                 describe('更新法物数量', function () {
                     it('访问法物时失败', function () {
@@ -1670,7 +1669,7 @@ describe('静音寺业务系统', function () {
                         getOpenIdStub = createPromiseStub([code], [{openid: openid}]);
                         stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
 
-                        getUserByOpenIdStub = createPromiseStub([openid], null, err);
+                        getUserByOpenIdStub = createPromiseStub([{openid:openid}], null, err);
                         stubs['./models/user'] = {findOne: getUserByOpenIdStub};
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
@@ -1684,7 +1683,7 @@ describe('静音寺业务系统', function () {
                         getOpenIdStub = createPromiseStub([code], [{openid: openid}]);
                         stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
 
-                        getUserByOpenIdStub = createPromiseStub([openid], [lord]);
+                        getUserByOpenIdStub = createPromiseStub([{openid:openid}], [lord]);
                         stubs['./models/user'] = {findOne: getUserByOpenIdStub};
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
