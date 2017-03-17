@@ -107,10 +107,15 @@ module.exports = {
     },
 
     lordVirtues: function (req, res) {
+        var code = req.query.code;
+        if(code){
+            logger.debug("The code of request:" + code);
+            return res.render('wechat/lordVirtues');
+        }
         var lordVirtuesUrl = req.originalUrl;
         var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2Way(lordVirtuesUrl);
-        logger.debug("The originalUrl of request:" + redirectUrl);
-        return res.render('wechat/lordVirtues');
+        logger.debug("begin redirect to " + redirectUrl);
+        res.redirect(redirectUrl);
     }
 };
 
