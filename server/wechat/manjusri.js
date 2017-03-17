@@ -4,6 +4,7 @@ var Part = require('./models/part'),
     Promise = require('bluebird'),
     createResponseWrap = require('../../modules/responsewrap'),
     UserModel = require('./models/user'),
+    VirtueModel = require('./models/virtue'),
     wx = require('../weixin');
 
 var log4js = require('log4js');
@@ -111,17 +112,22 @@ module.exports = {
         var code = req.query.code;
         if (code) {
             logger.debug("out of redirect");
+            var openid, viewdata, virtues;
             var resWrap = createResponseWrap(res);
             return wx.weixinService.getOpenId(code)
                 .then(function (data) {
-                    var openid = data.openid;
+                    openid = data.openid;
                     logger.debug("The openid is: " + openid);
                     return UserModel.findOne({openid: openid});
                 })
                 .then(function (lord) {
-                    var data = {lord: lord};
-                    logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(data));
-                    return res.render('wechat/lordVirtues', data);
+                    viewdata = {lord: lord};
+                    return VirtueModel.find({lord:ObjectId(lord._id)});
+                })
+                .then(function (virtues) {
+                    viewdata.virtues = virtues;
+                    logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(viewdata));
+                    return res.render('wechat/lordVirtues', viewdata);
                 })
                 .catch(function (err) {
                     logger.debug("error:" + err);
