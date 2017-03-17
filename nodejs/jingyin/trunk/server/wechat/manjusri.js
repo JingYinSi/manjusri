@@ -3,6 +3,7 @@ var Part = require('./models/part'),
     virtuesModule = require('../modules/virtues'),
     Promise = require('bluebird'),
     createResponseWrap = require('../../modules/responsewrap'),
+    UserModel = require('./models/user'),
     wx = require('../weixin');
 
 var log4js = require('log4js');
@@ -109,12 +110,22 @@ module.exports = {
     lordVirtues: function (req, res) {
         var code = req.query.code;
         if(!code){
-            logger.debug("begin redirect .......................................");
             var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
             return res.redirect(redirectUrl);
         }
-        logger.debug("render wechat/lordVirtues with code:" + code + " .......................................");
-        return res.render('wechat/lordVirtues');
+        var resWrap = createResponseWrap(res);
+        return wx.weixinService.getOpenId(code)
+            .then(function (data) {
+                var openid = data.openid;
+                return UserModel.findOne(openid);
+            })
+            .then(function (lord) {
+                var data = {lord: lord};
+                return res.render('wechat/lordVirtues', data);
+            })
+            .catch(function (err) {
+                return resWrap.setError(400, null, err);
+            });
     }
 };
 
