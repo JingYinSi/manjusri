@@ -112,7 +112,8 @@ module.exports = {
         if (!code) {
             logger.debug("begin redirect");
             var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
-            return res.redirect(redirectUrl);
+            res.redirect(redirectUrl);
+            return res.end();
         }
         else {
             logger.debug("out of redirect");
