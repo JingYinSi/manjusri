@@ -109,7 +109,7 @@ module.exports = {
 
     lordVirtues: function (req, res) {
         var code = req.query.code;
-        if(!code){
+        if (!code) {
             logger.debug("begin redirect");
             var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
             return res.redirect(redirectUrl);
@@ -120,7 +120,7 @@ module.exports = {
             .then(function (data) {
                 var openid = data.openid;
                 logger.debug("The openid is: " + openid);
-                return UserModel.findOne(openid);
+                return UserModel.findOne({openid: openid});
             })
             .then(function (lord) {
 
