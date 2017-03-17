@@ -15,7 +15,7 @@ var timestampGen = function () {
 var config, urlToGetAccessToken;
 var apiBaseURL, oauth2BaseURL;
 var appId, appSecret, mchId, mchKey;
-var payServerIp, payNotifyUrl;
+var siteBaseUrl, payServerIp, payNotifyUrl;
 
 
 function WeixinConfig() {
@@ -105,10 +105,11 @@ WeixinConfig.prototype.generatePayData = function (prepayId) {
 };
 
 WeixinConfig.prototype.wrapRedirectURLByOath2WayBaseScope = function (url) {
+    var redirectUrl = url.indexOf(siteBaseUrl)< 0 ? siteBaseUrl + url : url;
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId
-     + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";
+     + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
     /*var wrapedUrl = oauth2BaseURL + "?appid=" + appId
-        + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";*/
+        + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";*/
     return wrapedUrl;
 };
 
@@ -150,6 +151,7 @@ module.exports = function (configData) {
     appSecret = configData.appSecret;
     mchId = configData.mchId;
     mchKey = configData.mchKey;
+    siteBaseUrl = configData.siteBaseUrl;
     payServerIp = configData.payServerIp;
     payNotifyUrl = configData.payNotifyUrl;
 

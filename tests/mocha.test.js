@@ -719,6 +719,7 @@ describe('静音寺业务系统', function () {
                 mch_key = 'womendoushiwutaishanjingyinsidet';
                 apiBaseURL = 'apiBaseURL';
                 oauth2BaseURL = 'oauth2BaseURL';
+                siteBaseUrl = 'http://www.site.com';
                 payServerIp = '121.41.93.210';
                 payNotifyUrl = 'http://jingyintemple.top/jingyin/manjusri/pay/notify';
                 nonce = 'adasfsfsgsgd';
@@ -737,8 +738,29 @@ describe('静音寺业务系统', function () {
                     oauth2BaseURL: oauth2BaseURL,
                     mchId: mch_id,
                     mchKey: mch_key,
+                    siteBaseUrl: siteBaseUrl,
                     payServerIp: payServerIp,
                     payNotifyUrl: payNotifyUrl
+                });
+            });
+
+            describe('网页授权url', function () {
+                it('url未包含授权网站的BaseUrl', function () {
+                    var url = "/foo/fee";
+                    var expectedUrl = oauth2BaseURL + "?appid=" + appid
+                        + "&redirect_uri=" + siteBaseUrl + url
+                        + "&response_type=code&scope=snsapi_base#wechat_redirect";
+                    expect(config.wrapRedirectURLByOath2WayBaseScope(url))
+                        .eql(expectedUrl);
+                });
+
+                it('url已包含授权网站的BaseUrl', function () {
+                    var url = siteBaseUrl + "/foo/fee";
+                    var expectedUrl = oauth2BaseURL + "?appid=" + appid
+                        + "&redirect_uri=" + url
+                        + "&response_type=code&scope=snsapi_base#wechat_redirect";
+                    expect(config.wrapRedirectURLByOath2WayBaseScope(url))
+                        .eql(expectedUrl);
                 });
             });
 
@@ -1604,15 +1626,20 @@ describe('静音寺业务系统', function () {
 
                 describe('功德主', function () {
                     it('请求未包含查询参数code，需要重定向，以便获得当前用户的OpenId', function () {
+                        var url = "jingyin/foourl";
+                        reqStub.originalUrl = url;
+                        var auth2WrapedUrl = 'url/to/redirect';
+                        var urlWrapStub = sinon.stub();
+                        urlWrapStub.withArgs(url).returns(auth2WrapedUrl);
+                        stubs['../weixin'] = {weixinConfig: {wrapRedirectURLByOath2WayBaseScope: urlWrapStub}};
+
                         var redirctSpy = sinon.spy();
                         resStub.redirect = redirctSpy;
-                        var auth2WrapedUrl = 'url to redirect';
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, null, err);
-                            });
+                        controller(reqStub, resStub);
+                        expect(redirctSpy).calledOnce.calledWith(auth2WrapedUrl)
+
                     });
                 })
             });

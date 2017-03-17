@@ -11,6 +11,7 @@ const configData = {
     mchKey: "womendoushiwutaishanjingyinsidet",
     apiBaseURL: "https://api.weixin.qq.com/sns/oauth2/",
     oauth2BaseURL: "https://open.weixin.qq.com/connect/oauth2/authorize",
+    siteBaseUrl:"http://jingyintemple.top",
     payServerIp: '121.41.93.210',
     payNotifyUrl: 'http://jingyintemple.top/jingyin/manjusri/pay/notify'
 }
