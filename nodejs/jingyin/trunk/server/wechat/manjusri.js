@@ -113,9 +113,11 @@ module.exports = {
             return res.render('wechat/lordVirtues');
         }
         var lordVirtuesUrl = req.originalUrl;
+        logger.debug("the original url is: " + lordVirtuesUrl);
         var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2Way(lordVirtuesUrl);
         logger.debug("begin redirect to " + redirectUrl);
-        res.redirect(redirectUrl);
+        //return res.redirect(redirectUrl);
+        return res.setError(404);
     }
 };
 
