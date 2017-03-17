@@ -128,10 +128,12 @@ module.exports = {
                     return resWrap.setError(400, null, err);
                 });
         }
+        else {
             logger.debug("begin redirect");
             var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
-            return res.redirect(redirectUrl);
-            //return res.end();
+            res.redirect(redirectUrl);
+            return res.end();
+        }
     }
 };
 
