@@ -2,7 +2,8 @@ var Part = require('./models/part'),
     Virtue = require('./models/virtue'),
     virtuesModule = require('../modules/virtues'),
     Promise = require('bluebird'),
-    createResponseWrap = require('../../modules/responsewrap');
+    createResponseWrap = require('../../modules/responsewrap'),
+    wx = require('../weixin');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -106,8 +107,9 @@ module.exports = {
     },
 
     lordVirtues: function (req, res) {
-        logger.debug("The baseUrl of request:" + req.baseUrl);
-        logger.debug("The originalUrl of request:" + req.originalUrl);
+        var lordVirtuesUrl = req.originalUrl;
+        var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2Way(lordVirtuesUrl);
+        logger.debug("The originalUrl of request:" + redirectUrl);
         return res.render('wechat/lordVirtues');
     }
 };
