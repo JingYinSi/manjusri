@@ -4,6 +4,10 @@ var Part = require('./models/part'),
     Promise = require('bluebird'),
     createResponseWrap = require('../../modules/responsewrap');
 
+var log4js = require('log4js');
+log4js.configure("log4js.conf", {reloadSecs: 300});
+var logger = log4js.getLogger();
+
 function listVirtuesAndTotalTimes() {
     return new Promise(function (resolve, reject) {
         var data = {};
@@ -102,6 +106,8 @@ module.exports = {
     },
 
     lordVirtues: function (req, res) {
+        logger.debug("The baseUrl of request:" + req.baseUrl);
+        logger.debug("The originalUrl of request:" + req.originalUrl);
         return res.render('wechat/lordVirtues');
     }
 };
