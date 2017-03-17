@@ -117,7 +117,7 @@ module.exports = {
         var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2Way(lordVirtuesUrl);
         logger.debug("begin redirect to " + redirectUrl);
         //return res.redirect(redirectUrl);
-        return res.setError(404);
+        return res.setError(404, 'redirect err');
     }
 };
 
