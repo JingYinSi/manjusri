@@ -131,7 +131,11 @@ module.exports = {
         else {
             logger.debug("begin redirect");
             var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
-            res.redirect(redirectUrl);
+            //return res.redirect(redirectUrl);
+            res.writeHead(302, {
+                'Location': redirectUrl
+                //add other headers here...
+            });
             return res.end();
         }
     }
