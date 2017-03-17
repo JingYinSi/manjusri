@@ -108,14 +108,13 @@ module.exports = {
 
     lordVirtues: function (req, res) {
         var code = req.query.code;
-        if(code){
-            logger.debug("The code of request:" + code);
-            return res.render('wechat/lordVirtues');
+        if(!code){
+            logger.debug("begin redirect .......................................");
+            var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
+            return res.redirect(redirectUrl);
         }
-        //var lordVirtuesUrl = "http://jingyintemple.top" + req.originalUrl;
-        var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
-        return res.redirect(redirectUrl);
-        //return res.setError(404, 'redirect err');
+        logger.debug("render wechat/lordVirtues with code:" + code + " .......................................");
+        return res.render('wechat/lordVirtues');
     }
 };
 
