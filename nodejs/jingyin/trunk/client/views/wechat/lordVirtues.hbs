@@ -92,6 +92,17 @@
             background-color: #FFF;
             font-size: 32px;
         }
+
+        .myAccuvirtueList li .subject{
+            width: 150px;
+        }
+
+        .myAccuvirtueList li .date{
+            width: 150px;
+        }
+
+        .myAccuvirtueList li .amount{
+        }
     </style>
 </head>
 
@@ -101,9 +112,6 @@
     <div class="icon">&nbsp;</div>
     <div class="content">
         <div class="nickName"><a href="myProfile.html">{{lord.name}}</a></div>
-        <div class="summary">
-            您随喜了99次，一共随喜了9900元。
-        </div>
     </div>
 </div>
 <div class="myAccuvirtueSummary">
@@ -116,9 +124,11 @@
 <div class="myAccuvirtue">您的随喜明细</div>
 <ul class="myAccuvirtueList">
     {{#each virtues}}
-        <li>{{dateMMDD timestamp}} {{amount}}元</li>
+        <li>
+            <span class="subject">日行一善</span>
+            <span class="date">{{dateMMDD timestamp}}</span>
+            <span class="amount">{{amount}}元</span></li>
     {{/each}}
 </ul>
-
 </body>
 </html>
