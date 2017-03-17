@@ -45,36 +45,6 @@
             font-size: 42px;
         }
 
-        .myProfile .content .summary {
-            margin-top: 30px;
-            vertical-align: middle;
-            font-size: 32px;
-        }
-
-        .myAccuvirtueSummary {
-            width: 100%;
-            margin-top: 3px;
-            padding-left: 15px;
-            background-color: #FFF;
-            overflow: hidden;
-        }
-
-        .myAccuvirtueSummary .title {
-            font-size: 38px;
-        }
-
-        .myAccuvirtueSummary .today {
-            font-size: 32px;
-        }
-
-        .myAccuvirtueSummary .month {
-            font-size: 32px;
-        }
-
-        .myAccuvirtueSummary .total {
-            font-size: 32px;
-        }
-
         .myAccuvirtue {
             width: 100%;
             margin-top: 3px;
@@ -83,25 +53,54 @@
             overflow: hidden;
         }
 
-        .myAccuvirtueList {
-            background-color: #FFF;
+        .myAccuvirtue .summary {
+
         }
 
-        .myAccuvirtueList li {
+        .myAccuvirtue .summary .title {
+            font-size: 38px;
+        }
+
+        .myAccuvirtue .summary .today {
+            font-size: 28px;
+        }
+
+        .myAccuvirtue .summary .month {
+            font-size: 28px;
+        }
+
+        .myAccuvirtue .summary .total {
+            font-size: 28px;
+        }
+
+        .myAccuvirtue .detail {
+            font-size: 28px;
+        }
+
+        .myAccuvirtue .detail .title {
+            font-size: 28px;
+        }
+
+        .myAccuvirtue .detail .items{
+            font-size: 28px;
+        }
+
+        .myAccuvirtue .detail .items li{
             margin-left: 5%;
             background-color: #FFF;
             font-size: 32px;
         }
 
-        .myAccuvirtueList li .subject{
+        .myAccuvirtue .detail .items li .subject{
             width: 150px;
         }
 
-        .myAccuvirtueList li .date{
-            width: 150px;
+        .myAccuvirtue .detail .items li .date{
+            font-size: 28px;
         }
 
-        .myAccuvirtueList li .amount{
+        .myAccuvirtue .detail .items li .amount{
+            font-size: 28px;
         }
     </style>
 </head>
@@ -114,21 +113,25 @@
         <div class="nickName"><a href="myProfile.html">{{lord.name}}</a></div>
     </div>
 </div>
-<div class="myAccuvirtueSummary">
-    <div class="title">随喜情况</div>
-    <div class="today">今天<span class="times">次数:1</span><span class="amount">金额:￥1</span></div>
-    <div class="month">本月<span class="times">次数:30</span><span class="amount">金额:￥30</span></div>
-    <div class="total">累计<span class="times">次数:1000</span><span class="amount">金额:￥1000</span></div>
-</div>
 
-<div class="myAccuvirtue">您的随喜明细</div>
-<ul class="myAccuvirtueList">
-    {{#each virtues}}
-        <li>
-            <span class="subject">日行一善</span>
-            <span class="date">{{dateMMDD timestamp}}</span>
-            <span class="amount">{{amount}}元</span></li>
-    {{/each}}
-</ul>
+<div class="myAccuvirtue">
+    <div class="summary">
+        <div class="title">随喜情况</div>
+        <div class="today">今天<span class="times">次数:1</span><span class="amount">金额:￥1</span></div>
+        <div class="month">本月<span class="times">次数:30</span><span class="amount">金额:￥30</span></div>
+        <div class="total">累计<span class="times">次数:1000</span><span class="amount">金额:￥1000</span></div>
+    </div>
+    <div class="detail">
+        <div class="title">您的随喜明细</div>
+        <ul class="items">
+            {{#each virtues}}
+                <li>
+                    <span class="subject">日行一善</span>
+                    <span class="date">{{dateMMDD timestamp}}</span>
+                    <span class="amount">{{amount}}元</span></li>
+            {{/each}}
+        </ul>
+    </div>
+</div>
 </body>
 </html>
