@@ -109,14 +109,7 @@ module.exports = {
 
     lordVirtues: function (req, res) {
         var code = req.query.code;
-        if (!code) {
-            logger.debug("begin redirect");
-            var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
-            res.writeHead(302, {
-                'Location': redirectUrl
-            });
-            return res.end();
-        } else {
+        if (code) {
             logger.debug("out of redirect");
             var resWrap = createResponseWrap(res);
             return wx.weixinService.getOpenId(code)
@@ -135,6 +128,12 @@ module.exports = {
                     return resWrap.setError(400, null, err);
                 });
         }
+        logger.debug("begin redirect");
+        var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
+        res.writeHead(302, {
+            'Location': redirectUrl
+        });
+        return res.end();
 
     }
 };
