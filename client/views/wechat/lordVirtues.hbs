@@ -27,7 +27,7 @@
             width: 150px;
             line-height: 260px;
             margin-left: 4%;
-            background-image: url("{{lord.img}}");
+            background-image: url({{lord.img}});
             background-repeat: no-repeat;
             background-position: center;
         }
@@ -51,16 +51,39 @@
             font-size: 32px;
         }
 
+        .myAccuvirtueSummary {
+            width: 100%;
+            margin-top: 3px;
+            padding-left: 15px;
+            background-color: #FFF;
+            overflow: hidden;
+        }
+
+        .myAccuvirtueSummary .title {
+            font-size: 38px;
+        }
+
+        .myAccuvirtueSummary .today {
+            font-size: 32px;
+        }
+
+        .myAccuvirtueSummary .month {
+            font-size: 32px;
+        }
+
+        .myAccuvirtueSummary .total {
+            font-size: 32px;
+        }
+
         .myAccuvirtue {
             width: 100%;
             margin-top: 3px;
             padding-left: 15px;
             background-color: #FFF;
-            font-size: 38px;
             overflow: hidden;
         }
 
-        .myAccuvirtueList  {
+        .myAccuvirtueList {
             background-color: #FFF;
         }
 
@@ -83,13 +106,18 @@
         </div>
     </div>
 </div>
+<div class="myAccuvirtueSummary">
+    <div class="title">随喜情况</div>
+    <div class="today">今天<span class="times">次数:1</span><span class="amount">金额:￥1</span></div>
+    <div class="month">本月<span class="times">次数:30</span><span class="amount">金额:￥30</span></div>
+    <div class="total">累计<span class="times">次数:1000</span><span class="amount">金额:￥1000</span></div>
+</div>
 
 <div class="myAccuvirtue">您的随喜明细</div>
-
 <ul class="myAccuvirtueList">
-{{#each virtues}}
-    <li>￥{{amount}}/{{dateMMDD timestamp}}</li>
-{{/each}}
+    {{#each virtues}}
+        <li>{{dateYYYYMMDD timestamp}} {{amount}}元</li>
+    {{/each}}
 </ul>
 
 </body>
