@@ -119,7 +119,7 @@ module.exports = {
         return wx.weixinService.getOpenId(code)
             .then(function (data) {
                 var openid = data.openid;
-                logger.debug("The openid is: " + JSON.stringify(data));
+                logger.debug("The openid is: " + openid);
                 return UserModel.findOne(openid);
             })
             .then(function (lord) {
@@ -129,6 +129,7 @@ module.exports = {
                 return res.render('wechat/lordVirtues', data);
             })
             .catch(function (err) {
+                logger.debug("error:" + err);
                 return resWrap.setError(400, null, err);
             });
     }
