@@ -1,162 +1,95 @@
 <!DOCTYPE >
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+    <meta name="format-detection" content="telphone=no,email=no"/>
+    <link rel="stylesheet" href="css/lordVirtues.css">
     <title>功德主</title>
-    <style type="text/css">
-        body {
-            margin: 0;
-            background-color: #fdf6d5;
-        }
-
-        img {
-            border: none;
-            display: inline;
-        }
-
-        .myProfile {
-            width: 100%;
-            margin-top: 10px;
-            margin-bottom: 3px;
-            background-color: #FFF;
-            overflow: hidden;
-        }
-
-        .myProfile .icon {
-            float: left;
-            width: 150px;
-            line-height: 260px;
-            margin-left: 4%;
-            background-image: url({{lord.img}});
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        .myProfile .content {
-            margin-left: 25%;
-            vertical-align: middle;
-            height: 260px;
-            overflow: hidden;
-        }
-
-        .myProfile .content .nickName {
-            margin-top: 60px;
-            vertical-align: middle;
-            font-size: 42px;
-        }
-
-        .myAccuvirtueSummaryTitle {
-            width: 100%;
-            margin-top: 3px;
-            margin-bottom: 5px;
-            background-color: #FFF;
-            overflow: hidden;
-            font-size: 38px;
-            padding-left: 15px;
-            padding-top: 20px;
-            padding-bottom: 20px;
-        }
-
-        .myAccuvirtueSummaryToday {
-            width: 100%;
-            margin-top: 3px;
-            margin-bottom: 5px;
-            padding-left: 15px;
-            background-color: #FFF;
-            overflow: hidden;
-            font-size: 24px;
-            padding-top: 15px;
-            padding-bottom: 15px;
-        }
-
-        .myAccuvirtueSummaryMonth {
-            width: 100%;
-            margin-top: 3px;
-            margin-bottom: 5px;
-            padding-left: 15px;
-            background-color: #FFF;
-            overflow: hidden;
-            font-size: 24px;
-            padding-top: 15px;
-            padding-bottom: 15px;
-        }
-
-        .myAccuvirtueSummaryTotal {
-            width: 100%;
-            margin-top: 3px;
-            margin-bottom: 5px;
-            padding-left: 15px;
-            background-color: #FFF;
-            overflow: hidden;
-            font-size: 24px;
-            padding-top: 15px;
-            padding-bottom: 15px;
-        }
-
-        .myAccuvirtueDetailTitle {
-            width: 100%;
-            margin-top: 3px;
-            margin-top: 5px;
-            padding-left: 15px;
-            background-color: #FFF;
-            overflow: hidden;
-            font-size: 38px;
-            padding-top: 20px;
-            padding-bottom: 20px;
-        }
-
-        .myAccuvirtueDetailItems{
-            width: 100%;
-            margin-top: 3px;
-            margin-top: 5px;
-            padding-left: 15px;
-            background-color: #FFF;
-            overflow: hidden;
-            font-size: 24px;
-        }
-
-        .myAccuvirtueDetailItems li{
-            margin-left: 5%;
-            font-size: 24px;
-        }
-
-        .myAccuvirtueDetailItems li .subject{
-        }
-
-        .myAccuvirtueDetailItems li .date{
-        }
-
-        .myAccuvirtueDetailItems li .amount{
-        }
-    </style>
 </head>
-
 <body>
-
-<div class="myProfile">
-    <div class="icon">&nbsp;</div>
-    <div class="content">
-        <div class="nickName"><a href="myProfile.html">{{lord.name}}</a></div>
+<main id="page" class="page-wrap">
+    <div class="page">
+        <div class="content">
+            <div class="media-list media-list--after-v">
+                <div class="media-item media-item--custom">
+                    <img src="{{lord.img}}" class="item-img">
+                    <div class="item-bd">
+                        <h4 class="bd-tt">{{lord.name}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="header-sub">
+            <ul class="nav-list nav-list--tab">
+                <li class="nav-item active">功德</li>
+                <li class="nav-item">功课</li>
+                <li class="nav-item">活动</li>
+                <li class="nav-item">义工</li>
+            </ul>
+        </section>
+        <div class="content">
+            <h2 class="guide-title">日行一善</h2>
+            <ul class="line-list line-list--indent line-list--flex">
+                <li class="line-item">
+                    <span class="item-append">今天</span>
+                    <span class="item-tt">次数：1次</span>
+                    <span class="item-tt">金额：￥1.00</span>
+                </li>
+                <li class="line-item">
+                    <span class="item-append">本月</span>
+                    <span class="item-tt">次数：20次</span>
+                    <span class="item-tt">金额：￥20.00</span>
+                </li>
+                <li class="line-item">
+                    <span class="item-append">累计</span>
+                    <span class="item-tt">次数：100次</span>
+                    <span class="item-tt">金额：￥1000.00</span>
+                </li>
+            </ul>
+            <h2 class="guide-title">随喜项目</h2>
+            <div class="media-list media-list--after-v">
+                {{#each virtues}}
+                <div class="media-item">
+                    <img src="https://placeholdit.imgix.net/~text?w=60&h=60" class="item-img">
+                    <div class="item-bd">
+                        <h4 class="bd-tt">{{subject}}</h4>
+                        <div class="bd-txt">￥{{amount}} / {{dateMMDD date}}</div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            <ul class="line-list line-list--indent line-list--flex">
+                <li class="line-item">
+                    <span class="item-append">累计</span>
+                    <span class="item-tt">次数：100次</span>
+                    <span class="item-tt">金额：￥1000.00</span>
+                </li>
+            </ul>
+            <div class="card-list card-list--gap card-list--custom">
+                <div class="card-item ">
+                    <img src="images/logo.png" alt="" class="item-img" width="150">
+                </div>
+                <span class="item-tt">Copyright @2017 The Jin Yin Temple</span>
+            </div>
+        </div>
     </div>
-</div>
-
-<div class="myAccuvirtueSummaryTitle">随喜情况</div>
-<div class="myAccuvirtueSummaryToday">今天<span class="times">次数:1</span><span class="amount">金额:￥1</span></div>
-<div class="myAccuvirtueSummaryMonth">本月<span class="times">次数:30</span><span class="amount">金额:￥30</span></div>
-<div class="myAccuvirtueSummaryTotal">累计<span class="times">次数:1000</span><span class="amount">金额:￥1000</span></div>
-
-<div class="myAccuvirtueDetailTitle">
-    您的随喜明细
-</div>
-
-<ul class="myAccuvirtueDetailItems">
-    {{#each virtues}}
-        <li>
-            <span class="subject">{{subject}}</span>
-            <span class="date">{{dateMMDD date}}</span>
-            <span class="amount">{{amount}}元</span></li>
-    {{/each}}
-</ul>
-
+</main>
+<footer class="fixed-bottom">
+    <ul class="nav-list nav-list--bottom nav-list--custom">
+        <li class="nav-item active">
+            <p class="item-txt">首页</p>
+        </li>
+        <li class="nav-item">
+            <p class="item-txt">建寺</p>
+        </li>
+        <li class="nav-item">
+            <p class="item-txt">功课</p>
+        </li>
+        <li class="nav-item">
+            <p class="item-txt">查询</p>
+        </li>
+    </ul>
+</footer>
 </body>
 </html>
