@@ -131,8 +131,7 @@ module.exports = {
             })
             .then(function (lord) {
                 viewdata = {lord: lord};
-                var lordid = mongoose.Types.ObjectId(lord._id);
-                return VirtueModel.find({lord: lordid});
+                return virtuesModule.listLordVirtues(lord.id);
             })
             .then(function (virtues) {
                 viewdata.virtues = virtues;

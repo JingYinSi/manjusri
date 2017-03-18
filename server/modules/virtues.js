@@ -2,6 +2,7 @@
  * Created by clx on 2016/11/20.
  */
 const VirtueSchema = require('../wechat/models/virtue'),
+    mongoose = require('mongoose'),
     Promise = require('bluebird');
 
 var log4js = require('log4js');
@@ -26,6 +27,28 @@ Virtues.prototype.findNewVirtueById = function (virtueId) {
                 return null;
             }
             return doc;
+        });
+}
+
+Virtues.prototype.listLordVirtues = function (lordId) {
+    var list = [];
+    return VirtueSchema
+        //.find({lord: mongoose.Types.ObjectId(lordId), state: 'payed'})
+        .find({lord: lordId, state: 'payed'})
+        .sort({timestamp: -1})
+        .populate('subject', 'name')
+        .exec()
+        .then(function (virtues) {
+            virtues.forEach(function (v) {
+                var d = {
+                    date: v.timestamp,
+                    subject: v.subject.name,
+                    num: v.num,
+                    amount: v.amount
+                };
+                list.push(d);
+            });
+            return list;
         });
 }
 
