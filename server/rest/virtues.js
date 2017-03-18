@@ -110,38 +110,4 @@ Virtues.prototype.paidNotify = function (req, res) {
         });
 }
 
-//TODO: 调整菜单
-//TODO: restful已支付服务是否有必要保留？
-//TODO: 如果保留，那么这里的代码与../wechat/payment.js的paidNotify存在重复
-/*Virtues.prototype.paid = function (req, res) {
- var data = req.body;
-
- function doPay(user) {
- virtueModel.pay(req.params.id, user.id, data.paymentNo, function (err, virtue) {
- var selfUrl = linkages.getLink('virtue', {id: virtue.id});
- var links = {
- self: selfUrl,
- }
- res.links(links);
- res.status(200).json(virtue);
- });
- }
-
- userModel.findOne({openid: data.openId}, function (err, user) {
- if (!user) {
- logger.info('Can not found user with openid:' + data.openId);
- usersModule.register(data.openId, function (err, userAdded) {
- if (err) {
- logger.error('register user failed:' + err);
- return;
- }
- doPay(userAdded);
- });
- return;
- }
- doPay(user);
- });
-
- };*/
-
 module.exports = new Virtues();

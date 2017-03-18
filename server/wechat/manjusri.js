@@ -111,31 +111,7 @@ module.exports = {
 
     lordVirtues: function (req, res) {
         var code = req.query.code;
-        if (code) {
-            logger.debug("out of redirect");
-            var openid, viewdata, virtues;
-            var resWrap = createResponseWrap(res);
-            return wx.weixinService.getOpenId(code)
-                .then(function (data) {
-                    openid = data.openid;
-                    logger.debug("The openid is: " + openid);
-                    return UserModel.findOne({openid: openid});
-                })
-                .then(function (lord) {
-                    viewdata = {lord: lord};
-                    var lordid = mongoose.Types.ObjectId(lord._id);
-                    return VirtueModel.find({lord: lordid});
-                })
-                .then(function (virtues) {
-                    viewdata.virtues = virtues;
-                    logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(viewdata));
-                    return res.render('wechat/lordVirtues', viewdata);
-                })
-                .catch(function (err) {
-                    logger.debug("error:" + err);
-                    return resWrap.setError(400, null, err);
-                });
-        } else {
+        if (!code) {
             logger.debug("begin redirect");
             var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
             res.redirect(redirectUrl);
@@ -144,6 +120,29 @@ module.exports = {
              });
              return res.end();*/
         }
+        logger.debug("out of redirect");
+        var openid, viewdata, virtues;
+        var resWrap = createResponseWrap(res);
+        return wx.weixinService.getOpenId(code)
+            .then(function (data) {
+                openid = data.openid;
+                logger.debug("The openid is: " + openid);
+                return UserModel.findOne({openid: openid});
+            })
+            .then(function (lord) {
+                viewdata = {lord: lord};
+                var lordid = mongoose.Types.ObjectId(lord._id);
+                return VirtueModel.find({lord: lordid});
+            })
+            .then(function (virtues) {
+                viewdata.virtues = virtues;
+                logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(viewdata));
+                return res.render('wechat/lordVirtues', viewdata);
+            })
+            .catch(function (err) {
+                logger.debug("error:" + err);
+                return resWrap.setError(400, null, err);
+            });
     }
 };
 
