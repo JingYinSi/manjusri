@@ -127,10 +127,16 @@ describe('静音寺业务系统', function () {
                             "state": "payed",
                         },
                         {
-                            load: usersInDb[1].id,
-                            subject: partsInDb[1].id,
-                            amount: 50,
-                            state: 'new'
+                            "lord": usersInDb[1].id,
+                            "subject": partsInDb[1].id,
+                            "amount": 50,
+                            "state": 'new'
+                        },
+                        {
+                            "lord": usersInDb[0].id,
+                            "subject": partsInDb[0].id,
+                            "amount": 20,
+                            "state": "new",
                         }
                     ];
                     insertDocs(VirtueModel, virtuesData, function (err, docs) {
@@ -372,6 +378,18 @@ describe('静音寺业务系统', function () {
                             expect(doc.num).eql(virtuesInDb[0].num);
                             expect(doc.amount).eql(virtuesInDb[0].amount);
                             expect(doc.lord).eql(usersInDb[0].name);
+                            expect(doc.subject).eql(partsInDb[0].name);
+                        });
+                });
+
+                it('列出指定功德主的捐助交易', function () {
+                    return virtues.listLordVirtues(usersInDb[0].id)
+                        .then(function (list) {
+                            expect(list.length).eql(1);
+                            var doc = list[0];
+                            expect(doc.date).eql(virtuesInDb[0].timestamp);
+                            expect(doc.num).eql(virtuesInDb[0].num);
+                            expect(doc.amount).eql(virtuesInDb[0].amount);
                             expect(doc.subject).eql(partsInDb[0].name);
                         });
                 });
@@ -1625,13 +1643,13 @@ describe('静音寺业务系统', function () {
 
                 describe('功德主', function () {
                     var code, openid, lord, virtues, viewdata;
-                    var getOpenIdStub, getUserByOpenIdStub, findLordVirtuesStub;
+                    var getOpenIdStub, getUserByOpenIdStub, listLordVirtuesStub;
 
                     beforeEach(function () {
                         code = '12345678';
                         openid = 'gfghhfhjfjkfkfkf';
                         lord = {
-                            _id: '587240dea0191d6754dcc0ba',
+                            id: '587240dea0191d6754dcc0ba',
                             name: 'foo'
                         }
                         virtues = [{foo: "foo"}, {fee: "fee"}];
@@ -1689,9 +1707,8 @@ describe('静音寺业务系统', function () {
                         stubs['./models/user'] = {findOne: getUserByOpenIdStub};
 
                         //TODO:这里需要重构，在virtues对象中定义listVirtuesByLord方法
-                        var lordid = mongoose.Types.ObjectId(lord._id);
-                        findLordVirtuesStub = createPromiseStub([{lord: lordid}], null, err);
-                        stubs['./models/virtue'] = {find: findLordVirtuesStub};
+                        listLordVirtuesStub = createPromiseStub([lord.id], null, err);
+                        stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
                         return controller(reqStub, resStub)
@@ -1707,9 +1724,8 @@ describe('静音寺业务系统', function () {
                         getUserByOpenIdStub = createPromiseStub([{openid: openid}], [lord]);
                         stubs['./models/user'] = {findOne: getUserByOpenIdStub};
 
-                        var lordid = mongoose.Types.ObjectId(lord._id);
-                        findLordVirtuesStub = createPromiseStub([{lord: lordid}], [virtues]);
-                        stubs['./models/virtue'] = {find: findLordVirtuesStub};
+                        listLordVirtuesStub = createPromiseStub([lord.id], [virtues]);
+                        stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
                         controller(reqStub, resStub);
