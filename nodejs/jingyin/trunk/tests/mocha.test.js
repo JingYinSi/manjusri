@@ -30,9 +30,12 @@ function createPromiseStub(withArgs, resolves, err) {
 
 describe('静音寺业务系统', function () {
     var stubs, err;
+    var dateUtils;
+
     beforeEach(function () {
         stubs = {}
         err = new Error('any error message');
+        dateUtils = require("../modules/utils").dateUtils;
     });
 
     describe('业务', function (done) {
@@ -125,6 +128,25 @@ describe('静音寺业务系统', function () {
                             "subject": partsInDb[0].id,
                             "amount": 20,
                             "state": "payed",
+                            "timestamp": dateUtils.maxYestoday()
+                        },
+                        {
+                            "lord": usersInDb[0].id,
+                            "subject": partsInDb[0].id,
+                            "amount": 20,
+                            "state": "payed"
+                        },
+                        {
+                            "lord": usersInDb[1].id,
+                            "subject": partsInDb[0].id,
+                            "amount": 20,
+                            "state": "payed"
+                        },
+                        {
+                            "lord": usersInDb[0].id,
+                            "subject": partsInDb[1].id,
+                            "amount": 20,
+                            "state": "payed"
                         },
                         {
                             "lord": usersInDb[1].id,
@@ -135,9 +157,23 @@ describe('静音寺业务系统', function () {
                         {
                             "lord": usersInDb[0].id,
                             "subject": partsInDb[0].id,
+                            "amount": 10,
+                            "state": "new"
+                        },
+                        {
+                            "lord": usersInDb[0].id,
+                            "subject": partsInDb[0].id,
                             "amount": 20,
-                            "state": "new",
-                        }
+                            "state": "payed",
+                            "timestamp": dateUtils.minTomorrow()
+                        },
+                        {
+                            "lord": usersInDb[0].id,
+                            "subject": partsInDb[0].id,
+                            "amount": 20,
+                            "state": "payed",
+                            "timestamp": new Date(2016, 5, 24)
+                        },
                     ];
                     insertDocs(VirtueModel, virtuesData, function (err, docs) {
                         if (err) return callback(err);
@@ -369,29 +405,57 @@ describe('静音寺业务系统', function () {
                     });
                 });
 
-                it('列出最近的捐助交易', function () {
-                    return virtues.listLastVirtues(1)
-                        .then(function (list) {
-                            expect(list.length).eql(1);
-                            var doc = list[0];
-                            expect(doc.date).eql(virtuesInDb[0].timestamp);
-                            expect(doc.num).eql(virtuesInDb[0].num);
-                            expect(doc.amount).eql(virtuesInDb[0].amount);
-                            expect(doc.lord).eql(usersInDb[0].name);
-                            expect(doc.subject).eql(partsInDb[0].name);
-                        });
-                });
+                describe('指定功德主的功德', function () {
 
-                it('列出指定功德主的捐助交易', function () {
-                    return virtues.listLordVirtues(usersInDb[0].id)
-                        .then(function (list) {
-                            expect(list.length).eql(1);
-                            var doc = list[0];
-                            expect(doc.date).eql(virtuesInDb[0].timestamp);
-                            expect(doc.num).eql(virtuesInDb[0].num);
-                            expect(doc.amount).eql(virtuesInDb[0].amount);
-                            expect(doc.subject).eql(partsInDb[0].name);
-                        });
+                    it('当今日无daily类型的交易时，列出指定功德主的捐助交易', function () {
+                        return virtues.findLordVirtues(usersInDb[0]._id, new Date(2017, 0, 15))
+                            .then(function (result) {
+                                expect(result).eql({
+                                    daily: {
+                                        thisday: {count: 0, sum: 0},
+                                        thisMonth: {count: 0, sum: 0},
+                                        total: {count: 4, sum: 80}
+                                    },
+                                    virtues: {
+                                        count: 1, sum: 20,
+                                        details: [
+                                            {
+                                                date: virtuesInDb[3].timestamp,
+                                                num: virtuesInDb[3].num,
+                                                amount: virtuesInDb[3].amount,
+                                                subject: partsInDb[1].name
+
+                                            }
+                                        ]
+                                    }
+                                });
+                            });
+                    });
+
+                    it('列出指定功德主的捐助交易', function () {
+                        return virtues.findLordVirtues(usersInDb[0]._id)
+                            .then(function (result) {
+                                expect(result).eql({
+                                    daily: {
+                                        thisday: {count: 1, sum: 20},
+                                        thisMonth: {count: 3, sum: 60},
+                                        total: {count: 4, sum: 80}
+                                    },
+                                    virtues: {
+                                        count: 1, sum: 20,
+                                        details: [
+                                            {
+                                                date: virtuesInDb[3].timestamp,
+                                                num: virtuesInDb[3].num,
+                                                amount: virtuesInDb[3].amount,
+                                                subject: partsInDb[1].name
+
+                                            }
+                                        ]
+                                    }
+                                });
+                            });
+                    });
                 });
 
                 describe('查询指定单号的预置捐助交易，以便支付', function () {
@@ -418,7 +482,7 @@ describe('静音寺业务系统', function () {
                     });
 
                     it('查找成功', function () {
-                        virtueId = virtuesInDb[1].id.toString();
+                        virtueId = virtuesInDb[4].id.toString();
                         return virtues.findNewVirtueById(virtueId)
                             .then(function (doc) {
                                 expect(doc.state).eql('new');
@@ -642,6 +706,8 @@ describe('静音寺业务系统', function () {
     });
 
     describe('utils', function () {
+        var utils;
+
         it('直接从GET请求中获取JSON对象', function () {
             var data = {
                 foo: 'foo',
@@ -662,7 +728,46 @@ describe('静音寺业务系统', function () {
             });
             expect(callbackIsCalled).to.be.true;
 
-        })
+        });
+
+        describe('日期 utils', function () {
+
+            var theDay, expected;
+            beforeEach(function () {
+                theDay = new Date(2017, 1, 17);
+                utils = require('../modules/utils').dateUtils;
+            });
+
+            it('昨日最晚', function () {
+                expected = new Date(new Date(2017, 1, 16).setHours(23, 59, 59, 999));
+                expect(utils.maxYestoday(theDay)).eql(expected);
+            });
+
+            it('明日最早', function () {
+                expected = new Date(new Date(2017, 1, 18).setHours(0, 0, 0, 0));
+                var actual = utils.minTomorrow(theDay);
+                expect(actual).eql(expected);
+            });
+
+            it('今日最早', function () {
+                expect(utils.minToday(theDay)).eql(theDay);
+            });
+
+            it('今日最晚', function () {
+                expected = new Date(theDay.setHours(23, 59, 59, 999));
+                expect(utils.maxToday(theDay)).eql(expected);
+            });
+
+            it('本月最早', function () {
+                expected = utils.minToday(new Date(2017, 1, 1));
+                expect(utils.minThisMonth(theDay)).eql(expected);
+            });
+
+            it('本月最晚', function () {
+                expected = utils.maxToday(new Date(2017, 1, 28));
+                expect(utils.maxThisMonth(theDay)).eql(expected);
+            });
+        });
     });
 
     describe('Response Wrapper', function () {

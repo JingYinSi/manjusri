@@ -3,6 +3,7 @@
  */
 const VirtueSchema = require('../wechat/models/virtue'),
     PartSchema = require('../wechat/models/part'),
+    dateUtils = require('../../modules/utils').dateUtils,
     mongoose = require('mongoose'),
     Promise = require('bluebird');
 
@@ -31,7 +32,8 @@ Virtues.prototype.findNewVirtueById = function (virtueId) {
         });
 }
 
-Virtues.prototype.findLordVirtues = function (lordId) {
+Virtues.prototype.findLordVirtues = function (lordId, day) {
+    var theday = day ? day : new Date();
     logger.debug("begin find lord( " + lordId + " ) virtues");
     var result = {
         daily: {
@@ -42,28 +44,19 @@ Virtues.prototype.findLordVirtues = function (lordId) {
         virtues: {count: 0, sum: 0, details: []}
     };
     var dailyId;
-    var todaystart = new Date();
-    todaystart.setHours(0, 0, 0, 0);
-    var todayend = new Date();
-    todayend.setHours(23, 59, 59, 999);
-    var thisyear, thismonth;
-    thisyear = todaystart.getFullYear();
-    thismonth = todaystart.getMonth();
-    var firstDayOfThisMonth = new Date(thisyear, thismonth, 1);
-    var lastDayOfThisMonth = new Date(new Date(thisyear, thismonth + 1, 1) - 1);
 
     logger.debug("begin find daily part");
     return PartSchema.findOne({type: 'daily'}).exec()
         .then(function (daily) {
-            dailyId = daily.id;
+            dailyId = daily._id;
             logger.debug("begin find daily part -- " + dailyId + " virtues ..........");
-            return VirtueSchema.aggregate([
-                /*{
+            var sql = [
+                {
                     $match: {
                         lord: lordId, state: 'payed', subject: dailyId,
-                        timestamp: {$gte: todaystart, $lte: todayend}
+                        timestamp: {$gte: dateUtils.minToday(theday), $lte: dateUtils.maxToday(theday)}
                     }
-                },*/
+                },
                 {
                     $group: {
                         _id: null,
@@ -71,19 +64,21 @@ Virtues.prototype.findLordVirtues = function (lordId) {
                         sum: {$sum: "$amount"}
                     }
                 }
-            ]).exec();
+            ];
+            return VirtueSchema.aggregate(sql).exec();
         })
         .then(function (data) {
-            data = data[0];
-            delete data._id;
-            logger.debug("begin aggregate today daily virtues:" + JSON.stringify(data));
-            result.daily.thisday = data;
-            logger.debug("aggregate today daily virtues success");
+            if(data.length > 0){
+                data = data[0];
+                delete data._id;
+                logger.debug("aggregate today daily virtues success:" + JSON.stringify(data));
+                result.daily.thisday = data;
+            }
             return VirtueSchema.aggregate([
                 {
                     $match: {
                         lord: lordId, state: 'payed', subject: dailyId,
-                        timestamp: {$gte: firstDayOfThisMonth, $lte: lastDayOfThisMonth}
+                        timestamp: {$gte: dateUtils.minThisMonth(theday), $lte: dateUtils.maxThisMonth(theday)}
                     }
                 },
                 {
@@ -96,7 +91,12 @@ Virtues.prototype.findLordVirtues = function (lordId) {
             ]).exec();
         })
         .then(function (data) {
-            result.daily.thisMonth = data;
+            if(data.length > 0){
+                data = data[0];
+                delete data._id;
+                logger.debug("aggregate this month daily virtues success:" + JSON.stringify(data));
+                result.daily.thisMonth = data;
+            }
             return VirtueSchema.aggregate([
                 {
                     $match: {
@@ -113,7 +113,12 @@ Virtues.prototype.findLordVirtues = function (lordId) {
             ]).exec();
         })
         .then(function (data) {
-            result.daily.today = data;
+            if(data.length > 0){
+                data = data[0];
+                delete data._id;
+                logger.debug("aggregate this total daily virtues success:" + JSON.stringify(data));
+                result.daily.total = data;
+            }
             return VirtueSchema
                 .find({lord: lordId, state: 'payed', subject: {$ne: dailyId}})
                 .sort({timestamp: -1})
@@ -133,28 +138,6 @@ Virtues.prototype.findLordVirtues = function (lordId) {
                     });
                     return result;
                 });
-        });
-}
-
-
-Virtues.prototype.listLordVirtues = function (lordId) {
-    var list = [];
-    return VirtueSchema
-        .find({lord: lordId, state: 'payed'})
-        .sort({timestamp: -1})
-        .populate('subject', 'name')
-        .exec()
-        .then(function (virtues) {
-            virtues.forEach(function (v) {
-                var d = {
-                    date: v.timestamp,
-                    subject: v.subject.name,
-                    num: v.num,
-                    amount: v.amount
-                };
-                list.push(d);
-            });
-            return list;
         });
 }
 
