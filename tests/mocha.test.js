@@ -409,7 +409,7 @@ describe('静音寺业务系统', function () {
                 describe('指定功德主的功德', function () {
 
                     it('当今日无daily类型的交易时，列出指定功德主的捐助交易', function () {
-                        return virtues.findLordVirtues(usersInDb[0]._id, new Date(2017, 0, 15))
+                        return virtues.listLordVirtues(usersInDb[0]._id, new Date(2017, 0, 15))
                             .then(function (result) {
                                 expect(result).eql({
                                     daily: {
@@ -435,7 +435,7 @@ describe('静音寺业务系统', function () {
                     });
 
                     it('列出指定功德主的捐助交易', function () {
-                        return virtues.findLordVirtues(usersInDb[0]._id)
+                        return virtues.listLordVirtues(usersInDb[0]._id)
                             .then(function (result) {
                                 expect(result).eql({
                                     daily: {
@@ -1834,7 +1834,7 @@ describe('静音寺业务系统', function () {
                         stubs['./models/user'] = {findOne: getUserByOpenIdStub};
 
                         listLordVirtuesStub = createPromiseStub([lord._id], null, err);
-                        stubs['../modules/virtues'] = {findLordVirtues: listLordVirtuesStub};
+                        stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
                         return controller(reqStub, resStub)
@@ -1851,7 +1851,7 @@ describe('静音寺业务系统', function () {
                         stubs['./models/user'] = {findOne: getUserByOpenIdStub};
 
                         listLordVirtuesStub = createPromiseStub([lord._id], [virtues]);
-                        stubs['../modules/virtues'] = {findLordVirtues: listLordVirtuesStub};
+                        stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
                         controller(reqStub, resStub);

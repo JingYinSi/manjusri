@@ -130,7 +130,7 @@ module.exports = {
             })
             .then(function (lord) {
                 viewdata = {lord: lord};
-                return virtuesModule.findLordVirtues(lord._id);
+                return virtuesModule.listLordVirtues(lord._id);
             })
             .then(function (virtues) {
                 viewdata.virtues = virtues;
