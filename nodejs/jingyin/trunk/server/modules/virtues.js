@@ -122,7 +122,7 @@ Virtues.prototype.findLordVirtues = function (lordId, day) {
             return VirtueSchema
                 .find({lord: lordId, state: 'payed', subject: {$ne: dailyId}})
                 .sort({timestamp: -1})
-                .populate('subject', 'name')
+                .populate('subject')
                 .exec()
                 .then(function (virtues) {
                     virtues.forEach(function (v) {

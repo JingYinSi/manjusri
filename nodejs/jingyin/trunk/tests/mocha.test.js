@@ -93,6 +93,7 @@ describe('静音寺业务系统', function () {
                 {
                     "type": "suixi",
                     "name": "随喜",
+                    "img": "/images/product_banner2.jpg",
                     "onSale": true,
                 },
                 {
@@ -423,6 +424,7 @@ describe('静音寺业务系统', function () {
                                                 date: virtuesInDb[3].timestamp,
                                                 num: virtuesInDb[3].num,
                                                 amount: virtuesInDb[3].amount,
+                                                img:partsInDb[1].img,
                                                 subject: partsInDb[1].name
 
                                             }
@@ -448,6 +450,7 @@ describe('静音寺业务系统', function () {
                                                 date: virtuesInDb[3].timestamp,
                                                 num: virtuesInDb[3].num,
                                                 amount: virtuesInDb[3].amount,
+                                                img:partsInDb[1].img,
                                                 subject: partsInDb[1].name
 
                                             }
