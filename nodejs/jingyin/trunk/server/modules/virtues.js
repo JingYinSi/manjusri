@@ -74,7 +74,9 @@ Virtues.prototype.findLordVirtues = function (lordId) {
             ]).exec();
         })
         .then(function (data) {
+            logger.debug("begin aggregate today daily virtues:" + JSON.stringify(data));
             result.daily.today = data;
+            logger.debug("aggregate today daily virtues success");
             return VirtueSchema.aggregate([
                 {
                     $match: {
