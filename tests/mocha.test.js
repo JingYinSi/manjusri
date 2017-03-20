@@ -1773,7 +1773,7 @@ describe('静音寺业务系统', function () {
                         code = '12345678';
                         openid = 'gfghhfhjfjkfkfkf';
                         lord = {
-                            id: '587240dea0191d6754dcc0ba',
+                            _id: '587240dea0191d6754dcc0ba',
                             name: 'foo'
                         }
                         virtues = [{foo: "foo"}, {fee: "fee"}];
@@ -1830,8 +1830,8 @@ describe('静音寺业务系统', function () {
                         getUserByOpenIdStub = createPromiseStub([{openid: openid}], [lord]);
                         stubs['./models/user'] = {findOne: getUserByOpenIdStub};
 
-                        listLordVirtuesStub = createPromiseStub([lord.id], null, err);
-                        stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
+                        listLordVirtuesStub = createPromiseStub([lord._id], null, err);
+                        stubs['../modules/virtues'] = {findLordVirtues: listLordVirtuesStub};
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
                         return controller(reqStub, resStub)
@@ -1847,8 +1847,8 @@ describe('静音寺业务系统', function () {
                         getUserByOpenIdStub = createPromiseStub([{openid: openid}], [lord]);
                         stubs['./models/user'] = {findOne: getUserByOpenIdStub};
 
-                        listLordVirtuesStub = createPromiseStub([lord.id], [virtues]);
-                        stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
+                        listLordVirtuesStub = createPromiseStub([lord._id], [virtues]);
+                        stubs['../modules/virtues'] = {findLordVirtues: listLordVirtuesStub};
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
                         controller(reqStub, resStub);
