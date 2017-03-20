@@ -620,6 +620,25 @@ describe('静音寺业务系统', function () {
                     });
             });
         });
+
+        describe('关于日期', function () {
+            it('today', function () {
+                var d = new Date();
+                var thedate = d.getDate();
+                expect(d.getMonth() + 1).eql(3);
+                var todaystart = new Date();
+                todaystart.setHours(0, 0, 0, 0);
+                var todaystartend = new Date();
+                todaystartend.setHours(23, 59, 59, 999);
+                var thisyear, thismonth;
+                thisyear = d.getFullYear();
+                thismonth = d.getMonth();
+                var firstDayOfThisMonth = new Date(thisyear, thismonth, 1);
+                var lastDayOfThisMonth = new Date(new Date(thisyear, thismonth + 1, 1) - 1);
+
+                var days = lastDayOfThisMonth - firstDayOfThisMonth;
+            })
+        });
     });
 
     describe('utils', function () {
@@ -1706,7 +1725,6 @@ describe('静音寺业务系统', function () {
                         getUserByOpenIdStub = createPromiseStub([{openid: openid}], [lord]);
                         stubs['./models/user'] = {findOne: getUserByOpenIdStub};
 
-                        //TODO:这里需要重构，在virtues对象中定义listVirtuesByLord方法
                         listLordVirtuesStub = createPromiseStub([lord.id], null, err);
                         stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
 

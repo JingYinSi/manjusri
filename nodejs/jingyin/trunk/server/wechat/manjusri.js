@@ -4,7 +4,6 @@ var Part = require('./models/part'),
     Promise = require('bluebird'),
     createResponseWrap = require('../../modules/responsewrap'),
     UserModel = require('./models/user'),
-    VirtueModel = require('./models/virtue'),
     mongoose = require('mongoose'),
     wx = require('../weixin');
 
@@ -131,7 +130,7 @@ module.exports = {
             })
             .then(function (lord) {
                 viewdata = {lord: lord};
-                return virtuesModule.listLordVirtues(lord.id);
+                return virtuesModule.findLordVirtues(lord.id);
             })
             .then(function (virtues) {
                 viewdata.virtues = virtues;
