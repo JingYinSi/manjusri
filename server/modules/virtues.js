@@ -66,7 +66,6 @@ Virtues.prototype.findLordVirtues = function (lordId) {
                 },*/
                 {
                     $group: {
-                        _id: null,
                         count: {$sum: 1},
                         sum: {$sum: "$amount"}
                     }
@@ -74,8 +73,8 @@ Virtues.prototype.findLordVirtues = function (lordId) {
             ]).exec();
         })
         .then(function (data) {
-            logger.debug("begin aggregate today daily virtues:" + JSON.stringify(data));
-            result.daily.thisday = data;
+            logger.debug("begin aggregate today daily virtues:" + JSON.stringify(data[0]));
+            result.daily.thisday = data[0];
             logger.debug("aggregate today daily virtues success");
             return VirtueSchema.aggregate([
                 {
