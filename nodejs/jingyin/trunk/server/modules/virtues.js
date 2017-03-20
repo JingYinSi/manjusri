@@ -32,6 +32,7 @@ Virtues.prototype.findNewVirtueById = function (virtueId) {
 }
 
 Virtues.prototype.findLordVirtues = function (lordId) {
+    logger.debug("begin find lord( " + lordId + " ) virtues");
     var result = {
         daily: {
             today: {count: 0, sum: 0},
