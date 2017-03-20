@@ -35,7 +35,7 @@ Virtues.prototype.findLordVirtues = function (lordId) {
     logger.debug("begin find lord( " + lordId + " ) virtues");
     var result = {
         daily: {
-            today: {count: 0, sum: 0},
+            thisday: {count: 0, sum: 0},
             thisMonth: {count: 0, sum: 0},
             total: {count: 0, sum: 0}
         },
@@ -76,7 +76,7 @@ Virtues.prototype.findLordVirtues = function (lordId) {
         })
         .then(function (data) {
             logger.debug("begin aggregate today daily virtues:" + JSON.stringify(data));
-            result.daily.today = data;
+            result.daily.thisday = data;
             logger.debug("aggregate today daily virtues success");
             return VirtueSchema.aggregate([
                 {
