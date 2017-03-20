@@ -34,22 +34,22 @@
                 <li class="line-item">
                     <span class="item-append">今天</span>
                     <span class="item-tt">次数：{{virtues.daily.thisday.count}}次</span>
-                    <span class="item-tt">金额：￥{{virtues.daily.thisday.sun}}</span>
+                    <span class="item-tt">金额：￥{{virtues.daily.thisday.sum}}</span>
                 </li>
                 <li class="line-item">
                     <span class="item-append">本月</span>
-                    <span class="item-tt">次数：20次</span>
-                    <span class="item-tt">金额：￥20.00</span>
+                    <span class="item-tt">次数：{{virtues.daily.thisMonth.count}}次</span>
+                    <span class="item-tt">金额：￥{{virtues.daily.thisMonth.sum}}</span>
                 </li>
                 <li class="line-item">
                     <span class="item-append">累计</span>
-                    <span class="item-tt">次数：100次</span>
-                    <span class="item-tt">金额：￥1000.00</span>
+                    <span class="item-tt">次数：{{virtues.daily.total.count}}次</span>
+                    <span class="item-tt">金额：￥{{virtues.daily.total.sum}}</span>
                 </li>
             </ul>
             <h2 class="guide-title">随喜项目</h2>
             <div class="media-list media-list--after-v">
-                {{#each virtues.details}}
+                {{#each virtues.virtues.details}}
                 <div class="media-item">
                     <img src="https://placeholdit.imgix.net/~text?w=60&h=60" class="item-img">
                     <div class="item-bd">
@@ -62,8 +62,8 @@
             <ul class="line-list line-list--indent line-list--flex">
                 <li class="line-item">
                     <span class="item-append">累计</span>
-                    <span class="item-tt">次数：100次</span>
-                    <span class="item-tt">金额：￥1000.00</span>
+                    <span class="item-tt">次数：{{virtues.virtues.count}}次</span>
+                    <span class="item-tt">金额：￥{{virtues.virtues.sum}}</span>
                 </li>
             </ul>
             <div class="card-list card-list--gap card-list--custom">
