@@ -66,6 +66,7 @@ Virtues.prototype.findLordVirtues = function (lordId) {
                 },*/
                 {
                     $group: {
+                        _id: null,
                         count: {$sum: 1},
                         sum: {$sum: "$amount"}
                     }
