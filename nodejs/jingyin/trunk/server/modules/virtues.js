@@ -129,6 +129,7 @@ Virtues.prototype.findLordVirtues = function (lordId, day) {
                         var d = {
                             date: v.timestamp,
                             subject: v.subject.name,
+                            img:v.subject.img,
                             num: v.num,
                             amount: v.amount
                         };
