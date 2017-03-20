@@ -53,11 +53,11 @@ Virtues.prototype.findLordVirtues = function (lordId) {
     var firstDayOfThisMonth = new Date(thisyear, thismonth, 1);
     var lastDayOfThisMonth = new Date(new Date(thisyear, thismonth + 1, 1) - 1);
 
-    return PartSchema
-        .findOne({type: 'daily'})
-        .exec()
+    logger.debug("begin find daily part");
+    return PartSchema.findOne({type: 'daily'}).exec()
         .then(function (daily) {
             dailyId = daily.id;
+            logger.debug("begin find daily part -- " + dailyId + " virtues ..........");
             return VirtueSchema.aggregate([
                 {
                     $match: {
@@ -114,7 +114,7 @@ Virtues.prototype.findLordVirtues = function (lordId) {
         .then(function (data) {
             result.daily.today = data;
             return VirtueSchema
-                .find({lord: lordId, state: 'payed', subject:{$ne:dailyId}})
+                .find({lord: lordId, state: 'payed', subject: {$ne: dailyId}})
                 .sort({timestamp: -1})
                 .populate('subject', 'name')
                 .exec()
