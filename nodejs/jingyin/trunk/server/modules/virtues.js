@@ -58,12 +58,12 @@ Virtues.prototype.findLordVirtues = function (lordId) {
             dailyId = daily.id;
             logger.debug("begin find daily part -- " + dailyId + " virtues ..........");
             return VirtueSchema.aggregate([
-                {
+                /*{
                     $match: {
                         lord: lordId, state: 'payed', subject: dailyId,
                         timestamp: {$gte: todaystart, $lte: todayend}
                     }
-                },
+                },*/
                 {
                     $group: {
                         _id: null,
