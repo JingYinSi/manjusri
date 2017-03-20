@@ -42,14 +42,13 @@ Virtues.prototype.findLordVirtues = function (lordId) {
         virtues: {count: 0, sum: 0, details: []}
     };
     var dailyId;
-    var list = [];
     var todaystart = new Date();
     todaystart.setHours(0, 0, 0, 0);
     var todayend = new Date();
     todayend.setHours(23, 59, 59, 999);
     var thisyear, thismonth;
-    thisyear = today.getFullYear();
-    thismonth = today.getMonth();
+    thisyear = todaystart.getFullYear();
+    thismonth = todaystart.getMonth();
     var firstDayOfThisMonth = new Date(thisyear, thismonth, 1);
     var lastDayOfThisMonth = new Date(new Date(thisyear, thismonth + 1, 1) - 1);
 
