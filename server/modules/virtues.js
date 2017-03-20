@@ -2,6 +2,7 @@
  * Created by clx on 2016/11/20.
  */
 const VirtueSchema = require('../wechat/models/virtue'),
+    PartSchema = require('../wechat/models/part'),
     mongoose = require('mongoose'),
     Promise = require('bluebird');
 
@@ -30,10 +31,111 @@ Virtues.prototype.findNewVirtueById = function (virtueId) {
         });
 }
 
+Virtues.prototype.findLordVirtues = function (lordId) {
+    var result = {
+        daily: {
+            today: {count: 0, sum: 0},
+            thisMonth: {count: 0, sum: 0},
+            total: {count: 0, sum: 0}
+        },
+        virtues: {count: 0, sum: 0, details: []}
+    };
+    var dailyId;
+    var list = [];
+    var todaystart = new Date();
+    todaystart.setHours(0, 0, 0, 0);
+    var todayend = new Date();
+    todayend.setHours(23, 59, 59, 999);
+    var thisyear, thismonth;
+    thisyear = today.getFullYear();
+    thismonth = today.getMonth();
+    var firstDayOfThisMonth = new Date(thisyear, thismonth, 1);
+    var lastDayOfThisMonth = new Date(new Date(thisyear, thismonth + 1, 1) - 1);
+
+    return PartSchema
+        .findOne({type: 'daily'})
+        .exec()
+        .then(function (daily) {
+            dailyId = daily.id;
+            return VirtueSchema.aggregate([
+                {
+                    $match: {
+                        lord: lordId, state: 'payed', subject: dailyId,
+                        timestamp: {$gte: todaystart, $lte: todayend}
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        count: {$sum: 1},
+                        sum: {$sum: "$amount"}
+                    }
+                }
+            ]).exec();
+        })
+        .then(function (data) {
+            result.daily.today = data;
+            return VirtueSchema.aggregate([
+                {
+                    $match: {
+                        lord: lordId, state: 'payed', subject: dailyId,
+                        timestamp: {$gte: firstDayOfThisMonth, $lte: lastDayOfThisMonth}
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        count: {$sum: 1},
+                        sum: {$sum: "$amount"}
+                    }
+                }
+            ]).exec();
+        })
+        .then(function (data) {
+            result.daily.thisMonth = data;
+            return VirtueSchema.aggregate([
+                {
+                    $match: {
+                        lord: lordId, state: 'payed', subject: dailyId
+                    }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        count: {$sum: 1},
+                        sum: {$sum: "$amount"}
+                    }
+                }
+            ]).exec();
+        })
+        .then(function (data) {
+            result.daily.today = data;
+            return VirtueSchema
+                .find({lord: lordId, state: 'payed', subject:{$ne:dailyId}})
+                .sort({timestamp: -1})
+                .populate('subject', 'name')
+                .exec()
+                .then(function (virtues) {
+                    virtues.forEach(function (v) {
+                        var d = {
+                            date: v.timestamp,
+                            subject: v.subject.name,
+                            num: v.num,
+                            amount: v.amount
+                        };
+                        result.virtues.count++;
+                        result.virtues.sum += v.amount;
+                        result.virtues.details.push(d);
+                    });
+                    return result;
+                });
+        });
+}
+
+
 Virtues.prototype.listLordVirtues = function (lordId) {
     var list = [];
     return VirtueSchema
-        //.find({lord: mongoose.Types.ObjectId(lordId), state: 'payed'})
         .find({lord: lordId, state: 'payed'})
         .sort({timestamp: -1})
         .populate('subject', 'name')
