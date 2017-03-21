@@ -111,21 +111,14 @@ module.exports = {
     lordVirtues: function (req, res) {
         var code = req.query.code;
         if (!code) {
-            logger.debug("begin redirect");
             var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
             return res.redirect(redirectUrl);
-            /*res.writeHead(302, {
-             'Location': redirectUrl
-             });
-             return res.end();*/
         }
-        logger.debug("out of redirect");
         var openid, viewdata, virtues;
         var resWrap = createResponseWrap(res);
         return wx.weixinService.getOpenId(code)
             .then(function (data) {
                 openid = data.openid;
-                logger.debug("The openid is: " + openid);
                 return UserModel.findOne({openid: openid});
             })
             .then(function (lord) {

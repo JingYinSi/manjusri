@@ -43,6 +43,7 @@ Virtues.prototype.listLordVirtues = function (lordId, day) {
         virtues: {count: 0, sum: 0, details: []}
     };
 
+
     function doListLordVirtues(dailyId) {
         var group = {
             $group: {
@@ -51,6 +52,7 @@ Virtues.prototype.listLordVirtues = function (lordId, day) {
                 sum: {$sum: "$amount"}
             }
         };
+
         var todayMatch = {
             $match: {
                 lord: lordId, state: 'payed', subject: dailyId,
@@ -98,17 +100,14 @@ Virtues.prototype.listLordVirtues = function (lordId, day) {
             .then(function (data) {
                 if (data[0].length > 0) {
                     delete data[0][0]._id;
-                    logger.debug("aggregate today daily virtues success:" + JSON.stringify(data));
                     result.daily.thisday = data[0][0];
                 }
                 if (data[1].length > 0) {
                     delete data[1][0]._id;
-                    logger.debug("aggregate month daily virtues success:" + JSON.stringify(data));
                     result.daily.thisMonth = data[1][0];
                 }
                 if (data[2].length > 0) {
                     delete data[2][0]._id;
-                    logger.debug("aggregate total daily virtues success:" + JSON.stringify(data));
                     result.daily.total = data[2][0];
                 }
                 result.virtues = data[3].virtues;
