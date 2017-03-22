@@ -110,9 +110,9 @@ module.exports = {
 
     lordProfile: function (req, res) {
         var resWrap = createResponseWrap(res);
-        var lordId = req.params.lordId;
-        logger.debug("begin edit lord(" + lordId + ") profile .........");
-        return res.render('wechat/index');
+        //var lordId = req.params.lordId;
+        //logger.debug("begin edit lord(" + lordId + ") profile .........");
+        return res.render('wechat/myProfile');
     },
 
     lordVirtues: function (req, res) {
