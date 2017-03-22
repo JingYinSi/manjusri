@@ -29,14 +29,16 @@ module.exports = function (ctx) {
     }));
 
      // Use express session support since OAuth2orize requires it
-    /*app.use(session({
+    app.use(express.cookieParser());
+    /*app.use(express.session({ secret: ctx.secret }));*/
+    app.use(session({
         secret: ctx.secret || 'super secret for OAuth2orize',
         saveUninitialized: true,
         resave: true
-    }));*/
+    }));
 
-    app.use(express.cookieParser());
-    app.use(express.session({ secret: ctx.secret }));
+
+
 
     if(ctx.wechat){
         app.use('/jingyin/wechat', wechat(ctx.wechat.token, ctx.wechat.post));
