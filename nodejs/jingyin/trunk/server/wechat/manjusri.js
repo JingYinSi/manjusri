@@ -118,6 +118,7 @@ module.exports = {
         var resWrap = createResponseWrap(res);
         return wx.weixinService.getOpenId(code)
             .then(function (data) {
+                logger.debug("通过code换取网页授权access_token:\n" + JSON.stringify(data));
                 openid = data.openid;
                 return UserModel.findOne({openid: openid});
             })
