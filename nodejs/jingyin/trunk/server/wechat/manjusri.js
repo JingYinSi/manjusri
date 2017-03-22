@@ -134,6 +134,13 @@ module.exports = {
                 logger.debug("error:" + err);
                 return resWrap.setError(400, null, err);
             });
+    },
+
+    lordProfile: function (req, res) {
+        var resWrap = createResponseWrap(res);
+        var lordId = req.params.lordId;
+        logger.debug("begin edit lord(" + lordId + ") profile .........");
+        return res.render('wechat/myProfile');
     }
 };
 
