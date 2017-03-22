@@ -112,7 +112,7 @@ module.exports = {
         //var resWrap = createResponseWrap(res);
         //var lordId = req.params.lordId;
         //logger.debug("begin edit lord(" + lordId + ") profile .........");
-        return res.render('wechat/index');
+        return res.render('wechat/myProfile');
     },
 
     lordVirtues: function (req, res) {
