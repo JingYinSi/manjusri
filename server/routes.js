@@ -34,7 +34,7 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/lordvirtues')
         .get(manjusri.lordVirtues);
 
-    router.route('/jingyin/manjusri/lords/:lordId/profile"')
+    router.route('/jingyin/manjusri/lords/profile"')
         .get(manjusri.lordProfile);
 
 
