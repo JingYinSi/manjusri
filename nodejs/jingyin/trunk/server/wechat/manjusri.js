@@ -109,8 +109,12 @@ module.exports = {
     },
 
     lordVirtues: function (req, res) {
+        var sess = req.session;
+
         var code = req.query.code;
         if (!code) {
+            sess.user ? logger.debug("The session already exists:" + JSON.stringify(sess.user))
+                : logger.debug("The session not exists...............");
             var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
             return res.redirect(redirectUrl);
         }
@@ -119,6 +123,7 @@ module.exports = {
         return wx.weixinService.getOpenId(code)
             .then(function (data) {
                 logger.debug("通过code换取网页授权access_token:\n" + JSON.stringify(data));
+                sess.user = {openid: data.openid, accesstoken: data.access_token};
                 openid = data.openid;
                 return UserModel.findOne({openid: openid});
             })

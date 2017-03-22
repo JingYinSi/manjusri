@@ -30,7 +30,8 @@ module.exports = function (ctx) {
 
      // Use express session support since OAuth2orize requires it
     app.use(session({
-        secret: ctx.secret || 'super secret for OAuth2orize',
+        //cookie: { maxAge: 60000 },
+        secret: ctx.secret || 'super secret for session',
         saveUninitialized: false,
         resave: false
     }));
