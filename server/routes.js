@@ -34,6 +34,10 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/lordvirtues')
         .get(manjusri.lordVirtues);
 
+    router.route('/jingyin/manjusri/lords/:lordId/profile"')
+        .get(manjusri.lordProfile);
+
+
     /*----------------------------restful--------------------------------------------------*/
     router.route('/jingyin/rest/virtues/prepay')
         .post(virtues.prepay);
