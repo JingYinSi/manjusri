@@ -7,7 +7,7 @@ var express = require('express'),
     exphbs = require('express-handlebars'),
     moment = require('moment'),
     errorHandler = require('errorhandler'),
-    //cookieparser = require('cookie-parser'),
+    cookieparser = require('cookie-parser'),
     session = require('express-session'),
     favicon = require('serve-favicon'),
     router = express.Router(),
@@ -34,8 +34,8 @@ module.exports = function (ctx) {
     /*app.use(express.session({ secret: ctx.secret }));*/
     app.use(session({
         secret: ctx.secret || 'super secret for OAuth2orize',
-        saveUninitialized: true,
-        resave: true
+        /*saveUninitialized: true,
+        resave: true*/
     }));
 
     if(ctx.wechat){
