@@ -21,6 +21,9 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/suixi')
         .get(manjusri.suixi);
 
+    router.route('/jingyin/manjusri/lords/:lordId/profile"')
+        .get(manjusri.lordProfile);
+
     router.route('/jingyin/manjusri/trans/:partId')
         .get(manjusri.trans);
 
@@ -34,8 +37,7 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/lordvirtues')
         .get(manjusri.lordVirtues);
 
-    router.route('/jingyin/manjusri/lords/profile"')
-        .get(manjusri.lordProfile);
+
 
 
     /*----------------------------restful--------------------------------------------------*/
