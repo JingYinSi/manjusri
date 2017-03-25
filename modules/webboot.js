@@ -13,7 +13,7 @@ var express = require('express'),
     passport = require('passport'),
     app = express(),
     mongoose = require('mongoose'),
-    redirects = require('./redirects');
+    redirects = require('../server/wechat/redirects');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
