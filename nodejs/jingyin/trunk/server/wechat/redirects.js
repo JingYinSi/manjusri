@@ -16,8 +16,8 @@ module.exports = {
         return res.redirect(url);
     },
 
-    toProfile: function (req, res) {
-        var url = urlRegister.getLink("profile");
+    toProfile: function (openid, req, res) {
+        var url = urlRegister.getLink("profile", {openid: openid});
         return res.redirect(url);
     },
 
