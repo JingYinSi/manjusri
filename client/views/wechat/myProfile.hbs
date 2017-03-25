@@ -140,6 +140,25 @@
         }
     </style>
     <script src="/js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript">
+        function save() {
+            alert('保存成功');
+            var dataToUpdate = {
+                name : $('#txtName').val(),
+                realname : $('#txtRealname').val(),
+                phone:$('#txtPhone').val(),
+                email:$('#txtEmail').val(),
+                addr : $('#txtAddr').val()
+            };
+
+            var url = '/jingyin/manjusri/lords/{{openid}}/profile';
+            $.put(url,dataToUpdate,function(data){
+                        alert('保存成功');
+                        window.location =  '/jingyin/manjusri/lordvirtues';
+                    }
+            );
+        }
+    </script>
 </head>
 
 <body>
@@ -186,47 +205,5 @@
 <div class="form-tool">
     <input type="button" class="ok" value="填好了" onclick="save()"/>
 </div>
-
-<script type="text/javascript">
-    function save() {
-        var dataToUpdate = {
-            name : $('#txtName').val(),
-            realname : $('#txtRealname').val(),
-            phone:$('#txtPhone').val(),
-            email:$('#txtEmail').val(),
-            addr : $('#txtAddr').val()
-        };
-
-        var url = '/jingyin/manjusri/lords/{{openid}}/profile';
-        $.put(url,dataToUpdate,function(data){
-                alert('保存成功');
-                window.location =  '/jingyin/manjusri/lordvirtues';
-            }
-        );
-    }
-    /*$("#show-confirm").click(function () {
-        var amount = $('#input_amount').val();
-        var giving = $('#input_target').val();
-        if (amount == '') {
-            $.toptip('请填写金额。');
-            return;
-        }
-
-        amount = Math.round(amount * 100) / 100;
-        var dataToPost = {
-            subject: $('#subject').text(),
-            amount: amount
-        };
-        if (giving) dataToPost.giving = giving;
-
-        requestDoTansaction(dataToPost);
-    });
-
-    $(function () {
-        $('#scrollBody').liMarquee({
-            direction: 'up'
-        });
-    });*/
-</script>
 </body>
 </html>
