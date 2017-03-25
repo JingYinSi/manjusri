@@ -25,7 +25,9 @@ Users.prototype.registerUser = function (data) {
 User.prototype.updateProfileByOpenid = function (openid, dataToUpdate) {
     return this.findByOpenid(openid)
         .then(function (user) {
-
+            for(var name in dataToUpdate){
+                user[name] = dataToUpdate[name];
+            }
         })
 }
 
