@@ -160,11 +160,11 @@ module.exports = {
     },
 
     lordVirtues: function (req, res) {
-        var sess = req.session;
+        /*var sess = req.session;
         if (!sess.user){
             req.session.redirectToUrl = req.originalUrl;
             return redirects.toLogin(req, res);
-        }
+        }*/
 
         var viewdata, virtues;
         var resWrap = createResponseWrap(res);
