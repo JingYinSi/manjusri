@@ -12,7 +12,7 @@ module.exports = {
     toLogin: function (req, res) {
         var url = urlRegister.getLink("login");
         url = wx.weixinConfig.wrapRedirectURLByOath2Way(url);
-        req.session.redirectToUrl = req.originalUrl;
+        //req.session.redirectToUrl = req.originalUrl;
         return res.redirect(url);
     },
 
