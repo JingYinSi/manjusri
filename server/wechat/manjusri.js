@@ -6,8 +6,7 @@ var Part = require('./models/part'),
     UserModel = require('./models/user'),
     usersModule = require('../modules/users'),
     mongoose = require('mongoose'),
-    wx = require('../weixin'),
-    redirects = require('./redirects');
+    wx = require('../weixin');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -161,11 +160,11 @@ module.exports = {
 
     lordVirtues: function (req, res) {
         var sess = req.session;
-        if (!sess.user){
+        /*if (!sess.user){
             logger.debug("not work ............................................");
             req.session.redirectToUrl = req.originalUrl;
             return redirects.toLogin(req, res);
-        }
+        }*/
 
         var viewdata, virtues;
         var resWrap = createResponseWrap(res);
