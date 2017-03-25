@@ -36,7 +36,8 @@ module.exports = function (router) {
         .post(virtues.paidNotify);
 
     router.route('/jingyin/manjusri/lordvirtues')
-        .get(manjusri.lordVirtues);
+        //.get(manjusri.lordVirtues);
+        .get(manjusri.home);
 
     //TODO:最终应设为：/jingyin/manjusri/lords/:openid/profile
     router.route('/jingyin/manjusri/lord/profile')
