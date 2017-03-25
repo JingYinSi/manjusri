@@ -22,7 +22,7 @@ var logger = log4js.getLogger();
 var auth = function (req, res, next) {
     var sess = req.session;
     if (!sess.user){
-        logger.debug("entering login ..........................")
+        logger.debug("begin login ..........................")
         req.session.redirectToUrl = req.originalUrl;
         return redirects.toLogin(req, res);
     }
@@ -55,6 +55,7 @@ module.exports = function (ctx) {
         app.use('/jingyin/wechat', wechat(ctx.wechat.token, ctx.wechat.post));
     }
 
+    //TODO:需要拉出来
     app.get('/jingyin/manjusri/lordvirtues', auth);
     app.get('/jingyin/manjusri/dailyvirtue', auth);
     app.get('/jingyin/manjusri/suixi', auth);

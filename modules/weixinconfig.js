@@ -112,19 +112,13 @@ WeixinConfig.prototype.wrapRedirectURLByOath2WayBaseScope = function (url) {
     var redirectUrl = url.indexOf(siteBaseUrl)< 0 ? siteBaseUrl + url : url;
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId
      + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
-    /*var wrapedUrl = oauth2BaseURL + "?appid=" + appId
-        + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";*/
     return wrapedUrl;
 };
 
 WeixinConfig.prototype.wrapRedirectURLByOath2Way = function (url) {
-    /*var wrapedUrl = oauth2BaseURL + "?appid=" + appId
-        + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_base#wechat_redirect";*/
     var redirectUrl = url.indexOf(siteBaseUrl)< 0 ? siteBaseUrl + url : url;
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId
         + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";
-    /*var wrapedUrl = oauth2BaseURL + "?appid=" + appId
-        + "&redirect_uri=" + url + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";*/
     return wrapedUrl;
 };
 
