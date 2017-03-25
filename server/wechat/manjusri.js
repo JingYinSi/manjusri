@@ -199,5 +199,19 @@ module.exports = {
                 return resWrap.setError(500, null, err);
             })
     },
+
+    updateLordProfile:function(req,res){
+        var openid = req.params.openid;
+        var resWrap = createResponseWrap(res);
+        var dataToUpdate = req.body;
+        logger.info("dataToUpdate:" + dataToUpdate);
+        usersModule.updateProfileByOpenid(openid,dataToUpdate)
+            .then(function(){
+                return;
+            })
+            .catch(function(err){
+                return resWrap.setError(500, null, err);
+            });
+    }
 };
 
