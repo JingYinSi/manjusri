@@ -11,7 +11,9 @@ var UserSchema = new Schema({
     subscribe: Number,
     phone: String,
     addr: String,
-    watching: Boolean
+    watching: Boolean,
+    realname:String,
+    email:String
 });
 
 module.exports = mongoose.model('User', UserSchema);
