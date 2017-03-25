@@ -182,7 +182,36 @@
 </div>
 
 <div class="form-tool">
-    <input type="button" class="ok" value="填好了" onclick="alert('保存成功!');"/>
+    <input type="button" class="ok" value="填好了" onclick="save"/>
 </div>
+
+<script type="text/javascript">
+    var save = function save() {
+        alert('保存成功!');
+    }
+    /*$("#show-confirm").click(function () {
+        var amount = $('#input_amount').val();
+        var giving = $('#input_target').val();
+        if (amount == '') {
+            $.toptip('请填写金额。');
+            return;
+        }
+
+        amount = Math.round(amount * 100) / 100;
+        var dataToPost = {
+            subject: $('#subject').text(),
+            amount: amount
+        };
+        if (giving) dataToPost.giving = giving;
+
+        requestDoTansaction(dataToPost);
+    });
+
+    $(function () {
+        $('#scrollBody').liMarquee({
+            direction: 'up'
+        });
+    });*/
+</script>
 </body>
 </html>
