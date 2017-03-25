@@ -155,12 +155,14 @@
             $.ajax({
                 url: url,
                 type: 'PUT',
-                data:dataToUpdate,
+                data:dataToUpdate//,
                 //contentType:'application/json',
-                success: function(response) {
-                    alert('保存成功');
-                    window.location =  '/jingyin/manjusri/lordvirtues';
-                }
+                /*success: function(response) {
+
+                }*/
+            }).done(function(data){
+                alert('保存成功');
+                window.location =  '/jingyin/manjusri/lordvirtues';
             });
         }
     </script>
