@@ -206,8 +206,8 @@ module.exports = {
         var dataToUpdate = req.body;
         logger.info("dataToUpdate:" + JSON.stringify(dataToUpdate));
         usersModule.updateProfileByOpenid(openid, dataToUpdate)
-            .then(function () {
-                return;
+            .then(function (data) {
+                return res.status(200);
             })
             .catch(function (err) {
                 return resWrap.setError(500, null, err);
