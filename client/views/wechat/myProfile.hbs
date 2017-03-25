@@ -155,14 +155,14 @@
             $.ajax({
                 url: url,
                 type: 'PUT',
-                data:dataToUpdate//,
-                //contentType:'application/json',
-                /*success: function(response) {
-
-                }*/
+                data:dataToUpdate
             }).done(function(data){
-                alert('保存成功');
+                alert('保存成功.');
                 window.location =  '/jingyin/manjusri/lordvirtues';
+            }).fail(function(){
+                alert('保存失败.')
+            }).always(function(){
+                alert('completed!');
             });
         }
     </script>
