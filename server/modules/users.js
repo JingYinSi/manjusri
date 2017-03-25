@@ -22,13 +22,14 @@ Users.prototype.registerUser = function (data) {
     return model.save();
 }
 
-User.prototype.updateProfileByOpenid = function (openid, dataToUpdate) {
+Users.prototype.updateProfileByOpenid = function (openid, dataToUpdate) {
     return this.findByOpenid(openid)
         .then(function (user) {
-            for(var name in dataToUpdate){
-                user[name] = dataToUpdate[name];
+            for(var key in dataToUpdate){
+                user[key] = dataToUpdate[key];
             }
-        })
+            return user.save();
+        });
 }
 
 Users.prototype.register = function (accessToken, openId) {

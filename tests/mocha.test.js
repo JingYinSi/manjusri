@@ -340,9 +340,12 @@ describe('静音寺业务系统', function () {
                         email: "my email address"
                     };
 
-                    return users.updateProfileByOpenid(usersData[0].openid, data)
+                    users.updateProfileByOpenid(usersData[0].openid, data)
                         .then(function (user) {
                             expect(user.realname).eql(data.realname);
+                            expect(user.phone).eql(data.phone);
+                            expect(user.addr).eql(data.addr);
+                            expect(user.email).eql(data.email);
                             done();
                         })
                         .catch(function (err) {
