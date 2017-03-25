@@ -39,7 +39,7 @@ module.exports = {
             })
             .then(function (payData) {
                 logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
-                resWrap.render('wechat/payment', {
+                return resWrap.render('wechat/payment', {
                     openId: openId,
                     virtue: virtueId,
                     payData: payData
