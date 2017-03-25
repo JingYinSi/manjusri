@@ -3,6 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>我的信息</title>
+
     <style type="text/css">
         body {
             margin: 0;
@@ -138,6 +139,7 @@
             background-color: #3CC51F;
         }
     </style>
+    <script src="/js/jquery-1.8.3.min.js"></script>
 </head>
 
 <body>
@@ -152,42 +154,55 @@
 <div class="formItem">
     <div class="nickNameIcon">&nbsp;</div>
     <div class="label">昵称</div>
-    <input class="editor" type="text" value="{{name}}"/>
+    <input class="editor" id="txtName" type="text" value="{{name}}"/>
 </div>
 
 <div class="formItem">
     <div class="realNameIcon">&nbsp;</div>
     <div class="label">真实姓名</div>
-    <input class="editor" type="text" value="{{realname}}"/>
+    <input class="editor" id="txtRealname" type="text" value="{{realname}}"/>
 </div>
 
 <div class="formItem">
     <div class="content">
         <div class="mobileIcon">&nbsp;</div>
         <div class="label">手机</div>
-        <input class="editor" type="text" value="{{phone}}"/>
+        <input class="editor" id="txtPhone" type="text" value="{{phone}}"/>
     </div>
 </div>
 
 <div class="formItem">
     <div class="addressIcon">&nbsp;</div>
     <div class="label">地址</div>
-    <input class="editor" type="text" value="{{addr}}"/>
+    <input class="editor" id="txtAddr" type="text" value="{{addr}}"/>
 </div>
 
 <div class="formItem">
     <div class="emailIcon">&nbsp;</div>
     <div class="label">邮箱</div>
-    <input class="editor" type="text" value="{{email}}"/>
+    <input class="editor" id="txtEmail" type="text" value="{{email}}"/>
 </div>
 
 <div class="form-tool">
-    <input type="button" class="ok" value="填好了" onclick="save"/>
+    <input type="button" class="ok" value="填好了" onclick="save()"/>
 </div>
 
 <script type="text/javascript">
     function save() {
-        alert('保存成功!');
+        var dataToUpdate = {
+            name : $('#txtName').val(),
+            realname : $('#txtRealname').val(),
+            phone:$('#txtPhone').val(),
+            email:$('#txtEmail').val(),
+            addr : $('#txtAddr').val()
+        };
+
+        var url = '/jingyin/manjusri/lords/{{openid}}/profile';
+        $.put(url,dataToUpdate,function(data){
+                alert('保存成功');
+                window.location =  url;
+            }
+        );
     }
     /*$("#show-confirm").click(function () {
         var amount = $('#input_amount').val();
