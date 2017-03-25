@@ -13,6 +13,6 @@ describe('资源注册', function () {
             .eql("/jingyin/manjusri/pay/confirm?virtue=234567");
         expect(linkage.getLink("login")).eql("/jingyin/manjusri/login");
         expect(linkage.getLink("home")).eql("/jingyin/manjusri/index");
-        expect(linkage.getLink("profile")).eql("/jingyin/manjusri/lord/profile");
+        expect(linkage.getLink("profile", {openid:'123456789'})).eql("/jingyin/manjusri/lords/123456789/profile");
     });
 });
