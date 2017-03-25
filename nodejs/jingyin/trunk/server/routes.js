@@ -7,9 +7,14 @@ const manjusri = require('./wechat/manjusri'),
     part = require('./biz/part'),
     payRoute = require('./payurl').payRoute;
 
+var log4js = require('log4js');
+log4js.configure("log4js.conf", {reloadSecs: 300});
+var logger = log4js.getLogger();
+
 const virtues = require('./rest/virtues');
 
 var auth = function (req, res, next) {
+    logger.debug("entering login ..........................")
     var sess = req.session;
     if (!sess.user){
         req.session.redirectToUrl = req.originalUrl;
@@ -44,8 +49,8 @@ module.exports = function (router) {
         .get(payment.result)
         .post(virtues.paidNotify);
 
-    router.route('/jingyin/manjusri/lordvirtues', auth)
-        .get(manjusri.lordVirtues);
+    router.route('/jingyin/manjusri/lordvirtues')
+        .get(manjusri.lordVirtues, auth);
 
     //TODO:最终应设为：/jingyin/manjusri/lords/:openid/profile
     router.route('/jingyin/manjusri/lord/profile')
