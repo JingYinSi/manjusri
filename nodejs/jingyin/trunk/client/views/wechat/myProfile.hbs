@@ -142,7 +142,6 @@
     <script src="/js/jquery-1.8.3.min.js"></script>
     <script type="text/javascript">
         function save() {
-            alert('保存成功');
             var dataToUpdate = {
                 name : $('#txtName').val(),
                 realname : $('#txtRealname').val(),
@@ -150,8 +149,10 @@
                 email:$('#txtEmail').val(),
                 addr : $('#txtAddr').val()
             };
-
+           
             var url = '/jingyin/manjusri/lords/{{openid}}/profile';
+            alert(url);
+            alert(JSON.stringify(dataToUpdate));
             $.put(url,dataToUpdate,function(data){
                         alert('保存成功');
                         window.location =  '/jingyin/manjusri/lordvirtues';
