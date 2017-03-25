@@ -18,7 +18,6 @@ module.exports = {
         }
         var openId, subjectName, amount;
         var sess = req.session;
-        //if (!sess.user) return redirects.toLogin(req, res);
         openId = sess.user.openid;
 
         var tasks = [
