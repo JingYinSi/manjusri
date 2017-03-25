@@ -56,6 +56,9 @@ module.exports = function (ctx) {
     }
 
     app.get('/jingyin/manjusri/lordvirtues', auth);
+    app.get('/jingyin/manjusri/dailyvirtue', auth);
+    app.get('/jingyin/manjusri/suixi', auth);
+    app.get('/jingyin/manjusri/trans/:partId', auth);
 
     ctx.route(router);
     app.use(router);

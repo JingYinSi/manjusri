@@ -184,40 +184,6 @@ module.exports = {
                 return resWrap.setError(500, errmsg, err);
             });
     },
-    /*lordVirtues: function (req, res) {
-     var sess = req.session;
-     if (!sess.user) return redirects.toLogin(req, res);
-
-     var code = req.query.code;
-     if (!code) {
-     sess.user ? logger.debug("The session already exists:" + JSON.stringify(sess.user))
-     : logger.debug("The session not exists...............");
-     var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
-     return res.redirect(redirectUrl);
-     }
-     var openid, viewdata, virtues;
-     var resWrap = createResponseWrap(res);
-     return wx.weixinService.getOpenId(code)
-     .then(function (data) {
-     logger.debug("通过code换取网页授权access_token:\n" + JSON.stringify(data));
-     sess.user = {openid: data.openid, accesstoken: data.access_token};
-     openid = data.openid;
-     return UserModel.findOne({openid: openid});
-     })
-     .then(function (lord) {
-     viewdata = {lord: lord};
-     return virtuesModule.listLordVirtues(lord._id);
-     })
-     .then(function (virtues) {
-     viewdata.virtues = virtues;
-     logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(viewdata));
-     return res.render('wechat/lordVirtues', viewdata);
-     })
-     .catch(function (err) {
-     logger.debug("error:" + err);
-     return resWrap.setError(400, null, err);
-     });
-     },*/
 
     lordProfile: function (req, res) {
         //var resWrap = createResponseWrap(res);
