@@ -4,8 +4,10 @@ var Part = require('./models/part'),
     Promise = require('bluebird'),
     createResponseWrap = require('../../modules/responsewrap'),
     UserModel = require('./models/user'),
+    usersModule = require('../modules/users'),
     mongoose = require('mongoose'),
-    wx = require('../weixin');
+    wx = require('../weixin'),
+    redirects = require('./redirects');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -30,6 +32,55 @@ function listVirtuesAndTotalTimes() {
 }
 
 module.exports = {
+    login: function (req, res) {
+        var errCode = 400;
+        var wrapedRes = createResponseWrap(res);
+        var code = req.query.code;
+        if (!code) {
+            return wrapedRes.setError(400);
+        }
+        var openid, accessToken;
+
+        return wx.weixinService.getOpenId(code)
+            .then(function (data) {
+                openid = data.openid;
+                accessToken = data.access_token;
+                var sess = req.session;
+                sess.user = {openid: openid, access_token: data.access_token};
+                sess.refresh_token = data.refresh_token;
+                return usersModule.findByOpenid(openid);
+            })
+            .then(function (user) {
+                if (!user) {
+                    errCode = 500;
+                    return wx.weixinService.getUserInfoByOpenIdAndToken(accessToken, openid)
+                        .then(function (userInfo) {
+                            var data = {
+                                name: userInfo.nickname,
+                                openid: userInfo.openid,
+                                img: userInfo.headimgurl,
+                                city: userInfo.city,
+                                province: userInfo.province,
+                                sex: userInfo.sex,
+                                subscribe: userInfo.subscribe_time
+                            }
+                            return usersModule.registerUser(data)
+                                .then(function (user) {
+                                    return redirects.toProfile(req, res);
+                                });
+                        });
+                } else {
+                    var redirectToUrl = req.session.redirectToUrl;
+                    return redirectToUrl ? res.redirect(redirectToUrl)
+                        : redirects.toHome(req, res);
+                }
+            })
+            .catch(function (err) {
+                logger.debug("error:" + err);
+                return wrapedRes.setError(errCode, null, err);
+            });
+    },
+
     home: function (req, res) {
         var res = createResponseWrap(res);
         return listVirtuesAndTotalTimes()
@@ -110,24 +161,20 @@ module.exports = {
 
     lordVirtues: function (req, res) {
         var sess = req.session;
+        if (!sess.user) return redirects.toLogin(req, res);
 
-        var code = req.query.code;
-        if (!code) {
-            sess.user ? logger.debug("The session already exists:" + JSON.stringify(sess.user))
-                : logger.debug("The session not exists...............");
-            var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
-            return res.redirect(redirectUrl);
-        }
-        var openid, viewdata, virtues;
+        var viewdata, virtues;
         var resWrap = createResponseWrap(res);
-        return wx.weixinService.getOpenId(code)
-            .then(function (data) {
-                logger.debug("通过code换取网页授权access_token:\n" + JSON.stringify(data));
-                sess.user = {openid: data.openid, accesstoken: data.access_token};
-                openid = data.openid;
-                return UserModel.findOne({openid: openid});
-            })
+        var openid = sess.user.openid;
+        //var token = sess.user.access_token;
+        var errmsg;
+        return usersModule.findByOpenid(openid)
             .then(function (lord) {
+                if(!lord){
+                    errmsg = "The User with openid(" + openid + ") not exists?";
+                    logger.error(errmsg);
+                    return Promise.reject();
+                }
                 viewdata = {lord: lord};
                 return virtuesModule.listLordVirtues(lord._id);
             })
@@ -138,9 +185,43 @@ module.exports = {
             })
             .catch(function (err) {
                 logger.debug("error:" + err);
-                return resWrap.setError(400, null, err);
+                return resWrap.setError(500, errmsg, err);
             });
     },
+    /*lordVirtues: function (req, res) {
+     var sess = req.session;
+     if (!sess.user) return redirects.toLogin(req, res);
+
+     var code = req.query.code;
+     if (!code) {
+     sess.user ? logger.debug("The session already exists:" + JSON.stringify(sess.user))
+     : logger.debug("The session not exists...............");
+     var redirectUrl = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(req.originalUrl);
+     return res.redirect(redirectUrl);
+     }
+     var openid, viewdata, virtues;
+     var resWrap = createResponseWrap(res);
+     return wx.weixinService.getOpenId(code)
+     .then(function (data) {
+     logger.debug("通过code换取网页授权access_token:\n" + JSON.stringify(data));
+     sess.user = {openid: data.openid, accesstoken: data.access_token};
+     openid = data.openid;
+     return UserModel.findOne({openid: openid});
+     })
+     .then(function (lord) {
+     viewdata = {lord: lord};
+     return virtuesModule.listLordVirtues(lord._id);
+     })
+     .then(function (virtues) {
+     viewdata.virtues = virtues;
+     logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(viewdata));
+     return res.render('wechat/lordVirtues', viewdata);
+     })
+     .catch(function (err) {
+     logger.debug("error:" + err);
+     return resWrap.setError(400, null, err);
+     });
+     },*/
 
     lordProfile: function (req, res) {
         //var resWrap = createResponseWrap(res);

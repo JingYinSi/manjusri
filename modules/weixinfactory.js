@@ -31,24 +31,6 @@ Weixin.prototype.getOpenId = function (code) {
         return httpRequest.concat({url: url, json: true});
 };
 
-/*Weixin.prototype.getOpenId = function (code) {
-    var me = this;
-    return new Promise(function (resolve, reject) {
-        var url = config.getUrlToGetOpenId(code);
-        return httpRequest.concat({url: url, json: true})
-            .then(function (data) {
-                logger.debug("getOpenId:" + JSON.stringify(data));
-                //TODO: 什么时机获取用户信息？
-                me.getUserInfoByOpenIdAndToken(data.access_token, data.openid).then(function (userInfo) {
-                    logger.debug("getUserInfo:" + JSON.stringify(userInfo));
-                });
-                return resolve(data.openid);
-            }, function (err) {
-                return reject(err);
-            });
-    });
-};*/
-
 Weixin.prototype.getUserInfoByOpenId = function (openid) {
     return this.getAccessToken()
         .then(function (token) {

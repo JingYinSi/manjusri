@@ -272,6 +272,66 @@ describe('静音寺业务系统', function () {
                 });
             });
 
+            describe('用户', function () {
+                var users;
+
+                beforeEach(function () {
+                    users = require('../server/modules/users');
+                });
+
+                describe('查找指定openid的用户', function () {
+                    it('指定openid的用户不存在', function (done) {
+                        var result;
+                        users.findByOpenid('fooopenid')
+                            .then(function (user) {
+                                expect(user).to.be.null;
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            });
+                    });
+                });
+
+                describe('用户注册', function (done) {
+                    it('成功注册', function () {
+                        var openId = 'o6_bmjrPTlm6_2sgVt7hMZOPfL2M';
+                        var userInfo = {
+                            "subscribe": 1,
+                            "openid": openId,
+                            "nickname": "Band",
+                            "sex": 1,
+                            "language": "zh_CN",
+                            "city": "广州",
+                            "province": "广东",
+                            "country": "中国",
+                            "headimgurl": "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0",
+                            "subscribe_time": 1382694957,
+                            "unionid": " o6_bmasdasdsad6_2sgVt7hMZOPfL",
+                            "remark": "",
+                            "groupid": 0
+                        }
+                        var userData = {
+                            name: userInfo.nickname,
+                            openid: userInfo.openid,
+                            img: userInfo.headimgurl,
+                            city: userInfo.city,
+                            province: userInfo.province,
+                            sex: userInfo.sex,
+                            subscribe: userInfo.subscribe_time
+                        }
+                        users.registerUser(userData)
+                            .then(function (data) {
+                                expect(data._id).not.null;
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            });
+                    });
+                });
+            });
+
             describe('功德', function () {
                 var virtues;
 
@@ -424,7 +484,7 @@ describe('静音寺业务系统', function () {
                                                 date: virtuesInDb[3].timestamp,
                                                 num: virtuesInDb[3].num,
                                                 amount: virtuesInDb[3].amount,
-                                                img:partsInDb[1].img,
+                                                img: partsInDb[1].img,
                                                 subject: partsInDb[1].name
 
                                             }
@@ -450,7 +510,7 @@ describe('静音寺业务系统', function () {
                                                 date: virtuesInDb[3].timestamp,
                                                 num: virtuesInDb[3].num,
                                                 amount: virtuesInDb[3].amount,
-                                                img:partsInDb[1].img,
+                                                img: partsInDb[1].img,
                                                 subject: partsInDb[1].name
 
                                             }
@@ -930,6 +990,14 @@ describe('静音寺业务系统', function () {
                 expect(config.getUrlToGetUserInfo(token, openid)).eql(url);
             });
 
+            it('获得检验授权凭证（access_token）是否有效的Url', function () {
+                var token = '1234534566';
+                var openid = 'hfcqehcehrv3f42f24yf34f';
+                var url = 'https://api.weixin.qq.com/sns/auth?' +
+                    'access_token=' + token + '&openid=' + openid;
+                expect(config.getUrlToCheckAccessToken(token, openid)).eql(url);
+            });
+
             it('拼装预置微信支付请求', function () {
                 var openId = 'foo-openid';
                 var transId = 'transOrderNo';
@@ -1320,6 +1388,12 @@ describe('静音寺业务系统', function () {
                     expect(linkage.getLink("virtue", {id: 234567})).eql("/jingyin/rest/virtues/234567");
                     expect(linkage.getLink("pay", {virtue: 234567}))
                         .eql("http://jingyintemple.top/jingyin/manjusri/pay/confirm?virtue=234567");
+                    expect(linkage.getLink("login")).eql("/jingyin/manjusri/login");
+                });
+
+                it('如果指定资源未注册，getLink返回null', function () {
+                    var linkage = require('../server/rests');
+                    expect(linkage.getLink("not exist")).to.be.null;
                 });
             });
 
@@ -1396,6 +1470,282 @@ describe('静音寺业务系统', function () {
                             controller(reqStub, resStub);
                             expect(msgReplySpy).calledWith(answer);
                         });
+                    });
+                });
+
+                describe('重定向', function () {
+                    beforeEach(function () {
+                    });
+
+                    //TODO:迁至../rest.js
+                    it('重定向到经微信认证的登录', function () {
+                        var url = "any url should be redirect to after auth by weixin";
+                        reqStub.originalUrl = url;
+                        reqStub.session = {};
+
+                        var loginUrl = "redirects page url";
+                        restUrlMapStub = sinon.stub();
+                        restUrlMapStub.withArgs("login").returns(loginUrl);
+                        stubs['../rests'] = {getLink: restUrlMapStub};
+
+                        var auth2WrapedUrl = 'url/to/auth2WrapedUrl';
+                        var urlWrapStub = sinon.stub();
+                        urlWrapStub.withArgs(loginUrl).returns(auth2WrapedUrl);
+                        stubs['../weixin'] = {weixinConfig: {wrapRedirectURLByOath2Way: urlWrapStub}};
+
+                        var redirctSpy = sinon.spy();
+                        resStub.redirect = redirctSpy;
+
+                        controller = proxyquire('../server/wechat/redirects', stubs).toLogin;
+                        controller(reqStub, resStub);
+
+                        expect(redirctSpy).calledOnce.calledWith(auth2WrapedUrl);
+                        expect(reqStub.session.redirectToUrl).eql(url);
+                    });
+
+                    it('重定向到用户注册页面', function () {
+                        var url = "user/register/url";
+                        restUrlMapStub = sinon.stub();
+                        restUrlMapStub.withArgs("profile").returns(url);
+                        stubs['../rests'] = {getLink: restUrlMapStub};
+
+                        var redirctSpy = sinon.spy();
+                        resStub.redirect = redirctSpy;
+
+                        controller = proxyquire('../server/wechat/redirects', stubs).toProfile;
+                        controller(reqStub, resStub);
+
+                        expect(redirctSpy).calledOnce.calledWith(url);
+                    });
+
+                    it('重定向到首页', function () {
+                        var url = "user/home";
+                        restUrlMapStub = sinon.stub();
+                        restUrlMapStub.withArgs("home").returns(url);
+                        stubs['../rests'] = {getLink: restUrlMapStub};
+
+                        var redirctSpy = sinon.spy();
+                        resStub.redirect = redirctSpy;
+
+                        controller = proxyquire('../server/wechat/redirects', stubs).toHome;
+                        controller(reqStub, resStub);
+
+                        expect(redirctSpy).calledOnce.calledWith(url);
+                    });
+                });
+
+                describe('用户登录', function () {
+                    var code, openid, accesstoken, refresh_token, lord;
+
+                    beforeEach(function () {
+                        reqStub.session = {};
+                        code = '12345678';
+                        openid = 'ahbsdbjvhqervhr3';
+                        accesstoken = 'eurf3urf3urfr3r';
+                        refresh_token = 'abdfdgdhdhdhdhdh';
+                        lord = {name: "foo"};
+                    });
+
+                    it('请求未包含查询参数code，客户端400错', function () {
+                        controller = require('../server/wechat/manjusri').login;
+                        controller(reqStub, resStub);
+                        expect(statusSpy).calledWith(400).calledOnce;
+                    });
+
+                    it('获得当前用户的OpenId失败', function () {
+                        reqStub.query.code = code;
+                        var getOpenIdStub = createPromiseStub([code], null, err);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(400, null, err);
+                            });
+                    });
+
+                    it('当前用户为一个新用户， 如果系统在试图获取用户信息时失败， 则系统报500错', function () {
+                        reqStub.query.code = code;
+                        var getOpenIdStub = createPromiseStub([code], [{
+                            "access_token": accesstoken,
+                            "refresh_token": refresh_token,
+                            "openid": openid
+                        }]);
+
+                        var findUserStub = createPromiseStub([openid], [null]);
+                        stubs['../modules/users'] = {findByOpenid: findUserStub};
+
+                        var getUserInfoByOpenIdAndTokenStub = createPromiseStub([accesstoken, openid], null, err);
+                        stubs['../weixin'] = {
+                            weixinService: {
+                                getOpenId: getOpenIdStub,
+                                getUserInfoByOpenIdAndToken: getUserInfoByOpenIdAndTokenStub
+                            }
+                        };
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('当前用户为一个新用户， 如果添加新用户时失败， 则系统报500错', function () {
+                        reqStub.query.code = code;
+                        var getOpenIdStub = createPromiseStub([code], [{
+                            "access_token": accesstoken,
+                            "refresh_token": refresh_token,
+                            "openid": openid
+                        }]);
+
+                        var findUserStub = createPromiseStub([openid], [null]);
+                        stubs['../modules/users'] = {findByOpenid: findUserStub};
+
+                        var userInfoFromWeixin = {
+                            nickname: "nickname",
+                            openid: "openid",
+                            headimgurl: "headimgurl",
+                            city: "city",
+                            province: "province",
+                            sex: "1",
+                            subscribe_time: "subscribetime"
+                        }
+                        var userInfo = {
+                            name: userInfoFromWeixin.nickname,
+                            openid: userInfoFromWeixin.openid,
+                            img: userInfoFromWeixin.headimgurl,
+                            city: userInfoFromWeixin.city,
+                            province: userInfoFromWeixin.province,
+                            sex: userInfoFromWeixin.sex,
+                            subscribe: userInfoFromWeixin.subscribe_time
+                        }
+
+                        var getUserInfoByOpenIdAndTokenStub = createPromiseStub([accesstoken, openid], [userInfoFromWeixin]);
+                        stubs['../weixin'] = {
+                            weixinService: {
+                                getOpenId: getOpenIdStub,
+                                getUserInfoByOpenIdAndToken: getUserInfoByOpenIdAndTokenStub
+                            }
+                        };
+
+                        var registerUserStub = createPromiseStub([userInfo], null, err);
+                        stubs['../modules/users'].registerUser = registerUserStub;
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('当前用户为一个新用户时，以新用户的身份登录，并重定向到用户注册页面', function () {
+                        reqStub.query.code = code;
+                        var getOpenIdStub = createPromiseStub([code], [{
+                            "access_token": accesstoken,
+                            "refresh_token": refresh_token,
+                            "openid": openid
+                        }]);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+
+                        var findUserStub = createPromiseStub([openid], [null]);
+                        stubs['../modules/users'] = {findByOpenid: findUserStub};
+
+                        var userInfoFromWeixin = {
+                            nickname: "nickname",
+                            openid: "openid",
+                            headimgurl: "headimgurl",
+                            city: "city",
+                            province: "province",
+                            sex: "1",
+                            subscribe_time: "subscribetime"
+                        }
+                        var userInfo = {
+                            name: userInfoFromWeixin.nickname,
+                            openid: userInfoFromWeixin.openid,
+                            img: userInfoFromWeixin.headimgurl,
+                            city: userInfoFromWeixin.city,
+                            province: userInfoFromWeixin.province,
+                            sex: userInfoFromWeixin.sex,
+                            subscribe: userInfoFromWeixin.subscribe_time
+                        }
+
+                        var getUserInfoByOpenIdAndTokenStub = createPromiseStub([accesstoken, openid], [userInfoFromWeixin]);
+                        stubs['../weixin'] = {
+                            weixinService: {
+                                getOpenId: getOpenIdStub,
+                                getUserInfoByOpenIdAndToken: getUserInfoByOpenIdAndTokenStub
+                            }
+                        };
+
+                        var user = {name:"foo"}
+                        var registerUserStub = createPromiseStub([userInfo], [user]);
+                        stubs['../modules/users'].registerUser = registerUserStub;
+
+                        var redirectToProfileSpy = sinon.spy();
+                        stubs['./redirects'] = {toProfile: redirectToProfileSpy};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(reqStub.session.user).eql({access_token: accesstoken, openid: openid});
+                                //TODO:Save refresh_token in mongodb
+                                expect(reqStub.session.refresh_token).eql(refresh_token);
+                                expect(redirectToProfileSpy).calledOnce.calledWith(reqStub, resStub);
+                            });
+                    });
+
+                    it('当前用户已存在，登录成功，如果session中有重定向url，则按此重定向', function () {
+                        var redirectToUrl = "foo/url";
+                        reqStub.query.code = code;
+                        reqStub.session.redirectToUrl = redirectToUrl;
+
+                        var getOpenIdStub = createPromiseStub([code], [{
+                            "access_token": accesstoken,
+                            "refresh_token": refresh_token,
+                            "openid": openid
+                        }]);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+
+                        var user = {name:"foo"};
+                        var findUserStub = createPromiseStub([openid], [user]);
+                        stubs['../modules/users'] = {findByOpenid: findUserStub};
+
+                        var redirectSpy = sinon.spy();
+                        resStub.redirect = redirectSpy;
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(reqStub.session.user).eql({access_token: accesstoken, openid: openid});
+                                //TODO:Save refresh_token in mongodb
+                                expect(reqStub.session.refresh_token).eql(refresh_token);
+                                expect(redirectSpy).calledOnce.calledWith(redirectToUrl);
+                            });
+                    });
+
+                    it('当前用户已存在，登录成功，如果session中无重定向url，则重定向至首页', function () {
+                        reqStub.query.code = code;
+
+                        var getOpenIdStub = createPromiseStub([code], [{
+                            "access_token": accesstoken,
+                            "refresh_token": refresh_token,
+                            "openid": openid
+                        }]);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+
+                        var user = {name:"foo"};
+                        var findUserStub = createPromiseStub([openid], [user]);
+                        stubs['../modules/users'] = {findByOpenid: findUserStub};
+
+                        var redirectToHomeSpy = sinon.spy();
+                        stubs['./redirects'] = {toHome: redirectToHomeSpy};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(reqStub.session.user).eql({access_token: accesstoken, openid: openid});
+                                //TODO:Save refresh_token in mongodb
+                                expect(reqStub.session.refresh_token).eql(refresh_token);
+                                expect(redirectToHomeSpy).calledOnce.calledWith(reqStub, resStub);
+                            });
                     });
                 });
 
@@ -1769,11 +2119,11 @@ describe('静音寺业务系统', function () {
                 })
 
                 describe('功德主', function () {
-                    var code, openid, lord, virtues, viewdata;
+                    var token, openid, lord, virtues, viewdata;
                     var getOpenIdStub, getUserByOpenIdStub, listLordVirtuesStub;
 
                     beforeEach(function () {
-                        code = '12345678';
+                        token = 'ddfffffdffffffffff';
                         openid = 'gfghhfhjfjkfkfkf';
                         lord = {
                             _id: '587240dea0191d6754dcc0ba',
@@ -1782,56 +2132,47 @@ describe('静音寺业务系统', function () {
                         virtues = [{foo: "foo"}, {fee: "fee"}];
                         viewdata = {lord: lord, virtues: virtues};
 
-                        reqStub.query.code = code;
+                        reqStub.session = {
+                            user:{access_token:token, openid:openid},
+                        };
                     });
 
-                    it('请求未包含查询参数code，需要重定向，以便获得当前用户的OpenId', function () {
-                        delete reqStub.query.code;
-                        var url = "jingyin/foourl";
-                        reqStub.originalUrl = url;
-                        var auth2WrapedUrl = 'url/to/redirect';
-                        var urlWrapStub = sinon.stub();
-                        urlWrapStub.withArgs(url).returns(auth2WrapedUrl);
-                        stubs['../weixin'] = {weixinConfig: {wrapRedirectURLByOath2WayBaseScope: urlWrapStub}};
-
-                        var redirctSpy = sinon.spy();
-                        resStub.redirect = redirctSpy;
+                    it('用户未曾登录', function () {
+                        delete reqStub.session.user;
+                        var redirectToLoginSpy = sinon.spy();
+                        stubs['./redirects'] = {toLogin: redirectToLoginSpy};
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
                         controller(reqStub, resStub);
-                        expect(redirctSpy).calledOnce.calledWith(auth2WrapedUrl)
-                    });
-
-                    it('获得当前用户的OpenId失败', function () {
-                        getOpenIdStub = createPromiseStub([code], null, err);
-                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
-                        controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(400, null, err);
-                            });
+                        expect(redirectToLoginSpy).calledOnce.calledWith(reqStub, resStub);
                     });
 
                     it('未能成功获得当前用户', function () {
-                        getOpenIdStub = createPromiseStub([code], [{openid: openid}]);
-                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
-
-                        getUserByOpenIdStub = createPromiseStub([{openid: openid}], null, err);
-                        stubs['./models/user'] = {findOne: getUserByOpenIdStub};
+                        getUserByOpenIdStub = createPromiseStub([openid], null, err);
+                        stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
 
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
                         return controller(reqStub, resStub)
                             .then(function () {
-                                checkResponseStatusCodeAndMessage(400, null, err);
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('没有找到当前用户', function () {
+                        getUserByOpenIdStub = createPromiseStub([openid], [null]);
+                        stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                var errmsg = "The User with openid(" + openid + ") not exists?";
+                                checkResponseStatusCodeAndMessage(500, errmsg);
                             });
                     });
 
                     it('未能成功获得当前用户的所有捐助', function () {
-                        getOpenIdStub = createPromiseStub([code], [{openid: openid}]);
-                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
-
-                        getUserByOpenIdStub = createPromiseStub([{openid: openid}], [lord]);
-                        stubs['./models/user'] = {findOne: getUserByOpenIdStub};
+                        getUserByOpenIdStub = createPromiseStub([openid], [lord]);
+                        stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
 
                         listLordVirtuesStub = createPromiseStub([lord._id], null, err);
                         stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
@@ -1839,16 +2180,15 @@ describe('静音寺业务系统', function () {
                         controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
                         return controller(reqStub, resStub)
                             .then(function () {
-                                checkResponseStatusCodeAndMessage(400, null, err);
+                                checkResponseStatusCodeAndMessage(500, null, err);
                             });
                     });
 
-                    it('成功显示功德主页面', function () {
-                        getOpenIdStub = createPromiseStub([code], [{openid: openid}]);
-                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+                    //TODO:需处理当前用户没有做过任何捐助的情况
 
-                        getUserByOpenIdStub = createPromiseStub([{openid: openid}], [lord]);
-                        stubs['./models/user'] = {findOne: getUserByOpenIdStub};
+                    it('成功显示功德主页面', function () {
+                        getUserByOpenIdStub = createPromiseStub([openid], [lord]);
+                        stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
 
                         listLordVirtuesStub = createPromiseStub([lord._id], [virtues]);
                         stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
@@ -1895,44 +2235,6 @@ describe('静音寺业务系统', function () {
                         expect(err).to.be.null;
                         expect(msg).eql(welcomeMsg);
                     });
-                });
-            });
-
-            describe('用户注册', function () {
-                it('成功注册', function () {
-                    var openId = 'o6_bmjrPTlm6_2sgVt7hMZOPfL2M';
-                    var userInfoToRegister = {
-                        "subscribe": 1,
-                        "openid": openId,
-                        "nickname": "Band",
-                        "sex": 1,
-                        "language": "zh_CN",
-                        "city": "广州",
-                        "province": "广东",
-                        "country": "中国",
-                        "headimgurl": "http://wx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/0",
-                        "subscribe_time": 1382694957,
-                        "unionid": " o6_bmasdasdsad6_2sgVt7hMZOPfL",
-                        "remark": "",
-                        "groupid": 0
-                    }
-                    var expectedUser = {name: 'foo'}
-                    var getUserInfoStub = sinon.stub();
-                    getUserInfoStub.withArgs(openId).callsArgWith(1, null, userInfoToRegister);
-                    stubs['../weixin'] = {
-                        weixin: {getUserInfoByOpenId: getUserInfoStub}
-                    };
-
-                    var registerUserStub = sinon.stub();
-                    registerUserStub.withArgs(userInfoToRegister).callsArgWith(1, null, expectedUser);
-                    stubs['../wechat/models/user'] = {registerWeixinUser: registerUserStub};
-
-                    var users = proxyquire('../server/modules/users', stubs);
-                    users.register(openId, function (err, user) {
-                        expect(err).to.be.null;
-                        expect(user).eql(expectedUser);
-                    });
-
                 });
             });
         });
