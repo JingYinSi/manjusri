@@ -207,7 +207,8 @@ module.exports = {
         logger.info("dataToUpdate:" + JSON.stringify(dataToUpdate));
         usersModule.updateProfileByOpenid(openid, dataToUpdate)
             .then(function (data) {
-                return res.status(200);
+                res.status(200);
+                return res.end();
             })
             .catch(function (err) {
                 return resWrap.setError(500, null, err);
