@@ -166,7 +166,7 @@ module.exports = {
         var errmsg;
         return usersModule.findByOpenid(openid)
             .then(function (lord) {
-                if(!lord){
+                if (!lord) {
                     errmsg = "The User with openid(" + openid + ") not exists?";
                     logger.error(errmsg);
                     return Promise.reject();
@@ -188,7 +188,7 @@ module.exports = {
     lordProfile: function (req, res) {
         //var resWrap = createResponseWrap(res);
         var openid = req.params.openid;
-        if(req.session.user.openid !== openid){
+        if (req.session.user.openid !== openid) {
             return redirects.toHome(req, res);
         }
         return usersModule.findByOpenid(openid)
@@ -200,16 +200,16 @@ module.exports = {
             })
     },
 
-    updateLordProfile:function(req,res){
+    updateLordProfile: function (req, res) {
         var openid = req.params.openid;
         var resWrap = createResponseWrap(res);
         var dataToUpdate = req.body;
-        logger.info("dataToUpdate:" + dataToUpdate);
-        usersModule.updateProfileByOpenid(openid,dataToUpdate)
-            .then(function(){
+        logger.info("dataToUpdate:" + JSON.stringify(dataToUpdate));
+        usersModule.updateProfileByOpenid(openid, dataToUpdate)
+            .then(function () {
                 return;
             })
-            .catch(function(err){
+            .catch(function (err) {
                 return resWrap.setError(500, null, err);
             });
     }
