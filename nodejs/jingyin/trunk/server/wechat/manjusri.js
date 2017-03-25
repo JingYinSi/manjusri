@@ -162,6 +162,7 @@ module.exports = {
     lordVirtues: function (req, res) {
         var sess = req.session;
         if (!sess.user){
+            logger.debug("not work ............................................");
             req.session.redirectToUrl = req.originalUrl;
             return redirects.toLogin(req, res);
         }

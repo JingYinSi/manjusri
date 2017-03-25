@@ -13,15 +13,6 @@ var logger = log4js.getLogger();
 
 const virtues = require('./rest/virtues');
 
-var auth = function (req, res, next) {
-    logger.debug("entering login ..........................")
-    var sess = req.session;
-    if (!sess.user){
-        req.session.redirectToUrl = req.originalUrl;
-        return redirects.toLogin(req, res);
-    }
-    return next();
-}
 
 module.exports = function (router) {
     router.route('/jingyin/manjusri/login')
@@ -50,7 +41,7 @@ module.exports = function (router) {
         .post(virtues.paidNotify);
 
     router.route('/jingyin/manjusri/lordvirtues')
-        .get(manjusri.lordVirtues, auth);
+        .get(manjusri.lordVirtues);
 
     //TODO:最终应设为：/jingyin/manjusri/lords/:openid/profile
     router.route('/jingyin/manjusri/lord/profile')
