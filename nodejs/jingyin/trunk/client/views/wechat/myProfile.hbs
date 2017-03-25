@@ -1,11 +1,8 @@
-<!DOCTYPE >
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0"/>
-    <meta name="format-detection" content="telphone=no,email=no"/>
-    <link rel="stylesheet" href="/css/lordVirtues.css">
-    <title>功德主</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>我的信息</title>
 
     <style type="text/css">
         body {
@@ -24,15 +21,15 @@
         }
 
         .myProfileEditor .content {
-            line-height: 180px;
+            line-height: 260px;
             vertical-align: middle;
             overflow: hidden;
         }
 
         .myProfileEditor .content .icon {
             float: left;
-            width: 180px;
-            line-height: 180px;
+            width: 260px;
+            line-height: 260px;
             vertical-align: middle;
             background-image: url("{{img}}");
             background-repeat: no-repeat;
@@ -174,23 +171,12 @@
 
 <body>
 
-<main id="page" class="page-wrap">
-    <div class="page">
-        <div class="content">
-            <div class="media-list media-list--after-v">
-                <div class="media-item media-item--custom">
-                    <img src="{{lord.img}}" class="item-img" width="60px" height="60px">
-                    <div class="item-bd" onclick="window.location = '/jingyin/manjusri/lords/{{lord.openid}}/profile';" >
-                        <h4 class="bd-tt">
-                            <a href="/jingyin/manjusri/lords/{{lord.openid}}/profile">{{lord.name}}</a>
-                            <!--<a href="/jingyin/manjusri/suixi">{{lord.name}}</a>-->
-                        </h4>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="myProfileEditor">
+    <div class="content">
+        <div class="icon">&nbsp;</div>
+        <div class="nickName">{{name}}</div>
     </div>
-</main>
+</div>
 
 <div class="formItem">
     <div class="nickNameIcon">&nbsp;</div>
