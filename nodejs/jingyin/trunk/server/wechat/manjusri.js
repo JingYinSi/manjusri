@@ -3,7 +3,6 @@ var Part = require('./models/part'),
     virtuesModule = require('../modules/virtues'),
     Promise = require('bluebird'),
     createResponseWrap = require('../../modules/responsewrap'),
-    UserModel = require('./models/user'),
     usersModule = require('../modules/users'),
     mongoose = require('mongoose'),
     redirects = require('./redirects'),
@@ -192,10 +191,13 @@ module.exports = {
         if(req.session.user.openid !== openid){
             return redirects.toHome(req, res);
         }
-        logger.debug("begin edit lord with openid(" + openid + ") profile .........");
-        return res.render('wechat/myProfile');
+        return usersModule.findByOpenid(openid)
+            .then(function (lord) {
+                return res.render('wechat/myProfile', lord);
+            })
+            .catch(function (err) {
+                return resWrap.setError(500, null, err);
+            })
     },
-
-
 };
 
