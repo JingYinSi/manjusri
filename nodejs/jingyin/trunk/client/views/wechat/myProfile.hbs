@@ -136,7 +136,6 @@
             margin-right: 50px;
             padding-left: 5px;
             padding-right: 5px;
-            background-color: #3CC51F;
         }
     </style>
     <script src="/js/jquery-1.8.3.min.js"></script>
@@ -163,6 +162,10 @@
             }).always(function(){
                 //alert('completed!');
             });
+        }
+
+        function cancel(){
+            window.location =  '/jingyin/manjusri/lordvirtues';
         }
     </script>
 </head>
@@ -209,7 +212,8 @@
 </div>
 
 <div class="form-tool">
-    <input type="button" class="ok" value="填好了" onclick="save()"/>
+    <input type="button" class="ok" value="确认" onclick="save()"/>
+    <input type="button" class="ok" value="取消" onclick="cancel()"/>
 </div>
 </body>
 </html>
