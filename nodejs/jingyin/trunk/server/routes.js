@@ -9,6 +9,15 @@ const manjusri = require('./wechat/manjusri'),
 
 const virtues = require('./rest/virtues');
 
+var auth = function (req, res, next) {
+    var sess = req.session;
+    if (!sess.user){
+        req.session.redirectToUrl = req.originalUrl;
+        return redirects.toLogin(req, res);
+    }
+    return next();
+}
+
 module.exports = function (router) {
     router.route('/jingyin/manjusri/login')
         .get(manjusri.login);
@@ -35,7 +44,7 @@ module.exports = function (router) {
         .get(payment.result)
         .post(virtues.paidNotify);
 
-    router.route('/jingyin/manjusri/lordvirtues')
+    router.route('/jingyin/manjusri/lordvirtues', auth)
         .get(manjusri.lordVirtues);
 
     //TODO:最终应设为：/jingyin/manjusri/lords/:openid/profile
