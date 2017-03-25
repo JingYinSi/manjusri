@@ -6,6 +6,7 @@ var Part = require('./models/part'),
     UserModel = require('./models/user'),
     usersModule = require('../modules/users'),
     mongoose = require('mongoose'),
+    redirects = require('./redirects'),
     wx = require('../weixin');
 
 var log4js = require('log4js');
