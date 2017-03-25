@@ -15,12 +15,18 @@ function Users() {
 
 Users.prototype.findByOpenid = function (openid) {
     return UserModel.findOne({openid: openid});
-    //return Promise.resolve({foo:"ff"});
 }
 
 Users.prototype.registerUser = function (data) {
     model = new UserModel(data);
     return model.save();
+}
+
+User.prototype.updateProfileByOpenid = function (openid, dataToUpdate) {
+    return this.findByOpenid(openid)
+        .then(function (user) {
+
+        })
 }
 
 Users.prototype.register = function (accessToken, openId) {

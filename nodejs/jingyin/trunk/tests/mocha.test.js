@@ -39,6 +39,7 @@ describe('静音寺业务系统', function () {
     });
 
     describe('业务', function (done) {
+        var partsData, usersData;
         var virtuesInDb, partsInDb, usersInDb;
         var ObjectID;
 
@@ -83,7 +84,7 @@ describe('静音寺业务系统', function () {
             var UserModel = require('../server/wechat/models/user');
             var VirtueModel = require('../server/wechat/models/virtue');
 
-            var partsData = [
+            partsData = [
                 {
                     "type": "daily",
                     "name": "每日一善",
@@ -106,7 +107,7 @@ describe('静音寺业务系统', function () {
                     "sold": 10,
                 }
             ];
-            var usersData = [
+            usersData = [
                 {
                     "name": "陈立新",
                     "openid": "o0ghywcfW_2Dp4oN-7NADengZAVM",
@@ -330,6 +331,24 @@ describe('静音寺业务系统', function () {
                             });
                     });
                 });
+
+                it('补充个人资料', function (done) {
+                    var data = {
+                        realname: "clx",
+                        phone: "1234567",
+                        addr: 'foo address',
+                        email: "my email address"
+                    };
+
+                    return users.updateProfileByOpenid(usersData[0].openid, data)
+                        .then(function (user) {
+                            expect(user.realname).eql(data.realname);
+                            done();
+                        })
+                        .catch(function (err) {
+                            done(err);
+                        });
+                })
             });
 
             describe('功德', function () {
@@ -2086,7 +2105,7 @@ describe('静音寺业务系统', function () {
 
                 describe('响应微信支付结果', function () {
                     //TODO: 编写响应微信支付结果的测试用例
-                })
+                });
 
                 describe('功德主', function () {
                     var token, openid, lord, virtues, viewdata;
@@ -2157,7 +2176,7 @@ describe('静音寺业务系统', function () {
                         controller(reqStub, resStub);
                         expect(resRenderSpy).calledOnce.calledWith('wechat/lordVirtues', viewdata);
                     });
-                })
+                });
             });
         });
 
