@@ -149,15 +149,19 @@
                 email:$('#txtEmail').val(),
                 addr : $('#txtAddr').val()
             };
-           
+
             var url = '/jingyin/manjusri/lords/{{openid}}/profile';
-            alert(url);
-            alert(JSON.stringify(dataToUpdate));
-            $.put(url,dataToUpdate,function(data){
-                        alert('保存成功');
-                        window.location =  '/jingyin/manjusri/lordvirtues';
-                    }
-            );
+
+            $.ajax({
+                url: url,
+                type: 'PUT',
+                data:dataToUpdate,
+                //contentType:'application/json',
+                success: function(response) {
+                    alert('保存成功');
+                    window.location =  '/jingyin/manjusri/lordvirtues';
+                }
+            });
         }
     </script>
 </head>
