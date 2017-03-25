@@ -13,6 +13,16 @@ var logger = log4js.getLogger();
 function Users() {
 }
 
+Users.prototype.findByOpenid = function (openid) {
+    return UserModel.findOne({openid: openid});
+    //return Promise.resolve({foo:"ff"});
+}
+
+Users.prototype.registerUser = function (data) {
+    model = new UserModel(data);
+    return model.save();
+}
+
 Users.prototype.register = function (accessToken, openId) {
     return UserModel.findOne({openid: openId})
         .then(function (user) {

@@ -2,6 +2,7 @@
  * Created by sony on 2016/10/13.
  */
 const manjusri = require('./wechat/manjusri'),
+    login = require('./wechat/redirects'),
     payment = require('./wechat/payment'),
     part = require('./biz/part'),
     payRoute = require('./payurl').payRoute;
@@ -9,6 +10,9 @@ const manjusri = require('./wechat/manjusri'),
 const virtues = require('./rest/virtues');
 
 module.exports = function (router) {
+    router.route('/jingyin/manjusri/login')
+        .get(manjusri.login);
+
     router.route('/jingyin/manjusri/index')
         .get(manjusri.home);
 
@@ -34,7 +38,8 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/lordvirtues')
         .get(manjusri.lordVirtues);
 
-    router.route('/jingyin/manjusri/lords/:lordId/profile')
+    //TODO:最终应设为：/jingyin/manjusri/lords/:openid/profile
+    router.route('/jingyin/manjusri/lord/profile')
         .get(manjusri.lordProfile);
 
 
@@ -42,11 +47,11 @@ module.exports = function (router) {
     router.route('/jingyin/rest/virtues/prepay')
         .post(virtues.prepay);
     /*router.route('/jingyin/rest/virtues/:id')
-        .put(virtues.paid);*/
+     .put(virtues.paid);*/
     /*router.route('/jingyin/rest/virtues')
-        .get(virtues.list);*/
+     .get(virtues.list);*/
 
     /*----------------------------业务系统------------------------------------------  */
-   /* router.route('/jingyin/biz/parts/index')
-        .get(part.index);*/
+    /* router.route('/jingyin/biz/parts/index')
+     .get(part.index);*/
 }

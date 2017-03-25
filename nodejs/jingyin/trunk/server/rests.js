@@ -5,7 +5,10 @@
 const querystring = require('querystring');
 var urlMap = {
     virtue: '/jingyin/rest/virtues/:id',
-    pay: 'http://jingyintemple.top/jingyin/manjusri/pay/confirm'
+    pay: 'http://jingyintemple.top/jingyin/manjusri/pay/confirm',
+    login: '/jingyin/manjusri/login',
+    home: '/jingyin/manjusri/index',
+    profile: '/jingyin/manjusri/lord/profile',
 };
 function ResourceRegistry() {
 }
@@ -30,7 +33,7 @@ ResourceRegistry.URLTemplate = function (urlTemplate) {
 ResourceRegistry.URLTemplate.prototype.expand = function (params) {
     var path = this.genPath(params);
     var query = this.genQuery(params);
-    if(query.length>0){
+    if (query.length > 0) {
         return path + '?' + query;
     }
     return path;
@@ -61,13 +64,15 @@ ResourceRegistry.URLTemplate.prototype.genQuery = function (params) {
         }
     }
     if (result.length > 0) {
-        result = result.substr(0,result.length-1);
+        result = result.substr(0, result.length - 1);
     }
     return result;
 };
 
 ResourceRegistry.prototype.getLink = function (resourceId, params) {
-    var urlTemplate = new ResourceRegistry.URLTemplate(urlMap[resourceId]);
+    var tempUrl = urlMap[resourceId];
+    if (!tempUrl) return null; //TODO:如果指定资源未注册，getLink应该抛出ERROR
+    var urlTemplate = new ResourceRegistry.URLTemplate(tempUrl);
     return urlTemplate.expand(params);
 };
 

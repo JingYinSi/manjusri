@@ -61,6 +61,10 @@ WeixinConfig.prototype.getSnsUrlToGetUserInfo = function (token, openid) {
     return url;
 };
 
+WeixinConfig.prototype.getUrlToCheckAccessToken = function (token, openid) {
+    return "https://api.weixin.qq.com/sns/auth?access_token=" + token + "&openid=" + openid;
+}
+
 WeixinConfig.prototype.getPrepayRequestOption = function (openId, transId, transName, amount) {
     var order = {
         out_trade_no: transId,
