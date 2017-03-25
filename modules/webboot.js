@@ -20,9 +20,9 @@ log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
 var auth = function (req, res, next) {
-    logger.debug("entering login ..........................")
     var sess = req.session;
     if (!sess.user){
+        logger.debug("entering login ..........................")
         req.session.redirectToUrl = req.originalUrl;
         return redirects.toLogin(req, res);
     }
