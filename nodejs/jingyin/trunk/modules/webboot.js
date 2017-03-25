@@ -14,6 +14,10 @@ var express = require('express'),
     app = express(),
     mongoose = require('mongoose');
 
+var log4js = require('log4js');
+log4js.configure("log4js.conf", {reloadSecs: 300});
+var logger = log4js.getLogger();
+
 var auth = function (req, res, next) {
     logger.debug("entering login ..........................")
     var sess = req.session;
