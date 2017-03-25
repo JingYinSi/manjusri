@@ -12,7 +12,8 @@ var express = require('express'),
     router = express.Router(),
     passport = require('passport'),
     app = express(),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    redirects = require('./redirects');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
