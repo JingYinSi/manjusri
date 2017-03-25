@@ -42,6 +42,16 @@ module.exports = function (ctx) {
 
     ctx.route(router);
     app.use(router);
+    var auth = function (req, res, next) {
+        logger.debug("entering login ..........................")
+        var sess = req.session;
+        if (!sess.user){
+            req.session.redirectToUrl = req.originalUrl;
+            return redirects.toLogin(req, res);
+        }
+        return next();
+    }
+    app.get('/jingyin/manjusri/lordvirtues', auth);
     app.use('/', express.static(ctx.static || path.join(__dirname, '../client/public')));
     //app.use(favicon('/images/icon1.jpg'));
     if ('development' === app.get('env') || ctx.env) {
