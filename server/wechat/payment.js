@@ -18,7 +18,7 @@ module.exports = {
         }
         var openId, subjectName, amount;
         var sess = req.session;
-        if(!sess || !sess.user){
+        if(!sess || !sess.user || !sess.user.openid){
             resWrap.setError(400);
         }
         openId = sess.user.openid;
