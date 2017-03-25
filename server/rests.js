@@ -9,7 +9,7 @@ var urlMap = {
     pay: '/jingyin/manjusri/pay/confirm',
     login: '/jingyin/manjusri/login',
     home: '/jingyin/manjusri/index',
-    profile: '/jingyin/manjusri/lord/profile',
+    profile: '/jingyin/manjusri/lords/:openid/profile',
 };
 function ResourceRegistry() {
 }

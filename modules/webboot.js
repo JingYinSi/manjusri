@@ -60,6 +60,7 @@ module.exports = function (ctx) {
     app.get('/jingyin/manjusri/dailyvirtue', auth);
     app.get('/jingyin/manjusri/suixi', auth);
     app.get('/jingyin/manjusri/trans/:partId', auth);
+    app.get('/jingyin/manjusri/lords/:openid/profile', auth);
 
     ctx.route(router);
     app.use(router);

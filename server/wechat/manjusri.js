@@ -66,7 +66,7 @@ module.exports = {
                             }
                             return usersModule.registerUser(data)
                                 .then(function (user) {
-                                    return redirects.toProfile(req, res);
+                                    return redirects.toProfile(openid, req, res);
                                 });
                         });
                 } else {
@@ -188,8 +188,11 @@ module.exports = {
 
     lordProfile: function (req, res) {
         //var resWrap = createResponseWrap(res);
-        var lordId = req.params.lordId;
-        logger.debug("begin edit lord(" + lordId + ") profile .........");
+        var openid = req.params.openid;
+        if(req.session.user.openid !== openid){
+            return redirects.toHome(req, res);
+        }
+        logger.debug("begin edit lord with openid(" + openid + ") profile .........");
         return res.render('wechat/myProfile');
     },
 
