@@ -137,6 +137,7 @@
             padding-right: 5px;
         }
     </style>
+    <link rel="stylesheet" href="/css/lordVirtues.css">
     <script src="/js/jquery-1.8.3.min.js"></script>
     <script type="text/javascript">
         function save() {
@@ -171,12 +172,23 @@
 
 <body>
 
-<div class="myProfileEditor">
-    <div class="content">
-        <div class="icon">&nbsp;</div>
-        <div class="nickName">{{name}}</div>
+<main id="page" class="page-wrap">
+    <div class="page">
+        <div class="content">
+            <div class="media-list media-list--after-v">
+                <div class="media-item media-item--custom">
+                    <img src="{{lord.img}}" class="item-img" width="60px" height="60px">
+                    <div class="item-bd" onclick="window.location = '/jingyin/manjusri/lords/{{lord.openid}}/profile';" >
+                        <h4 class="bd-tt">
+                            <a href="/jingyin/manjusri/lords/{{lord.openid}}/profile">{{lord.name}}</a>
+                            <!--<a href="/jingyin/manjusri/suixi">{{lord.name}}</a>-->
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</main>
 
 <div class="formItem">
     <div class="nickNameIcon">&nbsp;</div>
