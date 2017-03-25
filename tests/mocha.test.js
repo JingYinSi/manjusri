@@ -1501,16 +1501,17 @@ describe('静音寺业务系统', function () {
                     });
 
                     it('重定向到用户注册页面', function () {
+                        var openid = "12324556";
                         var url = "user/register/url";
                         restUrlMapStub = sinon.stub();
-                        restUrlMapStub.withArgs("profile").returns(url);
+                        restUrlMapStub.withArgs("profile", {openid: openid}).returns(url);
                         stubs['../rests'] = {getLink: restUrlMapStub};
 
                         var redirctSpy = sinon.spy();
                         resStub.redirect = redirctSpy;
 
                         controller = proxyquire('../server/wechat/redirects', stubs).toProfile;
-                        controller(reqStub, resStub);
+                        controller(openid, reqStub, resStub);
 
                         expect(redirctSpy).calledOnce.calledWith(url);
                     });
@@ -1686,7 +1687,7 @@ describe('静音寺业务系统', function () {
                                 expect(reqStub.session.user).eql({access_token: accesstoken, openid: openid});
                                 //TODO:Save refresh_token in mongodb
                                 expect(reqStub.session.refresh_token).eql(refresh_token);
-                                expect(redirectToProfileSpy).calledOnce.calledWith(reqStub, resStub);
+                                expect(redirectToProfileSpy).calledOnce.calledWith(openid, reqStub, resStub);
                             });
                     });
 
