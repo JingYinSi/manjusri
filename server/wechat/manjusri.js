@@ -159,16 +159,9 @@ module.exports = {
     },
 
     lordVirtues: function (req, res) {
-        var sess = req.session;
-        /*if (!sess.user){
-            logger.debug("not work ............................................");
-            req.session.redirectToUrl = req.originalUrl;
-            return redirects.toLogin(req, res);
-        }*/
-
         var viewdata, virtues;
         var resWrap = createResponseWrap(res);
-        var openid = sess.user.openid;
+        var openid = req.session.user.openid;
         //var token = sess.user.access_token;
         var errmsg;
         return usersModule.findByOpenid(openid)
