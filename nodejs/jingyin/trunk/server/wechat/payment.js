@@ -10,7 +10,7 @@ log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
 module.exports = {
-    /*pay: function (req, res) {
+    pay: function (req, res) {
         var resWrap = responseWrapFactory(res);
         var virtueId = req.query.virtue;
         if (!virtueId) {
@@ -18,7 +18,7 @@ module.exports = {
         }
         var openId, subjectName, amount;
         var sess = req.session;
-        if (!sess.user) return redirects.toLogin(req, res);
+        //if (!sess.user) return redirects.toLogin(req, res);
         openId = sess.user.openid;
 
         var tasks = [
@@ -44,9 +44,9 @@ module.exports = {
             .catch(function (err) {
                 return resWrap.setError(400, null, err);
             });
-    },*/
+    },
 
-    pay: function (req, res) {
+    /*pay: function (req, res) {
         var resWrap = responseWrapFactory(res);
         var code = req.query.code;
         if (!code) {
@@ -88,7 +88,7 @@ module.exports = {
             .catch(function (err) {
                 return resWrap.setError(400, null, err);
             });
-    },
+    },*/
 
     result: function (req, res) {
         res.render('wechat/paymentResult');
