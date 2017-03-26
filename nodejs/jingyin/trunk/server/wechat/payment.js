@@ -3,7 +3,7 @@ var wx = require('../weixin').weixinService,
     users = require('../modules/users'),
     Promise = require('bluebird'),
     redirects = require('./redirects');
-    responseWrapFactory = require('../../modules/responsewrap');
+responseWrapFactory = require('../../modules/responsewrap');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -13,8 +13,8 @@ module.exports = {
     pay: function (req, res) {
         var resWrap = responseWrapFactory(res);
         var sess = req.session;
-        if(!sess || !sess.user || !sess.user.openid){
-            resWrap.setError(400);
+        if (!sess || !sess.user || !sess.user.openid) {
+            return resWrap.setError(401);
         }
 
         var virtueId = req.query.virtue;
@@ -25,15 +25,14 @@ module.exports = {
 
         openId = sess.user.openid;
 
-        var tasks = [
-            virtues.findNewVirtueById(virtueId)
-                .then(function (doc) {
-                    if(!doc)
-                        return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
-                    subjectName = doc.subject.name;
-                    amount = doc.amount;
-                })];
-        return Promise.all(tasks)
+        return virtues.findNewVirtueById(virtueId)
+            .then(function (doc) {
+                if (!doc) {
+                    return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
+                }
+                subjectName = doc.subject.name;
+                amount = doc.amount;
+            })
             .then(function () {
                 return wx.prepay(openId, virtueId, subjectName, amount);
             })
