@@ -72,7 +72,8 @@ module.exports = function (ctx) {
 
     // Use express session support since OAuth2orize requires it
     app.use(session({
-        cookie: {maxAge: 1000 * 60 * 60 * 24 * 7},// 1 week
+        //cookie: {maxAge: 1000 * 60 * 60 * 24 * 7},// 1 week
+        cookie: {maxAge: 1000 * 60 * 60 * 24},// 1 week
         secret: ctx.secret || 'super secret for session',
         saveUninitialized: false,
         resave: false,
