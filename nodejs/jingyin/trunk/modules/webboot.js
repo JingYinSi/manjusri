@@ -32,6 +32,9 @@ var auth = function (req, res, next) {
 }
 
 module.exports = function (ctx) {
+    var pid = process.pid;
+    logger.debug('The process no.' + pid + ' is running !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+
     app.set('views', ctx.views || path.join(__dirname, '../client/views'));
     app.use(morgan('dev'));
     app.use(bodyParser.urlencoded({
@@ -45,7 +48,7 @@ module.exports = function (ctx) {
         trim: true
     }));
 
-    logger.debug('CPUS in this machine is: ' + os.cpus().length + '  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+
     var connStr = 'mongodb://' + ctx.mongodb;
     mongoose.Promise = global.Promise;
     mongoose.connect(connStr);
