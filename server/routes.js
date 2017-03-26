@@ -43,7 +43,6 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/lordvirtues')
         .get(manjusri.lordVirtues);
 
-    //TODO:最终应设为：/jingyin/manjusri/lords/:openid/profile
     router.route('/jingyin/manjusri/lords/:openid/profile')
         .get(manjusri.lordProfile)
         .put(manjusri.updateLordProfile);
