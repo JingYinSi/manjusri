@@ -22,6 +22,8 @@ log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
 var auth = function (req, res, next) {
+    var pid = process.pid;
+    logger.debug('This request is processed by no.' + pid + ' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     var sess = req.session;
     if (!sess.user) {
         logger.debug("begin login ..........................")
