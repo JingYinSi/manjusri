@@ -176,7 +176,6 @@ module.exports = {
             })
             .then(function (virtues) {
                 viewdata.virtues = virtues;
-                logger.debug("begin render wechat/lordVirtues with data:\n" + JSON.stringify(viewdata));
                 return res.render('wechat/lordVirtues', viewdata);
             })
             .catch(function (err) {

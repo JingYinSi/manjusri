@@ -788,6 +788,13 @@ describe('静音寺业务系统', function () {
                 var days = lastDayOfThisMonth - firstDayOfThisMonth;
             })
         });
+
+        describe('集群', function () {
+            it('cpu', function () {
+                var os = require('os');
+                //expect(os.cpus().length).eql(2);
+            })
+        })
     });
 
     describe('utils', function () {
@@ -1499,7 +1506,6 @@ describe('静音寺业务系统', function () {
                     beforeEach(function () {
                     });
 
-                    //TODO:迁至../rest.js
                     it('重定向到经微信认证的登录', function () {
                         reqStub.session = {};
 
@@ -1707,7 +1713,6 @@ describe('静音寺业务系统', function () {
                         return controller(reqStub, resStub)
                             .then(function () {
                                 expect(reqStub.session.user).eql({access_token: accesstoken, openid: openid});
-                                //TODO:Save refresh_token in mongodb
                                 expect(reqStub.session.refresh_token).eql(refresh_token);
                                 expect(redirectToProfileSpy).calledOnce.calledWith(openid, reqStub, resStub);
                             });
@@ -1735,7 +1740,6 @@ describe('静音寺业务系统', function () {
                         return controller(reqStub, resStub)
                             .then(function () {
                                 expect(reqStub.session.user).eql({access_token: accesstoken, openid: openid});
-                                //TODO:Save refresh_token in mongodb
                                 expect(reqStub.session.refresh_token).eql(refresh_token);
                                 expect(redirectSpy).calledOnce.calledWith(redirectToUrl);
                             });
@@ -1762,7 +1766,6 @@ describe('静音寺业务系统', function () {
                         return controller(reqStub, resStub)
                             .then(function () {
                                 expect(reqStub.session.user).eql({access_token: accesstoken, openid: openid});
-                                //TODO:Save refresh_token in mongodb
                                 expect(reqStub.session.refresh_token).eql(refresh_token);
                                 expect(redirectToHomeSpy).calledOnce.calledWith(reqStub, resStub);
                             });
@@ -2165,8 +2168,6 @@ describe('静音寺业务系统', function () {
                                 checkResponseStatusCodeAndMessage(500, null, err);
                             });
                     });
-
-                    //TODO:需处理当前用户没有做过任何捐助的情况
 
                     it('成功显示功德主页面', function () {
                         getUserByOpenIdStub = createPromiseStub([openid], [lord]);

@@ -1,4 +1,5 @@
 var express = require('express'),
+    os = require('os'),
     morgan = require('morgan'),
     bodyParser = require('body-parser'),
     xmlBodyParser = require('express-xml-bodyparser'),
@@ -44,6 +45,7 @@ module.exports = function (ctx) {
         trim: true
     }));
 
+    logger.debug('CPUS in this machine is: ' + os.cpus().length + '  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     var connStr = 'mongodb://' + ctx.mongodb;
     mongoose.Promise = global.Promise;
     mongoose.connect(connStr);
