@@ -8,6 +8,7 @@ var express = require('express'),
     moment = require('moment'),
     errorHandler = require('errorhandler'),
     session = require('express-session'),
+    MongoDBStore = require('connect-mongodb-session')(session),
     favicon = require('serve-favicon'),
     router = express.Router(),
     passport = require('passport'),
@@ -21,7 +22,7 @@ var logger = log4js.getLogger();
 
 var auth = function (req, res, next) {
     var sess = req.session;
-    if (!sess.user){
+    if (!sess.user) {
         logger.debug("begin login ..........................")
         req.session.redirectToUrl = req.originalUrl;
         return redirects.toLogin(req, res);
@@ -43,15 +44,35 @@ module.exports = function (ctx) {
         trim: true
     }));
 
-     // Use express session support since OAuth2orize requires it
+    var connStr = 'mongodb://' + ctx.mongodb;
+    mongoose.Promise = global.Promise;
+    mongoose.connect(connStr);
+    mongoose.connection.on('open', function () {
+        console.log('Mongoose:' + connStr + ' is connected!');
+    });
+
+    var store = new MongoDBStore(
+        {
+            uri: connStr,
+            collection: 'sessions'
+        });
+
+    // Catch errors
+    store.on('error', function (error) {
+        assert.ifError(error);
+        assert.ok(false);
+    });
+
+    // Use express session support since OAuth2orize requires it
     app.use(session({
-        //cookie: { maxAge: 60000 },
+        cookie: {maxAge: 1000 * 60 * 60 * 24 * 7},// 1 week
         secret: ctx.secret || 'super secret for session',
         saveUninitialized: false,
-        resave: false
+        resave: false,
+        store: store
     }));
 
-    if(ctx.wechat){
+    if (ctx.wechat) {
         app.use('/jingyin/wechat', wechat(ctx.wechat.token, ctx.wechat.post));
     }
 
@@ -75,19 +96,14 @@ module.exports = function (ctx) {
     app.engine('hbs', exphbs.create({
         partialsDir: [path.join(__dirname, '../client/views/partials')],
         extname: '.hbs',
-        helpers:{
-            dateMMDD:function(timestamp){
+        helpers: {
+            dateMMDD: function (timestamp) {
                 return moment(timestamp).format('MM-DD');
             }
         }
     }).engine);
     app.set('view engine', 'hbs');
-    var connStr = 'mongodb://' + ctx.mongodb;
-    mongoose.Promise = global.Promise;
-    mongoose.connect(connStr);
-    mongoose.connection.on('open', function () {
-        console.log('Mongoose:' + connStr + ' is connected!');
-    });
+
     var port = process.env.PORT || ctx.port || 3301;
     var server = app.listen(port, process.env.IP || "0.0.0.0", function () {
         var host = server.address().address;
