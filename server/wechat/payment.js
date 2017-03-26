@@ -1,9 +1,7 @@
 var wx = require('../weixin').weixinService,
     virtues = require('../modules/virtues'),
-    users = require('../modules/users'),
     Promise = require('bluebird'),
-    redirects = require('./redirects');
-responseWrapFactory = require('../../modules/responsewrap');
+    responseWrapFactory = require('../../modules/responsewrap');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
