@@ -49,15 +49,17 @@ module.exports = function (ctx) {
         trim: true
     }));
 
-    /*if (ctx.env === 'development') {
+    if (ctx.env === 'development') {
         app.use(function (req, res, next) {
-            var info = "用户";
-            info += req.session.user ? "[" + req.session.user.openid + "]" : "[未登录]";
-            info += "正在访问：" + req.url + ", 进程号：" + process.pid;
-            logger.info(info);
+            if(req.url.indexOf('/jingyin/') >= 0) {
+                var info = "用户";
+                info += req.session && req.session.user ? "[" + req.session.user.openid + "]" : "[未登录]";
+                info += "正在访问：" + req.url + ", 进程号：" + process.pid;
+                logger.info(info);
+            }
             next();
         });
-    }*/
+    }
 
     var connStr = 'mongodb://' + ctx.mongodb;
     mongoose.Promise = global.Promise;
