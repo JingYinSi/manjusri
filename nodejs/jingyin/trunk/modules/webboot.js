@@ -49,7 +49,7 @@ module.exports = function (ctx) {
         trim: true
     }));
 
-    if (ctx.env === 'development') {
+    /*if (ctx.env === 'development') {
         app.use(function (req, res, next) {
             var info = "用户";
             info += req.session.user ? "[" + req.session.user.openid + "]" : "[未登录]";
@@ -57,7 +57,7 @@ module.exports = function (ctx) {
             logger.info(info);
             next();
         });
-    }
+    }*/
 
     var connStr = 'mongodb://' + ctx.mongodb;
     mongoose.Promise = global.Promise;
