@@ -25,7 +25,6 @@ var ctx = {
 
 if (cluster.isMaster) {
     var cpus = os.cpus().length;
-//start as many children as the number of CPUs
     for (var i = 0; i < cpus; i++) { //[1]
         logger.debug('begin fork no.' + i + " ~~~~~~~~~~~~~~~~~~~");
         cluster.fork();
