@@ -1,13 +1,13 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
     <meta name="format-detection" content="telphone=no,email=no" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="/css/lordVirtues.css">
-    <title>我的信息</title>
     <script src="/js/jquery-1.8.3.min.js"></script>
+    <title>我的信息</title>
+
     <script type="text/javascript">
         function save() {
             var dataToUpdate = {
@@ -47,7 +47,7 @@
                 <div class="media-item">
                     <div class="item-bd">
                         <a href="javascript:void(0)">
-                            <h4 class="bd-tt">头像</h4>
+                            <h4 class="bd-tt">{{name}}</h4>
                         </a>
                     </div>
                     <img src="{{img}}" class="item-img" width="60px" height="60px">
