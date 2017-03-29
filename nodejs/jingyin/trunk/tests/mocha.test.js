@@ -578,6 +578,38 @@ describe('静音寺业务系统', function () {
                     });
                 });
             });
+
+            describe('统计所有捐助', function () {
+                var statistics, options;
+
+                beforeEach(function () {
+                    statistics = require('../server/modules/statistics');
+                    options = {}
+                });
+
+                it('总计', function () {
+                    return statistics.listVirtues(options)
+                        .then(function (data) {
+                            expect(data).eql({
+                                count: 6,
+                                sum: 120
+                            });
+                        });
+                });
+
+                it('总计-指定期间', function () {
+                    return statistics.listVirtues(options)
+                        .then(function (data) {
+                            expect(data).eql({
+                                periods: {
+                                    Y2017: {count: 6, sum: 120}
+                                },
+                                count: 6,
+                                sum: 120
+                            });
+                        });
+                });
+            });
         });
     });
 
