@@ -1,142 +1,13 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html>
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+    <meta name="format-detection" content="telphone=no,email=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="css/index.css">
     <title>我的信息</title>
-
-    <style type="text/css">
-        body {
-            margin: 0;
-            background-color: #fdf6d5;
-        }
-
-        .myProfileEditor {
-            width: 100%;
-            line-height: 180px;;
-            margin-top: 10px;
-            margin-bottom: 5px;
-            padding-left: 20px;;
-            background-color: #FFF;
-            overflow: hidden;
-        }
-
-        .myProfileEditor .content {
-            line-height: 260px;
-            vertical-align: middle;
-            overflow: hidden;
-        }
-
-        .myProfileEditor .content .icon {
-            float: left;
-            width: 260px;
-            line-height: 260px;
-            vertical-align: middle;
-            background-image: url("{{img}}");
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        .myProfileEditor .content .nickName {
-            float: left;
-            line-height: 260px;
-            padding-left: 5%;
-            vertical-align: middle;
-            font-size: 42px;
-        }
-
-        .formItem {
-            width: 100%;
-            line-height: 180px;;
-            margin-bottom: 3px;
-            padding-left: 20px;;
-            vertical-align: middle;
-            background-color: #FFF;
-            overflow: hidden;
-        }
-
-        .formItem .label {
-            float: left;
-            width: 220px;
-            line-height: 180px;;
-            font-size: 42px;
-            margin-left: 15px;
-            vertical-align: middle;
-        }
-
-        .formItem .editor {
-            width: 60%;
-            line-height: 78px;;
-            padding:0;
-            font-size: 42px;
-            vertical-align: middle;
-        }
-
-        .nickNameIcon {
-            float: left;
-            line-height: 180px;
-            background-image: url("/images/xing.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 76px;
-        }
-
-        .realNameIcon {
-            float: left;
-            line-height: 180px;
-            background-image: url("/images/ren.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 76px;
-        }
-
-        .mobileIcon {
-            float: left;
-            line-height: 180px;
-            background-image: url("/images/shouji.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 76px;
-        }
-
-        .addressIcon {
-            float: left;
-            line-height: 180px;
-            background-image: url("/images/fang.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 76px;
-        }
-
-        .emailIcon {
-            float: left;
-            line-height: 180px;
-            background-image: url("/images/mail.png");
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 76px;
-        }
-
-        .form-tool{
-            width: 100%;
-            line-height: 180px;;
-            margin-bottom: 3px;
-            padding-left: 20px;;
-            text-align: center;
-            vertical-align: middle;
-            background-color: #FFF;
-            overflow: hidden;
-        }
-
-        .form-tool .ok{
-            width:166px;
-            height:70px;
-            font-size: 52px;
-            vertical-align: middle;
-            margin-right: 50px;
-            padding-left: 5px;
-            padding-right: 5px;
-        }
-    </style>
     <script src="/js/jquery-1.8.3.min.js"></script>
     <script type="text/javascript">
         function save() {
@@ -170,49 +41,103 @@
 </head>
 
 <body>
+<main id="page" class="page-wrap">
+    <div class="page">
+        <div class="content">
+            <div class="media-list media-list--after-v  media-item--custom-my">
+                <div class="media-item">
+                    <div class="item-bd">
+                        <a href="javascript:void(0)">
+                            <h4 class="bd-tt">头像</h4>
+                        </a>
+                    </div>
+                    <img src="{{lord.img}}" class="item-img" width="60px" height="60px">
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <ul class="line-list line-list--indent line-list--flex">
+                <li class="line-item">
+                    <i class="icon-info"></i>
+                    <p class="item-tt">昵称</p>
+                    <span class="item-append"><input class="editor" id="txtName" type="text" value="{{name}}"/></span>
+                    <i class="icon-v-right"></i>
+                </li>
 
-<div class="myProfileEditor">
-    <div class="content">
-        <div class="icon">&nbsp;</div>
-        <div class="nickName">{{name}}</div>
+                <li class="line-item">
+                    <i class="icon-info"></i>
+                    <p class="item-tt">真实姓名</p>
+                    <span class="item-append"><input class="editor" id="txtRealname" type="text" value="{{realname}}"/></span>
+                    <i class="icon-v-right"></i>
+                </li>
+            </ul>
+            <ul class="line-list line-list--indent line-list--flex">
+                <li class="line-item">
+                    <i class="icon-info"></i>
+                    <p class="item-tt">手机号</p>
+                    <span class="item-append"><input class="editor" id="txtPhone" type="text" value="{{phone}}"/></span>
+                    <i class="icon-v-right"></i>
+                </li>
+                <li class="line-item">
+                    <i class="icon-info"></i>
+                    <p class="item-tt">邮箱</p>
+                    <span class="item-append"><input class="editor" id="txtEmail" type="text" value="{{email}}"/></span>
+                    <i class="icon-v-right"></i>
+                </li>
+                <li class="line-item">
+                    <i class="icon-info"></i>
+                    <p class="item-tt">地址</p>
+                    <span class="item-append"><input class="editor" id="txtAddr" type="text" value="{{addr}}"/></span>
+                    <i class="icon-v-right"></i>
+                </li>
+            </ul>
+            <div class="form-tool">
+                <input type="button" class="ok" value="确认" onclick="save()"/>
+                <input type="button" class="ok" value="取消" onclick="cancel()"/>
+            </div>
+            <div class="card-list card-list--gap card-list--custom">
+                <div class="card-item ">
+                    <img src="/images/logo.png" alt="" class="item-img" width="80">
+                </div>
+                <span class="item-tt">Copyright @2017 The Jin Yin Temple</span>
+            </div>
+        </div>
     </div>
-</div>
+</main>
 
-<div class="formItem">
-    <div class="nickNameIcon">&nbsp;</div>
-    <div class="label">昵称</div>
-    <input class="editor" id="txtName" type="text" value="{{name}}"/>
-</div>
-
-<div class="formItem">
-    <div class="realNameIcon">&nbsp;</div>
-    <div class="label">真实姓名</div>
-    <input class="editor" id="txtRealname" type="text" value="{{realname}}"/>
-</div>
-
-<div class="formItem">
-    <div class="content">
-        <div class="mobileIcon">&nbsp;</div>
-        <div class="label">手机</div>
-        <input class="editor" id="txtPhone" type="text" value="{{phone}}"/>
+<footer class="fixed-bottom">
+    <ul class="nav-list nav-list--bottom nav-list--custom">
+        <li class="nav-item active">
+            <p class="item-txt" onclick="window.location='/jingyin/manjusri/index'">首页</p>
+        </li>
+        <li class="nav-item">
+            <p class="item-txt" onclick="window.location='/jingyin/manjusri/jiansi'">建寺</p></a>
+        </li>
+        <!--<li class="nav-item">
+            <p class="item-txt">功课</p>
+        </li>
+        <li class="nav-item">
+            <p class="item-txt">查询</p>
+        </li>-->
+    </ul>
+</footer>
+<!--
+<section class="dialog-wrap active">
+    <div class="overlay"></div>
+    <div class="dialog">
+        <div class="dialog-bd">
+            <h3 class="bd-tt">昵称</h3>
+            <p class="bd-txt txt--left">
+                <input type="text" class="f-text" placeholder="请在此处输入您的昵称">
+            </p>
+        </div>
+        <footer class="dialog-ft">
+            <span class="js-cancel ft-btn">取消</span>
+            <span class="js-save ft-btn">保存</span>
+        </footer>
     </div>
-</div>
-
-<div class="formItem">
-    <div class="addressIcon">&nbsp;</div>
-    <div class="label">地址</div>
-    <input class="editor" id="txtAddr" type="text" value="{{addr}}"/>
-</div>
-
-<div class="formItem">
-    <div class="emailIcon">&nbsp;</div>
-    <div class="label">邮箱</div>
-    <input class="editor" id="txtEmail" type="text" value="{{email}}"/>
-</div>
-
-<div class="form-tool">
-    <input type="button" class="ok" value="确认" onclick="save()"/>
-    <input type="button" class="ok" value="取消" onclick="cancel()"/>
-</div>
+</section>
+-->
 </body>
+
 </html>
