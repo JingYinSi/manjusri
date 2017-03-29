@@ -5,56 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0"/>
     <meta name="format-detection" content="telphone=no,email=no"/>
     <link rel="stylesheet" href="/css/lordVirtues.css">
+    <script src="/js/jquery-1.8.3.min.js"></script>
     <title>功德主</title>
 </head>
 <body>
 <main id="page" class="page-wrap">
     <div class="page">
         <div class="content">
-            <div class="media-list media-list--after-v">
-                <div class="media-item media-item--custom">
+            <div class="media-list media-list--after-v media-item--custom">
+                <div class="media-item ">
                     <img src="{{lord.img}}" class="item-img" width="60px" height="60px">
-                    <div class="item-bd" onclick="window.location = '/jingyin/manjusri/lords/{{lord.openid}}/profile';" >
-                        <h4 class="bd-tt">
-                            <a href="/jingyin/manjusri/lords/{{lord.openid}}/profile">{{lord.name}}</a>
-                            <!--<a href="/jingyin/manjusri/suixi">{{lord.name}}</a>-->
-                        </h4>
+                    <div class="item-bd" onclick="window.location = '/jingyin/manjusri/lords/{{lord.openid}}/profile';">
+                        <a href="/jingyin/manjusri/lords/{{lord.openid}}/profile">
+                            <h4 class="bd-tt">{{lord.name}}</h4>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
         <section class="header-sub">
-            <ul class="nav-list nav-list--tab">
-                <li class="nav-item active">功德</li>
-                <!--<li class="nav-item">功课</li>
-                <li class="nav-item">活动</li>
-                <li class="nav-item">义工</li>-->
-            </ul>
+            <div class="nav-list nav-list--tab">
+                <a href="#" class="nav-item active">功德</a>
+                <a href="#" class="nav-item disable"></a>
+                <a href="#" class="nav-item disable"></a>
+                <a href="#" class="nav-item disable"></a>
+            </div>
         </section>
         <div class="content">
-            <h2 class="guide-title">日行一善</h2>
-            <ul class="line-list line-list--indent line-list--flex">
+            <a href="javascript:;">
+                <h2 class="guide-title guide-title--after-v"><i class="icon-lotus"></i>日行一善</h2>
+            </a>
+            <ul class="line-list line-list--indent line-list--flex line-list--table">
+                <li class="line-item line-item--th">
+                    <span class="item-append"></span>
+                    <span class="item-tt">次数</span>
+                    <span class="item-tt">金额</span>
+                </li>
                 <li class="line-item">
                     <span class="item-append">今天</span>
-                    <span class="item-tt">次数：{{virtues.daily.thisday.count}}次</span>
-                    <span class="item-tt">金额：￥{{virtues.daily.thisday.sum}}</span>
+                    <span class="item-tt">{{virtues.daily.thisday.count}}次</span>
+                    <span class="item-tt">￥{{virtues.daily.thisday.sum}}</span>
                 </li>
                 <li class="line-item">
                     <span class="item-append">本月</span>
-                    <span class="item-tt">次数：{{virtues.daily.thisMonth.count}}次</span>
-                    <span class="item-tt">金额：￥{{virtues.daily.thisMonth.sum}}</span>
+                    <span class="item-tt">{{virtues.daily.thisMonth.count}}次</span>
+                    <span class="item-tt">￥{{virtues.daily.thisMonth.sum}}</span>
                 </li>
                 <li class="line-item">
                     <span class="item-append">累计</span>
-                    <span class="item-tt">次数：{{virtues.daily.total.count}}次</span>
-                    <span class="item-tt">金额：￥{{virtues.daily.total.sum}}</span>
+                    <span class="item-tt">{{virtues.daily.total.count}}次</span>
+                    <span class="item-tt">￥{{virtues.daily.total.sum}}</span>
                 </li>
             </ul>
-            <h2 class="guide-title">随喜项目</h2>
+            <a href="javascript:;">
+                <h2 class="guide-title guide-title--after-v"><i class="icon-lotus"></i>随喜项目</h2>
+            </a>
+            <ul class="line-list line-list--indent line-list--flex">
+                <li class="line-item">
+                    <!--<span class="item-append">累计</span>-->
+                    <span class="item-tt">总次数：<span class="money">{{virtues.virtues.count}}</span>次</span>
+                    <span class="item-tt">金额：<span class="money">￥{{virtues.virtues.sum}}</span></span>
+                </li>
+            </ul>
             <div class="media-list media-list--after-v">
                 {{#each virtues.virtues.details}}
                     <div class="media-item">
-                        <!--<img src="https://placeholdit.imgix.net/~text?w=60&h=60" class="item-img">-->
                         <img src="{{img}}" class="item-img">
                         <div class="item-bd">
                             <h4 class="bd-tt">{{subject}}</h4>
@@ -63,16 +78,9 @@
                     </div>
                 {{/each}}
             </div>
-            <ul class="line-list line-list--indent line-list--flex">
-                <li class="line-item">
-                    <span class="item-append">累计</span>
-                    <span class="item-tt">次数：{{virtues.virtues.count}}次</span>
-                    <span class="item-tt">金额：￥{{virtues.virtues.sum}}</span>
-                </li>
-            </ul>
             <div class="card-list card-list--gap card-list--custom">
                 <div class="card-item ">
-                    <img src="/images/logo.png" alt="" class="item-img" width="80">
+                    <img src="images/logo.png" alt="" class="item-img" width="150">
                 </div>
                 <span class="item-tt">Copyright @2017 The Jin Yin Temple</span>
             </div>
@@ -82,17 +90,17 @@
 <footer class="fixed-bottom">
     <ul class="nav-list nav-list--bottom nav-list--custom">
         <li class="nav-item active">
-            <p class="item-txt"><a href="/jingyin/manjusri/index">首页</a></p>
+            <a href="/jingyin/manjusri/index"><p class="item-txt">首页</p></a>
         </li>
         <li class="nav-item">
-            <p class="item-txt"><a href="/jingyin/manjusri/jiansi">建寺</a></p>
-        </li>
-        <!--<li class="nav-item">
-            <p class="item-txt">功课</p>
+            <a href="/jingyin/manjusri/jiansi"><p class="item-txt">建寺</p></a>
         </li>
         <li class="nav-item">
-            <p class="item-txt">查询</p>
-        </li>-->
+            <!--<p class="item-txt">功课</p>-->
+        </li>
+        <li class="nav-item">
+            <!--<p class="item-txt">查询</p>-->
+        </li>
     </ul>
 </footer>
 </body>
