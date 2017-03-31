@@ -15,17 +15,17 @@ module.exports = {
     dateUtils: {
         maxYestoday: function (day) {
             var theDay = day ? day : new Date();
-            return new Date(theDay.setHours(0,0,0,0) - 1);
+            return new Date(theDay.setHours(0, 0, 0, 0) - 1);
         },
 
         minTomorrow: function (day) {
             var theDay = day ? day : new Date();
-            return new Date( theDay.setHours(23, 59, 59, 999) + 1);
+            return new Date(theDay.setHours(23, 59, 59, 999) + 1);
         },
 
         minToday: function (day) {
             var theDay = day ? day : new Date();
-            return new Date(theDay.setHours(0,0,0,0));
+            return new Date(theDay.setHours(0, 0, 0, 0));
         },
 
         maxToday: function (day) {
@@ -45,6 +45,31 @@ module.exports = {
             var thisyear = theDay.getFullYear();
             var thismonth = theDay.getMonth();
             return new Date(new Date(thisyear, thismonth + 1, 1) - 1);
+        }
+    },
+
+    range: {
+        create: function (rangeArray) {
+            var result = [];
+            var names = [];
+            for (var i = 0; i < rangeArray.length - 1; i++) {
+                names.push([rangeArray[i], rangeArray[i + 1]]);
+            }
+            names.forEach(function (name) {
+                var obj = {
+                    name: function () {
+                        return name;
+                    },
+                    exp: function () {
+                        var exp = {};
+                        if (name[0]) exp["$gte"] = name[0];
+                        if (name[1]) exp["$lt"] = name[1];
+                        return exp;
+                    }
+                }
+                result.push(obj);
+            });
+            return result;
         }
     }
 
