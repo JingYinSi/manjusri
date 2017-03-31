@@ -110,11 +110,20 @@ describe('静音寺业务系统', function () {
             usersData = [
                 {
                     "name": "陈立新",
+                    "province": "江苏",
+                    "city": "南京",
                     "openid": "o0ghywcfW_2Dp4oN-7NADengZAVM",
                 },
                 {
                     "name": "Susan孙英",
+                    "province": "江苏",
+                    "city": "无锡",
                     "openid": "o0ghywYninpxeXtUPk-lTFx2cK9Q",
+                },
+                {
+                    "name": "foo",
+                    "city": "北京",
+                    "openid": "o0ghabcninpxeXtUPk-lTFx2cK9Q",
                 }
             ];
 
@@ -125,6 +134,13 @@ describe('静音寺业务系统', function () {
                     if (err) return callback(err);
                     usersInDb = docs;
                     var virtuesData = [
+                        {
+                            "lord": usersInDb[1].id,
+                            "subject": partsInDb[0].id,
+                            "amount": 10,
+                            "state": "payed",
+                            "timestamp": new Date(2016, 2, 14)
+                        },
                         {
                             "lord": usersInDb[0].id,
                             "subject": partsInDb[0].id,
@@ -175,6 +191,20 @@ describe('静音寺业务系统', function () {
                             "amount": 20,
                             "state": "payed",
                             "timestamp": new Date(2016, 5, 24)
+                        },
+                        {
+                            "lord": usersInDb[2].id,
+                            "subject": partsInDb[0].id,
+                            "amount": 30,
+                            "state": "payed",
+                            "timestamp": new Date(2016, 5, 24)
+                        },
+                        {
+                            "lord": usersInDb[1].id,
+                            "subject": partsInDb[0].id,
+                            "amount": 40,
+                            "state": "payed",
+                            "timestamp": new Date(2016, 7, 24)
                         },
                     ];
                     insertDocs(VirtueModel, virtuesData, function (err, docs) {
@@ -522,7 +552,7 @@ describe('静音寺业务系统', function () {
                                 expect(result).eql({
                                     daily: {
                                         thisday: {count: 1, sum: 20},
-                                        thisMonth: {count: 3, sum: 60},
+                                        thisMonth: {count: 2, sum: 40},
                                         total: {count: 4, sum: 80}
                                     },
                                     virtues: {
@@ -567,7 +597,7 @@ describe('静音寺业务系统', function () {
                     });
 
                     it('查找成功', function () {
-                        virtueId = virtuesInDb[4].id.toString();
+                        virtueId = virtuesInDb[5].id.toString();
                         return virtues.findNewVirtueById(virtueId)
                             .then(function (doc) {
                                 expect(doc.state).eql('new');
@@ -580,32 +610,371 @@ describe('静音寺业务系统', function () {
             });
 
             describe('统计所有捐助', function () {
-                var statistics, options;
+                var statistics;
 
                 beforeEach(function () {
                     statistics = require('../server/modules/statistics');
-                    options = {}
                 });
 
-                it('总计', function () {
-                    return statistics.listVirtues(options)
+                it('各年度及总计', function () {
+                    return statistics.byYears()
                         .then(function (data) {
                             expect(data).eql({
-                                count: 6,
-                                sum: 120
+                                "count": 9,
+                                "sum": 200,
+                                "years": [
+                                    {
+                                        "year": 2016,
+                                        "count": 4,
+                                        "sum": 100
+                                    },
+                                    {
+                                        "year": 2017,
+                                        "count": 5,
+                                        "sum": 100
+                                    }
+                                ]
                             });
                         });
                 });
 
-                it('总计-指定期间', function () {
-                    return statistics.listVirtues(options)
+                it('各个省市及总计', function () {
+                    return statistics.byProvicesAndCities()
                         .then(function (data) {
                             expect(data).eql({
-                                periods: {
-                                    Y2017: {count: 6, sum: 120}
+                                "count": 9,
+                                "sum": 200,
+                                "provinces": {
+                                    "直辖市": {
+                                        "count": 1,
+                                        "sum": 30,
+                                        "cities": {
+                                            "北京": {
+                                                "count": 1,
+                                                "sum": 30,
+                                            }
+                                        }
+                                    },
+                                    "江苏": {
+                                        "count": 8,
+                                        "sum": 170,
+                                        "cities": {
+                                            "南京": {
+                                                "count": 5,
+                                                "sum": 100,
+                                            },
+                                            "无锡": {
+                                                "count": 3,
+                                                "sum": 70,
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                });
+
+                it('前N名排名', function () {
+                    return statistics.topN(2)
+                        .then(function (data) {
+                            expect(data).eql({
+                                "top": 2,
+                                "count": 9,
+                                "sum": 200,
+                                "percent": 85,
+                                "details": [
+                                    {
+                                        lord: {
+                                            nickname: usersInDb[0].name,
+                                            name: usersInDb[0].realname,
+                                            province: usersInDb[0].province,
+                                            city: usersInDb[0].city,
+                                            phone: usersInDb[0].phone,
+                                            addr: usersInDb[0].addr,
+                                            email: usersInDb[0].email,
+                                        },
+                                        count: 5,
+                                        sum: 100
+                                    },
+                                    {
+                                        lord: {
+                                            nickname: usersInDb[1].name,
+                                            name: usersInDb[1].realname,
+                                            province: usersInDb[1].province,
+                                            city: usersInDb[1].city,
+                                            phone: usersInDb[1].phone,
+                                            addr: usersInDb[1].addr,
+                                            email: usersInDb[1].email,
+                                        },
+                                        count: 3,
+                                        sum: 70
+                                    }
+                                ]
+                            });
+                        });
+                });
+
+                it('指定金额区间排名', function () {
+                    var rangeExpStub3 = sinon.stub();
+                    rangeExpStub3.returns({$lt: 20});
+                    var rangeArrStub3 = sinon.stub();
+                    rangeArrStub3.returns([null, 20]);
+
+                    var rangeExpStub0 = sinon.stub();
+                    rangeExpStub0.returns({$gte: 20, $lt: 40});
+                    var rangeArrStub0 = sinon.stub();
+                    rangeArrStub0.returns([20, 40]);
+
+                    var rangeExpStub1 = sinon.stub();
+                    rangeExpStub1.returns({$gte: 40, $lt: 80});
+                    var rangeArrStub1 = sinon.stub();
+                    rangeArrStub1.returns([40, 80]);
+
+                    var rangeExpStub2 = sinon.stub();
+                    rangeExpStub2.returns({$gte: 80});
+                    var rangeArrStub2 = sinon.stub();
+                    rangeArrStub2.returns([80, null]);
+
+                    return statistics.eachRangeOfAmount([
+                        {name: rangeArrStub3, exp: rangeExpStub3},
+                        {name: rangeArrStub0, exp: rangeExpStub0},
+                        {name: rangeArrStub1, exp: rangeExpStub1},
+                        {name: rangeArrStub2, exp: rangeExpStub2},
+                    ])
+                        .then(function (data) {
+                            expect(data).eql({
+                                "count": 9,
+                                "sum": 200,
+                                "buckets": [
+                                    {
+                                        "bucket": [20, 40],
+                                        "count": 1,
+                                        "sum": 30,
+                                        "virtues": [
+                                            {
+                                                "count": 1,
+                                                "lord": {
+                                                    nickname: usersInDb[2].name,
+                                                    name: usersInDb[2].realname,
+                                                    province: usersInDb[2].province,
+                                                    city: usersInDb[2].city,
+                                                    phone: usersInDb[2].phone,
+                                                    addr: usersInDb[2].addr,
+                                                    email: usersInDb[2].email,
+                                                },
+                                                "sum": 30,
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        bucket: [40, 80],
+                                        virtues: [
+                                            {
+                                                lord: {
+                                                    nickname: usersInDb[1].name,
+                                                    name: usersInDb[1].realname,
+                                                    province: usersInDb[1].province,
+                                                    city: usersInDb[1].city,
+                                                    phone: usersInDb[1].phone,
+                                                    addr: usersInDb[1].addr,
+                                                    email: usersInDb[1].email,
+                                                },
+                                                count: 3,
+                                                sum: 70
+                                            }
+                                        ],
+                                        count: 3,
+                                        sum: 70
+                                    },
+                                    {
+                                        bucket: [80, null],
+                                        virtues: [
+                                            {
+                                                lord: {
+                                                    nickname: usersInDb[0].name,
+                                                    name: usersInDb[0].realname,
+                                                    province: usersInDb[0].province,
+                                                    city: usersInDb[0].city,
+                                                    phone: usersInDb[0].phone,
+                                                    addr: usersInDb[0].addr,
+                                                    email: usersInDb[0].email,
+                                                },
+                                                count: 5,
+                                                sum: 100
+                                            }
+                                        ],
+                                        count: 5,
+                                        sum: 100
+                                    },
+                                ]
+                            });
+                        });
+                });
+
+                it('指定年度的各个月份', function () {
+                    return statistics.byMonthesOfTheYear(2016)
+                        .then(function (data) {
+                            expect(data).eql({
+                                "count": 4,
+                                "sum": 100,
+                                "year": 2016,
+                                "monthes": {
+                                    "3": {
+                                        "count": 1,
+                                        "sum": 10
+                                    },
+                                    "6": {
+                                        "count": 2,
+                                        "sum": 50
+                                    },
+                                    "8": {
+                                        "count": 1,
+                                        "sum": 40
+                                    }
                                 },
-                                count: 6,
-                                sum: 120
+                            });
+                        });
+                });
+
+                it('指定年度的各个省市', function () {
+                    return statistics.byProvicesAndCities(2016)
+                        .then(function (data) {
+                            expect(data).eql({
+                                "count": 4,
+                                "sum": 100,
+                                "year": 2016,
+                                "provinces": {
+                                    "直辖市": {
+                                        "count": 1,
+                                        "sum": 30,
+                                        "cities": {
+                                            "北京": {
+                                                "count": 1,
+                                                "sum": 30,
+                                            }
+                                        }
+                                    },
+                                    "江苏": {
+                                        "count": 3,
+                                        "sum": 70,
+                                        "cities": {
+                                            "南京": {
+                                                "count": 1,
+                                                "sum": 20,
+                                            },
+                                            "无锡": {
+                                                "count": 2,
+                                                "sum": 50,
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                });
+
+                it('指定年度前N名排名', function () {
+                    return statistics.topN(1, 2017)
+                        .then(function (data) {
+                            expect(data).eql({
+                                "year": 2017,
+                                "top": 1,
+                                "count": 5,
+                                "sum": 100,
+                                "percent": 80,
+                                "details": [
+                                    {
+                                        lord: {
+                                            nickname: usersInDb[0].name,
+                                            name: usersInDb[0].realname,
+                                            province: usersInDb[0].province,
+                                            city: usersInDb[0].city,
+                                            phone: usersInDb[0].phone,
+                                            addr: usersInDb[0].addr,
+                                            email: usersInDb[0].email,
+                                        },
+                                        count: 4,
+                                        sum: 80
+                                    }
+                                ]
+                            });
+                        });
+                });
+
+                it('指定年度金额区间排名', function () {
+                    var rangeExpStub3 = sinon.stub();
+                    rangeExpStub3.returns({$lt: 20});
+                    var rangeArrStub3 = sinon.stub();
+                    rangeArrStub3.returns([null, 20]);
+
+                    var rangeExpStub0 = sinon.stub();
+                    rangeExpStub0.returns({$gte: 20, $lt: 40});
+                    var rangeArrStub0 = sinon.stub();
+                    rangeArrStub0.returns([20, 40]);
+
+                    var rangeExpStub1 = sinon.stub();
+                    rangeExpStub1.returns({$gte: 40, $lt: 80});
+                    var rangeArrStub1 = sinon.stub();
+                    rangeArrStub1.returns([40, 80]);
+
+                    var rangeExpStub2 = sinon.stub();
+                    rangeExpStub2.returns({$gte: 80});
+                    var rangeArrStub2 = sinon.stub();
+                    rangeArrStub2.returns([80, null]);
+
+                    return statistics.eachRangeOfAmount([
+                        {name: rangeArrStub3, exp: rangeExpStub3},
+                        {name: rangeArrStub0, exp: rangeExpStub0},
+                        {name: rangeArrStub1, exp: rangeExpStub1},
+                        {name: rangeArrStub2, exp: rangeExpStub2},
+                    ], 2017)
+                        .then(function (data) {
+                            expect(data).eql({
+                                "year": 2017,
+                                "count": 5,
+                                "sum": 100,
+                                "buckets": [
+                                    {
+                                        "bucket": [20, 40],
+                                        "count": 1,
+                                        "sum": 20,
+                                        "virtues": [
+                                            {
+                                                "count": 1,
+                                                "lord": {
+                                                    nickname: usersInDb[1].name,
+                                                    name: usersInDb[1].realname,
+                                                    province: usersInDb[1].province,
+                                                    city: usersInDb[1].city,
+                                                    phone: usersInDb[1].phone,
+                                                    addr: usersInDb[1].addr,
+                                                    email: usersInDb[1].email,
+                                                },
+                                                "sum": 20,
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        bucket: [80, null],
+                                        virtues: [
+                                            {
+                                                lord: {
+                                                    nickname: usersInDb[0].name,
+                                                    name: usersInDb[0].realname,
+                                                    province: usersInDb[0].province,
+                                                    city: usersInDb[0].city,
+                                                    phone: usersInDb[0].phone,
+                                                    addr: usersInDb[0].addr,
+                                                    email: usersInDb[0].email,
+                                                },
+                                                count: 4,
+                                                sum: 80
+                                            }
+                                        ],
+                                        count: 4,
+                                        sum: 80
+                                    },
+                                ]
                             });
                         });
                 });
@@ -892,6 +1261,43 @@ describe('静音寺业务系统', function () {
                 expect(utils.maxThisMonth(theDay)).eql(expected);
             });
         });
+
+        describe('范围', function () {
+            var range;
+
+            beforeEach(function () {
+                range = require('../modules/utils').range;
+            });
+
+            it('范围在上下限之间', function () {
+                var rangeObj = range.create([20, 50]);
+                expect(rangeObj[0].exp()).eql({$gte: 20, $lt: 50});
+                expect(rangeObj[0].name()).eql([20, 50]);
+            });
+
+            it('大于下限', function () {
+                var rangeObj = range.create([20, null]);
+                expect(rangeObj[0].exp()).eql({$gte: 20});
+                expect(rangeObj[0].name()).eql([20, null]);
+            });
+
+            it('小于上限', function () {
+                var rangeObj = range.create([null, 50]);
+                expect(rangeObj[0].exp()).eql({$lt: 50});
+                expect(rangeObj[0].name()).eql([null, 50]);
+            });
+
+            it('多个区间', function () {
+                var rangeObj = range.create([20, 50, 80, null]);
+
+                expect(rangeObj[0].exp()).eql({$gte: 20, $lt: 50});
+                expect(rangeObj[0].name()).eql([20, 50]);
+                expect(rangeObj[1].exp()).eql({$gte: 50, $lt: 80});
+                expect(rangeObj[1].name()).eql([50, 80]);
+                expect(rangeObj[2].exp()).eql({$gte: 80});
+                expect(rangeObj[2].name()).eql([80, null]);
+            });
+        })
     });
 
     describe('Response Wrapper', function () {
