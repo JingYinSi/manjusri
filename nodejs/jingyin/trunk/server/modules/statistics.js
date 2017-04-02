@@ -3,6 +3,7 @@
  */
 const VirtueSchema = require('../wechat/models/virtue'),
     dateUtils = require('../../modules/utils').dateUtils,
+    round = require('../../modules/utils').round,
     mongoose = require('mongoose');
 
 var log4js = require('log4js');
@@ -10,8 +11,36 @@ log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
 const sortTemplete = {$sort: {sum: -1}}
+const matchStageWithPayedStateAndTheYearMonthDay = function (theYear, theMonth, theDay) {
+    var matchLine = {$match: {state: 'payed'}}
+    if (theYear) {
+        var fromDate = dateUtils.minToday(new Date(theYear, 0, 1));
+        var toDate = dateUtils.maxToday(new Date(theYear, 11, 31));
+        if (theMonth) {
+            if (theDay) {
+                var day = new Date(theYear, theMonth - 1, theDay);
+                fromDate = dateUtils.minToday(day);
+                toDate = dateUtils.maxToday(day);
+            } else {
+                var thisMonth = new Date(theYear, theMonth - 1, 1);
+                fromDate = dateUtils.minThisMonth(thisMonth);
+                toDate = dateUtils.maxThisMonth(thisMonth);
+            }
+        }
+        matchLine = {
+            $match: {
+                state: 'payed',
+                timestamp: {
+                    $gte: fromDate,
+                    $lte: toDate
+                }
+            }
+        }
+    }
+    return matchLine;
+}
 
-const genByProvicesAndCities = function (lines, theYear) {
+const genByProvicesAndCities = function (lines, theYear, theMonth, theDay) {
     var result = {};
 
     return VirtueSchema.aggregate(lines)
@@ -20,6 +49,8 @@ const genByProvicesAndCities = function (lines, theYear) {
             result = data.total[0];
             delete result._id;
             if (theYear) result.year = theYear;
+            if (theMonth) result.month = theMonth;
+            if (theDay) result.day = theDay;
             result.provinces = {};
 
             var provincesData = data.byProvinces;
@@ -46,7 +77,7 @@ const genByProvicesAndCities = function (lines, theYear) {
             return result;
         });
 }
-const genTopN = function (lines, top, theYear) {
+const genTopN = function (lines, top, theYear, theMonth, theDay) {
     var result = {};
     return VirtueSchema.aggregate(lines)
         .then(function (data) {
@@ -72,13 +103,15 @@ const genTopN = function (lines, top, theYear) {
             var total = data.total[0];
             if (top) result.top = top;
             if (theYear) result.year = theYear;
+            if (theMonth) result.month = theMonth;
+            if (theDay) result.day = theDay;
             result.count = total.count;
             result.sum = total.sum;
-            result.percent = lordsum * 100 / total.sum;
+            result.percent = round(lordsum * 100 / total.sum, 2);
             return result;
         });
 }
-const genEachRangeOfAmount = function (lines, range, theYear) {
+const genEachRangeOfAmount = function (lines, range, theYear, theMonth) {
     var result = {};
     return VirtueSchema.aggregate(lines)
         .then(function (data) {
@@ -127,247 +160,235 @@ const genEachRangeOfAmount = function (lines, range, theYear) {
                 buckets: buckets
             };
             if (theYear) result.year = theYear;
+            if (theMonth) result.month = theMonth;
             return result;
         });
 }
 
-function Statistics() {
-}
-
-Statistics.prototype.byYears = function (options) {
-    lines = [
-        {"$match": {"state": "payed"}},
-        {
-            "$facet": {
-                "byYear": [
-                    {
-                        "$group": {
-                            "_id": {"$year": "$timestamp"},
-                            "count": {"$sum": 1},
-                            "sum": {"$sum": "$amount"}
-                        }
-                    },
-                    {$sort: {_id: 1}}
-                ],
-                "total": [{
-                    "$group": {"_id": null, "count": {"$sum": 1}, "sum": {"$sum": "$amount"}}
-                }]
-            }
-        }];
-    var result = {}
-    return VirtueSchema.aggregate(lines)
-        .then(function (data) {
-            data = data[0];
-
-            result = data.total[0];
-            delete result._id;
-
-            var years = [];
-            data["byYear"].forEach(function (item) {
-                var year = {
-                    year: item._id,
-                    count: item.count,
-                    sum: item.sum
-                }
-                years.push(year);
-            });
-            result.years = years;
-
-            return result;
-        });
-}
-
-Statistics.prototype.byProvicesAndCities = function (theYear) {
-    var matchLine = !theYear ? {$match: {state: 'payed'}}
-        : {
-        $match: {
-            state: 'payed',
-            timestamp: {
-                $gte: dateUtils.minToday(new Date(theYear, 0, 1)),
-                $lte: dateUtils.maxToday(new Date(theYear, 11, 31))
-            }
-        }
-    }
-    var lines = [
-        matchLine,
-        {$lookup: {from: "users", localField: "lord", foreignField: "_id", as: "lorddoc"}},
-        {$project: {"lorddoc.province": 1, "lorddoc.city": 1, amount: 1, timestamp: 1}},
-        {
-            $facet: {
-                total: [
-                    {
-                        $group: {
-                            _id: null,
-                            count: {$sum: 1}, sum: {$sum: "$amount"}
-                        }
-                    }
-                ],
-                byProvinces: [
-                    {
-                        $group: {
-                            _id: "$lorddoc.province",
-                            count: {$sum: 1}, sum: {$sum: "$amount"}
-                        }
-                    }
-                ],
-                byCities: [
-                    {
-                        $group: {
-                            _id: {province: "$lorddoc.province", city: "$lorddoc.city"},
-                            count: {$sum: 1}, sum: {$sum: "$amount"}
-                        }
-                    }
-                ]
-            }
-        }
-    ];
-
-    return genByProvicesAndCities(lines, theYear);
-}
-
-Statistics.prototype.topN = function (top, theYear) {
-    var matchLine = !theYear ? {$match: {state: 'payed'}}
-        : {
-        $match: {
-            state: 'payed',
-            timestamp: {
-                $gte: dateUtils.minToday(new Date(theYear, 0, 1)),
-                $lte: dateUtils.maxToday(new Date(theYear, 11, 31))
-            }
-        }
-    }
-
-    var lines = [
-        matchLine,
-        {$lookup: {from: "users", localField: "lord", foreignField: "_id", as: "lorddoc"}},
-        {$project: {"lorddoc": 1, amount: 1, timestamp: 1}},
-        {
-            $facet: {
-                total: [
-                    {
-                        $group: {
-                            _id: null,
-                            count: {$sum: 1}, sum: {$sum: "$amount"}
-                        }
-                    }
-                ],
-                byLord: [
-                    {
-                        $group: {
-                            _id: {lord: "$lorddoc"},
-                            count: {$sum: 1}, sum: {$sum: "$amount"}
+module.exports = {
+    byYears: function () {
+        lines = [
+            {"$match": {"state": "payed"}},
+            {
+                "$facet": {
+                    "byYear": [
+                        {
+                            "$group": {
+                                "_id": {"$year": "$timestamp"},
+                                "count": {"$sum": 1},
+                                "sum": {"$sum": "$amount"}
+                            }
                         },
-                    },
-                    sortTemplete,
-                    {$limit: top}
-                ]
-            }
+                        {$sort: {_id: 1}}
+                    ],
+                    "total": [{
+                        "$group": {"_id": null, "count": {"$sum": 1}, "sum": {"$sum": "$amount"}}
+                    }]
+                }
+            }];
+        var result = {
+            count: 0,
+            sum: 0,
+            years: []
         }
-    ];
+        return VirtueSchema.aggregate(lines)
+            .then(function (data) {
+                data = data[0];
+                if(!data.total.length) return result;
 
-    return genTopN(lines, top, theYear);
-}
+                result = data.total[0];
+                delete result._id;
 
-Statistics.prototype.eachRangeOfAmount = function (range, theYear) {
-    var facets = {
-        total: [
+                var years = [];
+                data["byYear"].forEach(function (item) {
+                    var year = {
+                        year: item._id,
+                        count: item.count,
+                        sum: item.sum
+                    }
+                    years.push(year);
+                });
+                result.years = years;
+
+                return result;
+            });
+    },
+    byProvicesAndCities: function (theYear, theMonth, theDay) {
+        var matchLine = matchStageWithPayedStateAndTheYearMonthDay(theYear, theMonth, theDay);
+        var lines = [
+            matchLine,
+            {$lookup: {from: "users", localField: "lord", foreignField: "_id", as: "lorddoc"}},
+            {$project: {"lorddoc.province": 1, "lorddoc.city": 1, amount: 1, timestamp: 1}},
             {
-                $group: {
-                    _id: null,
-                    count: {$sum: 1}, sum: {$sum: "$amount"}
+                $facet: {
+                    total: [
+                        {
+                            $group: {
+                                _id: null,
+                                count: {$sum: 1}, sum: {$sum: "$amount"}
+                            }
+                        }
+                    ],
+                    byProvinces: [
+                        {
+                            $group: {
+                                _id: "$lorddoc.province",
+                                count: {$sum: 1}, sum: {$sum: "$amount"}
+                            }
+                        }
+                    ],
+                    byCities: [
+                        {
+                            $group: {
+                                _id: {province: "$lorddoc.province", city: "$lorddoc.city"},
+                                count: {$sum: 1}, sum: {$sum: "$amount"}
+                            }
+                        }
+                    ]
                 }
             }
-        ],
-    }
-    var idx = 1;
-    range.forEach(function (item) {
-        var stages = [
-            {
-                $group: {
-                    _id: "$lorddoc",
-                    count: {$sum: 1}, sum: {$sum: "$amount"}
-                }
-            },
-            {$match: {sum: item.exp()}},
-            sortTemplete
         ];
-        facets["byRange" + idx++] = stages;
-    });
 
-    var matchLine = !theYear ? {$match: {state: 'payed'}}
-        : {
-        $match: {
-            state: 'payed',
-            timestamp: {
-                $gte: dateUtils.minToday(new Date(theYear, 0, 1)),
-                $lte: dateUtils.maxToday(new Date(theYear, 11, 31))
+        return genByProvicesAndCities(lines, theYear, theMonth, theDay);
+    },
+    topN: function (top, theYear, theMonth, theDay) {
+        var matchLine = matchStageWithPayedStateAndTheYearMonthDay(theYear, theMonth, theDay);
+        var lines = [
+            matchLine,
+            {$lookup: {from: "users", localField: "lord", foreignField: "_id", as: "lorddoc"}},
+            {$project: {"lorddoc": 1, amount: 1, timestamp: 1}},
+            {
+                $facet: {
+                    total: [
+                        {
+                            $group: {
+                                _id: null,
+                                count: {$sum: 1}, sum: {$sum: "$amount"}
+                            }
+                        }
+                    ],
+                    byLord: [
+                        {
+                            $group: {
+                                _id: {lord: "$lorddoc"},
+                                count: {$sum: 1}, sum: {$sum: "$amount"}
+                            },
+                        },
+                        sortTemplete,
+                        {$limit: top}
+                    ]
+                }
             }
+        ];
+
+        return genTopN(lines, top, theYear, theMonth, theDay);
+    },
+    eachRangeOfAmount: function (range, theYear, theMonth) {
+        var facets = {
+            total: [
+                {
+                    $group: {
+                        _id: null,
+                        count: {$sum: 1}, sum: {$sum: "$amount"}
+                    }
+                }
+            ],
         }
-    }
+        var idx = 1;
+        range.forEach(function (item) {
+            var stages = [
+                {
+                    $group: {
+                        _id: "$lorddoc",
+                        count: {$sum: 1}, sum: {$sum: "$amount"}
+                    }
+                },
+                {$match: {sum: item.exp()}},
+                sortTemplete
+            ];
+            facets["byRange" + idx++] = stages;
+        });
 
-    var lines = [
-        matchLine,
-        {$lookup: {from: "users", localField: "lord", foreignField: "_id", as: "lorddoc"}},
-        {
-            $project: {
-                "lorddoc": 1, amount: 1, timestamp: 1
-            }
-        },
-        {
-            $facet: facets
+        var fromDate = dateUtils.minToday(new Date(theYear, 0, 1));
+        var toDate = dateUtils.maxToday(new Date(theYear, 11, 31));
+        if (theMonth) {
+            var thisMonth = new Date(theYear, theMonth - 1, 1);
+            fromDate = dateUtils.minThisMonth(thisMonth);
+            toDate = dateUtils.maxThisMonth(thisMonth);
         }
-    ];
 
-    return genEachRangeOfAmount(lines, range, theYear);
-}
-
-Statistics.prototype.byMonthesOfTheYear = function (theYear) {
-    var lines = [
-        {
+        var matchLine = !theYear ? {$match: {state: 'payed'}}
+            : {
             $match: {
                 state: 'payed',
                 timestamp: {
-                    $gte: dateUtils.minToday(new Date(theYear, 0, 1)),
-                    $lte: dateUtils.maxToday(new Date(theYear, 11, 31))
+                    $gte: fromDate,
+                    $lte: toDate
                 }
             }
-        },
-        {
-            $facet: {
-                byMonths: [
-                    {
-                        $group: {
-                            _id: {$month: "$timestamp"},
-                            count: {$sum: 1}, sum: {$sum: "$amount"}
-                        }
-                    }
-                ],
-                byTheYear: [
-                    {
-                        $group: {
-                            _id: theYear,
-                            count: {$sum: 1}, sum: {$sum: "$amount"}
-                        }
-                    }
-                ]
-            }
         }
-    ];
 
-    var result = {};
-    return VirtueSchema.aggregate(lines)
-        .then(function (data) {
-            data = data[0];
-            result = data.byTheYear[0];
-            result.year = result._id;
-            delete result._id;
-            result.monthes = {};
+        var lines = [
+            matchLine,
+            {$lookup: {from: "users", localField: "lord", foreignField: "_id", as: "lorddoc"}},
+            {
+                $project: {
+                    "lorddoc": 1, amount: 1, timestamp: 1
+                }
+            },
+            {
+                $facet: facets
+            }
+        ];
 
-            data.byMonths.forEach(function (item) {
-                result.monthes[item._id] = {count: item.count, sum: item.sum}
+        return genEachRangeOfAmount(lines, range, theYear, theMonth);
+    },
+    byMonthesOfTheYear: function (theYear) {
+        var lines = [
+            {
+                $match: {
+                    state: 'payed',
+                    timestamp: {
+                        $gte: dateUtils.minToday(new Date(theYear, 0, 1)),
+                        $lte: dateUtils.maxToday(new Date(theYear, 11, 31))
+                    }
+                }
+            },
+            {
+                $facet: {
+                    byMonths: [
+                        {
+                            $group: {
+                                _id: {$month: "$timestamp"},
+                                count: {$sum: 1}, sum: {$sum: "$amount"}
+                            }
+                        }
+                    ],
+                    byTheYear: [
+                        {
+                            $group: {
+                                _id: theYear,
+                                count: {$sum: 1}, sum: {$sum: "$amount"}
+                            }
+                        }
+                    ]
+                }
+            }
+        ];
+
+        var result = {};
+        return VirtueSchema.aggregate(lines)
+            .then(function (data) {
+                data = data[0];
+                result = data.byTheYear[0];
+                result.year = result._id;
+                delete result._id;
+                result.monthes = {};
+
+                data.byMonths.forEach(function (item) {
+                    result.monthes[item._id] = {count: item.count, sum: item.sum}
+                });
+                return result;
             });
-            return result;
-        });
+    },
 }
-
-module.exports = new Statistics();
