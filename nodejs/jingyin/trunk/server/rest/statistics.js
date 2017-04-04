@@ -8,7 +8,7 @@ var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
-const top = 30;
+const top = 10000;
 const range = rangeFactory([1000, 5000, 10000, null]);
 
 const checkYear = function (year) {
