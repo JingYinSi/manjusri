@@ -5,7 +5,8 @@ const manjusri = require('./wechat/manjusri'),
     login = require('./wechat/redirects'),
     payment = require('./wechat/payment'),
     part = require('./biz/part'),
-    payRoute = require('./payurl').payRoute;
+    payRoute = require('./payurl').payRoute,
+    statistics = require('./rest/statistics');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -50,13 +51,6 @@ module.exports = function (router) {
 
     /*----------------------------restful--------------------------------------------------*/
     router.route('/jingyin/rest/virtues/prepay')
-        .post(virtues.prepay);
-    /*router.route('/jingyin/rest/virtues/:id')
-     .put(virtues.paid);*/
-    /*router.route('/jingyin/rest/virtues')
-     .get(virtues.list);*/
-
-    /*----------------------------业务系统------------------------------------------  */
-    /* router.route('/jingyin/biz/parts/index')
-     .get(part.index);*/
+    router.route('/jingyin/rests/manjusri/statistics')
+        .get(statistics.query);
 }

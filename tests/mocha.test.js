@@ -1206,6 +1206,29 @@ describe('静音寺业务系统', function () {
 
         });
 
+        describe('rest服务url', function () {
+            var routes, router;
+
+            before(function () {
+                app = express();
+                router = express.Router();
+                controller = function (req, res) {
+                    return res.status(200).json({data: 'ok'});
+                };
+            });
+
+            it('统计服务', function (done) {
+                stubs['./rest/statistics'] = {query: controller}
+                routes = proxyquire('../server/routes', stubs);
+                routes(router);
+                app.use(router);
+                request = requestAgent(app);
+
+                request.get('/jingyin/rests/manjusri/statistics')
+                    .expect(200, {data: 'ok'}, done);
+            });
+        });
+
         describe('统计', function () {
             var url, statistics, queryStub;
             var data;
