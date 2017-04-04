@@ -51,6 +51,15 @@ module.exports = function (router) {
 
     /*----------------------------restful--------------------------------------------------*/
     router.route('/jingyin/rest/virtues/prepay')
-    router.route('/jingyin/rests/manjusri/statistics')
-        .get(statistics.query);
+        .get(virtues.prepay);
+    /*router.route('/jingyin/rests/manjusri/statistics')
+        .get(.prepay);*/
+    /*router.route('/jingyin/rest/virtues/:id')
+     .put(virtues.paid);*/
+    /*router.route('/jingyin/rest/virtues')
+     .get(virtues.list);*/
+
+    /*----------------------------业务系统------------------------------------------  */
+    /* router.route('/jingyin/biz/parts/index')
+     .get(part.index);*/
 }
