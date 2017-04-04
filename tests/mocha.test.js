@@ -857,13 +857,6 @@ describe('静音寺业务系统', function () {
                         });
                 });
 
-                /*it('指定年度无数据', function () {
-                 return statistics.byMonthesOfTheYear(2022)
-                 .then(function (data) {
-                 expect(data).eql({});
-                 });
-                 });*/
-
                 it('指定年度的各个省市', function () {
                     return statistics.byProvicesAndCities(2016)
                         .then(function (data) {
@@ -1215,7 +1208,10 @@ describe('静音寺业务系统', function () {
 
         describe('统计', function () {
             var url, statistics, queryStub;
+            var data;
+
             beforeEach(function () {
+                data = {foo: 1, fee: 2};
                 url = '/foo/url';
                 app = express();
 
@@ -1237,560 +1233,133 @@ describe('静音寺业务系统', function () {
 
                 app.get(url, controller);
                 request
-                    .get(url + '? type=foo')
+                    .get(url + '?type=foo')
                     .expect(400, {error: "The query parameter[type] is invalide!"}, done);
             });
 
-            describe('各年度及总计', function () {
+            it('数据查询失败', function (done) {
+                queryStub = createPromiseStub([], null, err);
+                stubs['../modules/statistics'] = {byYears: queryStub};
+                controller = proxyquire('../server/rest/statistics', stubs).query;
+
+                app.get(url, controller);
+                request
+                    .get(url + "?type=byYears")
+                    .expect(500, err, done);
+            });
+
+            it('成功', function (done) {
+                queryStub = createPromiseStub([], [data]);
+                stubs['../modules/statistics'] = {byYears: queryStub};
+                controller = proxyquire('../server/rest/statistics', stubs).query;
+
+                app.get(url, controller);
+                request
+                    .get(url + "?type=byYears")
+                    .expect(200, data, done);
+            });
+
+            it('查询N名排名，当前使用前30名', function (done) {
+                queryStub = createPromiseStub([30], [data]);
+                stubs['../modules/statistics'] = {topN: queryStub};
+                controller = proxyquire('../server/rest/statistics', stubs).query;
+
+                app.get(url, controller);
+                request
+                    .get(url + "?type=topN")
+                    .expect(200, data, done);
+            });
+
+            it('按金额等级查询，当前使用[1000, 5000, 10000]', function (done) {
+                var range = {range: "fooo"};
+                var utilStub = sinon.stub();
+                utilStub.withArgs([1000, 5000, 10000, null]).returns(range);
+                stubs['../../modules/utils'] = {range: {create: utilStub}};
+
+                queryStub = createPromiseStub([range], [data]);
+                stubs['../modules/statistics'] = {eachRangeOfAmount: queryStub};
+                controller = proxyquire('../server/rest/statistics', stubs).query;
+
+                app.get(url, controller);
+                request
+                    .get(url + "?type=eachRangeOfAmount")
+                    .expect(200, data, done);
+            });
+
+            describe('查询指定期间', function () {
+                var year, month, day;
+
                 beforeEach(function () {
+                    var today = new Date();
+                    year = today.getFullYear();
+                    month = today.getMonth() + 1;
+                    day = today.getDate();
                 });
 
-                it('数据查询失败', function (done) {
-                    queryStub = createPromiseStub([], null, err);
-                    stubs['../modules/statistics'] = {byYears: queryStub};
+                it('指定月份却未指定年份时缺省使用当年', function (done) {
+                    queryStub = createPromiseStub([year, 4], [data]);
+                    stubs['../modules/statistics'] = {byProvicesAndCities: queryStub};
                     controller = proxyquire('../server/rest/statistics', stubs).query;
 
                     app.get(url, controller);
                     request
-                        .get(url + "? type='byyears'")
-                        .expect(500, err, done);
+                        .get(url + "?type=byProvicesAndCities&month=4")
+                        .expect(200, data, done);
                 });
 
-                it('成功', function (done) {
-                    var data = {foo: 1, fee: 2}
-                    queryStub = createPromiseStub([], [data]);
-                    stubs['../modules/statistics'] = {byYears: queryStub};
+                it('指定日却未指定年份和月份时，缺省使用当年当月', function (done) {
+                    queryStub = createPromiseStub([year, month, 21], [data]);
+                    stubs['../modules/statistics'] = {byProvicesAndCities: queryStub};
                     controller = proxyquire('../server/rest/statistics', stubs).query;
 
                     app.get(url, controller);
                     request
-                        .get(url)
+                        .get(url + "?type=byProvicesAndCities&day=21")
                         .expect(200, data, done);
                 });
-            });
 
-            describe('各个省市及总计', function () {
-                it('数据查询失败', function (done) {
-                    queryStub = createPromiseStub([], null, err);
-                    stubs['../modules/statistics'] = {byProvicesAndCities: queryStub};
-                    controller = proxyquire('../server/rest/statistics', stubs).byProvicesAndCities;
+                describe('指定年月日不合法', function () {
+                    beforeEach(function () {
+                        controller = require('../server/rest/statistics').query;
+                        app.get(url, controller);
+                    });
 
-                    app.get(url, controller);
-                    request
-                        .get(url)
-                        .expect(500, err, done);
+                    it('指定年份不合法', function (done) {
+                        request
+                            .get(url + '?type=byProvicesAndCities&year=abc')
+                            .expect(400, {error: "The value of query parameter[year] is invalide!"}, done);
+                    });
+
+                    it('指定月份不合法', function (done) {
+                        request
+                            .get(url + '?type=byProvicesAndCities&month=0')
+                            .expect(400, {error: "The value of query parameter[month] is invalide!"}, done);
+                    });
+
+                    it('指定日不合法', function (done) {
+                        request
+                            .get(url + '?type=byProvicesAndCities&day=34')
+                            .expect(400, {error: "The value of query parameter[day] is invalide!"}, done);
+                    });
+
+                    it('指定润月日不合法', function (done) {
+                        request
+                            .get(url + '?type=byProvicesAndCities&month=2&day=29')
+                            .expect(400, {error: "The value of query parameter[day] is invalide!"}, done);
+                    });
                 });
 
                 it('成功', function (done) {
-                    var data = {foo: 1, fee: 2}
-                    queryStub = createPromiseStub([], [data]);
+                    queryStub = createPromiseStub([2019, 5, 26], [data]);
                     stubs['../modules/statistics'] = {byProvicesAndCities: queryStub};
-                    controller = proxyquire('../server/rest/statistics', stubs).byProvicesAndCities;
+                    controller = proxyquire('../server/rest/statistics', stubs).query;
 
                     app.get(url, controller);
                     request
-                        .get(url)
+                        .get(url + "?type=byProvicesAndCities&month=5&year=2019&day=26")
                         .expect(200, data, done);
                 });
             });
-
-
-            /*it('前N名排名', function () {
-             return statistics.topN(2)
-             .then(function (data) {
-             expect(data).eql({
-             "top": 2,
-             "count": 9,
-             "sum": 200,
-             "percent": 85,
-             "details": [
-             {
-             lord: {
-             nickname: usersInDb[0].name,
-             name: usersInDb[0].realname,
-             province: usersInDb[0].province,
-             city: usersInDb[0].city,
-             phone: usersInDb[0].phone,
-             addr: usersInDb[0].addr,
-             email: usersInDb[0].email,
-             },
-             count: 5,
-             sum: 100
-             },
-             {
-             lord: {
-             nickname: usersInDb[1].name,
-             name: usersInDb[1].realname,
-             province: usersInDb[1].province,
-             city: usersInDb[1].city,
-             phone: usersInDb[1].phone,
-             addr: usersInDb[1].addr,
-             email: usersInDb[1].email,
-             },
-             count: 3,
-             sum: 70
-             }
-             ]
-             });
-             });
-             });
-
-             it('指定金额区间排名', function () {
-             var rangeExpStub3 = sinon.stub();
-             rangeExpStub3.returns({$lt: 20});
-             var rangeArrStub3 = sinon.stub();
-             rangeArrStub3.returns([null, 20]);
-
-             var rangeExpStub0 = sinon.stub();
-             rangeExpStub0.returns({$gte: 20, $lt: 40});
-             var rangeArrStub0 = sinon.stub();
-             rangeArrStub0.returns([20, 40]);
-
-             var rangeExpStub1 = sinon.stub();
-             rangeExpStub1.returns({$gte: 40, $lt: 80});
-             var rangeArrStub1 = sinon.stub();
-             rangeArrStub1.returns([40, 80]);
-
-             var rangeExpStub2 = sinon.stub();
-             rangeExpStub2.returns({$gte: 80});
-             var rangeArrStub2 = sinon.stub();
-             rangeArrStub2.returns([80, null]);
-
-             return statistics.eachRangeOfAmount([
-             {name: rangeArrStub3, exp: rangeExpStub3},
-             {name: rangeArrStub0, exp: rangeExpStub0},
-             {name: rangeArrStub1, exp: rangeExpStub1},
-             {name: rangeArrStub2, exp: rangeExpStub2},
-             ])
-             .then(function (data) {
-             expect(data).eql({
-             "count": 9,
-             "sum": 200,
-             "buckets": [
-             {
-             "bucket": [20, 40],
-             "count": 1,
-             "sum": 30,
-             "virtues": [
-             {
-             "count": 1,
-             "lord": {
-             nickname: usersInDb[2].name,
-             name: usersInDb[2].realname,
-             province: usersInDb[2].province,
-             city: usersInDb[2].city,
-             phone: usersInDb[2].phone,
-             addr: usersInDb[2].addr,
-             email: usersInDb[2].email,
-             },
-             "sum": 30,
-             }
-             ]
-             },
-             {
-             bucket: [40, 80],
-             virtues: [
-             {
-             lord: {
-             nickname: usersInDb[1].name,
-             name: usersInDb[1].realname,
-             province: usersInDb[1].province,
-             city: usersInDb[1].city,
-             phone: usersInDb[1].phone,
-             addr: usersInDb[1].addr,
-             email: usersInDb[1].email,
-             },
-             count: 3,
-             sum: 70
-             }
-             ],
-             count: 3,
-             sum: 70
-             },
-             {
-             bucket: [80, null],
-             virtues: [
-             {
-             lord: {
-             nickname: usersInDb[0].name,
-             name: usersInDb[0].realname,
-             province: usersInDb[0].province,
-             city: usersInDb[0].city,
-             phone: usersInDb[0].phone,
-             addr: usersInDb[0].addr,
-             email: usersInDb[0].email,
-             },
-             count: 5,
-             sum: 100
-             }
-             ],
-             count: 5,
-             sum: 100
-             },
-             ]
-             });
-             });
-             });
-
-             it('指定年度的各个月份', function () {
-             return statistics.byMonthesOfTheYear(2016)
-             .then(function (data) {
-             expect(data).eql({
-             "count": 4,
-             "sum": 100,
-             "year": 2016,
-             "monthes": {
-             "3": {
-             "count": 1,
-             "sum": 10
-             },
-             "6": {
-             "count": 2,
-             "sum": 50
-             },
-             "8": {
-             "count": 1,
-             "sum": 40
-             }
-             },
-             });
-             });
-             });
-
-
-             it('指定年度的各个省市', function () {
-             return statistics.byProvicesAndCities(2016)
-             .then(function (data) {
-             expect(data).eql({
-             "count": 4,
-             "sum": 100,
-             "year": 2016,
-             "provinces": {
-             "直辖市": {
-             "count": 1,
-             "sum": 30,
-             "cities": {
-             "北京": {
-             "count": 1,
-             "sum": 30,
-             }
-             }
-             },
-             "江苏": {
-             "count": 3,
-             "sum": 70,
-             "cities": {
-             "南京": {
-             "count": 1,
-             "sum": 20,
-             },
-             "无锡": {
-             "count": 2,
-             "sum": 50,
-             }
-             }
-             }
-             }
-             });
-             });
-             });
-
-             it('指定年度前N名排名', function () {
-             return statistics.topN(1, thisYear)
-             .then(function (data) {
-             expect(data).eql({
-             "year": 2017,
-             "top": 1,
-             "count": 5,
-             "sum": 100,
-             "percent": 80,
-             "details": [
-             {
-             lord: {
-             nickname: usersInDb[0].name,
-             name: usersInDb[0].realname,
-             province: usersInDb[0].province,
-             city: usersInDb[0].city,
-             phone: usersInDb[0].phone,
-             addr: usersInDb[0].addr,
-             email: usersInDb[0].email,
-             },
-             count: 4,
-             sum: 80
-             }
-             ]
-             });
-             });
-             });
-
-             it('指定年度金额区间排名', function () {
-             var rangeExpStub3 = sinon.stub();
-             rangeExpStub3.returns({$lt: 20});
-             var rangeArrStub3 = sinon.stub();
-             rangeArrStub3.returns([null, 20]);
-
-             var rangeExpStub0 = sinon.stub();
-             rangeExpStub0.returns({$gte: 20, $lt: 40});
-             var rangeArrStub0 = sinon.stub();
-             rangeArrStub0.returns([20, 40]);
-
-             var rangeExpStub1 = sinon.stub();
-             rangeExpStub1.returns({$gte: 40, $lt: 80});
-             var rangeArrStub1 = sinon.stub();
-             rangeArrStub1.returns([40, 80]);
-
-             var rangeExpStub2 = sinon.stub();
-             rangeExpStub2.returns({$gte: 80});
-             var rangeArrStub2 = sinon.stub();
-             rangeArrStub2.returns([80, null]);
-
-             return statistics.eachRangeOfAmount([
-             {name: rangeArrStub3, exp: rangeExpStub3},
-             {name: rangeArrStub0, exp: rangeExpStub0},
-             {name: rangeArrStub1, exp: rangeExpStub1},
-             {name: rangeArrStub2, exp: rangeExpStub2},
-             ], thisYear)
-             .then(function (data) {
-             expect(data).eql({
-             "year": thisYear,
-             "count": 5,
-             "sum": 100,
-             "buckets": [
-             {
-             "bucket": [20, 40],
-             "count": 1,
-             "sum": 20,
-             "virtues": [
-             {
-             "count": 1,
-             "lord": {
-             nickname: usersInDb[1].name,
-             name: usersInDb[1].realname,
-             province: usersInDb[1].province,
-             city: usersInDb[1].city,
-             phone: usersInDb[1].phone,
-             addr: usersInDb[1].addr,
-             email: usersInDb[1].email,
-             },
-             "sum": 20,
-             }
-             ]
-             },
-             {
-             bucket: [80, null],
-             virtues: [
-             {
-             lord: {
-             nickname: usersInDb[0].name,
-             name: usersInDb[0].realname,
-             province: usersInDb[0].province,
-             city: usersInDb[0].city,
-             phone: usersInDb[0].phone,
-             addr: usersInDb[0].addr,
-             email: usersInDb[0].email,
-             },
-             count: 4,
-             sum: 80
-             }
-             ],
-             count: 4,
-             sum: 80
-             },
-             ]
-             });
-             });
-             });
-
-             it('指定月度的各个省市', function () {
-             return statistics.byProvicesAndCities(2016, 3)
-             .then(function (data) {
-             expect(data).eql({
-             "count": 1,
-             "sum": 10,
-             "year": 2016,
-             "month": 3,
-             "provinces": {
-             "江苏": {
-             "count": 1,
-             "sum": 10,
-             "cities": {
-             "无锡": {
-             "count": 1,
-             "sum": 10,
-             }
-             }
-             }
-             }
-             });
-             });
-             });
-
-             it('指定月度前N名排名', function () {
-             return statistics.topN(1, thisYear, thisMonth)
-             .then(function (data) {
-             expect(data).eql({
-             "year": thisYear,
-             "month": thisMonth,
-             "top": 1,
-             "count": 5,
-             "sum": 100,
-             "percent": 80,
-             "details": [
-             {
-             lord: {
-             nickname: usersInDb[0].name,
-             name: usersInDb[0].realname,
-             province: usersInDb[0].province,
-             city: usersInDb[0].city,
-             phone: usersInDb[0].phone,
-             addr: usersInDb[0].addr,
-             email: usersInDb[0].email,
-             },
-             count: 4,
-             sum: 80
-             }
-             ]
-             });
-             });
-             });
-
-             it('指定月度金额区间排名', function () {
-             var rangeExpStub3 = sinon.stub();
-             rangeExpStub3.returns({$lt: 20});
-             var rangeArrStub3 = sinon.stub();
-             rangeArrStub3.returns([null, 20]);
-
-             var rangeExpStub0 = sinon.stub();
-             rangeExpStub0.returns({$gte: 20, $lt: 40});
-             var rangeArrStub0 = sinon.stub();
-             rangeArrStub0.returns([20, 40]);
-
-             var rangeExpStub1 = sinon.stub();
-             rangeExpStub1.returns({$gte: 40, $lt: 80});
-             var rangeArrStub1 = sinon.stub();
-             rangeArrStub1.returns([40, 80]);
-
-             var rangeExpStub2 = sinon.stub();
-             rangeExpStub2.returns({$gte: 80});
-             var rangeArrStub2 = sinon.stub();
-             rangeArrStub2.returns([80, null]);
-
-             return statistics.eachRangeOfAmount([
-             {name: rangeArrStub3, exp: rangeExpStub3},
-             {name: rangeArrStub0, exp: rangeExpStub0},
-             {name: rangeArrStub1, exp: rangeExpStub1},
-             {name: rangeArrStub2, exp: rangeExpStub2},
-             ], thisYear, thisMonth)
-             .then(function (data) {
-             expect(data).eql({
-             "year": thisYear,
-             "month": thisMonth,
-             "count": 5,
-             "sum": 100,
-             "buckets": [
-             {
-             "bucket": [20, 40],
-             "count": 1,
-             "sum": 20,
-             "virtues": [
-             {
-             "count": 1,
-             "lord": {
-             nickname: usersInDb[1].name,
-             name: usersInDb[1].realname,
-             province: usersInDb[1].province,
-             city: usersInDb[1].city,
-             phone: usersInDb[1].phone,
-             addr: usersInDb[1].addr,
-             email: usersInDb[1].email,
-             },
-             "sum": 20,
-             }
-             ]
-             },
-             {
-             bucket: [80, null],
-             virtues: [
-             {
-             lord: {
-             nickname: usersInDb[0].name,
-             name: usersInDb[0].realname,
-             province: usersInDb[0].province,
-             city: usersInDb[0].city,
-             phone: usersInDb[0].phone,
-             addr: usersInDb[0].addr,
-             email: usersInDb[0].email,
-             },
-             count: 4,
-             sum: 80
-             }
-             ],
-             count: 4,
-             sum: 80
-             },
-             ]
-             });
-             });
-             });
-
-             it('指定日各个省市', function () {
-             return statistics.byProvicesAndCities(thisYear, thisMonth, thisDay)
-             .then(function (data) {
-             expect(data).eql({
-             "count": 3,
-             "sum": 60,
-             "year": thisYear,
-             "month": thisMonth,
-             "day": thisDay,
-             "provinces": {
-             "江苏": {
-             "count": 3,
-             "sum": 60,
-             "cities": {
-             "无锡": {
-             "count": 1,
-             "sum": 20,
-             },
-             "南京": {
-             "count": 2,
-             "sum": 40,
-             }
-             }
-             }
-             }
-             });
-             });
-             });
-
-             it('指定日前N名排名', function () {
-             return statistics.topN(1, thisYear, thisMonth, thisDay)
-             .then(function (data) {
-             expect(data).eql({
-             "year": thisYear,
-             "month": thisMonth,
-             "day": thisDay,
-             "top": 1,
-             "count": 3,
-             "sum": 60,
-             "percent": 66.67,
-             "details": [
-             {
-             lord: {
-             nickname: usersInDb[0].name,
-             name: usersInDb[0].realname,
-             province: usersInDb[0].province,
-             city: usersInDb[0].city,
-             phone: usersInDb[0].phone,
-             addr: usersInDb[0].addr,
-             email: usersInDb[0].email,
-             },
-             count: 2,
-             sum: 40
-             }
-             ]
-             });
-             });
-             });*/
         });
 
         describe('virtues', function () {
