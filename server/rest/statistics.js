@@ -8,7 +8,7 @@ var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
-const top = 10000;
+const top = 20000;
 const range = rangeFactory([1000, 5000, 10000, null]);
 
 const checkYear = function (year) {
@@ -32,7 +32,11 @@ module.exports = {
         if (!controller)
             return res.status(400).json({error: "The query parameter[type] is invalide!"});
         var args = [];
-        if (type === 'topN') args.push(top);
+        if (type === 'topN') {
+            var topNum = req.query.top;
+            topNum = topNum ? topNum * 1 : top;
+            args.push(topNum);
+        }
         if (type === 'eachRangeOfAmount') args.push(range);
 
         var year = req.query.year;
