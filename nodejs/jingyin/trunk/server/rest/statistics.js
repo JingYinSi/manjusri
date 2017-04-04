@@ -23,6 +23,10 @@ const checkDay = function (month, day) {
     return new Date(2107, month, day).getDate() === day * 1;
 }
 
+const checkTop = function (t) {
+    return t > 0;
+}
+
 module.exports = {
     query: function (req, res) {
         var type = req.query.type;
@@ -35,6 +39,8 @@ module.exports = {
         if (type === 'topN') {
             var topNum = req.query.top;
             topNum = topNum ? topNum * 1 : top;
+            if(!checkTop(topNum))
+                return res.status(400).json({error: "The value of query parameter[top] is invalide!"});
             args.push(topNum);
         }
         if (type === 'eachRangeOfAmount') args.push(range);

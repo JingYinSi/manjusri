@@ -1282,8 +1282,8 @@ describe('静音寺业务系统', function () {
                     .expect(200, data, done);
             });
 
-            it('查询N名排名，当前使用前30名', function (done) {
-                queryStub = createPromiseStub([30], [data]);
+            it('查询N名排名，当前使用前20000名', function (done) {
+                queryStub = createPromiseStub([20000], [data]);
                 stubs['../modules/statistics'] = {topN: queryStub};
                 controller = proxyquire('../server/rest/statistics', stubs).query;
 
@@ -1291,6 +1291,25 @@ describe('静音寺业务系统', function () {
                 request
                     .get(url + "?type=topN")
                     .expect(200, data, done);
+            });
+
+            it('查询指定N名排名', function (done) {
+                queryStub = createPromiseStub([40], [data]);
+                stubs['../modules/statistics'] = {topN: queryStub};
+                controller = proxyquire('../server/rest/statistics', stubs).query;
+
+                app.get(url, controller);
+                request
+                    .get(url + "?type=topN&top=40")
+                    .expect(200, data, done);
+            });
+
+            it('查询指定N名排名时，top查询参数不合法', function (done) {
+                controller = require('../server/rest/statistics').query;
+                app.get(url, controller);
+                request
+                    .get(url + "?type=topN&top=aa")
+                    .expect(400, {error: "The value of query parameter[top] is invalide!"}, done);
             });
 
             it('按金额等级查询，当前使用[1000, 5000, 10000]', function (done) {
@@ -2285,6 +2304,36 @@ describe('静音寺业务系统', function () {
                         send: resSendSyp,
                         end: resEndSpy
                     }
+                });
+
+                describe('页面处理url', function () {
+                    var routes, router;
+                    var request, express, app, bodyParser;
+                    var requestAgent;
+                    var controller;
+
+                    beforeEach(function () {
+                        bodyParser = require('body-parser');
+                        requestAgent = require('supertest');
+                        express = require('express');
+
+                        app = express();
+                        router = express.Router();
+                        controller = function (req, res) {
+                            return res.status(200).json({data: 'ok'});
+                        };
+                    });
+
+                    it('首页', function (done) {
+                        stubs['./wechat/manjusri'] = {index1: controller}
+                        routes = proxyquire('../server/pageroutes', stubs);
+                        routes(router);
+                        app.use(router);
+                        request = requestAgent(app);
+
+                        request.get('/jingyin/manjusri/index')
+                            .expect(200, {data: 'ok'}, done);
+                    });
                 });
 
                 describe('响应微信消息', function () {
