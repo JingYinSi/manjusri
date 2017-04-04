@@ -11,8 +11,8 @@ sinonStubPromise(sinon);
 
 //global.dbURI = 'mongodb://121.41.93.210:17914/test';
 //global.dbURI = 'mongodb://test:tEsT228793@121.41.93.210:17914/test';
-global.dbURI = 'mongodb://localhost/test';
-//global.dbURI = 'mongodb://shitongming:jIngyIn228793@121.41.93.210:17914/test';
+//global.dbURI = 'mongodb://localhost/test';
+global.dbURI = 'mongodb://shitongming:jIngyIn228793@121.41.93.210:17914/test';
 global.clearDB = require('mocha-mongoose')(dbURI);
 
 global.expect = chai.expect;
