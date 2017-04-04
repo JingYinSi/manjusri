@@ -15,7 +15,7 @@ var ctx = {
     //'static': __dirname + '/client/public',
     env: 'development',
     secret: 'jingyinmanjusriBiz',
-    mongodb: 'shitongming:jIngyIn228793@121.41.93.210:17914/jingyin',
+    mongodb: 'shitongming:jIngyIn228793@121.41.93.210:17915/jingyin',
     wechat: {
         token: 'jingyinManjusri',
         post: wechat

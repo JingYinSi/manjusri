@@ -2253,6 +2253,763 @@ describe('静音寺业务系统', function () {
                 });
             });
 
+            describe('处理请求（改版）', function () {
+                var reqStub, resStub;
+                var statusSpy, resEndSpy, resSendSyp, resRenderSpy;
+                var controller;
+
+                function checkResponseStatusCodeAndMessage(code, message, err) {
+                    expect(statusSpy).calledWith(code).calledOnce;
+                    if (message)
+                        expect(resStub.statusMessage).eql(message);
+                    if (err) {
+                        var actual = resSendSyp.getCall(0).args[0];
+                        expect(actual instanceof Error).true;
+                        expect(actual.message).eql(err.message);
+                    }
+                }
+
+                beforeEach(function () {
+                    statusSpy = sinon.spy();
+                    resSendSyp = sinon.spy();
+                    resEndSpy = sinon.spy();
+                    resRenderSpy = sinon.spy();
+
+                    reqStub = {
+                        query: {},
+                        params: {}
+                    };
+                    resStub = {
+                        status: statusSpy,
+                        render: resRenderSpy,
+                        send: resSendSyp,
+                        end: resEndSpy
+                    }
+                });
+
+                describe('响应微信消息', function () {
+                    var openid, msg, msgReplySpy;
+
+                    beforeEach(function () {
+                        controller = require('../server/wechat/wechat');
+                        openid = '1234567890';
+                        msg = {
+                            FromUserName: openid,
+                            MsgType: 'event',
+                            Event: 'subscribe'
+                        };
+                        reqStub.weixin = msg;
+
+                        msgReplySpy = sinon.spy();
+                        resStub.reply = msgReplySpy;
+                    });
+
+                    it('对于无需处理的消息，直接应答空串', function () {
+                        msg.Event = 'foo';
+                        controller(reqStub, resStub);
+                        expect(msgReplySpy).calledWith('');
+                    });
+
+                    describe('响应关注消息', function () {
+                        it('应答欢迎信息', function () {
+                            var user = {name: 'foo'};
+                            var registerUserStub = createPromiseStub([null, openid], [user]);
+                            stubs['../modules/users'] = {
+                                register: registerUserStub
+                            };
+
+                            var answer = {foo: 'foo'};
+                            var welcomeStub = createPromiseStub([user], [answer]);
+                            stubs['../modules/welcome'] = welcomeStub;
+
+                            controller = proxyquire('../server/wechat/wechat', stubs);
+                            controller(reqStub, resStub);
+                            expect(msgReplySpy).calledWith(answer);
+                        });
+                    });
+                });
+
+                describe('重定向', function () {
+                    beforeEach(function () {
+                    });
+
+                    it('重定向到经微信认证的登录', function () {
+                        reqStub.session = {};
+
+                        var loginUrl = "redirects page url";
+                        restUrlMapStub = sinon.stub();
+                        restUrlMapStub.withArgs("login").returns(loginUrl);
+                        stubs['../rests'] = {getLink: restUrlMapStub};
+
+                        var auth2WrapedUrl = 'url/to/auth2WrapedUrl';
+                        var urlWrapStub = sinon.stub();
+                        urlWrapStub.withArgs(loginUrl).returns(auth2WrapedUrl);
+                        stubs['../weixin'] = {weixinConfig: {wrapRedirectURLByOath2Way: urlWrapStub}};
+
+                        var redirctSpy = sinon.spy();
+                        resStub.redirect = redirctSpy;
+
+                        controller = proxyquire('../server/wechat/redirects', stubs).toLogin;
+                        controller(reqStub, resStub);
+
+                        expect(redirctSpy).calledOnce.calledWith(auth2WrapedUrl);
+                    });
+
+                    it('重定向到用户注册页面', function () {
+                        var openid = "12324556";
+                        var url = "user/register/url";
+                        restUrlMapStub = sinon.stub();
+                        restUrlMapStub.withArgs("profile", {openid: openid}).returns(url);
+                        stubs['../rests'] = {getLink: restUrlMapStub};
+
+                        var redirctSpy = sinon.spy();
+                        resStub.redirect = redirctSpy;
+
+                        controller = proxyquire('../server/wechat/redirects', stubs).toProfile;
+                        controller(openid, reqStub, resStub);
+
+                        expect(redirctSpy).calledOnce.calledWith(url);
+                    });
+
+                    it('重定向到首页', function () {
+                        var url = "user/home";
+                        restUrlMapStub = sinon.stub();
+                        restUrlMapStub.withArgs("home").returns(url);
+                        stubs['../rests'] = {getLink: restUrlMapStub};
+
+                        var redirctSpy = sinon.spy();
+                        resStub.redirect = redirctSpy;
+
+                        controller = proxyquire('../server/wechat/redirects', stubs).toHome;
+                        controller(reqStub, resStub);
+
+                        expect(redirctSpy).calledOnce.calledWith(url);
+                    });
+                });
+
+                describe('用户登录', function () {
+                    var code, openid, accesstoken, refresh_token, lord;
+
+                    beforeEach(function () {
+                        reqStub.session = {};
+                        code = '12345678';
+                        openid = 'ahbsdbjvhqervhr3';
+                        accesstoken = 'eurf3urf3urfr3r';
+                        refresh_token = 'abdfdgdhdhdhdhdh';
+                        lord = {name: "foo"};
+                    });
+
+                    it('请求未包含查询参数code，客户端400错', function () {
+                        controller = require('../server/wechat/manjusri').login;
+                        controller(reqStub, resStub);
+                        expect(statusSpy).calledWith(400).calledOnce;
+                    });
+
+                    it('获得当前用户的OpenId失败', function () {
+                        reqStub.query.code = code;
+                        var getOpenIdStub = createPromiseStub([code], null, err);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(400, null, err);
+                            });
+                    });
+
+                    it('当前用户为一个新用户， 如果系统在试图获取用户信息时失败， 则系统报500错', function () {
+                        reqStub.query.code = code;
+                        var getOpenIdStub = createPromiseStub([code], [{
+                            "access_token": accesstoken,
+                            "refresh_token": refresh_token,
+                            "openid": openid
+                        }]);
+
+                        var findUserStub = createPromiseStub([openid], [null]);
+                        stubs['../modules/users'] = {findByOpenid: findUserStub};
+
+                        var getUserInfoByOpenIdAndTokenStub = createPromiseStub([accesstoken, openid], null, err);
+                        stubs['../weixin'] = {
+                            weixinService: {
+                                getOpenId: getOpenIdStub,
+                                getUserInfoByOpenIdAndToken: getUserInfoByOpenIdAndTokenStub
+                            }
+                        };
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('当前用户为一个新用户， 如果添加新用户时失败， 则系统报500错', function () {
+                        reqStub.query.code = code;
+                        var getOpenIdStub = createPromiseStub([code], [{
+                            "access_token": accesstoken,
+                            "refresh_token": refresh_token,
+                            "openid": openid
+                        }]);
+
+                        var findUserStub = createPromiseStub([openid], [null]);
+                        stubs['../modules/users'] = {findByOpenid: findUserStub};
+
+                        var userInfoFromWeixin = {
+                            nickname: "nickname",
+                            openid: "openid",
+                            headimgurl: "headimgurl",
+                            city: "city",
+                            province: "province",
+                            sex: "1",
+                            subscribe_time: "subscribetime"
+                        }
+                        var userInfo = {
+                            name: userInfoFromWeixin.nickname,
+                            openid: userInfoFromWeixin.openid,
+                            img: userInfoFromWeixin.headimgurl,
+                            city: userInfoFromWeixin.city,
+                            province: userInfoFromWeixin.province,
+                            sex: userInfoFromWeixin.sex,
+                            subscribe: userInfoFromWeixin.subscribe_time
+                        }
+
+                        var getUserInfoByOpenIdAndTokenStub = createPromiseStub([accesstoken, openid], [userInfoFromWeixin]);
+                        stubs['../weixin'] = {
+                            weixinService: {
+                                getOpenId: getOpenIdStub,
+                                getUserInfoByOpenIdAndToken: getUserInfoByOpenIdAndTokenStub
+                            }
+                        };
+
+                        var registerUserStub = createPromiseStub([userInfo], null, err);
+                        stubs['../modules/users'].registerUser = registerUserStub;
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('当前用户为一个新用户时，以新用户的身份登录，并重定向到用户注册页面', function () {
+                        reqStub.query.code = code;
+                        var getOpenIdStub = createPromiseStub([code], [{
+                            "access_token": accesstoken,
+                            "refresh_token": refresh_token,
+                            "openid": openid
+                        }]);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+
+                        var findUserStub = createPromiseStub([openid], [null]);
+                        stubs['../modules/users'] = {findByOpenid: findUserStub};
+
+                        var userInfoFromWeixin = {
+                            nickname: "nickname",
+                            openid: "openid",
+                            headimgurl: "headimgurl",
+                            city: "city",
+                            province: "province",
+                            sex: "1",
+                            subscribe_time: "subscribetime"
+                        }
+                        var userInfo = {
+                            name: userInfoFromWeixin.nickname,
+                            openid: userInfoFromWeixin.openid,
+                            img: userInfoFromWeixin.headimgurl,
+                            city: userInfoFromWeixin.city,
+                            province: userInfoFromWeixin.province,
+                            sex: userInfoFromWeixin.sex,
+                            subscribe: userInfoFromWeixin.subscribe_time
+                        }
+
+                        var getUserInfoByOpenIdAndTokenStub = createPromiseStub([accesstoken, openid], [userInfoFromWeixin]);
+                        stubs['../weixin'] = {
+                            weixinService: {
+                                getOpenId: getOpenIdStub,
+                                getUserInfoByOpenIdAndToken: getUserInfoByOpenIdAndTokenStub
+                            }
+                        };
+
+                        var user = {name: "foo"}
+                        var registerUserStub = createPromiseStub([userInfo], [user]);
+                        stubs['../modules/users'].registerUser = registerUserStub;
+
+                        var redirectToProfileSpy = sinon.spy();
+                        stubs['./redirects'] = {toProfile: redirectToProfileSpy};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(reqStub.session.user).eql({access_token: accesstoken, openid: openid});
+                                expect(reqStub.session.refresh_token).eql(refresh_token);
+                                expect(redirectToProfileSpy).calledOnce.calledWith(openid, reqStub, resStub);
+                            });
+                    });
+
+                    it('当前用户已存在，登录成功，如果session中有重定向url，则按此重定向', function () {
+                        var redirectToUrl = "foo/url";
+                        reqStub.query.code = code;
+                        reqStub.session.redirectToUrl = redirectToUrl;
+
+                        var getOpenIdStub = createPromiseStub([code], [{
+                            "access_token": accesstoken,
+                            "refresh_token": refresh_token,
+                            "openid": openid
+                        }]);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+
+                        var user = {name: "foo"};
+                        var findUserStub = createPromiseStub([openid], [user]);
+                        stubs['../modules/users'] = {findByOpenid: findUserStub};
+
+                        var redirectSpy = sinon.spy();
+                        resStub.redirect = redirectSpy;
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(reqStub.session.user).eql({access_token: accesstoken, openid: openid});
+                                expect(reqStub.session.refresh_token).eql(refresh_token);
+                                expect(redirectSpy).calledOnce.calledWith(redirectToUrl);
+                            });
+                    });
+
+                    it('当前用户已存在，登录成功，如果session中无重定向url，则重定向至首页', function () {
+                        reqStub.query.code = code;
+
+                        var getOpenIdStub = createPromiseStub([code], [{
+                            "access_token": accesstoken,
+                            "refresh_token": refresh_token,
+                            "openid": openid
+                        }]);
+                        stubs['../weixin'] = {weixinService: {getOpenId: getOpenIdStub}};
+
+                        var user = {name: "foo"};
+                        var findUserStub = createPromiseStub([openid], [user]);
+                        stubs['../modules/users'] = {findByOpenid: findUserStub};
+
+                        var redirectToHomeSpy = sinon.spy();
+                        stubs['./redirects'] = {toHome: redirectToHomeSpy};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).login;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(reqStub.session.user).eql({access_token: accesstoken, openid: openid});
+                                expect(reqStub.session.refresh_token).eql(refresh_token);
+                                expect(redirectToHomeSpy).calledOnce.calledWith(reqStub, resStub);
+                            });
+                    });
+                });
+
+                describe('显示首页', function () {
+                    var virtuesList, virtueListStub;
+                    var times, countStub;
+
+                    beforeEach(function () {
+                        virtuesList = [{}, {}];
+                        virtueListStub = createPromiseStub([30], [virtuesList]);
+                        stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+
+                        times = 10;
+                        countStub = createPromiseStub([{state: 'payed'}], [times]);
+                        stubs['./models/virtue'] = {count: countStub};
+                    });
+
+                    it('未能列出最近的捐助交易', function () {
+                        virtueListStub = createPromiseStub([30], null, err);
+                        stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).home;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('未能列出捐助交易总数', function () {
+                        countStub = createPromiseStub([{state: 'payed'}], null, err);
+                        stubs['./models/virtue'] = {count: countStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).home;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('正确显示', function () {
+                        controller = proxyquire('../server/wechat/manjusri', stubs).home;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(resRenderSpy).calledWith('wechat/index', {
+                                    virtues: virtuesList,
+                                    times: 10,
+                                    title: '首页'
+                                });
+                            });
+                    });
+                });
+
+                describe('显示建寺', function () {
+                    var partFindStub, partslist;
+
+                    beforeEach(function () {
+                        partslist = [{foo: 'fffff'}, {}];
+                        partFindStub = createPromiseStub([{type: 'part', onSale: true}], [partslist]);
+                        stubs['./models/part'] = {find: partFindStub};
+                    });
+
+                    it('未能列出当前上架的法物', function () {
+                        partFindStub = createPromiseStub([{type: 'part', onSale: true}], null, err);
+                        stubs['./models/part'] = {find: partFindStub};
+                        controller = proxyquire('../server/wechat/manjusri', stubs).jiansi;
+
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('正确显示', function () {
+                        controller = proxyquire('../server/wechat/manjusri', stubs).jiansi;
+
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(resRenderSpy).calledWith('wechat/jiansi', {
+                                    title: '建寺',
+                                    parts: partslist
+                                });
+                            });
+                    });
+                });
+
+                describe('日行一善', function () {
+                    var virtuesList, virtueListStub;
+                    var times, countStub;
+                    var part, findOneStub;
+
+                    beforeEach(function () {
+                        virtuesList = [{}, {}];
+                        virtueListStub = createPromiseStub([30], [virtuesList]);
+                        stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+
+                        times = 10;
+                        countStub = createPromiseStub([{state: 'payed'}], [times]);
+                        stubs['./models/virtue'] = {count: countStub};
+
+                        part = new Object();
+                        findOneStub = createPromiseStub([{type: 'daily', onSale: true}], [part]);
+                        stubs['./models/part'] = {findOne: findOneStub};
+                    });
+
+                    it('未能列出最近的捐助交易', function () {
+                        virtueListStub = createPromiseStub([30], null, err);
+                        stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('未能列出捐助交易总数', function () {
+                        countStub = createPromiseStub([{state: 'payed'}], null, err);
+                        stubs['./models/virtue'] = {count: countStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('访问日行一善的相关信息失败', function () {
+                        findOneStub = createPromiseStub([{type: 'daily', onSale: true}], null, err);
+                        stubs['./models/part'] = {findOne: findOneStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('未能获得日行一善的相关信息', function () {
+                        findOneStub = createPromiseStub([{type: 'daily', onSale: true}], [null]);
+                        stubs['./models/part'] = {findOne: findOneStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, '日行一善相关信息未建立');
+                            });
+                    });
+
+                    it('正确显示', function () {
+                        controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(resRenderSpy).calledWith('wechat/dailyVirtue', {
+                                    virtues: virtuesList,
+                                    times: 10,
+                                    part: part,
+                                    title: '建寺-日行一善'
+                                });
+                            });
+                    });
+                });
+
+                describe('随喜', function () {
+                    var part, findOneStub;
+
+                    beforeEach(function () {
+                        part = new Object();
+                        findOneStub = createPromiseStub([{type: 'suixi', onSale: true}], [part]);
+                        stubs['./models/part'] = {findOne: findOneStub};
+                    });
+
+                    it('访问随喜的相关信息失败', function () {
+                        findOneStub = createPromiseStub([{type: 'suixi', onSale: true}], null, err);
+                        stubs['./models/part'] = {findOne: findOneStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).suixi;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('未能获得随喜的相关信息', function () {
+                        findOneStub = createPromiseStub([{type: 'suixi', onSale: true}], [null]);
+                        stubs['./models/part'] = {findOne: findOneStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).suixi;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, '随喜相关信息未建立');
+                            });
+                    });
+
+                    it('正确显示', function () {
+                        controller = proxyquire('../server/wechat/manjusri', stubs).suixi;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(resRenderSpy).calledWith('wechat/suixi', {
+                                    part: part,
+                                    title: '建寺-随喜所有建庙功德'
+                                });
+                            });
+                    });
+                });
+
+                describe('认捐法物', function () {
+                    var partId, part, partFindByIdStub;
+
+                    beforeEach(function () {
+                        partId = 12345;
+                        part = {name: 'foo'}
+
+                        reqStub.params.partId = partId;
+                        partFindByIdStub = createPromiseStub([partId], [part]);
+                        stubs['./models/part'] = {findById: partFindByIdStub};
+                    });
+
+                    it('访问法物的相关信息失败', function () {
+                        var partId = 12345;
+                        reqStub.params.partId = partId;
+                        var partFindByIdStub = createPromiseStub([partId], null, err);
+                        stubs['./models/part'] = {findById: partFindByIdStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).trans;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('指定法物不存在', function () {
+                        var partId = 12345;
+                        reqStub.params.partId = partId;
+                        var partFindByIdStub = createPromiseStub([partId], [null]);
+                        stubs['./models/part'] = {findById: partFindByIdStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).trans;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(404, 'part ' + partId.toString() + ' is not found');
+                            });
+                    });
+
+                    it('正确显示', function () {
+                        var partId = 12345;
+                        var part = {name: 'foo'}
+
+                        reqStub.params.partId = partId;
+                        var partFindByIdStub = createPromiseStub([partId], [part]);
+                        stubs['./models/part'] = {findById: partFindByIdStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).trans;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(resRenderSpy).calledWith('wechat/trans', {
+                                    title: '建寺-' + part.name,
+                                    part: part
+                                });
+                            });
+                    });
+                });
+
+                describe('微信支付', function () {
+                    var virtueId, openId, virtue, payData;
+                    var getOpenIdStub, findNewVirtueByIdStub, prepayStub;
+
+                    beforeEach(function () {
+                        virtueId = 'bbsd3fg12334555';
+                        virtue = {
+                            subject: {name: 'foo'},
+                            amount: 300
+                        };
+                        openId = 'gfghhfhjfjkfkfkf';
+                        payData = {foo: 'foo', fee: 'fee'};
+
+                        reqStub.session = {user: {openid: openId}};
+                        reqStub.query.virtue = virtueId;
+                    });
+
+                    it('请求中未包含virtue的查询变量', function () {
+                        delete reqStub.query.virtue;
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
+                        controller(reqStub, resStub);
+                        return checkResponseStatusCodeAndMessage(400, null, new Error('virtue is not found in query'));
+                    });
+
+                    it('查找捐助交易操作失败', function () {
+                        findNewVirtueByIdStub = createPromiseStub([virtueId], null, err);
+                        stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
+
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(400, null, err);
+                            });
+                    });
+
+                    it('未查找到指定的捐助交易', function () {
+                        findNewVirtueByIdStub = createPromiseStub([virtueId], [null]);
+                        stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
+
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                var error = new Error('The virtue[id=' + virtueId + '] is not found');
+                                checkResponseStatusCodeAndMessage(400, null, error);
+                            });
+                    });
+
+                    it('预置微信支付操作失败', function () {
+                        findNewVirtueByIdStub = createPromiseStub([virtueId], [virtue]);
+                        stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
+                        prepayStub = createPromiseStub([openId, virtueId, 'foo', 300], null, err);
+                        stubs['../weixin'] = {weixinService: {prepay: prepayStub}};
+
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(400, null, err);
+                            });
+                    });
+
+                    it('渲染前端进行微信支付', function () {
+                        findNewVirtueByIdStub = createPromiseStub([virtueId], [virtue]);
+                        stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
+                        prepayStub = createPromiseStub([openId, virtueId, 'foo', 300], [payData]);
+                        stubs['../weixin'] = {weixinService: {prepay: prepayStub}};
+
+                        controller = proxyquire('../server/wechat/payment', stubs).pay;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(resRenderSpy).calledWith('wechat/payment', {
+                                    openId: openId,
+                                    virtue: virtueId,
+                                    payData: payData
+                                });
+                            });
+                    });
+                });
+
+                describe('响应微信支付结果', function () {
+                    //TODO: 编写响应微信支付结果的测试用例
+                });
+
+                describe('功德主', function () {
+                    var token, openid, lord, virtues, viewdata;
+                    var getOpenIdStub, getUserByOpenIdStub, listLordVirtuesStub;
+
+                    beforeEach(function () {
+                        token = 'ddfffffdffffffffff';
+                        openid = 'gfghhfhjfjkfkfkf';
+                        lord = {
+                            _id: '587240dea0191d6754dcc0ba',
+                            name: 'foo'
+                        }
+                        virtues = [{foo: "foo"}, {fee: "fee"}];
+                        viewdata = {lord: lord, virtues: virtues};
+
+                        reqStub.session = {
+                            user: {access_token: token, openid: openid},
+                        };
+                    });
+
+                    it('未能成功获得当前用户', function () {
+                        getUserByOpenIdStub = createPromiseStub([openid], null, err);
+                        stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('没有找到当前用户', function () {
+                        getUserByOpenIdStub = createPromiseStub([openid], [null]);
+                        stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                var errmsg = "The User with openid(" + openid + ") not exists?";
+                                checkResponseStatusCodeAndMessage(500, errmsg);
+                            });
+                    });
+
+                    it('未能成功获得当前用户的所有捐助', function () {
+                        getUserByOpenIdStub = createPromiseStub([openid], [lord]);
+                        stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
+
+                        listLordVirtuesStub = createPromiseStub([lord._id], null, err);
+                        stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
+                    });
+
+                    it('成功显示功德主页面', function () {
+                        getUserByOpenIdStub = createPromiseStub([openid], [lord]);
+                        stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
+
+                        listLordVirtuesStub = createPromiseStub([lord._id], [virtues]);
+                        stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
+
+                        controller = proxyquire('../server/wechat/manjusri', stubs).lordVirtues;
+                        controller(reqStub, resStub);
+                        expect(resRenderSpy).calledOnce.calledWith('wechat/lordVirtues', viewdata);
+                    });
+                });
+            });
+
             describe('处理请求', function () {
                 var reqStub, resStub;
                 var statusSpy, resEndSpy, resSendSyp, resRenderSpy;
