@@ -53,7 +53,12 @@ module.exports = function (ctx) {
         app.use(function (req, res, next) {
             if(req.url.indexOf('/jingyin/') >= 0) {
                 var info = "用户";
-                info += req.session && req.session.user ? "[" + req.session.user.openid + "]" : "[未登录]";
+                if(req.session && req.session.user){
+                    info += "[" + req.session.user.openid + "]";
+                }else{
+                    info += "[未登录]";
+                }
+                //info += req.session && req.session.user ? "[" + req.session.user.openid + "]" : "[未登录]";
                 info += "正在访问：" + req.url + ", 进程号：" + process.pid;
                 logger.info(info);
             }
