@@ -148,7 +148,6 @@
 <script type="text/javascript">
     function selectMoney(amount) {
         document.getElementById('input_amount').value = amount;
-        //alert('您选择了' + item.getAttribute('amount') + '元');
     }
 
     function moneyItemOver(item) {
@@ -167,10 +166,6 @@
             $.toptip('请填写金额。');
             return;
         }
-
-       /* $.toptip('随喜'+amount+'金额,回向：' + giving);
-        return;*/
-
         amount = Math.round(amount * 100) / 100;
         var dataToPost = {
             subject: $('#subject').text(),
