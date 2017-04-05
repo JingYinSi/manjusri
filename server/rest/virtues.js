@@ -20,6 +20,7 @@ function Virtues() {
 
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
+    logger.info("entering prepay: " + JSON.stringify(obj));
     var resWrap = createResponseWrap(res);
 
     function responseVirtue(virtue) {
@@ -43,6 +44,7 @@ Virtues.prototype.prepay = function (req, res) {
             }
             return parts.updatePartNum(obj.subject, obj.num * 1)
                 .then(function () {
+                    logger.info("updatePartNum is success!!!");
                     return responseVirtue(virtue);
                 });
         })
