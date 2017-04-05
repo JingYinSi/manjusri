@@ -607,6 +607,46 @@ describe('静音寺业务系统', function () {
                             });
                     });
                 });
+
+                describe('查询最近N笔日行一善交易及其次数', function () {
+                    beforeEach(function () {
+                    });
+
+                    it('最近N笔捐助交易', function () {
+                        return virtues.lastVirtuesAndTotalCount(3)
+                            .then(function (data) {
+                                expect(data).eql({
+                                    count: 8,
+                                    virtues: [
+                                        {
+                                            "amount": 20,
+                                            "city": usersInDb[0].city,
+                                            "day": 5,
+                                            "month": 4,
+                                            "name": usersInDb[0].name,
+                                            "year": 2017
+                                        },
+                                        {
+                                            "amount": 20,
+                                            "city": usersInDb[0].city,
+                                            "day": 5,
+                                            "month": 4,
+                                            "name": usersInDb[0].name,
+                                            "year": 2017
+                                        },
+                                        {
+                                            "amount": 20,
+                                            "city": usersInDb[1].city,
+                                            "day": 5,
+                                            "month": 4,
+                                            "name": usersInDb[1].name,
+                                            "year": 2017
+                                        }
+                                    ]
+                                });
+                            });
+                    });
+                });
             });
 
             describe('统计所有捐助', function () {
@@ -2698,77 +2738,84 @@ describe('静音寺业务系统', function () {
                     var part, findOneStub;
 
                     beforeEach(function () {
-                        /*virtuesList = [{}, {}];
-                        virtueListStub = createPromiseStub([30], [virtuesList]);
-                        stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+                        virtuesList = {foo:"data"};
+                        /*virtueListStub = createPromiseStub([30], [virtuesList]);
+                         stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
 
-                        times = 10;
-                        countStub = createPromiseStub([{state: 'payed'}], [times]);
-                        stubs['./models/virtue'] = {count: countStub};
+                         times = 10;
+                         countStub = createPromiseStub([{state: 'payed'}], [times]);
+                         stubs['./models/virtue'] = {count: countStub};
 
-                        part = new Object();
-                        findOneStub = createPromiseStub([{type: 'daily', onSale: true}], [part]);
-                        stubs['./models/part'] = {findOne: findOneStub};*/
+                         part = new Object();
+                         findOneStub = createPromiseStub([{type: 'daily', onSale: true}], [part]);
+                         stubs['./models/part'] = {findOne: findOneStub};*/
+                    });
+
+                    it('查询最近N笔日行一善失败', function () {
+                        virtueListStub = createPromiseStub([30], null, err);
+                        stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
+
+                        controller = proxyquire('../server/wechat/manjusriPages', stubs).dailyVirtue;
+                        return controller(reqStub, resStub)
+                            .then(function () {
+                                checkResponseStatusCodeAndMessage(500, null, err);
+                            });
                     });
 
                     it('正确显示', function () {
+                        virtueListStub = createPromiseStub([30], [virtuesList]);
+                        stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
+
                         controller = proxyquire('../server/wechat/manjusriPages', stubs).dailyVirtue;
-                        controller(reqStub, resStub);
-                        expect(resRenderSpy).calledWith('manjusri/dailyVirtue');
-                       /* return controller(reqStub, resStub)
+                        return controller(reqStub, resStub)
                             .then(function () {
-                                expect(resRenderSpy).calledWith('wechat/dailyVirtue', {
-                                    virtues: virtuesList,
-                                    times: 10,
-                                    part: part,
-                                    title: '建寺-日行一善'
-                                });
-                            });*/
+                                expect(resRenderSpy).calledWith('manjusri/dailyVirtue', virtuesList);
+                            });
                     });
 
                     /*it('未能列出最近的捐助交易', function () {
-                        virtueListStub = createPromiseStub([30], null, err);
-                        stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
+                     virtueListStub = createPromiseStub([30], null, err);
+                     stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
 
-                        controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, null, err);
-                            });
-                    });
+                     controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                     return controller(reqStub, resStub)
+                     .then(function () {
+                     checkResponseStatusCodeAndMessage(500, null, err);
+                     });
+                     });
 
-                    it('未能列出捐助交易总数', function () {
-                        countStub = createPromiseStub([{state: 'payed'}], null, err);
-                        stubs['./models/virtue'] = {count: countStub};
+                     it('未能列出捐助交易总数', function () {
+                     countStub = createPromiseStub([{state: 'payed'}], null, err);
+                     stubs['./models/virtue'] = {count: countStub};
 
-                        controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, null, err);
-                            });
-                    });
+                     controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                     return controller(reqStub, resStub)
+                     .then(function () {
+                     checkResponseStatusCodeAndMessage(500, null, err);
+                     });
+                     });
 
-                    it('访问日行一善的相关信息失败', function () {
-                        findOneStub = createPromiseStub([{type: 'daily', onSale: true}], null, err);
-                        stubs['./models/part'] = {findOne: findOneStub};
+                     it('访问日行一善的相关信息失败', function () {
+                     findOneStub = createPromiseStub([{type: 'daily', onSale: true}], null, err);
+                     stubs['./models/part'] = {findOne: findOneStub};
 
-                        controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, null, err);
-                            });
-                    });
+                     controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                     return controller(reqStub, resStub)
+                     .then(function () {
+                     checkResponseStatusCodeAndMessage(500, null, err);
+                     });
+                     });
 
-                    it('未能获得日行一善的相关信息', function () {
-                        findOneStub = createPromiseStub([{type: 'daily', onSale: true}], [null]);
-                        stubs['./models/part'] = {findOne: findOneStub};
+                     it('未能获得日行一善的相关信息', function () {
+                     findOneStub = createPromiseStub([{type: 'daily', onSale: true}], [null]);
+                     stubs['./models/part'] = {findOne: findOneStub};
 
-                        controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, '日行一善相关信息未建立');
-                            });
-                    });*/
+                     controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
+                     return controller(reqStub, resStub)
+                     .then(function () {
+                     checkResponseStatusCodeAndMessage(500, '日行一善相关信息未建立');
+                     });
+                     });*/
                 });
 
                 describe('随喜', function () {

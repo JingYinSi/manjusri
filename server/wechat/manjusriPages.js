@@ -1,5 +1,4 @@
 var linkages = require("../rests"),
-    Virtue = require('./models/virtue'),
     virtuesModule = require('../modules/virtues'),
     Promise = require('bluebird'),
     createResponseWrap = require('../../modules/responsewrap'),
@@ -91,23 +90,14 @@ module.exports = {
     },
 
     dailyVirtue: function (req, res) {
-        return res.render('manjusri/dailyVirtue');
-        /*var data;
         var res = createResponseWrap(res);
-        return listVirtuesAndTotalTimes()
-            .then(function (result) {
-                data = result;
-                return Part.findOne({type: 'daily', onSale: true});
-            })
-            .then(function (part) {
-                if (!part) return res.setError(500, '日行一善相关信息未建立');
-                data.part = part;
-                data.title = '建寺-日行一善';
-                return res.render('wechat/dailyVirtue', data);
+        return virtuesModule.lastVirtuesAndTotalCount(30)
+            .then(function (data) {
+                return res.render('manjusri/dailyVirtue', data);
             })
             .catch(function (err) {
                 return res.setError(500, null, err);
-            });*/
+            });
     },
 
     /*
