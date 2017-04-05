@@ -174,7 +174,7 @@ Virtues.prototype.lastVirtuesAndTotalCount = function (count) {
                     {"$limit": count},
                 ],
                 "total": [{
-                    "$group": {"_id": null, "count": {"$sum": 1}}
+                    "$group": {"_id": "$subject", "count": {"$sum": 1}}
                 }]
             }
         }];
@@ -189,6 +189,7 @@ Virtues.prototype.lastVirtuesAndTotalCount = function (count) {
             if(data.length < 1 || !data[0].total || !data[0].byDaily)
                 return result;
             data = data[0];
+            result.id = data.total[0]._id;
             result.count = data.total[0].count;
             data.byDaily.forEach(function (item) {
                 result.virtues.push({

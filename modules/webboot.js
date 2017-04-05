@@ -102,7 +102,9 @@ module.exports = function (ctx) {
     //TODO:需要拉出来
     app.get('/jingyin/manjusri/lordvirtues', auth);
     app.get('/jingyin/manjusri/dailyvirtue', auth);
+    app.get('/jingyin/manjusri/new/dailyVirtue', auth);
     app.get('/jingyin/manjusri/suixi', auth);
+    app.get('/jingyin/manjusri/new/suixi', auth);
     app.get('/jingyin/manjusri/trans/:partId', auth);
     app.get('/jingyin/manjusri/lords/:openid/profile', auth);
 
