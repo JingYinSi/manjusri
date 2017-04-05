@@ -160,6 +160,7 @@
     }
 
     $("#show-confirm").click(function () {
+
         var amount = $('#input_amount').val();
         var giving = $('#input_giving').val();
         if (amount == '') {
@@ -167,8 +168,8 @@
             return;
         }
 
-        $.toptip('随喜'+amount+'金额,回向：' + giving);
-        return;
+       /* $.toptip('随喜'+amount+'金额,回向：' + giving);
+        return;*/
 
         amount = Math.round(amount * 100) / 100;
         var dataToPost = {
