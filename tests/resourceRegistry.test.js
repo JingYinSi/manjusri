@@ -16,7 +16,15 @@ describe('资源', function () {
             linkage = require('../server/rests');
         });
 
+        it('getUrlTemplete', function () {
+            expect(linkage.getUrlTemplete("profile")).eql("/jingyin/manjusri/lords/:openid/profile");
+        });
+
         it('getLink', function () {
+            expect(linkage.getLink("manjusri.index")).eql("/jingyin/manjusri/new/index");
+            expect(linkage.getLink("dailyVirtue")).eql("/jingyin/manjusri/new/dailyVirtue");
+            expect(linkage.getLink("suixi")).eql("/jingyin/manjusri/new/suixi");
+
             expect(linkage.getLink("virtue", {id: 234567})).eql("/jingyin/rest/virtues/234567");
             expect(linkage.getLink("pay", {virtue: 234567}))
                 .eql("/jingyin/manjusri/pay/confirm?virtue=234567");

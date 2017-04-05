@@ -2,6 +2,8 @@
  * Created by sony on 2016/10/13.
  */
 const manjusri = require('./wechat/manjusri'),
+    manjusriPages = require('./wechat/manjusriPages'),
+    linkages = require('./rests'),
     login = require('./wechat/redirects'),
     payment = require('./wechat/payment'),
     part = require('./biz/part'),
@@ -48,6 +50,12 @@ module.exports = function (router) {
         .get(manjusri.lordProfile)
         .put(manjusri.updateLordProfile);
 
+    /*----------------------------manjusri pages -------------------------------------------*/
+    router.route(linkages.getUrlTemplete('manjusri.index'))
+        .get(manjusriPages.home);
+
+    router.route(linkages.getUrlTemplete('dailyVirtue'))
+        .get(manjusriPages.dailyVirtue);
 
     /*----------------------------restful--------------------------------------------------*/
     router.route('/jingyin/rest/virtues/prepay')

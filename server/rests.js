@@ -10,6 +10,10 @@ var urlMap = {
     login: '/jingyin/manjusri/login',
     home: '/jingyin/manjusri/index',
     profile: '/jingyin/manjusri/lords/:openid/profile',
+
+    "manjusri.index": "/jingyin/manjusri/new/index",
+    "dailyVirtue": "/jingyin/manjusri/new/dailyVirtue",
+    "suixi": "/jingyin/manjusri/new/suixi",
 };
 function ResourceRegistry() {
 }
@@ -29,6 +33,10 @@ ResourceRegistry.URLTemplate = function (urlTemplate) {
         }
         return result;
     }
+};
+
+ResourceRegistry.prototype.getUrlTemplete = function (rel) {
+    return urlMap[rel];
 };
 
 ResourceRegistry.URLTemplate.prototype.expand = function (params) {

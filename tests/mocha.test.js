@@ -2306,11 +2306,11 @@ describe('静音寺业务系统', function () {
                     }
                 });
 
-                describe('页面处理url', function () {
+                describe('页面处理url Routes', function () {
                     var routes, router;
                     var request, express, app, bodyParser;
                     var requestAgent;
-                    var controller;
+                    var linkages, controller, url;
 
                     beforeEach(function () {
                         bodyParser = require('body-parser');
@@ -2319,19 +2319,39 @@ describe('静音寺业务系统', function () {
 
                         app = express();
                         router = express.Router();
+
+                        url = "/url/foo";
+                        linkages = sinon.stub();
+                        linkages.withArgs("manjusri.index").returns(url + '/index');
+                        linkages.withArgs("dailyVirtue").returns(url + '/dailyVirtue');
+                        stubs["./rests"] = {getUrlTemplete: linkages}
+
                         controller = function (req, res) {
                             return res.status(200).json({data: 'ok'});
                         };
                     });
 
                     it('首页', function (done) {
-                        stubs['./wechat/manjusri'] = {index1: controller}
-                        routes = proxyquire('../server/pageroutes', stubs);
+                        stubs['./wechat/manjusriPages'] = {home: controller}
+                        routes = proxyquire('../server/routes', stubs);
+
                         routes(router);
                         app.use(router);
                         request = requestAgent(app);
 
-                        request.get('/jingyin/manjusri/index')
+                        request.get(url + '/index')
+                            .expect(200, {data: 'ok'}, done);
+                    });
+
+                    it('日行一善', function (done) {
+                        stubs['./wechat/manjusriPages'] = {dailyVirtue: controller}
+                        routes = proxyquire('../server/routes', stubs);
+
+                        routes(router);
+                        app.use(router);
+                        request = requestAgent(app);
+
+                        request.get(url + '/dailyVirtue')
                             .expect(200, {data: 'ok'}, done);
                     });
                 });
@@ -2649,83 +2669,25 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('显示首页', function () {
-                    var virtuesList, virtueListStub;
-                    var times, countStub;
-
                     beforeEach(function () {
-                        virtuesList = [{}, {}];
-                        virtueListStub = createPromiseStub([30], [virtuesList]);
-                        stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
-
-                        times = 10;
-                        countStub = createPromiseStub([{state: 'payed'}], [times]);
-                        stubs['./models/virtue'] = {count: countStub};
-                    });
-
-                    it('未能列出最近的捐助交易', function () {
-                        virtueListStub = createPromiseStub([30], null, err);
-                        stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
-
-                        controller = proxyquire('../server/wechat/manjusri', stubs).home;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, null, err);
-                            });
-                    });
-
-                    it('未能列出捐助交易总数', function () {
-                        countStub = createPromiseStub([{state: 'payed'}], null, err);
-                        stubs['./models/virtue'] = {count: countStub};
-
-                        controller = proxyquire('../server/wechat/manjusri', stubs).home;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, null, err);
-                            });
                     });
 
                     it('正确显示', function () {
-                        controller = proxyquire('../server/wechat/manjusri', stubs).home;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                expect(resRenderSpy).calledWith('wechat/index', {
-                                    virtues: virtuesList,
-                                    times: 10,
-                                    title: '首页'
-                                });
-                            });
-                    });
-                });
+                        var dailyVirtueLink = "/dailyVirtueLink";
+                        var suixiLink = "/suixiLink";
+                        var linkages = sinon.stub();
+                        linkages.withArgs("dailyVirtue").returns(dailyVirtueLink);
+                        linkages.withArgs("suixi").returns(suixiLink);
+                        stubs["../rests"] = {getLink: linkages}
 
-                describe('显示建寺', function () {
-                    var partFindStub, partslist;
-
-                    beforeEach(function () {
-                        partslist = [{foo: 'fffff'}, {}];
-                        partFindStub = createPromiseStub([{type: 'part', onSale: true}], [partslist]);
-                        stubs['./models/part'] = {find: partFindStub};
-                    });
-
-                    it('未能列出当前上架的法物', function () {
-                        partFindStub = createPromiseStub([{type: 'part', onSale: true}], null, err);
-                        stubs['./models/part'] = {find: partFindStub};
-                        controller = proxyquire('../server/wechat/manjusri', stubs).jiansi;
-
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, null, err);
-                            });
-                    });
-
-                    it('正确显示', function () {
-                        controller = proxyquire('../server/wechat/manjusri', stubs).jiansi;
-
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                expect(resRenderSpy).calledWith('wechat/jiansi', {
-                                    title: '建寺',
-                                    parts: partslist
-                                });
+                        controller = proxyquire('../server/wechat/manjusriPages', stubs).home;
+                        controller(reqStub, resStub);
+                        expect(resRenderSpy).calledWith('manjusri/index',
+                            {
+                                linkages: {
+                                    dailyVirtue: dailyVirtueLink,
+                                    suixi: suixiLink
+                                }
                             });
                     });
                 });
@@ -2736,7 +2698,7 @@ describe('静音寺业务系统', function () {
                     var part, findOneStub;
 
                     beforeEach(function () {
-                        virtuesList = [{}, {}];
+                        /*virtuesList = [{}, {}];
                         virtueListStub = createPromiseStub([30], [virtuesList]);
                         stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
 
@@ -2746,10 +2708,25 @@ describe('静音寺业务系统', function () {
 
                         part = new Object();
                         findOneStub = createPromiseStub([{type: 'daily', onSale: true}], [part]);
-                        stubs['./models/part'] = {findOne: findOneStub};
+                        stubs['./models/part'] = {findOne: findOneStub};*/
                     });
 
-                    it('未能列出最近的捐助交易', function () {
+                    it('正确显示', function () {
+                        controller = proxyquire('../server/wechat/manjusriPages', stubs).dailyVirtue;
+                        controller(reqStub, resStub);
+                        expect(resRenderSpy).calledWith('manjusri/dailyVirtue');
+                       /* return controller(reqStub, resStub)
+                            .then(function () {
+                                expect(resRenderSpy).calledWith('wechat/dailyVirtue', {
+                                    virtues: virtuesList,
+                                    times: 10,
+                                    part: part,
+                                    title: '建寺-日行一善'
+                                });
+                            });*/
+                    });
+
+                    /*it('未能列出最近的捐助交易', function () {
                         virtueListStub = createPromiseStub([30], null, err);
                         stubs['../modules/virtues'] = {listLastVirtues: virtueListStub};
 
@@ -2791,20 +2768,7 @@ describe('静音寺业务系统', function () {
                             .then(function () {
                                 checkResponseStatusCodeAndMessage(500, '日行一善相关信息未建立');
                             });
-                    });
-
-                    it('正确显示', function () {
-                        controller = proxyquire('../server/wechat/manjusri', stubs).dailyVirtue;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                expect(resRenderSpy).calledWith('wechat/dailyVirtue', {
-                                    virtues: virtuesList,
-                                    times: 10,
-                                    part: part,
-                                    title: '建寺-日行一善'
-                                });
-                            });
-                    });
+                    });*/
                 });
 
                 describe('随喜', function () {

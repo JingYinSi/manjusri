@@ -1,0 +1,117 @@
+
+body{
+    font-family: "黑体";
+    font-size: 16px;
+}
+.wrapper{
+    max-width: 720px;
+    background-color: #fcf6d4;
+    /*height: 1000px;*/
+}
+.firwrap{
+    /*height: 200px;*/
+    margin: 10px -15px 0 -15px;
+    background-color: #fff;
+}
+.firwrap img{
+    width: 100%;
+}
+.firwrap-banner{
+    padding-top:20px;
+}
+
+.twowrap{
+    position: relative;
+    margin:0 -15px;
+    padding-top: 15px;
+    background-color: #fff;
+    /*height: 200px;*/
+    
+}
+.twowrap li{
+    height: 100px;
+    padding:10px;
+    background: #fff;
+    border-bottom:1px solid #eee;
+}
+.twowrap li:hover{
+    background: #f6f5f0;
+}
+
+.twowrap figure{
+    border-radius:40px;
+    width: 80px;
+    height: 80px;
+    overflow: hidden;
+}
+.twowrap img{
+    width: 100%;
+}
+.twowrap-left{
+    padding-left: 0;
+}
+.twowrap-center h4{
+    line-height: 50px;
+    margin:0;
+    padding:0;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+.twowrap-center p{
+    position: relative;
+    top:-10px;
+    color: #c9c9c9;
+    line-height: 30px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+}
+.twowrap span{
+    /*color: #f0a50c;*/
+    position: relative;
+    top: 30px;
+    font-weight: 600;
+}
+.twowrap-right{
+    padding:0;
+}
+
+.threewrap{
+    position: relative;
+    margin:10px -15px;
+    padding:15px;
+    background-color: #fff;
+}
+.threewrap figure{
+    position: relative;
+    top: -4px;
+    display: inline-block;
+    width: 25px;
+}
+.threewrap span{
+    font-size: 18px;
+    color: #eea000;
+}
+.threewrap img{
+    width: 100%;
+}
+.threewrap p{
+    text-indent: 32px;
+    color: #959595;
+}
+footer{
+    text-align: center;
+    margin:15px 0 30px 0;
+}
+footer figure{
+    width: 80px;
+    margin:20px auto;
+}
+footer img{
+    width: 100%;
+}
+footer .copyright{
+    color:#5f5d56;
+}
