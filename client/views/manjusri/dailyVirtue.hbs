@@ -15,7 +15,51 @@
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <script type="text/javascript">
+        function selectMoney(amount) {
+            document.getElementById('input_amount').value = amount;
+            //alert('您选择了' + item.getAttribute('amount') + '元');
+        }
 
+        function moneyItemOver(item) {
+            item.setAttribute('class', 'moneyItemOver');
+        }
+
+        function moneyItemOut(item) {
+            item.setAttribute('class', 'moneyItemOut');
+        }
+
+        $("#show-confirm").click(function () {
+            var amount = $('#input_amount').val();
+            var giving = $('#input_giving').val();
+            if (amount == '') {
+                $.toptip('请填写金额。');
+                return;
+            }
+
+            $.toptip('随喜'+amount+'金额,回向：' + giving);
+            return;
+
+            amount = Math.round(amount * 100) / 100;
+            var dataToPost = {
+                subject: $('#subject').text(),
+                amount: amount
+            };
+            if (giving) dataToPost.giving = giving;
+
+            var url = '/jingyin/rest/virtues/prepay11';
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function (data, textStatus, request) {
+                    var linkages = parseLinksInHeader(request.getResponseHeader('link'));
+                    window.location = linkages.pay;
+                }
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="wrapper container-fluid">
@@ -43,32 +87,32 @@
             </div>
             <div class="row twowrapBtn">
                 <div class="col-xs-4">
-                    <div class="twowrapBtn-Item">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(1);">
                         1元
                     </div>
                 </div>
                 <div class="col-xs-4">
-                    <div class="twowrapBtn-Item">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(3);">
                         3元
                     </div>
                 </div>
                 <div class="col-xs-4">
-                    <div class="twowrapBtn-Item">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(5);">
                         5元
                     </div>
                 </div>
                 <div class="col-xs-4">
-                    <div class="twowrapBtn-Item">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(10);">
                         10元
                     </div>
                 </div>
                 <div class="col-xs-4">
-                    <div class="twowrapBtn-Item">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(88);">
                         88元
                     </div>
                 </div>
                 <div class="col-xs-4">
-                    <div class="twowrapBtn-Item">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(99);">
                         99元
                     </div>
                 </div>
@@ -81,12 +125,12 @@
                     <span>回向&nbsp;&nbsp;</span>
                 </div>
                 <div class="col-xs-12 twowrapTextarea-bottom">
-                    <textarea class="form-control" rows="6"></textarea>
+                    <textarea id="input_giving" class="form-control" rows="3"></textarea>
                 </div>
             </div>
             <div class="row twowrapSubmit">
                 <div class="col-xs-6 col-xs-offset-3">
-                    <input type="submit" value="确定" class="btn btn-default">
+                    <input id="show-confirm" type="submit" value="确定" class="btn btn-default">
                 </div>
             </div>
         </form>
@@ -106,7 +150,7 @@
             </ul>-->
             <table width="100%" >
                 {{#each virtues}}
-                    <tr style="padding-bottom: 2cm">
+                    <tr style="padding-bottom: 2cm;height:26px;">
                         <td width="150">{{month}}月{{day}}号</td>
                         <td width="250">{{name}}</td>
                         <td width="150">{{city}}</td>
