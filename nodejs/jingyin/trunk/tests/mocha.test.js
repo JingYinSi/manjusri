@@ -616,6 +616,7 @@ describe('静音寺业务系统', function () {
                         return virtues.lastVirtuesAndTotalCount(3)
                             .then(function (data) {
                                 expect(data).eql({
+                                    id: partsInDb[0]._id,
                                     count: 8,
                                     virtues: [
                                         {
