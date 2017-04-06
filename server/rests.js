@@ -11,7 +11,7 @@ var urlMap = {
     home: '/jingyin/manjusri/index',
     profile: '/jingyin/manjusri/lords/:openid/profile',
 
-    //"manjusri.index": "/jingyin/manjusri/new/index",
+    "manjusri.index": "/jingyin/manjusri/new/index",
     "dailyVirtue": "/jingyin/manjusri/new/dailyVirtue",
     "suixi": "/jingyin/manjusri/new/suixi",
     "trans": '/jingyin/manjusri/trans/:partId',
