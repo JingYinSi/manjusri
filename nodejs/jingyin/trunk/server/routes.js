@@ -51,8 +51,8 @@ module.exports = function (router) {
         .put(manjusri.updateLordProfile);
 
     /*----------------------------manjusri pages -------------------------------------------*/
-    /*router.route(linkages.getUrlTemplete('home'))
-        .get(manjusriPages.home);*/
+    router.route(linkages.getUrlTemplete('manjusri.index'))
+        .get(manjusriPages.home);
 
     router.route(linkages.getUrlTemplete('dailyVirtue'))
         .get(manjusriPages.dailyVirtue);
