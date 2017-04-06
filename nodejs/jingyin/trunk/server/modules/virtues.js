@@ -164,9 +164,10 @@ Virtues.prototype.lastVirtuesAndTotalCount = function (type, count) {
                         $project: {
                             "_id": 0,
                             "name": "$userdoc.name",
-                            "year": {"$year": "$timestamp"},
+                            "date": "$timestamp",
+                            /*"year": {"$year": "$timestamp"},
                             "month": {"$month": "$timestamp"},
-                            "day": {"$dayOfMonth": "$timestamp"},
+                            "day": {"$dayOfMonth": "$timestamp"},*/
                             "city": "$userdoc.city",
                             "amount": 1
                         }
@@ -195,10 +196,10 @@ Virtues.prototype.lastVirtuesAndTotalCount = function (type, count) {
                 result.virtues.push({
                     "amount": item.amount,
                     "city": item.city.length > 0 ? item.city[0] : '未知',
-                    "day": item.day,
-                    "month": item.month,
+                    "day": item.date.getDate(),
+                    "month": item.date.getMonth() + 1,
                     "name": item.name.length > 0 ? item.name[0] : '未知',
-                    "year": item.year
+                    "year": item.date.getFullYear()
                 })
             });
             return result;

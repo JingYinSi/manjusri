@@ -654,7 +654,7 @@ describe('静音寺业务系统', function () {
                                         {
                                             "amount": 20,
                                             "city": usersInDb[0].city,
-                                            "day": day,
+                                            "day": day + 1,
                                             "month": month,
                                             "name": usersInDb[0].name,
                                             "year": year
