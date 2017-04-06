@@ -2415,7 +2415,7 @@ describe('静音寺业务系统', function () {
 
                         url = "/url/foo";
                         linkages = sinon.stub();
-                        linkages.withArgs("manjusri.index").returns(url + '/index');
+                        linkages.withArgs("home").returns(url + '/index');
                         linkages.withArgs("dailyVirtue").returns(url + '/dailyVirtue');
                         linkages.withArgs("suixi").returns(url + '/suixi');
                         linkages.withArgs("jiansi").returns(url + '/jiansi');
@@ -2787,149 +2787,167 @@ describe('静音寺业务系统', function () {
                     });
                 });
 
-                describe('显示首页', function () {
+                describe('处理各个页面', function () {
+                    var menuLinks, getMenuLinksStub;
                     beforeEach(function () {
+                        menuLinks = {home: "foo", jiansi: "fee"}
+                        getMenuLinksStub = sinon.stub();
+                        getMenuLinksStub.returns(menuLinks);
+                        stubs["../rests"] = {getMainMenuLinkages: getMenuLinksStub}
                     });
 
-                    it('正确显示', function () {
-                        var dailyVirtueLink = "/dailyVirtueLink";
-                        var suixiLink = "/suixiLink";
-                        var linkages = sinon.stub();
-                        linkages.withArgs("dailyVirtue").returns(dailyVirtueLink);
-                        linkages.withArgs("suixi").returns(suixiLink);
-                        stubs["../rests"] = {getLink: linkages}
+                    describe('显示首页', function () {
+                        beforeEach(function () {
+                        });
 
-                        controller = proxyquire('../server/wechat/manjusriPages', stubs).home;
-                        controller(reqStub, resStub);
-                        expect(resRenderSpy).calledWith('manjusri/index',
-                            {
-                                linkages: {
-                                    dailyVirtue: dailyVirtueLink,
-                                    suixi: suixiLink
-                                }
-                            });
-                    });
-                });
+                        it('正确显示', function () {
+                            var dailyVirtueLink = "/dailyVirtueLink";
+                            var suixiLink = "/suixiLink";
+                            var linkages = sinon.stub();
+                            linkages.withArgs("dailyVirtue").returns(dailyVirtueLink);
+                            linkages.withArgs("suixi").returns(suixiLink);
+                            stubs["../rests"].getLink = linkages;
 
-                describe('日行一善', function () {
-                    var virtuesList, virtueListStub;
-
-                    beforeEach(function () {
-                        virtuesList = {foo: "data"};
-                    });
-
-                    it('查询最近N笔日行一善失败', function () {
-                        virtueListStub = createPromiseStub(["daily", 30], null, err);
-                        stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
-
-                        controller = proxyquire('../server/wechat/manjusriPages', stubs).dailyVirtue;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, null, err);
-                            });
-                    });
-
-                    it('正确显示', function () {
-                        virtueListStub = createPromiseStub(["daily", 30], [virtuesList]);
-                        stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
-
-                        controller = proxyquire('../server/wechat/manjusriPages', stubs).dailyVirtue;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                expect(resRenderSpy).calledWith('manjusri/dailyVirtue', virtuesList);
-                            });
-                    });
-                });
-
-                describe('随喜', function () {
-                    var virtuesList, virtueListStub;
-                    beforeEach(function () {
-                        virtuesList = {foo: "data"};
-                    });
-
-                    it('查询最近N笔随喜失败', function () {
-                        virtueListStub = createPromiseStub(["suixi", 30], null, err);
-                        stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
-
-                        controller = proxyquire('../server/wechat/manjusriPages', stubs).suixi;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, null, err);
-                            });
-                    });
-
-                    it('正确显示', function () {
-                        virtueListStub = createPromiseStub(["suixi", 30], [virtuesList]);
-                        stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
-
-                        controller = proxyquire('../server/wechat/manjusriPages', stubs).suixi;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                expect(resRenderSpy).calledWith('manjusri/suixi', virtuesList);
-                            });
-                    });
-                });
-
-                describe('建寺', function () {
-                    var findPartsStub, parts;
-
-                    beforeEach(function () {
-                        parts = [
-                            {
-                                _id: "foo",
-                                field: "v"
-                            },
-                            {
-                                _id: "fee",
-                                field: "v"
-                            },
-                        ];
-                    });
-
-                    it('查询正在募捐的法物失败', function () {
-                        findPartsStub = createPromiseStub([], null, err);
-                        stubs['../modules/parts'] = {listPartsOnSale: findPartsStub};
-
-                        controller = proxyquire('../server/wechat/manjusriPages', stubs).jiansi;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, null, err);
-                            });
-                    });
-
-                    it('正确显示', function () {
-                        var dailyVirtueLink = "/dailyVirtueLink";
-                        var suixiLink = "/suixiLink";
-                        var transfooLink = "/trans/foo";
-                        var transfeeLink = "/trans/fee";
-                        var linkages = sinon.stub();
-                        linkages.withArgs("dailyVirtue").returns(dailyVirtueLink);
-                        linkages.withArgs("suixi").returns(suixiLink);
-                        linkages.withArgs("trans", {partId: "foo"}).returns(transfooLink);
-                        linkages.withArgs("trans", {partId: "fee"}).returns(transfeeLink);
-                        stubs["../rests"] = {getLink: linkages}
-
-                        findPartsStub = createPromiseStub([], [parts]);
-                        stubs['../modules/parts'] = {listPartsOnSale: findPartsStub};
-
-                        controller = proxyquire('../server/wechat/manjusriPages', stubs).jiansi;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                expect(resRenderSpy).calledWith('manjusri/jiansi', {
-                                    daily: dailyVirtueLink,
-                                    suixi: suixiLink,
-                                    parts: [
-                                        {
-                                            url: transfooLink,
-                                            field: "v"
-                                        },
-                                        {
-                                            url: transfeeLink,
-                                            field: "v"
-                                        },
-                                    ]
+                            controller = proxyquire('../server/wechat/manjusriPages', stubs).home;
+                            controller(reqStub, resStub);
+                            expect(resRenderSpy).calledWith('manjusri/index',
+                                {
+                                    linkages: {
+                                        dailyVirtue: dailyVirtueLink,
+                                        suixi: suixiLink
+                                    },
+                                    menu: menuLinks
                                 });
-                            });
+                        });
+                    });
+
+                    describe('日行一善', function () {
+                        var virtuesList, virtueListStub;
+
+                        beforeEach(function () {
+                            virtuesList = {foo: "data"};
+                        });
+
+                        it('查询最近N笔日行一善失败', function () {
+                            virtueListStub = createPromiseStub(["daily", 30], null, err);
+                            stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
+
+                            controller = proxyquire('../server/wechat/manjusriPages', stubs).dailyVirtue;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+                        });
+
+                        it('正确显示', function () {
+                            virtueListStub = createPromiseStub(["daily", 30], [virtuesList]);
+                            stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
+
+                            controller = proxyquire('../server/wechat/manjusriPages', stubs).dailyVirtue;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    expect(resRenderSpy).calledWith('manjusri/dailyVirtue', {
+                                        virtus: virtuesList,
+                                        menu: menuLinks
+                                    });
+                                });
+                        });
+                    });
+
+                    describe('随喜', function () {
+                        var virtuesList, virtueListStub;
+                        beforeEach(function () {
+                            virtuesList = {foo: "data"};
+                        });
+
+                        it('查询最近N笔随喜失败', function () {
+                            virtueListStub = createPromiseStub(["suixi", 30], null, err);
+                            stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
+
+                            controller = proxyquire('../server/wechat/manjusriPages', stubs).suixi;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+                        });
+
+                        it('正确显示', function () {
+                            virtueListStub = createPromiseStub(["suixi", 30], [virtuesList]);
+                            stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
+
+                            controller = proxyquire('../server/wechat/manjusriPages', stubs).suixi;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    expect(resRenderSpy).calledWith('manjusri/suixi', {
+                                        virtus: virtuesList,
+                                        menu: menuLinks
+                                    });
+                                });
+                        });
+                    });
+
+                    describe('建寺', function () {
+                        var findPartsStub, parts;
+
+                        beforeEach(function () {
+                            parts = [
+                                {
+                                    _id: "foo",
+                                    field: "v"
+                                },
+                                {
+                                    _id: "fee",
+                                    field: "v"
+                                },
+                            ];
+                        });
+
+                        it('查询正在募捐的法物失败', function () {
+                            findPartsStub = createPromiseStub([], null, err);
+                            stubs['../modules/parts'] = {listPartsOnSale: findPartsStub};
+
+                            controller = proxyquire('../server/wechat/manjusriPages', stubs).jiansi;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+                        });
+
+                        it('正确显示', function () {
+                            var dailyVirtueLink = "/dailyVirtueLink";
+                            var suixiLink = "/suixiLink";
+                            var transfooLink = "/trans/foo";
+                            var transfeeLink = "/trans/fee";
+                            var linkages = sinon.stub();
+                            linkages.withArgs("dailyVirtue").returns(dailyVirtueLink);
+                            linkages.withArgs("suixi").returns(suixiLink);
+                            linkages.withArgs("trans", {partId: "foo"}).returns(transfooLink);
+                            linkages.withArgs("trans", {partId: "fee"}).returns(transfeeLink);
+                            stubs["../rests"].getLink = linkages;
+
+                            findPartsStub = createPromiseStub([], [parts]);
+                            stubs['../modules/parts'] = {listPartsOnSale: findPartsStub};
+
+                            controller = proxyquire('../server/wechat/manjusriPages', stubs).jiansi;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    expect(resRenderSpy).calledWith('manjusri/jiansi', {
+                                        daily: dailyVirtueLink,
+                                        suixi: suixiLink,
+                                        menu: menuLinks,
+                                        parts: [
+                                            {
+                                                url: transfooLink,
+                                                field: "v"
+                                            },
+                                            {
+                                                url: transfeeLink,
+                                                field: "v"
+                                            },
+                                        ]
+                                    });
+                                });
+                        });
                     });
                 });
 

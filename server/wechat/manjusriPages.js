@@ -16,7 +16,10 @@ var dealwithVirtue = function (type, req, res) {
     var res = createResponseWrap(res);
     return virtuesModule.lastVirtuesAndTotalCount(type, 30)
         .then(function (data) {
-            return res.render(view, data);
+            return res.render(view, {
+                virtus: data,
+                menu: linkages.getMainMenuLinkages()
+            });
         })
         .catch(function (err) {
             return res.setError(500, null, err);
@@ -78,7 +81,8 @@ module.exports = {
             linkages: {
                 dailyVirtue: linkages.getLink("dailyVirtue"),
                 suixi: linkages.getLink("suixi"),
-            }
+            },
+            menu: linkages.getMainMenuLinkages()
         }
         return res.render('manjusri/index', viewData);
     },
@@ -98,6 +102,7 @@ module.exports = {
                     var view = {
                         daily: linkages.getLink("dailyVirtue"),
                         suixi: linkages.getLink("suixi"),
+                        menu:linkages.getMainMenuLinkages(),
                         parts: []
                     };
                     parts.forEach(function (item) {
