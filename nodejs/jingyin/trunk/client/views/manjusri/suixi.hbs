@@ -14,43 +14,6 @@
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-    <script type="text/javascript">
-        function selectMoney(amount) {
-            document.getElementById('input_amount').value = amount;
-        }
-
-        $("#show-confirm").click(function () {
-            var amount = $('#input_amount').val();
-            var giving = $('#input_giving').val();
-            if (amount == '') {
-                $.toptip('请填写金额。');
-                return;
-            }
-
-            $.toptip('随喜'+amount+'金额,回向：' + giving);
-            return;
-
-            amount = Math.round(amount * 100) / 100;
-            var dataToPost = {
-                subject: $('#subject').text(),
-                amount: amount
-            };
-            if (giving) dataToPost.giving = giving;
-
-            var url = '/jingyin/rest/virtues/prepay11';
-
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: data,
-                success: function (data, textStatus, request) {
-                    var linkages = parseLinksInHeader(request.getResponseHeader('link'));
-                    window.location = linkages.pay;
-                }
-            });
-        });
-    </script>
 </head>
 <body>
 <div class="wrapper container-fluid">
@@ -180,6 +143,39 @@
 <script src="/js/jquery-3.1.1.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/jquery.liMarquee.js"></script>
+<script type="text/javascript">
+    function selectMoney(amount) {
+        document.getElementById('input_amount').value = amount;
+    }
+
+    $("#show-confirm").click(function () {
+        var amount = $('#input_amount').val();
+        var giving = $('#input_giving').val();
+        if (amount == '') {
+            $.toptip('请填写金额。');
+            return;
+        }
+
+        amount = Math.round(amount * 100) / 100;
+        var dataToPost = {
+            subject: $('#subject').text(),
+            amount: amount
+        };
+        if (giving) dataToPost.giving = giving;
+
+        var url = '/jingyin/rest/virtues/prepay11';
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: data,
+            success: function (data, textStatus, request) {
+                var linkages = parseLinksInHeader(request.getResponseHeader('link'));
+                window.location = linkages.pay;
+            }
+        });
+    });
+</script>
 <script>
     $(function () {
         $('.dowebok').liMarquee({

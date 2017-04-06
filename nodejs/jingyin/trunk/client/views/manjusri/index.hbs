@@ -28,7 +28,7 @@
     </div>
 
     <ul class="row twowrap">
-        <li>
+        <li onclick="linkto('{{linkages.dailyVirtue}}');">
 
             <div class="col-xs-3 twowrap-left">
                 <figure>
@@ -39,27 +39,23 @@
                 <h4>日行一善</h4>
                 <p>日行一善，善福增长</p>
             </div>
-            <a href="{{linkages.dailyVirtue}}">
                 <div class="col-xs-1 twowrap-right">
                     <span>></span>
                 </div>
-            </a>
         </li>
-        <li>
-            <a href="{{linkages.suixi}}">
-                <div class="col-xs-3 twowrap-left">
-                    <figure>
-                        <img src="/uploads/userc.png" alt="">
-                    </figure>
-                </div>
-                <div class="col-xs-8 twowrap-center">
-                    <h4>随喜建寺</h4>
-                    <p>随喜建寺</p>
-                </div>
-                <div class="col-xs-1 twowrap-right">
-                    <span>></span>
-                </div>
-            </a>
+        <li onclick="linkto('{{linkages.suixi}}');">
+            <div class="col-xs-3 twowrap-left">
+                <figure>
+                    <img src="/uploads/userc.png" alt="">
+                </figure>
+            </div>
+            <div class="col-xs-8 twowrap-center">
+                <h4>随喜建寺</h4>
+                <p>随喜建寺</p>
+            </div>
+            <div class="col-xs-1 twowrap-right">
+                <span>></span>
+            </div>
         </li>
         <!--<li>
             <div class="col-xs-3 twowrap-left">
@@ -117,5 +113,10 @@
 </div>
 <script src="/js/jquery-3.1.1.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function linkto(link) {
+        window.location = link;
+    }
+</script>
 </body>
 </html>
