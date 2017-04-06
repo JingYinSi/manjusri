@@ -11,12 +11,14 @@ var urlMap = {
     home: '/jingyin/manjusri/index',
     profile: '/jingyin/manjusri/lords/:openid/profile',
 
-    "manjusri.index": "/jingyin/manjusri/new/index",
+    //"manjusri.index": "/jingyin/manjusri/new/index",
     "dailyVirtue": "/jingyin/manjusri/new/dailyVirtue",
     "suixi": "/jingyin/manjusri/new/suixi",
     "trans": '/jingyin/manjusri/trans/:partId',
     "jiansi": "/jingyin/manjusri/new/jiansi",
+    "lord": "/jingyin/manjusri/lordvirtues"
 };
+
 function ResourceRegistry() {
 }
 
@@ -86,5 +88,14 @@ ResourceRegistry.prototype.getLink = function (resourceId, params) {
     var urlTemplate = new ResourceRegistry.URLTemplate(tempUrl);
     return urlTemplate.expand(params);
 };
+
+ResourceRegistry.prototype.getMainMenuLinkages = function () {
+    var linkages = {
+        home: this.getLink("home"),
+        jiansi: this.getLink("jiansi"),
+        lord: this.getLink("lord")
+    }
+    return linkages;
+}
 
 module.exports = new ResourceRegistry();

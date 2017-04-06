@@ -56,3 +56,20 @@ input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit
 	Explain:		Clearfix（简写cl）避免因子元素浮动而导致的父元素高度缺失能问题
 */
 .cl:after,.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}.cl,.clearfix{zoom:1}
+.p-fix{
+    width: 100%;
+    max-width: 720px;
+    margin:0 auto;
+    line-height: 50px;
+    height: 50px;
+    position: fixed;
+    bottom:0;
+    z-index: 10;
+    left:0;
+    right:0;
+    background-color: #fff;
+}
+.p-fix a{
+    display: block;
+    color: #666;
+}
