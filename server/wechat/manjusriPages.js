@@ -91,9 +91,20 @@ module.exports = {
 
     dailyVirtue: function (req, res) {
         var res = createResponseWrap(res);
-        return virtuesModule.lastVirtuesAndTotalCount(30)
+        return virtuesModule.lastVirtuesAndTotalCount("daily", 30)
             .then(function (data) {
                 return res.render('manjusri/dailyVirtue', data);
+            })
+            .catch(function (err) {
+                return res.setError(500, null, err);
+            });
+    },
+
+    suixi: function (req, res) {
+        var res = createResponseWrap(res);
+        return virtuesModule.lastVirtuesAndTotalCount("suixi", 30)
+            .then(function (data) {
+                return res.render('manjusri/suixi', data);
             })
             .catch(function (err) {
                 return res.setError(500, null, err);
@@ -119,20 +130,7 @@ module.exports = {
 
 
 
-    suixi: function (req, res) {
-        var data = {
-            title: '建寺-随喜所有建庙功德'
-        };
-        var res = createResponseWrap(res);
-        return Part.findOne({type: 'suixi', onSale: true})
-            .then(function (part) {
-                if (!part) return res.setError(500, '随喜相关信息未建立');
-                data.part = part;
-                return res.render('wechat/suixi', data);
-            }, function (err) {
-                return res.setError(500, null, err);
-            });
-    },
+
 
     trans: function (req, res) {
         var id = req.params.partId;

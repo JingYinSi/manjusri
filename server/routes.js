@@ -57,6 +57,9 @@ module.exports = function (router) {
     router.route(linkages.getUrlTemplete('dailyVirtue'))
         .get(manjusriPages.dailyVirtue);
 
+    router.route(linkages.getUrlTemplete('suixi'))
+        .get(manjusriPages.suixi);
+
     /*----------------------------restful--------------------------------------------------*/
     router.route('/jingyin/rest/virtues/prepay')
         .post(virtues.prepay);

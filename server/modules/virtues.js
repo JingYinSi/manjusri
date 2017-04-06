@@ -151,11 +151,11 @@ Virtues.prototype.listLastVirtues = function (count) {
     });
 }
 
-Virtues.prototype.lastVirtuesAndTotalCount = function (count) {
+Virtues.prototype.lastVirtuesAndTotalCount = function (type, count) {
     var lines = [
         {$lookup: {from: "parts", localField: "subject", foreignField: "_id", as: "partdoc"}},
         {$lookup: {from: "users", localField: "lord", foreignField: "_id", as: "userdoc"}},
-        {"$match": {"state": "payed", "partdoc.type": "daily"}},
+        {"$match": {"state": "payed", "partdoc.type": type}},
         {"$sort": {"timestamp": -1}},
         {
             "$facet": {
