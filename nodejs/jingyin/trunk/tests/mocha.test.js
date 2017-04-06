@@ -2846,10 +2846,8 @@ describe('静音寺业务系统', function () {
                             controller = proxyquire('../server/wechat/manjusriPages', stubs).dailyVirtue;
                             return controller(reqStub, resStub)
                                 .then(function () {
-                                    expect(resRenderSpy).calledWith('manjusri/dailyVirtue', {
-                                        virtus: virtuesList,
-                                        menu: menuLinks
-                                    });
+                                    virtuesList.menu = menuLinks;
+                                    expect(resRenderSpy).calledWith('manjusri/dailyVirtue', virtuesList);
                                 });
                         });
                     });
@@ -2878,10 +2876,8 @@ describe('静音寺业务系统', function () {
                             controller = proxyquire('../server/wechat/manjusriPages', stubs).suixi;
                             return controller(reqStub, resStub)
                                 .then(function () {
-                                    expect(resRenderSpy).calledWith('manjusri/suixi', {
-                                        virtus: virtuesList,
-                                        menu: menuLinks
-                                    });
+                                    virtuesList.menu = menuLinks;
+                                    expect(resRenderSpy).calledWith('manjusri/suixi', virtuesList);
                                 });
                         });
                     });
