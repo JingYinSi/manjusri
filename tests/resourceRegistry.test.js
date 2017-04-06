@@ -22,10 +22,10 @@ describe('资源', function () {
 
         it('getLink', function () {
             expect(linkage.getLink("home")).eql("/jingyin/manjusri/index");
-            expect(linkage.getLink("dailyVirtue")).eql("/jingyin/manjusri/new/dailyVirtue");
-            expect(linkage.getLink("suixi")).eql("/jingyin/manjusri/new/suixi");
+            expect(linkage.getLink("dailyVirtue")).eql("/jingyin/manjusri/dailyVirtue");
+            expect(linkage.getLink("suixi")).eql("/jingyin/manjusri/suixi");
             expect(linkage.getLink("trans", {partId: "foo"})).eql('/jingyin/manjusri/trans/foo');
-            expect(linkage.getLink("jiansi")).eql("/jingyin/manjusri/new/jiansi");
+            expect(linkage.getLink("jiansi")).eql("/jingyin/manjusri/jiansi");
             expect(linkage.getLink("lord")).eql("/jingyin/manjusri/lordvirtues");
 
             expect(linkage.getLink("virtue", {id: 234567})).eql("/jingyin/rest/virtues/234567");
@@ -39,7 +39,7 @@ describe('资源', function () {
         it('获得主菜单URL', function () {
             expect(linkage.getMainMenuLinkages()).eql({
                 home:"/jingyin/manjusri/index",
-                jiansi: "/jingyin/manjusri/new/jiansi",
+                jiansi: "/jingyin/manjusri/jiansi",
                 lord: "/jingyin/manjusri/lordvirtues"
             });
         });
