@@ -14,6 +14,8 @@ var urlMap = {
     "manjusri.index": "/jingyin/manjusri/new/index",
     "dailyVirtue": "/jingyin/manjusri/new/dailyVirtue",
     "suixi": "/jingyin/manjusri/new/suixi",
+    "trans": '/jingyin/manjusri/trans/:partId',
+    "jiansi": "/jingyin/manjusri/new/jiansi",
 };
 function ResourceRegistry() {
 }

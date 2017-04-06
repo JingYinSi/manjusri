@@ -60,6 +60,9 @@ module.exports = function (router) {
     router.route(linkages.getUrlTemplete('suixi'))
         .get(manjusriPages.suixi);
 
+    router.route(linkages.getUrlTemplete('jiansi'))
+        .get(manjusriPages.jiansi);
+
     /*----------------------------restful--------------------------------------------------*/
     router.route('/jingyin/rest/virtues/prepay')
         .post(virtues.prepay);

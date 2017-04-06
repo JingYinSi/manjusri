@@ -99,6 +99,15 @@ describe('静音寺业务系统', function () {
                 },
                 {
                     "type": "part",
+                    "name": "万尊文殊菩萨像中",
+                    "img": "/images/product2.jpg",
+                    "price": 1000,
+                    "num": 10,
+                    "onSale": false,
+                    "sold": 9,
+                },
+                {
+                    "type": "part",
                     "name": "万尊文殊菩萨像小",
                     "img": "/images/product2.jpg",
                     "price": 1000,
@@ -300,6 +309,23 @@ describe('静音寺业务系统', function () {
                                 expect(partSaveStub).calledOnce;
                             });
                     });
+                });
+
+                it('查询正在募捐的法物', function () {
+                    var parts = require('../server/modules/parts');
+                    return parts.listPartsOnSale()
+                        .then(function (data) {
+                            expect(data).eql([
+                                {
+                                    _id: partsInDb[3]._id,
+                                    "name": partsInDb[3].name,
+                                    "img": partsInDb[3].img,
+                                    "price": partsInDb[3].price,
+                                    "num": partsInDb[3].num,
+                                    "sold": partsInDb[3].sold,
+                                }
+                            ]);
+                        })
                 });
             });
 
@@ -2392,6 +2418,7 @@ describe('静音寺业务系统', function () {
                         linkages.withArgs("manjusri.index").returns(url + '/index');
                         linkages.withArgs("dailyVirtue").returns(url + '/dailyVirtue');
                         linkages.withArgs("suixi").returns(url + '/suixi');
+                        linkages.withArgs("jiansi").returns(url + '/jiansi');
                         stubs["./rests"] = {getUrlTemplete: linkages}
 
                         controller = function (req, res) {
@@ -2432,6 +2459,18 @@ describe('静音寺业务系统', function () {
                         request = requestAgent(app);
 
                         request.get(url + '/suixi')
+                            .expect(200, {data: 'ok'}, done);
+                    });
+
+                    it('建寺', function (done) {
+                        stubs['./wechat/manjusriPages'] = {jiansi: controller}
+                        routes = proxyquire('../server/routes', stubs);
+
+                        routes(router);
+                        app.use(router);
+                        request = requestAgent(app);
+
+                        request.get(url + '/jiansi')
                             .expect(200, {data: 'ok'}, done);
                     });
                 });
@@ -2776,7 +2815,7 @@ describe('静音寺业务系统', function () {
                     var virtuesList, virtueListStub;
 
                     beforeEach(function () {
-                        virtuesList = {foo:"data"};
+                        virtuesList = {foo: "data"};
                     });
 
                     it('查询最近N笔日行一善失败', function () {
@@ -2804,9 +2843,8 @@ describe('静音寺业务系统', function () {
 
                 describe('随喜', function () {
                     var virtuesList, virtueListStub;
-
                     beforeEach(function () {
-                        virtuesList = {foo:"data"};
+                        virtuesList = {foo: "data"};
                     });
 
                     it('查询最近N笔随喜失败', function () {
@@ -2832,44 +2870,64 @@ describe('静音寺业务系统', function () {
                     });
                 });
 
-                describe('随喜', function () {
-                    var part, findOneStub;
+                describe('建寺', function () {
+                    var findPartsStub, parts;
 
                     beforeEach(function () {
-                        part = new Object();
-                        findOneStub = createPromiseStub([{type: 'suixi', onSale: true}], [part]);
-                        stubs['./models/part'] = {findOne: findOneStub};
+                        parts = [
+                            {
+                                _id: "foo",
+                                field: "v"
+                            },
+                            {
+                                _id: "fee",
+                                field: "v"
+                            },
+                        ];
                     });
 
-                    it('访问随喜的相关信息失败', function () {
-                        findOneStub = createPromiseStub([{type: 'suixi', onSale: true}], null, err);
-                        stubs['./models/part'] = {findOne: findOneStub};
+                    it('查询正在募捐的法物失败', function () {
+                        findPartsStub = createPromiseStub([], null, err);
+                        stubs['../modules/parts'] = {listPartsOnSale: findPartsStub};
 
-                        controller = proxyquire('../server/wechat/manjusri', stubs).suixi;
+                        controller = proxyquire('../server/wechat/manjusriPages', stubs).jiansi;
                         return controller(reqStub, resStub)
                             .then(function () {
                                 checkResponseStatusCodeAndMessage(500, null, err);
                             });
                     });
 
-                    it('未能获得随喜的相关信息', function () {
-                        findOneStub = createPromiseStub([{type: 'suixi', onSale: true}], [null]);
-                        stubs['./models/part'] = {findOne: findOneStub};
-
-                        controller = proxyquire('../server/wechat/manjusri', stubs).suixi;
-                        return controller(reqStub, resStub)
-                            .then(function () {
-                                checkResponseStatusCodeAndMessage(500, '随喜相关信息未建立');
-                            });
-                    });
-
                     it('正确显示', function () {
-                        controller = proxyquire('../server/wechat/manjusri', stubs).suixi;
+                        var dailyVirtueLink = "/dailyVirtueLink";
+                        var suixiLink = "/suixiLink";
+                        var transfooLink = "/trans/foo";
+                        var transfeeLink = "/trans/fee";
+                        var linkages = sinon.stub();
+                        linkages.withArgs("dailyVirtue").returns(dailyVirtueLink);
+                        linkages.withArgs("suixi").returns(suixiLink);
+                        linkages.withArgs("trans", {partId: "foo"}).returns(transfooLink);
+                        linkages.withArgs("trans", {partId: "fee"}).returns(transfeeLink);
+                        stubs["../rests"] = {getLink: linkages}
+
+                        findPartsStub = createPromiseStub([], [parts]);
+                        stubs['../modules/parts'] = {listPartsOnSale: findPartsStub};
+
+                        controller = proxyquire('../server/wechat/manjusriPages', stubs).jiansi;
                         return controller(reqStub, resStub)
                             .then(function () {
-                                expect(resRenderSpy).calledWith('wechat/suixi', {
-                                    part: part,
-                                    title: '建寺-随喜所有建庙功德'
+                                expect(resRenderSpy).calledWith('manjusri/jiansi', {
+                                    daily: dailyVirtueLink,
+                                    suixi: suixiLink,
+                                    parts: [
+                                        {
+                                            url: transfooLink,
+                                            field: "v"
+                                        },
+                                        {
+                                            url: transfeeLink,
+                                            field: "v"
+                                        },
+                                    ]
                                 });
                             });
                     });

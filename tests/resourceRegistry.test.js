@@ -24,6 +24,8 @@ describe('资源', function () {
             expect(linkage.getLink("manjusri.index")).eql("/jingyin/manjusri/new/index");
             expect(linkage.getLink("dailyVirtue")).eql("/jingyin/manjusri/new/dailyVirtue");
             expect(linkage.getLink("suixi")).eql("/jingyin/manjusri/new/suixi");
+            expect(linkage.getLink("trans", {partId: "foo"})).eql('/jingyin/manjusri/trans/foo');
+            expect(linkage.getLink("jiansi")).eql("/jingyin/manjusri/new/jiansi");
 
             expect(linkage.getLink("virtue", {id: 234567})).eql("/jingyin/rest/virtues/234567");
             expect(linkage.getLink("pay", {virtue: 234567}))
