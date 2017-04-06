@@ -31,7 +31,7 @@
                         <img src="/assets/images/a.png" alt="">
                     </figure>
                     <span>金额：</span>
-                    <span id="subject" hidden>{{part.id}}</span>
+                    <span id="subject" hidden>{{id}}</span>
                 </div>
                 <div class="col-xs-8 twowrapIpt-center">
                     <input id="input_amount" type="number" placeholder="随喜所有建寺功德" style="text-align: right">
@@ -143,6 +143,7 @@
 <script src="/js/jquery-3.1.1.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/jquery.liMarquee.js"></script>
+<script src="/js/js.js"></script>
 <script type="text/javascript">
     function selectMoney(amount) {
         document.getElementById('input_amount').value = amount;
@@ -163,17 +164,7 @@
         };
         if (giving) dataToPost.giving = giving;
 
-        var url = '/jingyin/rest/virtues/prepay11';
-
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: data,
-            success: function (data, textStatus, request) {
-                var linkages = parseLinksInHeader(request.getResponseHeader('link'));
-                window.location = linkages.pay;
-            }
-        });
+        requestDoTansaction(dataToPost);
     });
 </script>
 <script>
