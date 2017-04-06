@@ -21,8 +21,8 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/login')
         .get(manjusri.login);
 
-    router.route('/jingyin/manjusri/index')
-        .get(manjusri.home);
+    /*router.route('/jingyin/manjusri/index')
+        .get(manjusri.home);*/
 
     router.route('/jingyin/manjusri/jiansi')
         .get(manjusri.jiansi);
@@ -51,7 +51,9 @@ module.exports = function (router) {
         .put(manjusri.updateLordProfile);
 
     /*----------------------------manjusri pages -------------------------------------------*/
-    router.route(linkages.getUrlTemplete('manjusri.index'))
+    /*router.route(linkages.getUrlTemplete('manjusri.index'))
+        .get(manjusriPages.home);*/
+    router.route(linkages.getUrlTemplete('home'))
         .get(manjusriPages.home);
 
     router.route(linkages.getUrlTemplete('dailyVirtue'))
