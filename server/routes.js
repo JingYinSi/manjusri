@@ -22,7 +22,7 @@ module.exports = function (router) {
         .get(manjusri.login);
 
     /*router.route('/jingyin/manjusri/index')
-        .get(manjusri.home);*/
+        .get(manjusri.home);
 
     router.route('/jingyin/manjusri/jiansi')
         .get(manjusri.jiansi);
@@ -31,7 +31,7 @@ module.exports = function (router) {
         .get(manjusri.dailyVirtue);
 
     router.route('/jingyin/manjusri/suixi')
-        .get(manjusri.suixi);
+        .get(manjusri.suixi);*/
 
     router.route('/jingyin/manjusri/trans/:partId')
         .get(manjusri.trans);
