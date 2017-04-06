@@ -4,16 +4,26 @@
 var partModel = require('../wechat/models/part'),
     Promise = require('bluebird');
 
-function Parts() {
-}
+module.exports = {
+    updatePartNum: function (partId, num) {
+        return partModel.findById(partId)
+            .then(function (part) {
+                if (!part) return Promise.reject(new Error('The part ' + partId + ' is not found'));
+                part.updateNum(num);
+                return part.save();
+            });
+    },
 
-Parts.prototype.updatePartNum = function (partId, num) {
-    return partModel.findById(partId)
-        .then(function (part) {
-            if(!part) return Promise.reject(new Error('The part ' + partId + ' is not found'));
-            part.updateNum(num);
-            return part.save();
-        });
-}
-
-module.exports = new Parts();
+    listPartsOnSale: function () {
+        var results = [];
+        return partModel.find({type: 'part', onSale: true})
+            .select("name img price num sold")
+            .exec()
+            .then(function (data) {
+                data.forEach(function (item) {
+                    results.push(item._doc);
+                });
+                return results;
+            })
+    }
+};
