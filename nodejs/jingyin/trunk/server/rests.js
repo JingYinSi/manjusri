@@ -12,10 +12,10 @@ var urlMap = {
     profile: '/jingyin/manjusri/lords/:openid/profile',
 
     "manjusri.index": "/jingyin/manjusri/new/index",
-    "dailyVirtue": "/jingyin/manjusri/new/dailyVirtue",
-    "suixi": "/jingyin/manjusri/new/suixi",
+    "dailyVirtue": "/jingyin/manjusri/dailyVirtue",
+    "suixi": "/jingyin/manjusri/suixi",
     "trans": '/jingyin/manjusri/trans/:partId',
-    "jiansi": "/jingyin/manjusri/new/jiansi",
+    "jiansi": "/jingyin/manjusri/jiansi",
     "lord": "/jingyin/manjusri/lordvirtues"
 };
 
