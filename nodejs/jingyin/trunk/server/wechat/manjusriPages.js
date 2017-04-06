@@ -16,10 +16,8 @@ var dealwithVirtue = function (type, req, res) {
     var res = createResponseWrap(res);
     return virtuesModule.lastVirtuesAndTotalCount(type, 30)
         .then(function (data) {
-            return res.render(view, {
-                virtus: data,
-                menu: linkages.getMainMenuLinkages()
-            });
+            data.menu = linkages.getMainMenuLinkages();
+            return res.render(view, data);
         })
         .catch(function (err) {
             return res.setError(500, null, err);
