@@ -35,10 +35,12 @@ Users.prototype.updateProfileByOpenid = function (openid, dataToUpdate) {
 Users.prototype.register = function (accessToken, openId) {
     return UserModel.findOne({openid: openId})
         .then(function (user) {
+            logger.debug('The user with openid[' + openId + '] entering ..................\n' + JSON.stringify(user));
             if (user && user.name && user.subscribe) {
                 logger.debug('The user with openid[' + openId + '] is already registered!');
                 return Promise.resolve(user);
             }
+            logger.debug('a new user? we will try to add or update the info of the user  with openid[' + openId + '] .......');
             (accessToken ? weixinService.getUserInfoByOpenIdAndToken(accessToken, openId)
                 : weixinService.getUserInfoByOpenId(openId))
                 .then(function (userInfo) {
