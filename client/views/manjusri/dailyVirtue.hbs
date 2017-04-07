@@ -29,7 +29,7 @@
                 var amount = $('#input_amount').val();
                 var giving = $('#input_giving').val();
                 if (amount == '') {
-                    //$.toptip('请填写金额。');
+                    $.toptip('请填写金额。');
                     return;
                 }
                 amount = Math.round(amount * 100) / 100;
