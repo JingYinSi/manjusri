@@ -9,13 +9,10 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/liMarquee.css">
     <link rel="stylesheet" href="/assets/css/doGoodDeedADay.css">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-
     <!--[if lt IE 9]>
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
 </head>
 <body>
@@ -158,7 +155,6 @@
             var amount = $('#input_amount').val();
             var giving = $('#input_giving').val();
             if (amount == '') {
-                $.toptip('请填写金额。');
                 return;
             }
             amount = Math.round(amount * 100) / 100;
