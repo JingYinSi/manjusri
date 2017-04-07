@@ -69,6 +69,7 @@ module.exports = {
                                 });
                         });
                 } else {
+                    //TODO:访问微信用户资料补充当前不足的用户信息
                     var redirectToUrl = req.session.redirectToUrl;
                     return redirectToUrl ? res.redirect(redirectToUrl)
                         : redirects.toHome(req, res);
