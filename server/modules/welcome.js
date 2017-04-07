@@ -20,13 +20,13 @@ var welcomeMsg = [
         title: '欢迎您关注静音文殊禅林-每日一善',
         description: '描述-每日一善',
         picurl: 'http://jingyintemple.top/images/jiansi.jpg',
-        url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+        url: 'http://jingyintemple.top/jingyin/manjusri/dailyVirtue'
     },
     {
         title: '欢迎您关注静音文殊禅林-随喜功德',
         description: '描述-随喜功德',
         picurl: 'http://jingyintemple.top/images/jiansi.jpg',
-        url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+        url: 'http://jingyintemple.top/jingyin/manjusri/suixi'
     }
 ];
 
