@@ -15,6 +15,40 @@
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <script src="/js/jquery-3.1.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.liMarquee.js"></script>
+    <script src="/js/js.js"></script>
+    <script type="text/javascript">
+        function selectMoney(amount) {
+            document.getElementById('input_amount').value = amount;
+        }
+
+        $(document).ready(function(){
+            $("#show-confirm").click(function () {
+                var amount = $('#input_amount').val();
+                var giving = $('#input_giving').val();
+                if (amount == '') {
+                    $.toptip('请填写金额。');
+                    return;
+                }
+                amount = Math.round(amount * 100) / 100;
+                var dataToPost = {
+                    subject: $('#subject').text(),
+                    amount: amount
+                };
+                if (giving) dataToPost.giving = giving;
+
+                requestDoTansaction(dataToPost);
+            });
+
+            $('.dowebok').liMarquee({
+                direction: 'up',
+                // scrollamount:30,
+                // circular:true
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="wrapper container-fluid">
@@ -141,50 +175,5 @@
     </footer>
     {{>footmenu}}
 </div>
-<script src="/js/jquery-3.1.1.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/jquery.liMarquee.js"></script>
-<script src="/js/js.js"></script>
-<script type="text/javascript">
-    function selectMoney(amount) {
-        document.getElementById('input_amount').value = amount;
-    }
-
-    function moneyItemOver(item) {
-        item.setAttribute('class', 'moneyItemOver');
-    }
-
-    function moneyItemOut(item) {
-        item.setAttribute('class', 'moneyItemOut');
-    }
-
-    $("#show-confirm").click(function () {
-
-        var amount = $('#input_amount').val();
-        var giving = $('#input_giving').val();
-        if (amount == '') {
-            $.toptip('请填写金额。');
-            return;
-        }
-        amount = Math.round(amount * 100) / 100;
-        var dataToPost = {
-            subject: $('#subject').text(),
-            amount: amount
-        };
-        if (giving) dataToPost.giving = giving;
-
-        requestDoTansaction(dataToPost);
-    });
-</script>
-<script>
-    $(function () {
-        $('.dowebok').liMarquee({
-            direction: 'up',
-            // scrollamount:30,
-            // circular:true
-        });
-    });
-</script>
-
 </body>
 </html>
