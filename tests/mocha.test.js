@@ -84,57 +84,8 @@ describe('静音寺业务系统', function () {
             var UserModel = require('../server/wechat/models/user');
             var VirtueModel = require('../server/wechat/models/virtue');
 
-            partsData = [
-                {
-                    "type": "daily",
-                    "name": "每日一善",
-                    "img": "/images/product_banner2.jpg",
-                    "onSale": true,
-                },
-                {
-                    "type": "suixi",
-                    "name": "随喜",
-                    "img": "/images/product_banner2.jpg",
-                    "onSale": true,
-                },
-                {
-                    "type": "part",
-                    "name": "万尊文殊菩萨像中",
-                    "img": "/images/product2.jpg",
-                    "price": 1000,
-                    "num": 10,
-                    "onSale": false,
-                    "sold": 9,
-                },
-                {
-                    "type": "part",
-                    "name": "万尊文殊菩萨像小",
-                    "img": "/images/product2.jpg",
-                    "price": 1000,
-                    "num": 50,
-                    "onSale": true,
-                    "sold": 10,
-                }
-            ];
-            usersData = [
-                {
-                    "name": "陈立新",
-                    "province": "江苏",
-                    "city": "南京",
-                    "openid": "o0ghywcfW_2Dp4oN-7NADengZAVM",
-                },
-                {
-                    "name": "Susan孙英",
-                    "province": "江苏",
-                    "city": "无锡",
-                    "openid": "o0ghywYninpxeXtUPk-lTFx2cK9Q",
-                },
-                {
-                    "name": "foo",
-                    "city": "北京",
-                    "openid": "o0ghabcninpxeXtUPk-lTFx2cK9Q",
-                }
-            ];
+            partsData = require('./data/partsdata').data;
+            usersData = require('./data/usersdata').data;
 
             insertDocs(PartModel, partsData, function (err, docs) {
                 if (err) return callback(err);
@@ -2419,6 +2370,7 @@ describe('静音寺业务系统', function () {
                         linkages.withArgs("dailyVirtue").returns(url + '/dailyVirtue');
                         linkages.withArgs("suixi").returns(url + '/suixi');
                         linkages.withArgs("jiansi").returns(url + '/jiansi');
+                        linkages.withArgs("pray").returns(url + '/pray');
                         stubs["./rests"] = {getUrlTemplete: linkages}
 
                         controller = function (req, res) {
@@ -2471,6 +2423,18 @@ describe('静音寺业务系统', function () {
                         request = requestAgent(app);
 
                         request.get(url + '/jiansi')
+                            .expect(200, {data: 'ok'}, done);
+                    });
+
+                    it('祈福', function (done) {
+                        stubs['./wechat/manjusriPages'] = {pray: controller}
+                        routes = proxyquire('../server/routes', stubs);
+
+                        routes(router);
+                        app.use(router);
+                        request = requestAgent(app);
+
+                        request.get(url + '/pray')
                             .expect(200, {data: 'ok'}, done);
                     });
                 });
@@ -2943,6 +2907,20 @@ describe('静音寺业务系统', function () {
                                         ]
                                     });
                                 });
+                        });
+                    });
+
+                    describe('祈福', function () {
+
+                        beforeEach(function () {
+                        });
+
+                        it('正确显示', function () {
+                            controller = proxyquire('../server/wechat/manjusriPages', stubs).pray;
+                            controller(reqStub, resStub);
+                            expect(resRenderSpy).calledWith('manjusri/pray', {
+                                menu: menuLinks,
+                            });
                         });
                     });
                 });
@@ -3960,6 +3938,7 @@ describe('静音寺业务系统', function () {
     //TODO:首页标题当中的点太大啦
 
     //TODO:日行一善和随喜页面中的功德说明的文字应可以在后台系统中发布，每周/月定时替换
+    //TODO:功课的页面要结合我的功德的页面一同考虑，它是该页下的一个page！！！！！
 });
 
 

@@ -21,17 +21,20 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/login')
         .get(manjusri.login);
 
-    /*router.route('/jingyin/manjusri/index')
-        .get(manjusri.home);
+    router.route(linkages.getUrlTemplete('home'))
+        .get(manjusriPages.home);
 
-    router.route('/jingyin/manjusri/jiansi')
-        .get(manjusri.jiansi);
+    router.route(linkages.getUrlTemplete('dailyVirtue'))
+        .get(manjusriPages.dailyVirtue);
 
-    router.route('/jingyin/manjusri/dailyvirtue')
-        .get(manjusri.dailyVirtue);
+    router.route(linkages.getUrlTemplete('suixi'))
+        .get(manjusriPages.suixi);
 
-    router.route('/jingyin/manjusri/suixi')
-        .get(manjusri.suixi);*/
+    router.route(linkages.getUrlTemplete('jiansi'))
+        .get(manjusriPages.jiansi);
+
+    router.route(linkages.getUrlTemplete('pray'))
+        .get(manjusriPages.pray);
 
     router.route('/jingyin/manjusri/trans/:partId')
         .get(manjusri.trans);
@@ -49,21 +52,6 @@ module.exports = function (router) {
     router.route('/jingyin/manjusri/lords/:openid/profile')
         .get(manjusri.lordProfile)
         .put(manjusri.updateLordProfile);
-
-    /*----------------------------manjusri pages -------------------------------------------*/
-    /*router.route(linkages.getUrlTemplete('manjusri.index'))
-        .get(manjusriPages.home);*/
-    router.route(linkages.getUrlTemplete('home'))
-        .get(manjusriPages.home);
-
-    router.route(linkages.getUrlTemplete('dailyVirtue'))
-        .get(manjusriPages.dailyVirtue);
-
-    router.route(linkages.getUrlTemplete('suixi'))
-        .get(manjusriPages.suixi);
-
-    router.route(linkages.getUrlTemplete('jiansi'))
-        .get(manjusriPages.jiansi);
 
     /*----------------------------restful--------------------------------------------------*/
     router.route('/jingyin/rest/virtues/prepay')
