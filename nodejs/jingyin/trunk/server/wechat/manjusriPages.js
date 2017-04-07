@@ -70,5 +70,9 @@ module.exports = {
             );
     },
 
+    pray: function (req, res) {
+        var res = createResponseWrap(res);
+        return res.render('manjusri/pray', {menu:linkages.getMainMenuLinkages()});
+    }
 };
 

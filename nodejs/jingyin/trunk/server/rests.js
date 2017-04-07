@@ -16,6 +16,7 @@ var urlMap = {
     "suixi": "/jingyin/manjusri/suixi",
     "trans": '/jingyin/manjusri/trans/:partId',
     "jiansi": "/jingyin/manjusri/jiansi",
+    "pray": "/jingyin/manjusri/pray",
     "lord": "/jingyin/manjusri/lordvirtues"
 };
 
@@ -93,6 +94,7 @@ ResourceRegistry.prototype.getMainMenuLinkages = function () {
     var linkages = {
         home: this.getLink("home"),
         jiansi: this.getLink("jiansi"),
+        pray: this.getLink('pray'),
         lord: this.getLink("lord")
     }
     return linkages;
