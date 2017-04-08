@@ -1243,7 +1243,7 @@ describe('静音寺业务系统', function () {
         var requestAgent;
         var controller;
 
-        before(function () {
+        beforeEach(function () {
             bodyParser = require('body-parser');
             requestAgent = require('supertest');
             express = require('express');
@@ -1253,13 +1253,36 @@ describe('静音寺业务系统', function () {
         describe('rest服务url', function () {
             var routes, router;
 
-            before(function () {
+            beforeEach(function (done) {
                 app = express();
                 router = express.Router();
                 controller = function (req, res) {
                     return res.status(200).json({data: 'ok'});
                 };
+                /*stubs['./rest/pray'] = {pray: controller}
+                 stubs['./rest/statistics'] = {query: controller}
+                 routes = proxyquire('../server/routes', stubs);
+                 routes(router);
+                 app.use(router);
+                 request = requestAgent(app);*/
             });
+
+            /*it('祈福', function (done) {
+             /!*controller = function (req, res) {
+             /!*return Promise.resolve(function () {
+             res.body = {id: 'foo'};
+             return res.status(201);
+             });*!/
+             };*!/
+             /!*stubs['./rest/pray'] = {pray: controller}
+             routes = proxyquire('../server/routes', stubs);
+             routes(router);
+             app.use(router);
+             request = requestAgent(app);*!/
+
+             request.post('/jingyin/rests/manjusri/pray')
+             .expect(200, {data: 'ok'}, done);
+             });*/
 
             it('统计服务', function (done) {
                 stubs['./rest/statistics'] = {query: controller}
@@ -1271,6 +1294,8 @@ describe('静音寺业务系统', function () {
                 request.get('/jingyin/rests/manjusri/statistics')
                     .expect(200, {data: 'ok'}, done);
             });
+
+
         });
 
         describe('统计', function () {
