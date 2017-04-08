@@ -1239,46 +1239,33 @@ describe('静音寺业务系统', function () {
     });
 
     describe("Restful服务", function () {
-        var request, express, app, bodyParser;
+        var request, app, bodyParser;
         var requestAgent;
         var controller;
 
         beforeEach(function () {
             bodyParser = require('body-parser');
             requestAgent = require('supertest');
-            express = require('express');
-
+            app = require('express')();
+            request = requestAgent(app);
+            app.use(bodyParser.json());
         });
 
         describe('rest服务url', function () {
-            var routes, router;
+            var routes;
 
-            beforeEach(function (done) {
-                app = express();
-                router = express.Router();
+            beforeEach(function () {
                 controller = function (req, res) {
-                    return res.status(200).json({data: 'ok'});
+                    return res.json(200, {data: 'ok'});
                 };
-                /*stubs['./rest/pray'] = {pray: controller}
-                 stubs['./rest/statistics'] = {query: controller}
-                 routes = proxyquire('../server/routes', stubs);
-                 routes(router);
-                 app.use(router);
-                 request = requestAgent(app);*/
             });
 
+            //TODO:继续实现祈福rest服务
+
             it('祈福', function (done) {
-                controller = function (req, res) {
-                    return Promise.resolve(function () {
-                        res.body = {id: 'foo'};
-                        return res.status(201);
-                    });
-                };
                 stubs['./rest/pray'] = {pray: controller}
                 routes = proxyquire('../server/routes', stubs);
-                routes(router);
-                app.use(router);
-                request = requestAgent(app);
+                routes.attachTo(app);
 
                 request.post('/jingyin/rests/manjusri/pray')
                     .expect(200, {data: 'ok'}, done);
@@ -1287,15 +1274,11 @@ describe('静音寺业务系统', function () {
             it('统计服务', function (done) {
                 stubs['./rest/statistics'] = {query: controller}
                 routes = proxyquire('../server/routes', stubs);
-                routes(router);
-                app.use(router);
-                request = requestAgent(app);
+                routes.attachTo(app);
 
                 request.get('/jingyin/rests/manjusri/statistics')
                     .expect(200, {data: 'ok'}, done);
             });
-
-
         });
 
         describe('统计', function () {
@@ -1305,10 +1288,7 @@ describe('静音寺业务系统', function () {
             beforeEach(function () {
                 data = {foo: 1, fee: 2};
                 url = '/foo/url';
-                app = express();
 
-                request = requestAgent(app);
-                app.use(bodyParser.json());
             });
 
             it('查询参数中未包含查询类型', function (done) {
@@ -1476,9 +1456,6 @@ describe('静音寺业务系统', function () {
         describe('virtues', function () {
             var virtues;
             beforeEach(function () {
-                app = express();
-                request = requestAgent(app);
-                app.use(bodyParser.json());
                 virtues = require('../server/rest/virtues');
             });
 
@@ -1599,7 +1576,8 @@ describe('静音寺业务系统', function () {
                 var virtueId, openId, payDataFromWeixin
             })
         });
-    });
+    })
+    ;
 
     describe('技术', function () {
         describe('Http请求', function () {
@@ -2376,7 +2354,7 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('页面处理url Routes', function () {
-                    var routes, router;
+                    var routes, authStub;
                     var request, express, app, bodyParser;
                     var requestAgent;
                     var linkages, controller, url;
@@ -2387,7 +2365,6 @@ describe('静音寺业务系统', function () {
                         express = require('express');
 
                         app = express();
-                        router = express.Router();
 
                         url = "/url/foo";
                         linkages = sinon.stub();
@@ -2398,6 +2375,11 @@ describe('静音寺业务系统', function () {
                         linkages.withArgs("pray").returns(url + '/pray');
                         stubs["./rests"] = {getUrlTemplete: linkages}
 
+                        authStub = function (req, res, next) {
+                            next();
+                        }
+                        stubs['./auth'] = {manjusri: authStub}
+
                         controller = function (req, res) {
                             return res.status(200).json({data: 'ok'});
                         };
@@ -2407,8 +2389,7 @@ describe('静音寺业务系统', function () {
                         stubs['./wechat/manjusriPages'] = {home: controller}
                         routes = proxyquire('../server/routes', stubs);
 
-                        routes(router);
-                        app.use(router);
+                        routes.attachTo(app);
                         request = requestAgent(app);
 
                         request.get(url + '/index')
@@ -2419,8 +2400,7 @@ describe('静音寺业务系统', function () {
                         stubs['./wechat/manjusriPages'] = {dailyVirtue: controller}
                         routes = proxyquire('../server/routes', stubs);
 
-                        routes(router);
-                        app.use(router);
+                        routes.attachTo(app);
                         request = requestAgent(app);
 
                         request.get(url + '/dailyVirtue')
@@ -2431,8 +2411,7 @@ describe('静音寺业务系统', function () {
                         stubs['./wechat/manjusriPages'] = {suixi: controller}
                         routes = proxyquire('../server/routes', stubs);
 
-                        routes(router);
-                        app.use(router);
+                        routes.attachTo(app);
                         request = requestAgent(app);
 
                         request.get(url + '/suixi')
@@ -2443,8 +2422,7 @@ describe('静音寺业务系统', function () {
                         stubs['./wechat/manjusriPages'] = {jiansi: controller}
                         routes = proxyquire('../server/routes', stubs);
 
-                        routes(router);
-                        app.use(router);
+                        routes.attachTo(app);
                         request = requestAgent(app);
 
                         request.get(url + '/jiansi')
@@ -2455,8 +2433,7 @@ describe('静音寺业务系统', function () {
                         stubs['./wechat/manjusriPages'] = {pray: controller}
                         routes = proxyquire('../server/routes', stubs);
 
-                        routes(router);
-                        app.use(router);
+                        routes.attachTo(app);
                         request = requestAgent(app);
 
                         request.get(url + '/pray')
@@ -3956,14 +3933,15 @@ describe('静音寺业务系统', function () {
         });
     });
 
-    //TODO:在首页为用户建立一个反馈意见和建议的渠道
-    //TODO:底部菜单条的文字应居中对齐
-    //TODO:各页顶部图片顶部不应留有缝隙
-    //TODO:首页功能列表之后，联系方式之前插入一段“静音寺感恩您的每一分心意”一类的一段话
-    //TODO:首页标题当中的点太大啦
+//TODO:在首页为用户建立一个反馈意见和建议的渠道
+//TODO:底部菜单条的文字应居中对齐
+//TODO:各页顶部图片顶部不应留有缝隙
+//TODO:首页功能列表之后，联系方式之前插入一段“静音寺感恩您的每一分心意”一类的一段话
+//TODO:首页标题当中的点太大啦
 
-    //TODO:日行一善和随喜页面中的功德说明的文字应可以在后台系统中发布，每周/月定时替换
-    //TODO:功课的页面要结合我的功德的页面一同考虑，它是该页下的一个page！！！！！
-});
+//TODO:日行一善和随喜页面中的功德说明的文字应可以在后台系统中发布，每周/月定时替换
+//TODO:功课的页面要结合我的功德的页面一同考虑，它是该页下的一个page！！！！！
+})
+;
 
 
