@@ -3,12 +3,13 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     xmlBodyParser = require('express-xml-bodyparser'),
     path = require('path'),
-    wechat = require('wechat'),
+
     exphbs = require('express-handlebars'),
     moment = require('moment'),
     errorHandler = require('errorhandler'),
     favicon = require('serve-favicon'),
-    router = express.Router(),
+    //router = express.Router(),
+    routes = require('../server/routes'),
     passport = require('passport'),
     app = express(),
     mongoose = require('mongoose'),
@@ -47,22 +48,13 @@ module.exports = function (ctx) {
     }
     ctx.connectDb();
     ctx.useSession(app);
+    ctx.userMiddlewares(app);
 
-    if (ctx.wechat) {
+    /*if (ctx.wechat) {
         app.use('/jingyin/wechat', wechat(ctx.wechat.token, ctx.wechat.post));
-    }
+    }*/
 
-    //TODO:需要拉出来
-    var auth = ctx.auth.manjusri;
-    app.get('/jingyin/manjusri/lordvirtues', auth);
-    app.get('/jingyin/manjusri/dailyvirtue', auth);
-    app.get('/jingyin/manjusri/suixi', auth);
-    app.get('/jingyin/manjusri/trans/:partId', auth);
-    app.get('/jingyin/manjusri/lords/:openid/profile', auth);
-
-    ctx.route(router);
-    app.use(router);
-
+    routes.attachTo(app);
 
     app.use('/', express.static(ctx.static || path.join(__dirname, '../client/public')));
     //app.use(favicon('/images/icon1.jpg'));
