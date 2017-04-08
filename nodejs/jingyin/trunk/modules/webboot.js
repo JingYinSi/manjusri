@@ -23,7 +23,7 @@ module.exports = function (ctx) {
     logger.debug('The process no.' + pid + ' is running !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
     app.set('views', ctx.views || path.join(__dirname, '../client/views'));
-    app.use(morgan('combined'));
+    app.use(morgan('dev'));
     app.use(bodyParser.urlencoded({
         'extended': true
     }));
