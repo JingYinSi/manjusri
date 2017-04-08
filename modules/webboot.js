@@ -8,7 +8,6 @@ var express = require('express'),
     moment = require('moment'),
     errorHandler = require('errorhandler'),
     favicon = require('serve-favicon'),
-    //router = express.Router(),
     routes = require('../server/routes'),
     passport = require('passport'),
     app = express(),
@@ -20,9 +19,6 @@ log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
 module.exports = function (ctx) {
-    var pid = process.pid;
-    logger.debug('The process no.' + pid + ' is running !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-
     app.set('views', ctx.views || path.join(__dirname, '../client/views'));
     app.use(morgan('dev'));
     app.use(bodyParser.urlencoded({
@@ -36,28 +32,13 @@ module.exports = function (ctx) {
         trim: true
     }));
 
-    if (ctx.env === 'development') {
-        app.use(function (req, res, next) {
-            if(req.url.indexOf('/jingyin/') >= 0) {
-                var info = "用户";
-                info += "正在访问：" + req.url + ", 进程号：" + process.pid;
-                logger.debug(info);
-            }
-            next();
-        });
-    }
     ctx.connectDb();
     ctx.useSession(app);
     ctx.userMiddlewares(app);
-
-    /*if (ctx.wechat) {
-        app.use('/jingyin/wechat', wechat(ctx.wechat.token, ctx.wechat.post));
-    }*/
-
     routes.attachTo(app);
 
     app.use('/', express.static(ctx.static || path.join(__dirname, '../client/public')));
-    //app.use(favicon('/images/icon1.jpg'));
+    app.use(favicon(path.join(__dirname, '../client/public/images/icon1.jpg')));
     if ('development' === app.get('env') || ctx.env) {
         app.use(errorHandler());
     }
