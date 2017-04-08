@@ -20,24 +20,12 @@ var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
-/*var auth = function (req, res, next) {
-    var pid = process.pid;
-    logger.debug('This request is processed by no.' + pid + ' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-    var sess = req.session;
-    if (!sess.user) {
-        logger.debug("begin login ..........................")
-        req.session.redirectToUrl = req.originalUrl;
-        return redirects.toLogin(req, res);
-    }
-    return next();
-}*/
-
 module.exports = function (ctx) {
     var pid = process.pid;
     logger.debug('The process no.' + pid + ' is running !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
     app.set('views', ctx.views || path.join(__dirname, '../client/views'));
-    app.use(morgan('dev'));
+    app.use(morgan('combined'));
     app.use(bodyParser.urlencoded({
         'extended': true
     }));
@@ -59,35 +47,8 @@ module.exports = function (ctx) {
             next();
         });
     }
-
-    var connStr = 'mongodb://' + ctx.mongodb;
-    mongoose.Promise = global.Promise;
-    mongoose.connect(connStr);
-    mongoose.connection.on('open', function () {
-        //console.log('Mongoose:' + connStr + ' is connected!');
-    });
-
-    var store = new MongoDBStore(
-        {
-            uri: connStr,
-            collection: 'sessions'
-        });
-
-    // Catch errors
-    store.on('error', function (error) {
-        assert.ifError(error);
-        assert.ok(false);
-    });
-
-    // Use express session support since OAuth2orize requires it
-    app.use(session({
-        //cookie: {maxAge: 1000 * 60 * 60 * 24 * 7},// 1 week
-        cookie: {maxAge: 1000 * 60 * 60 * 24},// 1 week
-        secret: ctx.secret || 'super secret for session',
-        saveUninitialized: false,
-        resave: false,
-        store: store
-    }));
+    ctx.connectDb();
+    ctx.useSession(app);
 
     if (ctx.wechat) {
         app.use('/jingyin/wechat', wechat(ctx.wechat.token, ctx.wechat.post));
