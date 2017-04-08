@@ -41,7 +41,7 @@ describe('资源', function () {
             expect(linkage.getMainMenuLinkages()).eql({
                 home:"/jingyin/manjusri/index",
                 jiansi: "/jingyin/manjusri/jiansi",
-                pray:"/jingyin/manjusri/jiansi",
+                pray:"/jingyin/manjusri/pray",
                 lord: "/jingyin/manjusri/lordvirtues"
             });
         });
