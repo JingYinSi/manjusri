@@ -12,6 +12,7 @@ const mongodb = 'mongodb://shitongming:jIngyIn228793@121.41.93.210:17915/jingyin
     secret = 'jingyinmanjusriBiz',
     token = 'jingyinManjusri';
 
+
 module.exports = {
     port: 80,
     env: 'development',

@@ -3,10 +3,35 @@
  */
 describe('资源', function () {
     describe('资源注册', function () {
-        before(function () {
+        var resgistry;
+        var request, app;
+        var resourceDef, id, url, handler;
+
+        beforeEach(function () {
+            request = require('supertest');
+            app = require('express')();
+            resgistry = require('../modules/rest/resourceRegistry');
+
+            id = 'foo resource'
+            url = '/url/foo';
+            handler = function (req, res) {
+                res.json(200, {data: 'I am a foo'});
+            };
         });
 
-        it('getLink', function () {
+        it('注册一个GET服务', function (done) {
+            resourceDef = {
+                id: id,
+                url: url,
+                handler: handler
+            }
+
+            resgistry.register([resourceDef]);
+            resgistry.attachTo(app);
+
+            request(app)
+                .get(url)
+                .expect(200, {data: 'I am a foo'}, done);
         });
     });
 
@@ -39,9 +64,9 @@ describe('资源', function () {
 
         it('获得主菜单URL', function () {
             expect(linkage.getMainMenuLinkages()).eql({
-                home:"/jingyin/manjusri/index",
+                home: "/jingyin/manjusri/index",
                 jiansi: "/jingyin/manjusri/jiansi",
-                pray:"/jingyin/manjusri/pray",
+                pray: "/jingyin/manjusri/pray",
                 lord: "/jingyin/manjusri/lordvirtues"
             });
         });
