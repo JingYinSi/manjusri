@@ -1,27 +1,20 @@
 /**
  * Created by clx on 2017/4/8.
  */
-const route = require('./server/routes'),
+const wechatLib = require('wechat'),
     wechat = require('./server/wechat/wechat'),
-    auth = require('./server/auth'),
     mongoose = require('mongoose'),
     session = require('express-session'),
     MongoDBStore = require('connect-mongodb-session')(session),
     promise = require('bluebird');
 
 const mongodb = 'mongodb://shitongming:jIngyIn228793@121.41.93.210:17915/jingyin',
-    secret = 'jingyinmanjusriBiz';
+    secret = 'jingyinmanjusriBiz',
+    token = 'jingyinManjusri';
 
 module.exports = {
     port: 80,
     env: 'development',
-
-    wechat: {
-        token: 'jingyinManjusri',
-        post: wechat
-    },
-    route: route,
-    auth: auth,
 
     connectDb: function () {
         mongoose.Promise = promise;
@@ -53,5 +46,9 @@ module.exports = {
             resave: false,
             store: store
         }));
+    },
+
+    userMiddlewares: function (app) {
+        app.use('/jingyin/wechat', wechatLib(token, wechat));
     }
 }
