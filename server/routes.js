@@ -4,7 +4,8 @@
 const manjusri = require('./wechat/manjusri'),
     manjusriPages = require('./wechat/manjusriPages'),
     linkages = require('./rests'),
-    login = require('./wechat/redirects'),
+    auth = require('./auth').manjusri,
+    //login = require('./wechat/redirects'),
     payment = require('./wechat/payment'),
     part = require('./biz/part'),
     payRoute = require('./payurl').payRoute,
@@ -17,54 +18,25 @@ var logger = log4js.getLogger();
 
 const virtues = require('./rest/virtues');
 
+module.exports = {
+    attachTo: function (app) {
+        app.get('/jingyin/manjusri/login', manjusri.login);
+        app.get(linkages.getUrlTemplete('home'), manjusriPages.home);
+        app.get(linkages.getUrlTemplete('dailyVirtue'), auth, manjusriPages.dailyVirtue);
+        app.get(linkages.getUrlTemplete('suixi'), auth, manjusriPages.suixi);
+        app.get(linkages.getUrlTemplete('jiansi'), manjusriPages.jiansi);
+        app.get(linkages.getUrlTemplete('pray'), manjusriPages.pray);
+        app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);
+        app.get(payRoute, payment.pay);
+        app.get('/jingyin/manjusri/pay/notify', payment.result);
+        app.post('/jingyin/manjusri/pay/notify', virtues.paidNotify);
+        app.get('/jingyin/manjusri/lordvirtues', auth, manjusri.lordVirtues);
+        app.get('/jingyin/manjusri/lords/:openid/profile', auth, manjusri.lordProfile);
+        app.put('/jingyin/manjusri/lords/:openid/profile', manjusri.updateLordProfile);
 
-module.exports = function (router) {
-    router.route('/jingyin/manjusri/login')
-        .get(manjusri.login);
-
-    router.route(linkages.getUrlTemplete('home'))
-        .get(manjusriPages.home);
-
-    router.route(linkages.getUrlTemplete('dailyVirtue'))
-        .get(manjusriPages.dailyVirtue);
-
-    router.route(linkages.getUrlTemplete('suixi'))
-        .get(manjusriPages.suixi);
-
-    router.route(linkages.getUrlTemplete('jiansi'))
-        .get(manjusriPages.jiansi);
-
-    router.route(linkages.getUrlTemplete('pray'))
-        .get(manjusriPages.pray);
-
-    router.route('/jingyin/manjusri/trans/:partId')
-        .get(manjusri.trans);
-
-    router.route(payRoute)
-        .get(payment.pay);
-
-    router.route('/jingyin/manjusri/pay/notify')
-        .get(payment.result)
-        .post(virtues.paidNotify);
-
-    router.route('/jingyin/manjusri/lordvirtues')
-        .get(manjusri.lordVirtues);
-
-    router.route('/jingyin/manjusri/lords/:openid/profile')
-        .get(manjusri.lordProfile)
-        .put(manjusri.updateLordProfile);
-
-    /*----------------------------restful--------------------------------------------------*/
-    router.route('/jingyin/rest/virtues/prepay')
-        .post(virtues.prepay);
-    router.route('/jingyin/rests/manjusri/pray')
-        .post(pray.pray);
-    router.route('/jingyin/rests/manjusri/statistics')
-        .get(statistics.query);
-
-
-
-    /*----------------------------业务系统------------------------------------------  */
-    /* router.route('/jingyin/biz/parts/index')
-     .get(part.index);*/
+        /*----------------------------restful--------------------------------------------------*/
+        app.post('/jingyin/rest/virtues/prepay', virtues.prepay);
+        app.post('/jingyin/rests/manjusri/pray', pray.pray);
+        app.get('/jingyin/rests/manjusri/statistics', statistics.query);
+    }
 }

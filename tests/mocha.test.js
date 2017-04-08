@@ -1267,22 +1267,22 @@ describe('静音寺业务系统', function () {
                  request = requestAgent(app);*/
             });
 
-            /*it('祈福', function (done) {
-             /!*controller = function (req, res) {
-             /!*return Promise.resolve(function () {
-             res.body = {id: 'foo'};
-             return res.status(201);
-             });*!/
-             };*!/
-             /!*stubs['./rest/pray'] = {pray: controller}
-             routes = proxyquire('../server/routes', stubs);
-             routes(router);
-             app.use(router);
-             request = requestAgent(app);*!/
+            it('祈福', function (done) {
+                controller = function (req, res) {
+                    return Promise.resolve(function () {
+                        res.body = {id: 'foo'};
+                        return res.status(201);
+                    });
+                };
+                stubs['./rest/pray'] = {pray: controller}
+                routes = proxyquire('../server/routes', stubs);
+                routes(router);
+                app.use(router);
+                request = requestAgent(app);
 
-             request.post('/jingyin/rests/manjusri/pray')
-             .expect(200, {data: 'ok'}, done);
-             });*/
+                request.post('/jingyin/rests/manjusri/pray')
+                    .expect(200, {data: 'ok'}, done);
+            });
 
             it('统计服务', function (done) {
                 stubs['./rest/statistics'] = {query: controller}
