@@ -2,7 +2,8 @@
  * Created by clx on 2017/4/8.
  */
 const route = require('./server/routes'),
-    wechat = require('./server/wechat/wechat');
+    wechat = require('./server/wechat/wechat'),
+    auth = require('./server/auth');
 
 module.exports = {
     port: 80,
@@ -14,4 +15,5 @@ module.exports = {
         post: wechat
     },
     route: route,
+    auth: auth,
 }

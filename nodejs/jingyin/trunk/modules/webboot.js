@@ -20,7 +20,7 @@ var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
-var auth = function (req, res, next) {
+/*var auth = function (req, res, next) {
     var pid = process.pid;
     logger.debug('This request is processed by no.' + pid + ' !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     var sess = req.session;
@@ -30,7 +30,7 @@ var auth = function (req, res, next) {
         return redirects.toLogin(req, res);
     }
     return next();
-}
+}*/
 
 module.exports = function (ctx) {
     var pid = process.pid;
@@ -94,6 +94,7 @@ module.exports = function (ctx) {
     }
 
     //TODO:需要拉出来
+    var auth = ctx.auth.manjusri;
     app.get('/jingyin/manjusri/lordvirtues', auth);
     app.get('/jingyin/manjusri/dailyvirtue', auth);
     app.get('/jingyin/manjusri/suixi', auth);
