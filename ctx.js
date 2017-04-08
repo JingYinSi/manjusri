@@ -27,7 +27,7 @@ module.exports = {
         mongoose.Promise = promise;
         mongoose.connect(mongodb);
         mongoose.connection.on('open', function () {
-            console.log('Mongoose:' + mongodb + ' is connected!');
+            //console.log('Mongoose:' + mongodb + ' is connected!');
         });
     },
 
