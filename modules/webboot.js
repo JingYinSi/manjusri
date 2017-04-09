@@ -34,6 +34,7 @@ module.exports = function (ctx) {
 
     ctx.connectDb();
     ctx.useSession(app);
+    ctx.usePassport(app);
     ctx.userMiddlewares(app);
     routes.attachTo(app);
 
