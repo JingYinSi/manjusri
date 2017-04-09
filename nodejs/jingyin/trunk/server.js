@@ -15,8 +15,9 @@ if (cluster.isMaster) {
         cluster.fork();
         cluster.on('exit', function (worker, code) {
             if (code != 0 && !worker.suicide) {
-                logger.info('Worker crashed. Starting a new worker ~~~~~~~~~~~~~~~~~~~~~~~~~');
-                cluster.fork();
+                logger.info('Worker crashed. ~~~~~~~~~~~~~~~~~~~~~~~~~');
+                /*logger.info('Worker crashed. Starting a new worker ~~~~~~~~~~~~~~~~~~~~~~~~~');
+                cluster.fork();*/
             }
         });
     }

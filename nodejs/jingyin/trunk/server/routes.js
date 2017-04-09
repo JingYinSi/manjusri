@@ -5,7 +5,7 @@ const manjusri = require('./wechat/manjusri'),
     manjusriPages = require('./wechat/manjusriPages'),
     linkages = require('./rests'),
     auth = require('./auth').manjusri,
-    //login = require('./wechat/redirects'),
+    passport = require('passport'),
     payment = require('./wechat/payment'),
     part = require('./biz/part'),
     payRoute = require('./payurl').payRoute,
@@ -38,5 +38,38 @@ module.exports = {
         app.post('/jingyin/rest/virtues/prepay', virtues.prepay);
         app.post('/jingyin/rests/manjusri/pray', pray.pray);
         app.get('/jingyin/rests/manjusri/statistics', statistics.query);
+
+        /*------------------------------ Biz view--------------------------------------------------*/
+        app.get('/jingyin/biz', function (req, res) {
+            res.render('biz/home', {user: req.user});
+        });
+
+//displays our signup page
+        app.get('/jingyin/biz/signin', function (req, res) {
+            res.render('biz/signin');
+        });
+
+//sends the request through our local signup strategy, and if successful takes user to homepage, otherwise returns then to signin page
+        app.post('/jingyin/biz/local-reg', passport.authenticate('local-signup', {
+                successRedirect: '/jingyin/biz',
+                failureRedirect: '/jingyin/biz/signin'
+            })
+        );
+
+//sends the request through our local login/signin strategy, and if successful takes user to homepage, otherwise returns then to signin page
+        app.post('/jingyin/biz/login', passport.authenticate('local-signin', {
+                successRedirect: '/jingyin/biz',
+                failureRedirect: '/jingyin/biz/signin'
+            })
+        );
+
+//logs user out of site, deleting them from the session, and returns to homepage
+        app.get('/jingyin/biz/logout', function (req, res) {
+            var name = req.user.username;
+            console.log("LOGGIN OUT " + req.user.username)
+            req.logout();
+            res.redirect('/jingyin/biz');
+            req.session.notice = "You have successfully been logged out " + name + "!";
+        });
     }
 }

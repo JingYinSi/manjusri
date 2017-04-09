@@ -3,6 +3,6 @@
  */
 module.exports = {
     pray: function (req, res) {
-        return res.status(201);
+        return res.json(200, {data:'foo'});
     }
 }

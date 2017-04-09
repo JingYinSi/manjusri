@@ -7,27 +7,6 @@ var mongoose = require('mongoose'),
     js2xmlparser = require('js2xmlparser'),
     proxyquire = require('proxyquire');
 
-
-function createPromiseStub(withArgs, resolves, err) {
-    var stub = sinon.stub();
-    var mid;
-    var promise = stub.returnsPromise();
-
-    if (withArgs && withArgs.length > 0) {
-        mid = stub.withArgs.apply(stub, withArgs);
-        promise = mid.returnsPromise();
-    } else promise = stub.returnsPromise();
-
-    if (err) {
-        promise.rejects(err);
-        return stub;
-    }
-    if (resolves) {
-        promise.resolves.apply(promise, resolves);
-    }
-    return stub;
-}
-
 describe('静音寺业务系统', function () {
     var stubs, err;
     var dateUtils;
@@ -42,42 +21,6 @@ describe('静音寺业务系统', function () {
         var partsData, usersData;
         var virtuesInDb, partsInDb, usersInDb;
         var ObjectID;
-
-        function insertDocsInSequential(model, docs, callback) {
-            var result = [];
-
-            function iterate(index) {
-                if (index === docs.length) return callback(null, result);
-                new model(docs[index]).save(function (err, data) {
-                    if (err) return callback(err, result);
-                    result.push(data);
-                    iterate(index + 1);
-                });
-            }
-
-            iterate(0);
-        }
-
-        function insertDocsInParallel(model, docs, callback) {
-            var result = [];
-            var finished = 0, errored = false;
-
-            function done(err, data) {
-                if (err) {
-                    errored = true;
-                    return callback(err);
-                }
-                result.push(data);
-                ++finished;
-                if (finished === docs.length && !errored) {
-                    return callback(null, result);
-                }
-            }
-
-            docs.forEach(function (item) {
-                new model(item).save(done);
-            });
-        }
 
         function initDB(insertDocs, callback) {
             var PartModel = require('../server/wechat/models/part');
