@@ -23,7 +23,9 @@ module.exports = {
         app.get('/jingyin/manjusri/login', manjusri.login);
         app.get(linkages.getUrlTemplete('home'), manjusriPages.home);
         app.get(linkages.getUrlTemplete('dailyVirtue'), auth, manjusriPages.dailyVirtue);
+        //app.get(linkages.getUrlTemplete('dailyVirtue'), manjusriPages.dailyVirtue);
         app.get(linkages.getUrlTemplete('suixi'), auth, manjusriPages.suixi);
+        //app.get(linkages.getUrlTemplete('suixi'), manjusriPages.suixi);
         app.get(linkages.getUrlTemplete('jiansi'), manjusriPages.jiansi);
         app.get(linkages.getUrlTemplete('pray'), manjusriPages.pray);
         app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);

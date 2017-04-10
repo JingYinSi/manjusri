@@ -73,3 +73,12 @@ input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit
     display: block;
     color: #666;
 }
+
+.f-r{float: right!important;}
+.mr15{margin-right: 15px!important;}
+.p030{padding:0 30px!important;}
+.fs20{font-size: 20px!important;}
+.h40{height: 40px!important;}
+.l40{line-height: 40px!important;}
+.p0{padding:0!important;}
+.mt0{margin-top: 0!important}
