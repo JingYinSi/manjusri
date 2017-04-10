@@ -13,6 +13,7 @@ module.exports = {
         var resWrap = responseWrapFactory(res);
         var sess = req.session;
         if (!sess || !sess.user || !sess.user.openid) {
+            logger.debug("session is wrong  wrong   wrong wrong........................");
             return resWrap.setError(401);
         }
 
