@@ -34,7 +34,7 @@ module.exports = function (ctx) {
 
     ctx.connectDb();
     ctx.useSession(app);
-    ctx.usePassport(app);
+    //ctx.usePassport(app); //在实现passport时一定要注意session的全局影响!!!
     ctx.userMiddlewares(app);
     routes.attachTo(app);
 
