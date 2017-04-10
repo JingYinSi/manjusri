@@ -12,6 +12,7 @@ module.exports = {
         logger.debug("begin pay pay pay pay ........................");
         var resWrap = responseWrapFactory(res);
         var sess = req.session;
+        logger.debug("We are going to pay, the context of current session is:" + JSON.stringify(sess));
         if (!sess || !sess.user || !sess.user.openid) {
             logger.debug("session is wrong  wrong   wrong wrong........................");
             return resWrap.setError(401);

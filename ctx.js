@@ -80,8 +80,8 @@ module.exports = {
                 bizUsers.localAuth(username, password)
                     .then(function (user) {
                         if (user) {
-                            logger.info("LOGGED IN AS: " + user.username);
-                            req.session.success = 'You are successfully logged in ' + user.username + '!';
+                            logger.info("LOGGED IN AS: " + user.name);
+                            req.session.success = 'You are successfully logged in ' + user.name + '!';
                             done(null, user);
                         }
                         if (!user) {
@@ -103,8 +103,8 @@ module.exports = {
                 bizUsers.localReg(username, password)
                     .then(function (user) {
                         if (user) {
-                            logger.info("REGISTERED: " + user.username);
-                            req.session.success = 'You are successfully registered and logged in ' + user.username + '!';
+                            logger.info("REGISTERED: " + user.name);
+                            req.session.success = 'You are successfully registered and logged in ' + user.name + '!';
                             done(null, user);
                         }
                         if (!user) {
@@ -121,7 +121,7 @@ module.exports = {
 
         // Passport session setup.
         passport.serializeUser(function(user, done) {
-            logger.info("serializing " + user.username);
+            logger.info("serializing " + user.name);
             done(null, user);
         });
 
