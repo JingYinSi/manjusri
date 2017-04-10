@@ -10,8 +10,9 @@ var logger = log4js.getLogger();
 module.exports = {
     manjusri : function (req, res, next) {
         var sess = req.session;
-        if (!sess.user) {
-            logger.debug("begin login ..........................")
+        logger.debug("check the user is already login:" + JSON.stringify(sess));
+        if (!sess || !sess.user || !sess.user.openid) {
+            logger.debug("begin login ..........................");
             req.session.redirectToUrl = req.originalUrl;
             return redirects.toLogin(req, res);
         }

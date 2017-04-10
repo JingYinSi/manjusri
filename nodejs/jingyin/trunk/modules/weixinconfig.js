@@ -4,6 +4,9 @@
  */
 var signMd5 = require('./weixinsignmd5'),
     js2xmlparser = require('js2xmlparser');
+var log4js = require('log4js');
+log4js.configure("log4js.conf", {reloadSecs: 300});
+var logger = log4js.getLogger();
 
 var nonceGen = function () {
     return Math.random().toString(36).substr(2, 15);
@@ -110,6 +113,7 @@ WeixinConfig.prototype.generatePayData = function (prepayId) {
 
 WeixinConfig.prototype.wrapRedirectURLByOath2WayBaseScope = function (url) {
     var redirectUrl = url.indexOf(siteBaseUrl)< 0 ? siteBaseUrl + url : url;
+    logger.debug("the url weixin（Oath2WayBaseScope） will redirect to is: " + redirectUrl);
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId
      + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
     return wrapedUrl;
@@ -117,6 +121,7 @@ WeixinConfig.prototype.wrapRedirectURLByOath2WayBaseScope = function (url) {
 
 WeixinConfig.prototype.wrapRedirectURLByOath2Way = function (url) {
     var redirectUrl = url.indexOf(siteBaseUrl)< 0 ? siteBaseUrl + url : url;
+    logger.debug("the url weixin（Oath2Way） will redirect to is: " + redirectUrl);
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId
         + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";
     return wrapedUrl;

@@ -46,7 +46,10 @@ module.exports = {
                 accessToken = data.access_token;
                 var sess = req.session;
                 sess.user = {openid: openid, access_token: data.access_token};
-                sess.refresh_token = data.refresh_token;
+                logger.debug("session is built, and context of current session is:" + JSON.stringify(sess));
+                //TODO:全局性地缓存refresh_token
+                //sess.refresh_token = data.refresh_token;
+
                 return usersModule.findByOpenid(openid);
             })
             .then(function (user) {
