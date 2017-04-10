@@ -9,6 +9,7 @@ var logger = log4js.getLogger();
 
 module.exports = {
     pay: function (req, res) {
+        logger.debug("begin pay pay pay pay ........................");
         var resWrap = responseWrapFactory(res);
         var sess = req.session;
         if (!sess || !sess.user || !sess.user.openid) {
