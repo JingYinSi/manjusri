@@ -14,7 +14,11 @@ const wechatLib = require('wechat'),
 
 const mongodb = 'mongodb://shitongming:jIngyIn228793@121.41.93.210:17915/jingyin',
     secret = 'jingyinmanjusriBiz',
-    token = 'jingyinManjusri';
+    token = 'jingyinManjusri',
+    google = {
+        appid: "563211417527-b32d57ihordse1o6250l64caqfbb3udn.apps.googleusercontent.com",
+        secret: "0POakSd9SpnlEuRQwm0EP1f6"
+    };
 
 const log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});

@@ -2339,6 +2339,17 @@ describe('静音寺业务系统', function () {
                             .expect(200, {data: 'ok'}, done);
                     });
 
+                    it('首页', function (done) {
+                        stubs['./wechat/manjusriPages'] = {home: controller}
+                        routes = proxyquire('../server/routes', stubs);
+
+                        routes.attachTo(app);
+                        request = requestAgent(app);
+
+                        request.get(url + '/index')
+                            .expect(200, {data: 'ok'}, done);
+                    });
+
                     it('日行一善', function (done) {
                         stubs['./wechat/manjusriPages'] = {dailyVirtue: controller}
                         routes = proxyquire('../server/routes', stubs);

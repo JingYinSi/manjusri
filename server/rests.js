@@ -5,8 +5,8 @@
 const querystring = require('querystring');
 var urlMap = {
     virtue: '/jingyin/rest/virtues/:id',
-    //pay: 'http://jingyintemple.top/jingyin/manjusri/pay/confirm',
-    pay: '/jingyin/manjusri/pay/confirm',
+    pay: 'http://jingyintemple.top/jingyin/manjusri/pay/confirm',
+    //pay: '/jingyin/manjusri/pay/confirm',
     login: '/jingyin/manjusri/login',
     home: '/jingyin/manjusri/index',
     profile: '/jingyin/manjusri/lords/:openid/profile',
