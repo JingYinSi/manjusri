@@ -25,7 +25,10 @@ Virtues.prototype.prepay = function (req, res) {
 
     function responseVirtue(virtue) {
         var selfUrl = linkages.getLink('virtue', {id: virtue.id});
+
         var payUrl = linkages.getLink('pay', {virtue: virtue.id});
+        logger.debug("The pay url: " + payUrl);
+
         var links = {
             self: selfUrl,
             pay: payUrl
