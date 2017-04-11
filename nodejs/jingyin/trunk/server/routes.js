@@ -10,7 +10,8 @@ const manjusri = require('./wechat/manjusri'),
     part = require('./biz/part'),
     payRoute = require('./payurl').payRoute,
     statistics = require('./rest/statistics'),
-    pray = require('./rest/pray');
+    pray = require('./rest/pray'),
+    paymentShare = require('./wechat/paymentShare');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -73,5 +74,7 @@ module.exports = {
             res.redirect('/jingyin/biz');
             req.session.notice = "You have successfully been logged out " + name + "!";
         });
+
+        app.get('/jingyin/payment/share',paymentShare.result);
     }
 }

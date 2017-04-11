@@ -63,6 +63,22 @@ Weixin.prototype.prepay = function (openId, transId, transName, amount) {
         });
 };
 
+Weixin.prototype.generateShareConfig = function(url){
+    var me = this;
+    return this.getAccessToken()
+        .then(function (token) {
+            me.getTicketForJsAPI(token).then(function(ticket){
+                var shareConfig = config.generateShareConfig(ticket,url);
+                return Promise.resolve(shareConfig);
+            });
+        });
+};
+
+Weixin.prototype.getTicketForJsAPI = function(token){
+    var url = config.getTicketURLForJsApi(token);
+    return httpRequest.concat({url: url, json: true})
+};
+
 module.exports = function (configObj) {
     config = configObj;
     return new Weixin();
