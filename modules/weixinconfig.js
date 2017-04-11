@@ -112,15 +112,15 @@ WeixinConfig.prototype.generatePayData = function (prepayId) {
 };
 
 WeixinConfig.prototype.wrapRedirectURLByOath2WayBaseScope = function (url) {
-    var redirectUrl = url.indexOf(siteBaseUrl)< 0 ? siteBaseUrl + url : url;
+    var redirectUrl = url.indexOf(siteBaseUrl) < 0 ? siteBaseUrl + url : url;
     logger.debug("the url weixin（Oath2WayBaseScope） will redirect to is: " + redirectUrl);
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId
-     + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
+        + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
     return wrapedUrl;
 };
 
 WeixinConfig.prototype.wrapRedirectURLByOath2Way = function (url) {
-    var redirectUrl = url.indexOf(siteBaseUrl)< 0 ? siteBaseUrl + url : url;
+    var redirectUrl = url.indexOf(siteBaseUrl) < 0 ? siteBaseUrl + url : url;
     logger.debug("the url weixin（Oath2Way） will redirect to is: " + redirectUrl);
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId
         + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";
@@ -148,6 +148,23 @@ WeixinConfig.prototype.parsePaymentNotification = function (paydata) {
             result.pass = true;
     }
     return result;
+};
+
+WeixinConfig.prototype.getTicketURLForJsApi = function (token) {
+    return "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=" + token + "&type=jsapi";
+};
+
+WeixinConfig.prototype.generateShareConfig = function (ticket, url) {
+    var shareConfig = {
+        noncestr: nonceGen(),
+        jsapi_ticket: ticket,
+        timestamp: timestampGen(),
+        url: url
+    };
+    //shareConfig.signature = signSha1(shareConfig);
+    //todo:待实现签名算法
+    shareConfig.appId = appId;
+    return shareData;
 };
 
 module.exports = function (configData) {
