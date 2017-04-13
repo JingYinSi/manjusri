@@ -3,6 +3,7 @@
  *
  */
 var signMd5 = require('./weixinsignmd5'),
+    signSha1 = require('./weixinsignsha1'),
     js2xmlparser = require('js2xmlparser');
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -161,8 +162,7 @@ WeixinConfig.prototype.generateShareConfig = function (ticket, url) {
         timestamp: timestampGen(),
         url: url
     };
-    //shareConfig.signature = signSha1(shareConfig);
-    //todo:待实现签名算法
+    shareConfig.signature = signSha1(shareConfig);
     shareConfig.appId = appId;
     return shareConfig;
 };
