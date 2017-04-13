@@ -164,7 +164,7 @@ WeixinConfig.prototype.generateShareConfig = function (ticket, url) {
     //shareConfig.signature = signSha1(shareConfig);
     //todo:待实现签名算法
     shareConfig.appId = appId;
-    return shareData;
+    return shareConfig;
 };
 
 module.exports = function (configData) {
