@@ -7,7 +7,9 @@ var logger = log4js.getLogger();
 
 module.exports = {
     result: function (req, res) {
-        var url = "";//todo:待分享的地址
+        var host = "http://jingyintemple.top";
+        var relativeUrl = req.url;
+        var url = host + relativeUrl;
         wx.generateShareConfig(url).then(function (shareConfig) {
             res.render('wechat/paymentShare',shareConfig);
         });
