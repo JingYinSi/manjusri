@@ -63,14 +63,16 @@ Weixin.prototype.prepay = function (openId, transId, transName, amount) {
         });
 };
 
-Weixin.prototype.generateShareConfig = function(url){
+Weixin.prototype.generateShareConfig = function(url,callback){
     var me = this;
     return this.getAccessToken()
         .then(function (token) {
-            me.getTicketForJsAPI(token).then(function(ticket){
-                var shareConfig = config.generateShareConfig(ticket,url);
-                return Promise.resolve(shareConfig);
+            return me.getTicketForJsAPI(token).then(function(result){
+                var shareConfig = config.generateShareConfig(result.ticket,url);
+                callback(shareConfig);
             });
+        },function (err) {
+            logger.info('获得AccessToken失败:' + err)
         });
 };
 
