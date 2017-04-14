@@ -10,7 +10,7 @@ module.exports = {
         var host = "http://jingyintemple.top";
         var relativeUrl = req.url;
         var url = host + relativeUrl;
-        wx.generateShareConfig(url).then(function (shareConfig) {
+        wx.generateShareConfig(url,function (shareConfig) {
             res.render('wechat/paymentShare',shareConfig);
         });
     },
