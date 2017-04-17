@@ -37,6 +37,7 @@ module.exports = {
         app.post('/jingyin/manjusri/pay/notify', virtues.paidNotify);
         app.get('/jingyin/manjusri/lordvirtues', auth, manjusri.lordVirtues);
         //app.get('/jingyin/manjusri/lordvirtues', manjusriPages.lordVirtues);
+
         app.get('/jingyin/manjusri/lords/:openid/profile', auth, manjusri.lordProfile);
         //app.get('/jingyin/manjusri/lords/:openid/profile', manjusriPages.lordProfile);
         app.put('/jingyin/manjusri/lords/:openid/profile', manjusri.updateLordProfile);
