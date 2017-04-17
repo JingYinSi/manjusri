@@ -4180,8 +4180,6 @@ describe('静音寺业务系统', function () {
                 describe('响应微信支付结果', function () {
                     //TODO: 编写响应微信支付结果的测试用例
                 });
-
-
             });
         });
 
@@ -4189,7 +4187,7 @@ describe('静音寺业务系统', function () {
             describe('打印祈福卡', function () {
                 it('产生word文档', function () {
                     var docx = require('../modules/templeteddocx');
-                    docx.instance('../data/praycardtemplate.docx', '../tests/upload')
+                    docx.instance('../data/praycardtemplate.docx', '../data/upload/prays')
                         .generate('output.docx', {
                             prays: [
                                 {context: '这是我的第一张祈福卡'},

@@ -74,7 +74,7 @@ module.exports = {
         var praysToPrint;
         return prays.praysToPrint()
             .then(function (list) {
-                if(list.length === 0) return res.status(404).end();
+                if(list.length === 0) return res.status(200).end("当前无祈福卡需要打印");
 
                 praysToPrint = {prays: list};
                 var date = list[0].date;
