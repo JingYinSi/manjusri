@@ -1291,6 +1291,24 @@ describe('静音寺业务系统', function () {
                     })
                 });
 
+                it('统计祈福的人次-未做祈福', function (done) {
+                    prays.countTimesOfPrays(usersInDb[3]._id)
+                        .then(function (data) {
+                            expect(data).eql({
+                                me: 0,
+                                total: {
+                                    NOP: 3,
+                                    times: 4
+                                }
+                            });
+                            done();
+                        })
+                        .catch(function (err) {
+                            expect(err).not.null;
+                            done(err);
+                        })
+                });
+
                 it('统计祈福的人次', function (done) {
                     prays.countTimesOfPrays(usersInDb[0]._id)
                         .then(function (data) {
