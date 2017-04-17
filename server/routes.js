@@ -10,8 +10,9 @@ const manjusri = require('./wechat/manjusri'),
     part = require('./biz/part'),
     payRoute = require('./payurl').payRoute,
     statistics = require('./rest/statistics'),
-    pray = require('./rest/pray'),
     paymentShare = require('./wechat/paymentShare');
+    lords = require('./rest/lords'),
+    pray = require('./rest/prays');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -28,19 +29,27 @@ module.exports = {
         app.get(linkages.getUrlTemplete('suixi'), auth, manjusriPages.suixi);
         //app.get(linkages.getUrlTemplete('suixi'), manjusriPages.suixi);
         app.get(linkages.getUrlTemplete('jiansi'), manjusriPages.jiansi);
-        app.get(linkages.getUrlTemplete('pray'), manjusriPages.pray);
+        app.get(linkages.getUrlTemplete('pray'), auth, manjusriPages.pray);
         app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);
+
         app.get('/jingyin/manjusri/pay/confirm', payment.pay);
         app.get('/jingyin/manjusri/pay/notify', payment.result);
         app.post('/jingyin/manjusri/pay/notify', virtues.paidNotify);
         app.get('/jingyin/manjusri/lordvirtues', auth, manjusri.lordVirtues);
+        //app.get('/jingyin/manjusri/lordvirtues', manjusriPages.lordVirtues);
         app.get('/jingyin/manjusri/lords/:openid/profile', auth, manjusri.lordProfile);
+        //app.get('/jingyin/manjusri/lords/:openid/profile', manjusriPages.lordProfile);
         app.put('/jingyin/manjusri/lords/:openid/profile', manjusri.updateLordProfile);
 
         /*----------------------------restful--------------------------------------------------*/
+        //TODO:重构这里的prepay restful服务
         app.post('/jingyin/rest/virtues/prepay', virtues.prepay);
-        app.post('/jingyin/rests/manjusri/pray', pray.pray);
-        app.get('/jingyin/rests/manjusri/statistics', statistics.query);
+        app.get(linkages.getUrlTemplete('lord'), lords.lord);
+        app.get(linkages.getUrlTemplete('lordPray'), pray.pray);
+        app.post(linkages.getUrlTemplete('lordPrays'), pray.add);
+        app.get(linkages.getUrlTemplete('manjusriStatistics'), statistics.query);
+
+        app.get('/jingyin/rests/pray/print', pray.print);
 
         /*------------------------------ Biz view--------------------------------------------------*/
         app.get('/jingyin/biz', function (req, res) {
@@ -74,7 +83,5 @@ module.exports = {
             res.redirect('/jingyin/biz');
             req.session.notice = "You have successfully been logged out " + name + "!";
         });
-
-        app.get('/jingyin/payment/share',paymentShare.result);
     }
 }

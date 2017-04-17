@@ -41,6 +41,10 @@ describe('资源', function () {
             linkage = require('../server/rests');
         });
 
+        it('如果指定资源未注册，getLink返回null', function () {
+            expect(linkage.getLink("not exist")).to.be.null;
+        });
+
         it('getUrlTemplete', function () {
             expect(linkage.getUrlTemplete("profile")).eql("/jingyin/manjusri/lords/:openid/profile");
         });
@@ -52,7 +56,7 @@ describe('资源', function () {
             expect(linkage.getLink("trans", {partId: "foo"})).eql('/jingyin/manjusri/trans/foo');
             expect(linkage.getLink("jiansi")).eql("/jingyin/manjusri/jiansi");
             expect(linkage.getLink("pray")).eql("/jingyin/manjusri/pray");
-            expect(linkage.getLink("lord")).eql("/jingyin/manjusri/lordvirtues");
+            expect(linkage.getLink("me")).eql("/jingyin/manjusri/lordvirtues");
 
 
             expect(linkage.getLink("virtue", {id: 234567})).eql("/jingyin/rest/virtues/234567");

@@ -6,8 +6,9 @@ var mongoose = require('mongoose'),
 
 var PraySchema = new Schema({
     prayer: {type: Schema.Types.ObjectId, ref: 'User'},
-    desc: String,
+    context: String,
     date: {type: Date, default: Date.now()},
+    printed: {type: Boolean, default: false}
 });
 
 module.exports = mongoose.model('Pray', PraySchema);

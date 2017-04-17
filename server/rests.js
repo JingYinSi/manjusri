@@ -5,8 +5,8 @@
 const querystring = require('querystring');
 var urlMap = {
     virtue: '/jingyin/rest/virtues/:id',
-    pay: 'http://jingyintemple.top/jingyin/manjusri/pay/confirm',
-    //pay: '/jingyin/manjusri/pay/confirm',
+    //pay: 'http://jingyintemple.top/jingyin/manjusri/pay/confirm',
+    pay: '/jingyin/manjusri/pay/confirm',
     login: '/jingyin/manjusri/login',
     home: '/jingyin/manjusri/index',
     profile: '/jingyin/manjusri/lords/:openid/profile',
@@ -17,7 +17,12 @@ var urlMap = {
     "trans": '/jingyin/manjusri/trans/:partId',
     "jiansi": "/jingyin/manjusri/jiansi",
     "pray": "/jingyin/manjusri/pray",
-    "lord": "/jingyin/manjusri/lordvirtues"
+    "me": "/jingyin/manjusri/lordvirtues",
+
+    lord: "/jingyin/rests/lords/:id",
+    manjusriStatistics: "/jingyin/rests/manjusri/statistics",
+    lordPray:"/jingyin/rests/lords/:lordid/prays/:prayid",
+    lordPrays: "/jingyin/rests/lords/:id/prays",
 };
 
 function ResourceRegistry() {
@@ -95,7 +100,7 @@ ResourceRegistry.prototype.getMainMenuLinkages = function () {
         home: this.getLink("home"),
         jiansi: this.getLink("jiansi"),
         pray: this.getLink('pray'),
-        lord: this.getLink("lord")
+        lord: this.getLink("me")
     }
     return linkages;
 }
