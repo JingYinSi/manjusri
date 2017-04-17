@@ -3,6 +3,7 @@ var linkages = require("../rests"),
     partsModule = require('../modules/parts'),
     createResponseWrap = require('../../modules/responsewrap'),
     usersModule = require('../modules/users'),
+    praysModule = require('../modules/prays'),
     mongoose = require('mongoose'),
     redirects = require('./redirects'),
     wx = require('../weixin');
@@ -11,9 +12,8 @@ var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
-
+//TODO:当用户更新微信头像等信息时，应能使数据同微信同步
 //TODO:将manjusriPages.js并入manjusri.js中
-
 var dealwithVirtue = function (type, req, res) {
     var view = type === "daily" ? 'manjusri/dailyVirtue' : 'manjusri/suixi';
     var res = createResponseWrap(res);
@@ -54,7 +54,7 @@ module.exports = {
                     var view = {
                         daily: linkages.getLink("dailyVirtue"),
                         suixi: linkages.getLink("suixi"),
-                        menu:linkages.getMainMenuLinkages(),
+                        menu: linkages.getMainMenuLinkages(),
                         parts: []
                     };
                     parts.forEach(function (item) {
@@ -71,8 +71,89 @@ module.exports = {
     },
 
     pray: function (req, res) {
-        var res = createResponseWrap(res);
-        return res.render('manjusri/pray', {menu:linkages.getMainMenuLinkages()});
-    }
+        var code = 500;
+        var errmsg;
+        var resWrap = createResponseWrap(res);
+        if (!req.session || !req.session.user)
+            return resWrap.setError(400);
+        var openid = req.session.user.openid;
+        //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
+        var lordid;
+        return usersModule.findByOpenid(openid)
+            .then(function (user) {
+                if (!user) {
+                    errmsg = "the user with openid[" + openid + "] not exists!!!";
+                    logger.error(errmsg);
+                    code = 400;
+                    return Promise.reject(errmsg);
+                }
+                lordid = user._id;
+                return praysModule.countTimesOfPrays(lordid);
+            })
+            .then(function (data) {
+                var viewData = {
+                    data: data,
+                    self: linkages.getLink('pray'),
+                    links: {
+                        addPray: linkages.getLink('lordPrays', {id: lordid})
+                    },
+                    menu: linkages.getMainMenuLinkages()
+                };
+                return resWrap.render('manjusri/pray', viewData);
+            })
+            .catch(function (err) {
+                logger.debug("error:" + err);
+                return resWrap.setError(code, errmsg, err);
+            })
+    },
+
+    lordVirtues: function (req, res) {
+        var viewdata, virtues;
+        var resWrap = createResponseWrap(res);
+        if (!req.session || !req.session.user)
+            return resWrap.setError(400);
+        var openid = req.session.user.openid;
+        //var openid = 'o0ghywcUHxUdazzXEBvYPxU1PVPk';
+        //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
+        //var token = sess.user.access_token;
+        var errmsg;
+        return usersModule.findByOpenid(openid)
+            .then(function (lord) {
+                if (!lord) {
+                    errmsg = "The User with openid(" + openid + ") not exists?";
+                    logger.error(errmsg);
+                    return Promise.reject(errmsg);
+                }
+                viewdata = {lord: lord};
+                return virtuesModule.listLordVirtues(lord._id);
+            })
+            .then(function (virtues) {
+                viewdata.virtues = virtues;
+                viewdata.links = {
+                    profile: linkages.getLink('profile', {openid: openid})
+                }
+                viewdata.menu = linkages.getMainMenuLinkages();
+                return res.render('manjusri/me', viewdata);
+            })
+            .catch(function (err) {
+                logger.debug("error:" + err);
+                return resWrap.setError(500, errmsg, err);
+            });
+    },
+
+    lordProfile: function (req, res) {
+        //var resWrap = createResponseWrap(res);
+        var openid = req.params.openid;
+        if (req.session.user.openid !== openid) {
+            return redirects.toHome(req, res);
+        }
+        return usersModule.findByOpenid(openid)
+            .then(function (lord) {
+                return res.render('manjusri/info', lord);
+            })
+            .catch(function (err) {
+                return resWrap.setError(500, null, err);
+            })
+    },
 };
 

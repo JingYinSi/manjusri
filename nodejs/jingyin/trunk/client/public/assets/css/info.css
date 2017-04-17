@@ -1,0 +1,59 @@
+
+body{
+    font-family: "黑体";
+    font-size: 16px;
+}
+.wrapper{
+    max-width: 720px;
+    /*height: 1000px;*/
+    background-color: #fcf6d4;
+}
+.header{
+    margin-top: 15px;
+    padding:0 30px;
+    background-color: #fff;
+}
+.headwrap{
+    border-bottom: 1px solid #eee;
+}
+.logoaImg{
+    display: inline-block;
+    padding:10px;
+    width: 80px;
+    height: 80px;
+
+}
+.logoaImg img{
+    width: 100%;
+}
+.logoaTitle{
+    display: inline-block;
+    line-height: 100px;
+    color: #000;
+    font-size: 22px;
+    font-family: "黑体";
+}
+.headright{
+    text-align: center;
+}
+.headright span{
+    line-height: 100px;
+    color: #bdbdbd;
+}
+
+
+footer{
+    text-align: center;
+    margin:15px 0 30px 0;
+}
+footer figure{
+    width: 80px;
+    margin:20px auto;
+}
+footer img{
+    width: 100%;
+}
+footer .copyright{
+    color:#5f5d56;
+}
+
