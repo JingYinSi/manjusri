@@ -19,6 +19,11 @@ module.exports = {
             "name": "foo",
             "city": "北京",
             "openid": "o0ghabcninpxeXtUPk-lTFx2cK9Q",
+        },
+        {
+            "name": "fee",
+            "city": "北京1",
+            "openid": "o0ghabcninpxeXtjPk-lTFx2cK9Q",
         }
     ]
 }

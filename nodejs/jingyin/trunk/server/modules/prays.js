@@ -46,9 +46,9 @@ module.exports = {
         return prayModel.aggregate(lines)
             .then(function (data) {
                 var data = data[0];
-                //return data;
+                var mycount = data.me.length < 1 ? 0 : data.me[0].count;
                 return {
-                    me: data.me[0].count,
+                    me: mycount,
                     total: {
                         NOP: data.NOP.length,
                         times: data.totalTimes[0].count
