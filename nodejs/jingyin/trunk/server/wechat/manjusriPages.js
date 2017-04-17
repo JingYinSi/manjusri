@@ -99,6 +99,7 @@ module.exports = {
                     },
                     menu: linkages.getMainMenuLinkages()
                 };
+                logger.debug("view data of pray page:" + JSON.stringify(viewData));
                 return resWrap.render('manjusri/pray', viewData);
             })
             .catch(function (err) {

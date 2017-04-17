@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>文殊心咒</title>
+    <title>我</title>
     <link href="/assets/css/reset.css" rel="stylesheet">
     <!--<link href="/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -24,14 +24,16 @@
             <div class="row">
                 <div class="col-xs-10 headleft" onclick="window.location = '{{links.profile}}';">
                     <div class="logoaImg">
-                        <img src="{{lord.img}}" alt="" class="br20">
+                        <img src="{{lord.img}}" alt="" class="br40">
                     </div>
                     <span class="logoaTitle">
                         {{lord.name}}
                     </span>
                 </div>
                 <div class="col-xs-2 headright ">
-                    <span class="glyphicon glyphicon-chevron-right"></span>
+                    <span class="glyphicon glyphicon-chevron-right"
+                          onclick="window.location = '{{links.profile}}';">
+                    </span>
                 </div>
             </div>
         </div>
@@ -41,18 +43,18 @@
     <div class="row  tabsMenu">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs">
-            <li class="col-xs-3 active"><a href="#count" aria-controls="count" role="tab" data-toggle="tab">
-                <div class="tabsMenuIcon"><img src="./assets/images/icon1.png" alt=""></div>
+            <li class="col-xs-4 active"><a href="#count" aria-controls="count" role="tab" data-toggle="tab">
+                <div class="tabsMenuIcon"><img src="/assets/images/icon1.png" alt=""></div>
                 捐助</a></li>
-            <li class="col-xs-3 "><a href="#rank" aria-controls="rank" role="tab" data-toggle="tab">
-                <div class="tabsMenuIcon"><img src="./assets/images/icon2.png" alt=""></div>
+            <li class="col-xs-4 "><a href="#rank" aria-controls="rank" role="tab" data-toggle="tab">
+                <div class="tabsMenuIcon"><img src="/assets/images/icon2.png" alt=""></div>
+                祈福</a></li>
+            <li class="col-xs-4 "><a href="#sound" aria-controls="sound" role="tab" data-toggle="tab">
+                <div class="tabsMenuIcon"><img src="/assets/images/icon3.png" alt=""></div>
                 功课</a></li>
-            <li class="col-xs-3 "><a href="#sound" aria-controls="sound" role="tab" data-toggle="tab">
-                <div class="tabsMenuIcon"><img src="./assets/images/icon3.png" alt=""></div>
-                活动</a></li>
-            <li class="col-xs-3 "><a href="#share" aria-controls="share" role="tab" data-toggle="tab">
-                <div class="tabsMenuIcon"><img src="./assets/images/icon4.png" alt=""></div>
-                义工</a></li>
+            <!--<li class="col-xs-3 "><a href="#share" aria-controls="share" role="tab" data-toggle="tab">
+                <div class="tabsMenuIcon"><img src="/assets/images/icon4.png" alt=""></div>
+                义工</a></li>-->
         </ul>
 
     </div>
@@ -68,7 +70,7 @@
                 </div>
                 <div class="p15 pt0 tc">
                     <div class="row c999">
-                        <div class="col-xs-4"></div>
+                        <div class="col-xs-4">期间</div>
                         <div class="col-xs-4">次数</div>
                         <div class="col-xs-4">金额</div>
                     </div>
