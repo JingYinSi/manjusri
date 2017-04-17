@@ -30,9 +30,10 @@ module.exports = {
         //app.get(linkages.getUrlTemplete('suixi'), manjusriPages.suixi);
         app.get(linkages.getUrlTemplete('jiansi'), manjusriPages.jiansi);
         app.get(linkages.getUrlTemplete('pray'), auth, manjusriPages.pray);
+        //app.get(linkages.getUrlTemplete('pray'), manjusriPages.pray);
         app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);
 
-        app.get('/jingyin/manjusri/pay/confirm', payment.pay);
+        app.get('/jingyin/manjusri/pay/confirm', auth, payment.pay);
         app.get('/jingyin/manjusri/pay/notify', payment.result);
         app.post('/jingyin/manjusri/pay/notify', virtues.paidNotify);
         app.get('/jingyin/manjusri/lordvirtues', auth, manjusriPages.lordVirtues);
