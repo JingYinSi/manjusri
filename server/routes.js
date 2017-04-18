@@ -45,7 +45,7 @@ module.exports = {
 
         /*----------------------------restful--------------------------------------------------*/
         //TODO:重构这里的prepay restful服务
-        app.post('/jingyin/rest/virtues/prepay', virtues.prepay);
+        app.post('/jingyin/rest/virtues/prepay', auth, virtues.prepay);
         app.get(linkages.getUrlTemplete('lord'), lords.lord);
         app.get(linkages.getUrlTemplete('lordPray'), pray.pray);
         app.post(linkages.getUrlTemplete('lordPrays'), pray.add);

@@ -50,15 +50,21 @@ Weixin.prototype.getUserInfoByOpenIdAndToken = function (token, openid) {
 };
 
 Weixin.prototype.prepay = function (openId, transId, transName, amount) {
+    logger.debug("Start to build weixin prepay request .....");
     var opt = config.getPrepayRequestOption(openId, transId, transName, amount);
+    logger.debug("The built and will be sent Weixin prepay request is: " + JSON.stringify(opt));
     return httpRequest.concat(opt)
         .then(function (data) {
             var str = data.toString();
-            logger.debug("Prepay xml from weixin API:\n" + str);
+            logger.debug("Weixin prepay process gave back a response, the Prepay xml from weixin prepay API is:\n" + str);
             var doc = XML.parse(str);
             if (doc.return_msg === 'OK' && doc.result_code === 'SUCCESS') {
-                return config.generatePayData(doc.prepay_id);
+                logger.debug("Weixin prepay is successful, we are going to build payment request data by prepay response....");
+                var paydata = config.generatePayData(doc.prepay_id);
+                logger.debug("The payment request data is built like this: " + JSON.stringify(paydata));
+                return paydata;
             }
+            logger.error("A failure is reported by Weixin prepay process .....");
             return Promise.reject(new Error(doc.err_code_desc));
         });
 };

@@ -9,12 +9,11 @@ var logger = log4js.getLogger();
 
 module.exports = {
     pay: function (req, res) {
-        logger.debug("begin pay pay pay pay ........................");
         var resWrap = responseWrapFactory(res);
         var sess = req.session;
         logger.debug("We are going to pay, the context of current session is:" + JSON.stringify(sess));
         if (!sess || !sess.user || !sess.user.openid) {
-            logger.debug("session is wrong  wrong   wrong wrong........................");
+            logger.error("session is wrong  wrong   wrong wrong........................");
             return resWrap.setError(401);
         }
 
@@ -35,10 +34,16 @@ module.exports = {
                 amount = doc.amount;
             })
             .then(function () {
+                logger.debug("Start to submit to weixin prepay process: " + JSON.stringify({
+                        openid: openId,
+                        virtueid:virtueId,
+                        subjectName: subjectName,
+                        amount: amount
+                    }));
                 return wx.prepay(openId, virtueId, subjectName, amount);
             })
             .then(function (payData) {
-                logger.debug("Pay data to be sent to H5:" + JSON.stringify(payData));
+                logger.debug("Weixin prepay is successfule, data to be sent to Weixin H5 to pay actually is:" + JSON.stringify(payData));
                 return resWrap.render('wechat/payment', {
                     openId: openId,
                     virtue: virtueId,
