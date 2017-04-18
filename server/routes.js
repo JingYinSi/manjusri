@@ -87,6 +87,6 @@ module.exports = {
         });
 
 
-        app.get('/jingyin/payment/share', paymentShare.result);
+        //app.get('/jingyin/payment/share', paymentShare.result);
     }
 }
