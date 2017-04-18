@@ -22,14 +22,16 @@
                 function (res) {
                     var result = res.err_msg; //result = 'get_brand_wcpay_request:ok
                     if (result.indexOf("ok") != -1) {
-                        window.location = "/jingyin/manjusri/pay/notify";
+                        window.location = "{{links.notify}}";
                         return;
                     }
                     else if (result.indexOf("cancel") != -1) {
-                        window.location = "/jingyin/manjusri/index";
+                        window.location = "{{links.home}}";
+                        return;
                     }
                     else if (result.indexOf("fail") != -1) {
-                        window.location = "/jingyin/manjusri/index";
+                        window.location = "{{links.home}}";
+                        return;
                     }
                 }
         );

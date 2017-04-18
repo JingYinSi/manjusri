@@ -8,6 +8,7 @@ var urlMap = {
     virtue: '/jingyin/rest/virtues/:id',
     //pay: 'http://jingyintemple.top/jingyin/manjusri/pay/confirm',
     pay: '/jingyin/manjusri/pay/confirm',
+    weixinPaymentNotify: '/jingyin/manjusri/pay/notify',
     login: '/jingyin/manjusri/login',
     home: '/jingyin/manjusri/index',
     profile: '/jingyin/manjusri/lords/:openid/profile',
