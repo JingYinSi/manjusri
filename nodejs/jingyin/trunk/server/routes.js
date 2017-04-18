@@ -85,5 +85,8 @@ module.exports = {
             res.redirect('/jingyin/biz');
             req.session.notice = "You have successfully been logged out " + name + "!";
         });
+
+
+        app.get('/jingyin/payment/share', paymentShare.result);
     }
 }
