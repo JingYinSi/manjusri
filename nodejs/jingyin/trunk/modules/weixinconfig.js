@@ -86,7 +86,14 @@ WeixinConfig.prototype.getPrepayRequestOption = function (openId, transId, trans
     };
     order.sign = signMd5(order, mchKey);
     //TODO:如何避免由于transName中包含不允许出现在XML中的字符而导致异常？
-    var prepayOrderXML = js2xmlparser.parse('xml', order);
+    var prepayOrderXML;
+    try {
+        prepayOrderXML = js2xmlparser.parse('xml', order);
+    } catch (err) {
+        logger.error("Parse prepay request data error, please check prepay data: " + JSON.stringify(order));
+        throw err;
+    }
+
     var options = {
         url: 'https://api.mch.weixin.qq.com:443/pay/unifiedorder',
         method: 'POST',

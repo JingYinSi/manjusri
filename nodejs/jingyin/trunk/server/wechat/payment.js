@@ -1,6 +1,7 @@
 var wx = require('../weixin').weixinService,
     virtues = require('../modules/virtues'),
     Promise = require('bluebird'),
+    linkages = require("../rests"),
     responseWrapFactory = require('../../modules/responsewrap');
 
 var log4js = require('log4js');
@@ -44,10 +45,16 @@ module.exports = {
             })
             .then(function (payData) {
                 logger.debug("Weixin prepay is successfule, data to be sent to Weixin H5 to pay actually is:" + JSON.stringify(payData));
+                var notifyLink = linkages.getLink('weixinPaymentNotify');
+                var homeLink = linkages.getLink('home');
                 return resWrap.render('wechat/payment', {
                     openId: openId,
                     virtue: virtueId,
-                    payData: payData
+                    payData: payData,
+                    links:{
+                        notify: notifyLink,
+                        home: homeLink
+                    }
                 });
             })
             .catch(function (err) {
