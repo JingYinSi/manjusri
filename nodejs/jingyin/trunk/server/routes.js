@@ -10,7 +10,6 @@ const manjusri = require('./wechat/manjusri'),
     part = require('./biz/part'),
     payRoute = require('./payurl').payRoute,
     statistics = require('./rest/statistics'),
-    paymentShare = require('./wechat/paymentShare');
     lords = require('./rest/lords'),
     pray = require('./rest/prays');
 
