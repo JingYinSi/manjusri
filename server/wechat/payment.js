@@ -70,7 +70,7 @@ module.exports = {
             return res.render('wechat/paymentShare',shareConfig);
         });
         //res.render('wechat/paymentResult');
-        return res.status(500).end();
+        //return res.status(500).end();
     },
 };
 
