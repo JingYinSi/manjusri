@@ -1,3 +1,4 @@
+/*
 var wx = require('../weixin').weixinService,
     Promise = require('bluebird');
 
@@ -14,4 +15,4 @@ module.exports = {
             res.render('wechat/paymentShare',shareConfig);
         });
     },
-};
+};*/

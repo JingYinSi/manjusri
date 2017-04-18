@@ -27,8 +27,8 @@ Weixin.prototype.getAccessToken = function () {
 };
 
 Weixin.prototype.getOpenId = function (code) {
-        var url = config.getUrlToGetOpenId(code);
-        return httpRequest.concat({url: url, json: true});
+    var url = config.getUrlToGetOpenId(code);
+    return httpRequest.concat({url: url, json: true});
 };
 
 Weixin.prototype.getUserInfoByOpenId = function (openid) {
@@ -69,20 +69,20 @@ Weixin.prototype.prepay = function (openId, transId, transName, amount) {
         });
 };
 
-Weixin.prototype.generateShareConfig = function(url,callback){
+Weixin.prototype.generateShareConfig = function (url, callback) {
     var me = this;
     return this.getAccessToken()
         .then(function (token) {
-            return me.getTicketForJsAPI(token).then(function(result){
-                var shareConfig = config.generateShareConfig(result.ticket,url);
+            return me.getTicketForJsAPI(token).then(function (result) {
+                var shareConfig = config.generateShareConfig(result.ticket, url);
                 callback(shareConfig);
             });
-        },function (err) {
+        }, function (err) {
             logger.info('获得AccessToken失败:' + err)
         });
 };
 
-Weixin.prototype.getTicketForJsAPI = function(token){
+Weixin.prototype.getTicketForJsAPI = function (token) {
     var url = config.getTicketURLForJsApi(token);
     return httpRequest.concat({url: url, json: true})
 };

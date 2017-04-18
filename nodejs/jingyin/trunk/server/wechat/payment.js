@@ -63,7 +63,14 @@ module.exports = {
     },
 
     result: function (req, res) {
-        res.render('wechat/paymentResult');
+        var host = "http://jingyintemple.top";
+        var relativeUrl = req.url;
+        var url = host + relativeUrl;
+        wx.generateShareConfig(url,function (shareConfig) {
+            return res.render('wechat/paymentShare',shareConfig);
+        });
+        //res.render('wechat/paymentResult');
+        return res.status(500).end();
     },
 };
 
