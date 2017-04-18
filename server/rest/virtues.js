@@ -67,6 +67,8 @@ Virtues.prototype.paidNotify = function (req, res) {
     var resWrap = createResponseWrap(res);
     logger.debug('Paid notify from weixin:\n', JSON.stringify(notify));
     if (!notify.pass) {
+        logger.error("We received a paid notification from weixin, " +
+            "but it shows that notify.pass is false, please check it!!!!");
         return resWrap.setError(400);
     }
     var openId = notify.openId;
@@ -77,37 +79,30 @@ Virtues.prototype.paidNotify = function (req, res) {
 
     return userModel.findOne({openid: openId})
         .then(function (user) {
-            if (user) {
-                return Promise.resolve(user);
+            if (!user) {
+                var errmsg = "We received a paid notification from weixin, but we Can't find the user with openid:"
+                    + notify.openid + '？ please check it ！！！！';
+                logger.error(errmsg);
+                return Promise.reject(new Error(errmsg));
             }
-            logger.info('Can not found user with openid:' + notify.openid
-                + ', we are going to find it on weixin again');
-            return weixinService.getUserInfoByOpenId(openId)
-                .then(function (userInfo) {
-                    var data = {
-                        name: userInfo.nickname,
-                        openid: userInfo.openid,
-                        img: userInfo.headimgurl,
-                        city: userInfo.city,
-                        province: userInfo.province,
-                        sex: userInfo.sex,
-                        subscribe: userInfo.subscribe_time
-                    }
-                    var user = new userModel(data);
-                    return user.save();
-                });
-        })
-        .then(function (user) {
+            logger.debug("We find the lord of the virtue from weixin paid notification.");
             lord = user;
             return virtueModel.findById(virtueId);
         })
         .then(function (virtue) {
+            if(!virtue){
+                var errmsg = "We received a paid notification from weixin, but we Can't find such virtue？ please check it ！！！！";
+                logger.error(errmsg);
+                return Promise.reject(new Error(errmsg));
+            }
             virtue.lord = lord.id;
             virtue.paymentNo = paymentNo;
             virtue.state = 'payed';
+            logger.debug("We are going to update the virtue by weixin paid notification: " + JSON.stringify(virtue));
             return virtue.save();
         })
         .then(function () {
+            logger.info("Virtue update successfully !!!!!");
             return res.end(notify.replyOK());
         })
         .catch(function (err) {
