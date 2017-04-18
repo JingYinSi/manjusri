@@ -21,13 +21,15 @@ function Virtues() {
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
     logger.debug("entering prepay: " + JSON.stringify(obj));
+    if (!req.session || !req.session.user)
+        logger.error("We are prepaying, but the user does't login, How come ？？？？？");
     var resWrap = createResponseWrap(res);
 
     function responseVirtue(virtue) {
         var selfUrl = linkages.getLink('virtue', {id: virtue.id});
 
         var payUrl = linkages.getLink('pay', {virtue: virtue.id});
-        logger.debug("The pay url: " + payUrl);
+        logger.debug("The pay url from resources registry is: " + payUrl);
 
         var links = {
             self: selfUrl,
@@ -42,6 +44,7 @@ Virtues.prototype.prepay = function (req, res) {
     if (obj.num) details = {price: obj.price, num: obj.num};
     return virtues.place(obj.subject, obj.amount, details, obj.giving)
         .then(function (virtue) {
+            logger.debug("We place a virtue to database: " + JSON.stringify(obj));
             if (!details || !details.num) {
                 return responseVirtue(virtue);
             }
