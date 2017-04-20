@@ -18,8 +18,8 @@ function Virtues() {
     }
 }
 
-Virtues.prototype.findNewVirtueById = function (virtueId, checkState) {
-    if(!checkState) checkState = true;
+Virtues.prototype.findNewVirtueById = function (virtueId, checkState = true) {
+    //if(checkState == undefined) checkState = true;
     return VirtueSchema.findById(virtueId)
         .populate('subject')
         .exec()
