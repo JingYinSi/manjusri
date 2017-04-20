@@ -78,10 +78,10 @@ module.exports = {
             }
         };
 
-        /*return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
+        return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
             viewdata.shareConfig = shareConfig;
             return res.render('wechat/paymentShare', viewdata);
-        })*/
+        })
 
         return virtues.findNewVirtueById(virtueId, false)
             .then(function (doc) {
