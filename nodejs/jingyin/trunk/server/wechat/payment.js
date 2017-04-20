@@ -78,12 +78,17 @@ module.exports = {
             }
         };
 
+        return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
+            viewdata.shareConfig = shareConfig;
+            return res.render('wechat/paymentShare', viewdata);
+        });
+
         /*return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
             viewdata.shareConfig = shareConfig;
             return res.render('wechat/paymentShare', viewdata);
         })*/
 
-        return virtues.findNewVirtueById(virtueId, false)
+        /*return virtues.findNewVirtueById(virtueId, false)
             .then(function (doc) {
                 if (!doc) {
                     return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
@@ -109,7 +114,7 @@ module.exports = {
             })
             .catch(function (err) {
                 res.status(500).end();
-            });
+            });*/
     },
 };
 
