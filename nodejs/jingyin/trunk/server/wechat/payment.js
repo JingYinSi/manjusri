@@ -1,4 +1,5 @@
 var wx = require('../weixin').weixinService,
+    wxConfig = require('../weixin').weixinConfig,
     virtues = require('../modules/virtues'),
     Promise = require('bluebird'),
     linkages = require("../rests"),
@@ -37,7 +38,7 @@ module.exports = {
             .then(function () {
                 logger.debug("Start to submit to weixin prepay process: " + JSON.stringify({
                         openid: openId,
-                        virtueid:virtueId,
+                        virtueid: virtueId,
                         subjectName: subjectName,
                         amount: amount
                     }));
@@ -45,13 +46,13 @@ module.exports = {
             })
             .then(function (payData) {
                 logger.debug("Weixin prepay is successfule, data to be sent to Weixin H5 to pay actually is:" + JSON.stringify(payData));
-                var notifyLink = linkages.getLink('weixinPaymentNotify');
+                var notifyLink = linkages.getLink('weixinPaymentNotify') + '?virtueId=' + virtueId;
                 var homeLink = linkages.getLink('home');
                 return resWrap.render('wechat/payment', {
                     openId: openId,
                     virtue: virtueId,
                     payData: payData,
-                    links:{
+                    links: {
                         notify: notifyLink,
                         home: homeLink
                     }
@@ -63,12 +64,47 @@ module.exports = {
     },
 
     result: function (req, res) {
-        var host = "http://jingyintemple.top";
-        var relativeUrl = req.url;
-        var url = host + relativeUrl;
-        return wx.generateShareConfig(url,function (shareConfig) {
-            return res.render('wechat/paymentShare',shareConfig);
-        });
+        var virtueId = req.query.virtueId;
+        if (!virtueId) {
+            return res.status(401).end();
+        }
+
+        var viewdata = {
+            share: {
+                title: '日行一善', // 分享标题
+                desc: '捐助静音寺建设', // 分享描述
+                link: 'http://jingyintemple.top/jingyin/manjusri/index',  // 分享链接
+                imgUrl: wxConfig.wrapUrlWithSitHost('/images/sharelogo.png'), // 分享图标
+            }
+        };
+
+        return virtues.findNewVirtueById(virtueId)
+            .then(function (doc) {
+                if (!doc) {
+                    return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
+                }
+                viewdata.share.title = '静音寺.文殊禅林 - ' + doc.subject.name;
+                if (doc.subject.img) viewdata.share.imgUrl = wxConfig.wrapUrlWithSitHost(doc.subject.img);
+                if (doc.subject.type === 'daily') {
+                    viewdata.share.desc = '随喜您行持日行一善，成功' + viewdata.share.desc;
+                    viewdata.share.link = wxConfig.wrapUrlWithSitHost(linkages.getLink('dailyVirtue'));
+                } else if (doc.subject.type === 'suixi') {
+                    viewdata.share.desc = '随喜您成功' + viewdata.share.desc;
+                    viewdata.share.link = wxConfig.wrapUrlWithSitHost(linkages.getLink('suixi'));
+                } else {
+                    viewdata.share.desc = '随喜您认捐' + doc.subject.name + ', ' + viewdata.share.desc;
+                    viewdata.share.link = wxConfig.wrapUrlWithSitHost(linkages.getLink('jiansi'));
+                }
+                viewdata.share.amount = doc.amount;
+                viewdata.share.subjectname = doc.subject.name;
+                return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
+                    viewdata.shareConfig = shareConfig;
+                    return res.render('wechat/paymentShare', viewdata);
+                })
+            })
+            .catch(function (err) {
+                res.status(500).end();
+            });
     },
 };
 

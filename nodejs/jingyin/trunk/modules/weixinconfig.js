@@ -174,6 +174,10 @@ WeixinConfig.prototype.generateShareConfig = function (ticket, url) {
     return shareConfig;
 };
 
+WeixinConfig.prototype.wrapUrlWithSitHost = function (url) {
+    return siteBaseUrl + url;
+}
+
 module.exports = function (configData) {
     apiBaseURL = configData.apiBaseURL;
     oauth2BaseURL = configData.oauth2BaseURL;
