@@ -85,40 +85,6 @@
 <script src="/js/jquery-3.1.1.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-    alert('aaaabbbbbbbbbbbbbbbbbaaa');
-    var going = false;
-    $('#mypray').attr("placeholder", "示例：\n"
-            + "1、诸佛菩萨怎样发愿，我则如是发愿。愿法界众生离苦得乐、速证菩提 ；\n"
-            + "2、愿xx事业顺利、广行布施、福慧圆满、普利群生；\n"
-            + "3、愿xx能找有缘人，同修福慧，同行菩提道；\n"
-            + "4、愿xx学习有成，智慧圆满，学以致用，广种善根，行菩萨道，普利有情；\n"
-            + "5、愿父母身体健康… \n"
-            + "6、愿国泰民安、风调雨顺、世界和平……\n"
-            + "7、愿佛法兴盛、所有高僧长久住世、弘传佛法……\n"
-            + "\n祈愿人：XXX");
-    $("#show-confirm").click(function () {
-        if (going) return;
-        going = true;
-        var pray = $('#mypray').val();
-        if (pray == '') {
-            return;
-        }
-        var dataToPost = {
-            pray: pray
-        };
-        var openid = $('#lordopenid').text();
-        $.ajax({
-            type: 'POST',
-            url: '{{links.addPray}}',
-            data: dataToPost,
-            success: function (data, textStatus, request) {
-                going = false;
-                window.location = '{{self}}';
-            }
-        });
-    });
-</script>
-<script type="text/javascript">
     var share_config = {
         title: '{{share.title}}', // 分享标题
         desc: '{{share.desc}}', // 分享描述
@@ -152,6 +118,38 @@
     wx.error(function (res) {
         alert('error');
         // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+    });
+
+    var going = false;
+    $('#mypray').attr("placeholder", "示例：\n"
+            + "1、诸佛菩萨怎样发愿，我则如是发愿。愿法界众生离苦得乐、速证菩提 ；\n"
+            + "2、愿xx事业顺利、广行布施、福慧圆满、普利群生；\n"
+            + "3、愿xx能找有缘人，同修福慧，同行菩提道；\n"
+            + "4、愿xx学习有成，智慧圆满，学以致用，广种善根，行菩萨道，普利有情；\n"
+            + "5、愿父母身体健康… \n"
+            + "6、愿国泰民安、风调雨顺、世界和平……\n"
+            + "7、愿佛法兴盛、所有高僧长久住世、弘传佛法……\n"
+            + "\n祈愿人：XXX");
+    $("#show-confirm").click(function () {
+        if (going) return;
+        going = true;
+        var pray = $('#mypray').val();
+        if (pray == '') {
+            return;
+        }
+        var dataToPost = {
+            pray: pray
+        };
+        var openid = $('#lordopenid').text();
+        $.ajax({
+            type: 'POST',
+            url: '{{links.addPray}}',
+            data: dataToPost,
+            success: function (data, textStatus, request) {
+                going = false;
+                window.location = '{{self}}';
+            }
+        });
     });
 </script>
 </body>
