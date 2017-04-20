@@ -33,6 +33,7 @@ module.exports = {
             linkages: {
                 dailyVirtue: linkages.getLink("dailyVirtue"),
                 suixi: linkages.getLink("suixi"),
+                pray:linkages.getLink('pray'),
             },
             menu: linkages.getMainMenuLinkages()
         }
