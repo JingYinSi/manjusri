@@ -18,13 +18,14 @@ function Virtues() {
     }
 }
 
-Virtues.prototype.findNewVirtueById = function (virtueId) {
+Virtues.prototype.findNewVirtueById = function (virtueId, checkState) {
+    if(!checkState) checkState = true;
     return VirtueSchema.findById(virtueId)
         .populate('subject')
         .exec()
         .then(function (doc) {
             if (!doc) return null;
-            if (doc.state !== 'new') {
+            if (checkState && doc.state !== 'new') {
                 logger.error('we are finding a new virtue, but what we are found is ' + doc.state + ' ???');
                 return null;
             }
