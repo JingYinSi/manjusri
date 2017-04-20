@@ -88,15 +88,18 @@ module.exports = {
                 if (!doc) {
                     return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
                 }
-                viewdata.share.title = '静音寺.文殊禅林 - ' + doc.subject.name;
+                //viewdata.share.title = '静音寺.文殊禅林 - ' + doc.subject.name;
                 //if (doc.subject.img) viewdata.share.imgUrl = wxConfig.wrapUrlWithSitHost(doc.subject.img);
                 if (doc.subject.type === 'daily') {
-                    viewdata.share.desc = '随喜您行持日行一善，成功' + viewdata.share.desc;
+                    viewdata.share.title = doc.subject.name;
+                    viewdata.share.desc = '随喜捐助五台山静音寺建设，圆满福慧资粮！';
                     viewdata.share.link = wxConfig.wrapUrlWithSitHost(linkages.getLink('dailyVirtue'));
                 } else if (doc.subject.type === 'suixi') {
-                    viewdata.share.desc = '随喜您成功' + viewdata.share.desc;
+                    viewdata.share.title = '随喜五台山静音寺建设';
+                    viewdata.share.desc = '五台山静音寺文殊禅林是以培养僧才为核心，弘扬人间佛教的道场！';
                     viewdata.share.link = wxConfig.wrapUrlWithSitHost(linkages.getLink('suixi'));
                 } else {
+                    viewdata.share.title = '随喜捐助';
                     viewdata.share.desc = '随喜您认捐' + doc.subject.name + ', ' + viewdata.share.desc;
                     viewdata.share.link = wxConfig.wrapUrlWithSitHost(linkages.getLink('jiansi'));
                 }
