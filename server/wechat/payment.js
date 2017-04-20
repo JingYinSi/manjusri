@@ -79,7 +79,8 @@ module.exports = {
         };
 
         var host = "http://jingyintemple.top";
-        var relativeUrl = req.url;
+        //var relativeUrl = req.url;
+        var relativeUrl = req.path;
         var url = host + relativeUrl;
 
         /*return wx.generateShareConfig(url, function (shareConfig) {
