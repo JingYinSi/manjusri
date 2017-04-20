@@ -64,6 +64,7 @@ module.exports = {
     },
 
     result: function (req, res) {
+        //TODO:在每一个页面设定分享内容
         var virtueId = req.query.virtueId;
         if (!virtueId) {
             return res.status(401).end();
@@ -81,12 +82,6 @@ module.exports = {
         var host = "http://jingyintemple.top";
         var relativeUrl = req.url;
         var url = host + relativeUrl;
-        //var url = "http://jingyintemple.top/jingyin/manjusri/pay/notify";
-
-        /*return wx.generateShareConfig(url, function (shareConfig) {
-            viewdata.shareConfig = shareConfig;
-            return res.render('wechat/paymentShare', viewdata);
-        });*/
 
         return virtues.findNewVirtueById(virtueId, false)
             .then(function (doc) {
