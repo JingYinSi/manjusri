@@ -80,13 +80,13 @@ module.exports = {
 
         var host = "http://jingyintemple.top";
         var relativeUrl = req.url;
-        //var url = host + relativeUrl;
-        var url = "http://jingyintemple.top/jingyin/manjusri/pay/notify";
+        var url = host + relativeUrl;
+        //var url = "http://jingyintemple.top/jingyin/manjusri/pay/notify";
 
-        /*return wx.generateShareConfig(url, function (shareConfig) {
+        return wx.generateShareConfig(url, function (shareConfig) {
             viewdata.shareConfig = shareConfig;
             return res.render('wechat/paymentShare', viewdata);
-        })*/
+        })
 
         return virtues.findNewVirtueById(virtueId, false)
             .then(function (doc) {
