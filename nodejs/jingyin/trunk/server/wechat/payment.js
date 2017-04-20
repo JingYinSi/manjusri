@@ -47,7 +47,6 @@ module.exports = {
             .then(function (payData) {
                 logger.debug("Weixin prepay is successfule, data to be sent to Weixin H5 to pay actually is:" + JSON.stringify(payData));
                 var notifyLink = linkages.getLink('weixinPaymentNotify') + '?virtueId=' + virtueId;
-                logger.debug("the notify link is: " + notifyLink);
                 var homeLink = linkages.getLink('home');
                 return resWrap.render('wechat/payment', {
                     openId: openId,
@@ -65,6 +64,7 @@ module.exports = {
     },
 
     result: function (req, res) {
+        logger.debug("the result page url is: " + req.originalUrl);
         var virtueId = req.query.virtueId;
         if (!virtueId) {
             return res.status(401).end();
