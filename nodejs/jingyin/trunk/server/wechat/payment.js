@@ -108,7 +108,7 @@ module.exports = {
                 return wx.generateShareConfig(url, function (shareConfig) {
                     viewdata.shareConfig = shareConfig;
                     return res.render('wechat/paymentShare', viewdata);
-                })
+                });
             })
             .catch(function (err) {
                 res.status(500).end();

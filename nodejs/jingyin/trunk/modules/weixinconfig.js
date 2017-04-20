@@ -176,6 +176,10 @@ WeixinConfig.prototype.generateShareConfig = function (ticket, url) {
 
 WeixinConfig.prototype.wrapUrlWithSitHost = function (url) {
     return siteBaseUrl + url;
+};
+
+WeixinConfig.prototype.getShareLogoImage = function () {
+    return this.wrapUrlWithSitHost('/images/sharelogo.jpg');
 }
 
 module.exports = function (configData) {

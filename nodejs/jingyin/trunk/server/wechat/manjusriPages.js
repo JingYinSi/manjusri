@@ -33,7 +33,7 @@ module.exports = {
             linkages: {
                 dailyVirtue: linkages.getLink("dailyVirtue"),
                 suixi: linkages.getLink("suixi"),
-                pray:linkages.getLink('pray'),
+                pray: linkages.getLink('pray'),
             },
             menu: linkages.getMainMenuLinkages()
         }
@@ -92,16 +92,29 @@ module.exports = {
                 return praysModule.countTimesOfPrays(lordid);
             })
             .then(function (data) {
+                var selflink = linkages.getLink('pray');
                 var viewData = {
                     data: data,
-                    self: linkages.getLink('pray'),
+                    share: {
+                        title: '填写祈福卡', // 分享标题
+                        desc: '向五台山文殊菩萨许个愿！', // 分享描述
+                        link: wx.weixinConfig.wrapUrlWithSitHost(selflink),  // 分享链接
+                        imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
+                    },
+                    self: selflink,
                     links: {
                         addPray: linkages.getLink('lordPrays', {id: lordid})
                     },
                     menu: linkages.getMainMenuLinkages()
                 };
-                logger.debug("view data of pray page:" + JSON.stringify(viewData));
-                return resWrap.render('manjusri/pray', viewData);
+                var url = wx.weixinConfig.wrapUrlWithSitHost(req.url);
+                return wx.weixinService.generateShareConfig(url, function (shareConfig) {
+                    viewData.shareConfig = shareConfig;
+                    logger.debug("view data of pray page:" + JSON.stringify(viewData));
+                    return res.render('manjusri/pray', viewData);
+                });
+                /*logger.debug("view data of pray page:" + JSON.stringify(viewData));
+                return resWrap.render('manjusri/pray', viewData);*/
             })
             .catch(function (err) {
                 logger.debug("error:" + err);
