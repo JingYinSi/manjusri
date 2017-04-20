@@ -75,7 +75,7 @@ module.exports = {
                 title: '日行一善', // 分享标题
                 desc: '捐助静音寺建设', // 分享描述
                 link: 'http://jingyintemple.top/jingyin/manjusri/index',  // 分享链接
-                imgUrl: wxConfig.wrapUrlWithSitHost('/images/sharelogo.png'), // 分享图标
+                imgUrl: wxConfig.wrapUrlWithSitHost('/images/sharelogo.jpg'), // 分享图标
             }
         };
 
@@ -89,7 +89,7 @@ module.exports = {
                     return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
                 }
                 viewdata.share.title = '静音寺.文殊禅林 - ' + doc.subject.name;
-                if (doc.subject.img) viewdata.share.imgUrl = wxConfig.wrapUrlWithSitHost(doc.subject.img);
+                //if (doc.subject.img) viewdata.share.imgUrl = wxConfig.wrapUrlWithSitHost(doc.subject.img);
                 if (doc.subject.type === 'daily') {
                     viewdata.share.desc = '随喜您行持日行一善，成功' + viewdata.share.desc;
                     viewdata.share.link = wxConfig.wrapUrlWithSitHost(linkages.getLink('dailyVirtue'));
