@@ -22,7 +22,9 @@
                 function (res) {
                     var result = res.err_msg; //result = 'get_brand_wcpay_request:ok
                     if (result.indexOf("ok") != -1) {
-                        window.location = "{{links.notify}}";
+
+                        window.location = "{{links.notify}}?virtueId={{virtue}}";
+                        alert("{{links.notify}}?virtueId={{virtue}}");
                         return;
                     }
                     else if (result.indexOf("cancel") != -1) {
