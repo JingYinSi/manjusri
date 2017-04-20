@@ -69,7 +69,14 @@ module.exports = {
             return res.status(401).end();
         }
 
-        var viewdata = {
+        var host = "http://jingyintemple.top";
+        var relativeUrl = req.url;
+        var url = host + relativeUrl;
+        return wx.generateShareConfig(url,function (shareConfig) {
+            return res.render('wechat/paymentShare',shareConfig);
+        });
+
+        /*var viewdata = {
             share: {
                 title: '日行一善', // 分享标题
                 desc: '捐助静音寺建设', // 分享描述
@@ -81,7 +88,7 @@ module.exports = {
         return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
             viewdata.shareConfig = shareConfig;
             return res.render('wechat/paymentShare', viewdata);
-        });
+        });*/
 
         /*return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
             viewdata.shareConfig = shareConfig;
