@@ -78,28 +78,16 @@ module.exports = {
             }
         };
 
-        //var host = "http://jingyintemple.top";
-        //var relativeUrl = req.url;
-        //var url = host + relativeUrl;
-        var url = 'http://jingyintemple.top/jingyin/manjusri/dailyVirtue';
+        var host = "http://jingyintemple.top";
+        var relativeUrl = req.url;
+        var url = host + relativeUrl;
 
-        return wx.generateShareConfig(url,function (shareConfig) {
-            return res.render('wechat/paymentShare',shareConfig);
-        });
-
-        /*
-
-        return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
-            viewdata.shareConfig = shareConfig;
-            return res.render('wechat/paymentShare', viewdata);
-        });*/
-
-        /*return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
+        /*return wx.generateShareConfig(url, function (shareConfig) {
             viewdata.shareConfig = shareConfig;
             return res.render('wechat/paymentShare', viewdata);
         })*/
 
-        /*return virtues.findNewVirtueById(virtueId, false)
+        return virtues.findNewVirtueById(virtueId, false)
             .then(function (doc) {
                 if (!doc) {
                     return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
@@ -118,14 +106,14 @@ module.exports = {
                 }
                 viewdata.share.amount = doc.amount;
                 viewdata.share.subjectname = doc.subject.name;
-                return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
+                return wx.generateShareConfig(url, function (shareConfig) {
                     viewdata.shareConfig = shareConfig;
                     return res.render('wechat/paymentShare', viewdata);
                 })
             })
             .catch(function (err) {
                 res.status(500).end();
-            });*/
+            });
     },
 };
 
