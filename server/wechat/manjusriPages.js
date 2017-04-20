@@ -107,7 +107,8 @@ module.exports = {
                     },
                     menu: linkages.getMainMenuLinkages()
                 };
-                var url = wx.weixinConfig.wrapUrlWithSitHost(req.url);
+                //var url = wx.weixinConfig.wrapUrlWithSitHost(req.url);
+                var url = "http://jingyintemple.top/jingyin/manjusri/pray";
                 return wx.weixinService.generateShareConfig(url, function (shareConfig) {
                     viewData.shareConfig = shareConfig;
                     logger.debug("view data of pray page:" + JSON.stringify(viewData));
