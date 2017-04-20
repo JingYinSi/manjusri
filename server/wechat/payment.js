@@ -65,10 +65,10 @@ module.exports = {
 
     result: function (req, res) {
         logger.debug("the result page url is: " + req.originalUrl);
-        var virtueId = req.query.virtueId;
+        /*var virtueId = req.query.virtueId;
         if (!virtueId) {
             return res.status(401).end();
-        }
+        }*/
 
         var viewdata = {
             share: {
@@ -79,7 +79,12 @@ module.exports = {
             }
         };
 
-        return virtues.findNewVirtueById(virtueId)
+        return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
+            viewdata.shareConfig = shareConfig;
+            return res.render('wechat/paymentShare', viewdata);
+        })
+
+        /*return virtues.findNewVirtueById(virtueId)
             .then(function (doc) {
                 if (!doc) {
                     return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
@@ -105,7 +110,7 @@ module.exports = {
             })
             .catch(function (err) {
                 res.status(500).end();
-            });
+            });*/
     },
 };
 
