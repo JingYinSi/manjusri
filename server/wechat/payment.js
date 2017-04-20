@@ -69,14 +69,7 @@ module.exports = {
             return res.status(401).end();
         }
 
-        var host = "http://jingyintemple.top";
-        var relativeUrl = req.url;
-        var url = host + relativeUrl;
-        return wx.generateShareConfig(url,function (shareConfig) {
-            return res.render('wechat/paymentShare',shareConfig);
-        });
-
-        /*var viewdata = {
+        var viewdata = {
             share: {
                 title: '日行一善', // 分享标题
                 desc: '捐助静音寺建设', // 分享描述
@@ -84,6 +77,17 @@ module.exports = {
                 imgUrl: wxConfig.wrapUrlWithSitHost('/images/sharelogo.png'), // 分享图标
             }
         };
+
+        //var host = "http://jingyintemple.top";
+        //var relativeUrl = req.url;
+        //var url = host + relativeUrl;
+        var url = 'http://jingyintemple.top/jingyin/manjusri/dailyVirtue';
+
+        return wx.generateShareConfig(url,function (shareConfig) {
+            return res.render('wechat/paymentShare',shareConfig);
+        });
+
+        /*
 
         return wx.generateShareConfig(viewdata.share.link, function (shareConfig) {
             viewdata.shareConfig = shareConfig;
