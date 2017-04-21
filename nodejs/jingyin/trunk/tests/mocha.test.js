@@ -1360,7 +1360,87 @@ describe('静音寺业务系统', function () {
                             done(err);
                         })
                 });
-            })
+            });
+
+            describe('缓存accesstoken等', function () {
+                var wxcache;
+                var val, timeout;
+
+                beforeEach(function () {
+                    wxcache = require("../server/modules/wxcache");
+                    val = '=909654739&openid=o0ghywSHHoT2BINz0CV1mNaWxhjQ';
+                    timeout = 10;
+                });
+
+                it('首次缓存accesstoken', function (done) {
+                    wxcache.setAccessToken(val, timeout)
+                        .then(function (data) {
+                            expect(data._id).not.null;
+                            expect(data.type).eql('accesstoken');
+                            expect(data.val).eql(val);
+                            expect(data.timeout).eql(timeout);
+                            expect(data.timestamp).not.null;
+                            done();
+                        })
+                        .catch(function (err) {
+                            done(err);
+                        })
+                });
+
+                it('更新accesstoken', function (done) {
+                    var id, timestamp;
+                    wxcache.setAccessToken("adfnnfnfnfnf", 100)
+                        .then(function (olddata) {
+                            id = olddata._id;
+                            timestamp = olddata.timestamp;
+                            return wxcache.setAccessToken(val, timeout);
+                        })
+                        .then(function (data) {
+                            expect(data._id).eql(id);
+                            expect(data.type).eql('accesstoken');
+                            expect(data.val).eql(val);
+                            expect(data.timeout).eql(timeout);
+                            expect(data.timestamp).not.eql(timestamp);
+                            done();
+                        })
+                        .catch(function (err) {
+                            done(err);
+                        })
+                });
+
+                it('读取已过期的accesstoken', function (done) {
+                    var id, timestamp;
+                    wxcache.setAccessToken(val, timeout)
+                        .then(function (data) {
+                            setTimeout(function () {
+                                return wxcache.getAccessToken()
+                                    .then(function (token) {
+                                        expect(token).null;
+                                        done();
+                                    });
+                            }, timeout + 10);
+                        })
+                        .catch(function (err) {
+                            done(err);
+                        })
+                });
+
+                it('读取accesstoken', function (done) {
+
+                    var id, timestamp;
+                    wxcache.setAccessToken(val, 500)
+                        .then(function (data) {
+                            return wxcache.getAccessToken()
+                                .then(function (token) {
+                                    expect(token).eql(val);
+                                    done();
+                                });
+                        })
+                        .catch(function (err) {
+                            done(err);
+                        })
+                });
+            });
         });
     });
 

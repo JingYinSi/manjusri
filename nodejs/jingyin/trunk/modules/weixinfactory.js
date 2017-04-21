@@ -4,7 +4,9 @@
  */
 var Promise = require('bluebird'),
     XML = require('pixl-xml'),
-    httpRequest = require('./httprequest');
+    httpRequest = require('./httprequest'),
+    wxcache = require('../server/modules/wxcache');
+
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
@@ -15,6 +17,21 @@ var Weixin = function () {
 };
 
 Weixin.prototype.getAccessToken = function () {
+    return wxcache.getAccessToken()
+        .then(function (token) {
+            if(token) return token;
+            var url = config.getUrlToGetAccessToken();
+            return httpRequest.concat({url: url, json: true})
+                .then(function (data) {
+                    return wxcache.setAccessToken(data.access_token, data.expires_in);
+                })
+                .then(function (doc) {
+                    return doc.val;
+                })
+        });
+};
+
+/*Weixin.prototype.getAccessToken = function () {
     return new Promise(function (resolve, reject) {
         var url = config.getUrlToGetAccessToken();
         return httpRequest.concat({url: url, json: true})
@@ -24,7 +41,7 @@ Weixin.prototype.getAccessToken = function () {
                 return reject(err);
             });
     })
-};
+};*/
 
 Weixin.prototype.getOpenId = function (code) {
     var url = config.getUrlToGetOpenId(code);
