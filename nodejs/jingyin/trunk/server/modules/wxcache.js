@@ -5,42 +5,65 @@ const wxcacheModel = require('../wechat/models/wxcache'),
     Promise = require('bluebird');
 
 const TYPE_ACCESSTOKEN = 'accesstoken';
+const TYPE_TicketForJsAPI = 'TicketForJsAPI';
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
 
+const __setAccessToken = function (type, val, timeout, ref) {
+    var condition = {type: type};
+    //if(ref) condition.ref = ref;
+    return wxcacheModel.findOne(condition)
+        .then(function (doc) {
+            var model;
+            if (!doc) {
+                var data = {
+                    type: type,
+                    val: val,
+                    timeout: Date.now() + timeout,
+                    ref: ref
+                };
+                model = new wxcacheModel(data);
+            } else {
+                model = doc;
+                model.val = val;
+                model.ref = ref;
+                model.timeout = Date.now() + timeout;
+            }
+            return model.save();
+        });
+};
+
+const __getAccessToken = function (type, ref) {
+    var condition = {type: type};
+    if(ref) condition.ref = ref;
+    return wxcacheModel.findOne(condition)
+        .then(function (data) {
+            if (!data) return null;
+            var isTimeout = Date.now() > data.timeout;
+            if (isTimeout)
+                logger.debug("the " + type + " is timeout ......");
+            else
+                logger.debug("the " + type + " is obtained successfully!");
+            return isTimeout ? null : data.val;
+        });
+}
+
 module.exports = {
     setAccessToken: function (val, timeout) {
-        return wxcacheModel.findOne({type: TYPE_ACCESSTOKEN})
-            .then(function (doc) {
-                var model;
-                if (!doc) {
-                    model = new wxcacheModel({
-                        type: TYPE_ACCESSTOKEN,
-                        val: val,
-                        timeout: timeout
-                    });
-                } else {
-                    model = doc;
-                    model.val = val;
-                    if (timeout) model.timeout = timeout;
-                    model.timestamp = Date.now();
-                }
-                return model.save();
-            });
+        return __setAccessToken(TYPE_ACCESSTOKEN, val, timeout);
     },
 
     getAccessToken: function () {
-        return wxcacheModel.findOne({type: TYPE_ACCESSTOKEN})
-            .then(function (data) {
-                if (!data) return null;
-                var isTimeout = Date.now() > data.timestamp.getTime() + data.timeout;
-                if(isTimeout)
-                    logger.debug("the access token is timeout ......");
-                else
-                    logger.debug("the access token is obtained successfully!");
-                return isTimeout ? null : data.val;
-            });
+        return __getAccessToken(TYPE_ACCESSTOKEN);
+    },
+
+    setTicketForJsAPI: function (token, val, timeout) {
+        return __setAccessToken(TYPE_TicketForJsAPI, val, timeout, token);
+    },
+
+    getTicketForJsAPI: function (token) {
+        return __getAccessToken(TYPE_TicketForJsAPI, token);
     }
 }

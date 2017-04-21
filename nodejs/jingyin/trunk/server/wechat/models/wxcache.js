@@ -4,8 +4,8 @@ var mongoose = require('mongoose'),
 var WxCacheSchema = new Schema({
     type: String,
     val: String,
+    ref: String,
     timeout: Number,
-    timestamp: {type: Date, default: Date.now()},
 });
 
 module.exports = mongoose.model('Wxcache', WxCacheSchema);
