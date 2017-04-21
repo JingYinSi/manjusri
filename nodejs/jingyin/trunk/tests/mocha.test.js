@@ -3435,6 +3435,7 @@ describe('静音寺业务系统', function () {
                             getShareLogoImageStub.returns(shareImg);
 
                             var shareConfig = {shareConfig: "config"};
+                            reqStub.url = prayLink;
                             var generateShareConfigStub = createPromiseStub([shareUrl], [shareConfig]);
 
                             stubs['../weixin'] = {
