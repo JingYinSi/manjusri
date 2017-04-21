@@ -23,7 +23,7 @@ Weixin.prototype.getAccessToken = function () {
             var url = config.getUrlToGetAccessToken();
             return httpRequest.concat({url: url, json: true})
                 .then(function (data) {
-                    return wxcache.setAccessToken(data.access_token, data.expires_in);
+                    return wxcache.setAccessToken(data.access_token, 7000000/*data.expires_in*/);
                 })
                 .then(function (doc) {
                     return doc.val;

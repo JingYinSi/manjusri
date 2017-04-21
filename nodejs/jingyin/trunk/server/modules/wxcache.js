@@ -35,8 +35,12 @@ module.exports = {
         return wxcacheModel.findOne({type: TYPE_ACCESSTOKEN})
             .then(function (data) {
                 if (!data) return null;
-                logger.debug("now is " + Date.now() + "------------------ " + data.timestamp.getTime() + data.timeout );
-                return Date.now() > data.timestamp.getTime() + data.timeout ? null : data.val;
+                var isTimeout = Date.now() > data.timestamp.getTime() + data.timeout;
+                if(isTimeout)
+                    logger.debug("the access token is timeout ......");
+                else
+                    logger.debug("the access token is obtained successfully!");
+                return isTimeout ? null : data.val;
             });
     }
 }
