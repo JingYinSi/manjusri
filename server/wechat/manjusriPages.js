@@ -79,7 +79,8 @@ module.exports = {
             return resWrap.setError(400);
         var openid = req.session.user.openid;
         //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
-        var lordid;
+
+        var lordid, viewData;
         return usersModule.findByOpenid(openid)
             .then(function (user) {
                 if (!user) {
@@ -93,12 +94,13 @@ module.exports = {
             })
             .then(function (data) {
                 var selflink = linkages.getLink('pray');
-                var viewData = {
+                var url = wx.weixinConfig.wrapUrlWithSitHost(selflink);
+                viewData = {
                     data: data,
                     share: {
                         title: '填写祈福卡', // 分享标题
                         desc: '向五台山文殊菩萨许个愿！', // 分享描述
-                        link: wx.weixinConfig.wrapUrlWithSitHost(selflink),  // 分享链接
+                        link: url,  // 分享链接
                         imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
                     },
                     self: selflink,
@@ -107,15 +109,12 @@ module.exports = {
                     },
                     menu: linkages.getMainMenuLinkages()
                 };
-                //var url = wx.weixinConfig.wrapUrlWithSitHost(req.url);
-                var url = "http://jingyintemple.top/jingyin/manjusri/pray";
-                return wx.weixinService.generateShareConfig(url, function (shareConfig) {
-                    viewData.shareConfig = shareConfig;
-                    logger.debug("view data of pray page:" + JSON.stringify(viewData));
-                    return res.render('manjusri/pray', viewData);
-                });
-                /*logger.debug("view data of pray page:" + JSON.stringify(viewData));
-                return resWrap.render('manjusri/pray', viewData);*/
+                //return wx.weixinService.generateShareConfig(url);
+            })
+            .then(function (shareConfig) {
+                viewData.shareConfig = shareConfig;
+                logger.debug("view data of pray page:" + JSON.stringify(viewData));
+                return res.render('manjusri/pray', viewData);
             })
             .catch(function (err) {
                 logger.debug("error:" + err);

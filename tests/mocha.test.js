@@ -1349,7 +1349,7 @@ describe('静音寺业务系统', function () {
                                 "ok": 1
                             });
                             var praySchema = require('../server/wechat/models/pray');
-                            return praySchema.find({printed:false});
+                            return praySchema.find({printed: false});
                         })
                         .then(function (list) {
                             expect(list.length).eql(0);
@@ -3027,9 +3027,11 @@ describe('静音寺业务系统', function () {
                         it('正确显示', function () {
                             var dailyVirtueLink = "/dailyVirtueLink";
                             var suixiLink = "/suixiLink";
+                            var prayLink = "/prayLink";
                             var linkages = sinon.stub();
                             linkages.withArgs("dailyVirtue").returns(dailyVirtueLink);
                             linkages.withArgs("suixi").returns(suixiLink);
+                            linkages.withArgs("pray").returns(prayLink);
                             stubs["../rests"].getLink = linkages;
 
                             controller = proxyquire('../server/wechat/manjusriPages', stubs).home;
@@ -3038,7 +3040,8 @@ describe('静音寺业务系统', function () {
                                 {
                                     linkages: {
                                         dailyVirtue: dailyVirtueLink,
-                                        suixi: suixiLink
+                                        suixi: suixiLink,
+                                        pray: prayLink
                                     },
                                     menu: menuLinks
                                 });
@@ -3258,12 +3261,40 @@ describe('静音寺业务系统', function () {
                             stubs["../rests"] = {
                                 getMainMenuLinkages: getMainMenuLinksStub,
                                 getLink: linkages
-                            }
+                            };
+
+                            var shareUrl = '/www/shareurl';
+                            var wrapUrlWithSitHostStub = sinon.stub();
+                            wrapUrlWithSitHostStub.withArgs(prayLink).returns(shareUrl);
+
+                            var shareImg = '/share/image/logo';
+                            var getShareLogoImageStub = sinon.stub();
+                            getShareLogoImageStub.returns(shareImg);
+
+                            var shareConfig = {shareConfig: "config"};
+                            var generateShareConfigStub = createPromiseStub([shareUrl], [shareConfig]);
+
+                            stubs['../weixin'] = {
+                                weixinConfig: {
+                                    wrapUrlWithSitHost: wrapUrlWithSitHostStub,
+                                    getShareLogoImage: getShareLogoImageStub
+                                },
+                                weixinService: {
+                                    generateShareConfig: generateShareConfigStub
+                                }
+                            };
 
                             controller = proxyquire('../server/wechat/manjusriPages', stubs).pray;
                             return controller(reqStub, resStub)
                                 .then(function () {
                                     viewdata = {
+                                        share: {
+                                            title: '填写祈福卡', // 分享标题
+                                            desc: '向五台山文殊菩萨许个愿！', // 分享描述
+                                            link: shareUrl,  // 分享链接
+                                            imgUrl: shareImg, // 分享图标
+                                        },
+                                        shareConfig: shareConfig,
                                         data: praysData,
                                         self: prayLink,
                                         links: {addPray: lordPraysLink},
@@ -3490,6 +3521,13 @@ describe('静音寺业务系统', function () {
                     });
 
                     it('渲染前端进行微信支付', function () {
+                        var homeLink = "/homeLink";
+                        var notifyLink = "/notifyLink";
+                        var linkages = sinon.stub();
+                        linkages.withArgs("home").returns(homeLink);
+                        linkages.withArgs("weixinPaymentNotify").returns(notifyLink);
+                        stubs["../rests"] = {getLink: linkages};
+
                         findNewVirtueByIdStub = createPromiseStub([virtueId], [virtue]);
                         stubs['../modules/virtues'] = {findNewVirtueById: findNewVirtueByIdStub};
                         prepayStub = createPromiseStub([openId, virtueId, 'foo', 300], [payData]);
@@ -3499,6 +3537,7 @@ describe('静音寺业务系统', function () {
                         return controller(reqStub, resStub)
                             .then(function () {
                                 expect(resRenderSpy).calledWith('wechat/payment', {
+                                    links: {home: homeLink, notify: notifyLink},
                                     openId: openId,
                                     virtue: virtueId,
                                     payData: payData
