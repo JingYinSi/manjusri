@@ -1372,73 +1372,156 @@ describe('静音寺业务系统', function () {
                     timeout = 10;
                 });
 
-                it('首次缓存accesstoken', function (done) {
-                    wxcache.setAccessToken(val, timeout)
-                        .then(function (data) {
-                            expect(data._id).not.null;
-                            expect(data.type).eql('accesstoken');
-                            expect(data.val).eql(val);
-                            expect(data.timeout).eql(timeout);
-                            expect(data.timestamp).not.null;
-                            done();
-                        })
-                        .catch(function (err) {
-                            done(err);
-                        })
-                });
+                describe('access token', function () {
+                    it('首次缓存accesstoken', function (done) {
+                        wxcache.setAccessToken(val, timeout)
+                            .then(function (data) {
+                                expect(data._id).not.null;
+                                expect(data.type).eql('accesstoken');
+                                expect(data.val).eql(val);
+                                expect(data.timeout).not.null;
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
 
-                it('更新accesstoken', function (done) {
-                    var id, timestamp;
-                    wxcache.setAccessToken("adfnnfnfnfnf", 100)
-                        .then(function (olddata) {
-                            id = olddata._id;
-                            timestamp = olddata.timestamp;
-                            return wxcache.setAccessToken(val, timeout);
-                        })
-                        .then(function (data) {
-                            expect(data._id).eql(id);
-                            expect(data.type).eql('accesstoken');
-                            expect(data.val).eql(val);
-                            expect(data.timeout).eql(timeout);
-                            expect(data.timestamp).not.eql(timestamp);
-                            done();
-                        })
-                        .catch(function (err) {
-                            done(err);
-                        })
-                });
+                    it('更新accesstoken', function (done) {
+                        var id;
+                        wxcache.setAccessToken("adfnnfnfnfnf", 100)
+                            .then(function (olddata) {
+                                id = olddata._id;
+                                return wxcache.setAccessToken(val, timeout);
+                            })
+                            .then(function (data) {
+                                expect(data._id).eql(id);
+                                expect(data.type).eql('accesstoken');
+                                expect(data.val).eql(val);
+                                expect(data.timeout).not.null;
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
 
-                it('读取已过期的accesstoken', function (done) {
-                    var id, timestamp;
-                    wxcache.setAccessToken(val, timeout)
-                        .then(function (data) {
-                            setTimeout(function () {
+                    it('读取已过期的accesstoken', function (done) {
+                        wxcache.setAccessToken(val, timeout)
+                            .then(function (data) {
+                                setTimeout(function () {
+                                    return wxcache.getAccessToken()
+                                        .then(function (token) {
+                                            expect(token).null;
+                                            done();
+                                        });
+                                }, timeout);
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('读取accesstoken', function (done) {
+                        wxcache.setAccessToken(val, timeout)
+                            .then(function (data) {
                                 return wxcache.getAccessToken()
                                     .then(function (token) {
-                                        expect(token).null;
+                                        expect(token).eql(val);
                                         done();
                                     });
-                            }, timeout + 10);
-                        })
-                        .catch(function (err) {
-                            done(err);
-                        })
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
                 });
 
-                it('读取accesstoken', function (done) {
+                describe('Ticket For JsAPI', function () {
+                    var token;
 
-                    var id, timestamp;
-                    wxcache.setAccessToken(val, 500)
-                        .then(function (data) {
-                            return wxcache.getAccessToken()
-                                .then(function (token) {
-                                    expect(token).eql(val);
-                                    done();
-                                });
-                        })
-                        .catch(function (err) {
-                            done(err);
-                        })
+                    beforeEach(function () {
+                        token = 'ghywSHHoT2BINz0CV1mNaWxhjQ';
+                    });
+
+                    it('首次缓存ticket', function (done) {
+                        wxcache.setTicketForJsAPI(token, val, timeout)
+                            .then(function (data) {
+                                expect(data._id).not.null;
+                                expect(data.type).eql('TicketForJsAPI');
+                                expect(data.ref).eql(token);
+                                expect(data.val).eql(val);
+                                expect(data.timeout).not.null;
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('更新ticket', function (done) {
+                        var id;
+                        wxcache.setTicketForJsAPI('tokenccccc', "adfnnfnfnfnf", 100)
+                            .then(function (olddata) {
+                                id = olddata._id;
+                                return wxcache.setTicketForJsAPI(token, val, timeout);
+                            })
+                            .then(function (data) {
+                                expect(data._id).eql(id);
+                                expect(data.type).eql('TicketForJsAPI');
+                                expect(data.ref).eql(token);
+                                expect(data.val).eql(val);
+                                expect(data.timeout).not.null;
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('读取已过期的ticket', function (done) {
+                        wxcache.setTicketForJsAPI(token, val, timeout)
+                            .then(function (data) {
+                                setTimeout(function () {
+                                    return wxcache.getTicketForJsAPI(token)
+                                        .then(function (ticket) {
+                                            expect(ticket).null;
+                                            done();
+                                        });
+                                }, timeout);
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('读取accesstoken已过期的ticket', function (done) {
+                        wxcache.setTicketForJsAPI(token, val, timeout)
+                            .then(function (data) {
+                                return wxcache.getTicketForJsAPI('timeout token')
+                                    .then(function (ticket) {
+                                        expect(ticket).null;
+                                        done();
+                                    });
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('读取ticket', function (done) {
+                        wxcache.setTicketForJsAPI(token, val, timeout)
+                            .then(function (data) {
+                                return wxcache.getTicketForJsAPI(token)
+                                    .then(function (ticket) {
+                                        expect(ticket).eql(val);
+                                        done();
+                                    });
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
                 });
             });
         });

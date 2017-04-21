@@ -23,7 +23,7 @@ Weixin.prototype.getAccessToken = function () {
             var url = config.getUrlToGetAccessToken();
             return httpRequest.concat({url: url, json: true})
                 .then(function (data) {
-                    return wxcache.setAccessToken(data.access_token, 7000000/*data.expires_in*/);
+                    return wxcache.setAccessToken(data.access_token, 7000000);
                 })
                 .then(function (doc) {
                     return doc.val;
@@ -105,14 +105,29 @@ Weixin.prototype.generateShareConfig = function (url, callback) {
         .then(function (token) {
             return me.getTicketForJsAPI(token);
         })
-        .then(function (result) {
-            return config.generateShareConfig(result.ticket, url);
+        .then(function (ticket) {
+            return config.generateShareConfig(ticket, url);
         })
 };
 
-Weixin.prototype.getTicketForJsAPI = function (token) {
+/*Weixin.prototype.getTicketForJsAPI = function (token) {
     var url = config.getTicketURLForJsApi(token);
     return httpRequest.concat({url: url, json: true})
+};*/
+
+Weixin.prototype.getTicketForJsAPI = function (token) {
+    return wxcache.getTicketForJsAPI(token)
+        .then(function (ticket) {
+            if(ticket) return ticket;
+            var url = config.getTicketURLForJsApi(token);
+            return httpRequest.concat({url: url, json: true})
+                .then(function (data) {
+                    return wxcache.setTicketForJsAPI(token, data.ticket, 6000000);
+                })
+                .then(function (doc) {
+                    return doc.val;
+                })
+        })
 };
 
 module.exports = function (configObj) {
