@@ -106,10 +106,6 @@ module.exports = {
                 viewdata.share.amount = doc.amount;
                 viewdata.share.subjectname = doc.subject.name;
                 return wx.generateShareConfig(url);
-                /*return wx.generateShareConfig(url, function (shareConfig) {
-                    viewdata.shareConfig = shareConfig;
-                    return res.render('wechat/paymentShare', viewdata);
-                });*/
             })
             .then(function (shareConfig) {
                 viewdata.shareConfig = shareConfig;
