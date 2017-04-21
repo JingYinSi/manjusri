@@ -69,7 +69,7 @@ Weixin.prototype.prepay = function (openId, transId, transName, amount) {
         });
 };
 
-Weixin.prototype.generateShareConfig = function (url, callback) {
+/*Weixin.prototype.generateShareConfig = function (url, callback) {
     var me = this;
     return this.getAccessToken()
         .then(function (token) {
@@ -78,8 +78,19 @@ Weixin.prototype.generateShareConfig = function (url, callback) {
                 callback(shareConfig);
             });
         }, function (err) {
-            logger.info('获得AccessToken失败:' + err)
+            logger.error('获得AccessToken失败:' + err)
         });
+};*/
+
+Weixin.prototype.generateShareConfig = function (url, callback) {
+    var me = this;
+    return this.getAccessToken()
+        .then(function (token) {
+            return me.getTicketForJsAPI(token);
+        })
+        .then(function (result) {
+            return config.generateShareConfig(result.ticket, url);
+        })
 };
 
 Weixin.prototype.getTicketForJsAPI = function (token) {
