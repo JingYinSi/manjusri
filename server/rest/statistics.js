@@ -47,6 +47,10 @@ module.exports = {
                     desc: '查询2017年N名排名，当前默认使用前20000名',
                     link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&year=2017'
                 },
+                {
+                    desc: '查询2017年前40名',
+                    link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&top=40'
+                },
             ]
         };
         return res.status(200).json(data);
