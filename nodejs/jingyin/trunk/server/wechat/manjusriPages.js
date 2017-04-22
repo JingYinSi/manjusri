@@ -15,12 +15,41 @@ var logger = log4js.getLogger();
 //TODO:当用户更新微信头像等信息时，应能使数据同微信同步
 //TODO:将manjusriPages.js并入manjusri.js中
 var dealwithVirtue = function (type, req, res) {
-    var view = type === "daily" ? 'manjusri/dailyVirtue' : 'manjusri/suixi';
+    var view, viewdata, selflink, share;
+    if(type === "daily") {
+        view = 'manjusri/dailyVirtue';
+        selflink = linkages.getLink('dailyVirtue');
+        share = {
+            title: '日行一善', // 分享标题
+            desc: '捐助五台山静音寺建设，圆满福慧资粮！', // 分享描述
+            link: linkages.getLink('dailyVirtue'),  // 分享链接
+            imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
+        };
+    }else{
+        view = 'manjusri/suixi';
+        selflink = linkages.getLink('suixi');
+        share = {
+            title: '随喜五台山静音寺建设', // 分享标题
+            desc: '五台山静音寺文殊禅林是以培养僧才为核心，弘扬人间佛教的道场！', // 分享描述
+            link: linkages.getLink('suixi'),  // 分享链接
+            imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
+        };
+    }
     var res = createResponseWrap(res);
     return virtuesModule.lastVirtuesAndTotalCount(type, 30)
         .then(function (data) {
-            data.menu = linkages.getMainMenuLinkages();
-            return res.render(view, data);
+            viewdata = data;
+            viewdata.links = {
+                self: selflink,
+                prepay: linkages.getLink('prepay'),
+            }
+            viewdata.share = share;
+            viewdata.menu = linkages.getMainMenuLinkages();
+            return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url));
+        })
+        .then(function (shareConfig) {
+            viewdata.shareConfig = shareConfig;
+            return res.render(view, viewdata);
         })
         .catch(function (err) {
             return res.setError(500, null, err);
@@ -29,15 +58,30 @@ var dealwithVirtue = function (type, req, res) {
 
 module.exports = {
     home: function (req, res) {
+        var res = createResponseWrap(res);
         var viewData = {
             linkages: {
                 dailyVirtue: linkages.getLink("dailyVirtue"),
                 suixi: linkages.getLink("suixi"),
                 pray: linkages.getLink('pray'),
             },
+            share: {
+                title: '静音寺.文殊禅林', // 分享标题
+                desc: '传承正法，培养僧才，实修实证，秉承宗风，效仿古贤', // 分享描述
+                link: linkages.getLink('home'),  // 分享链接
+                imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
+            },
             menu: linkages.getMainMenuLinkages()
         }
-        return res.render('manjusri/index', viewData);
+
+        return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url))
+            .then(function (shareConfig) {
+                viewData.shareConfig = shareConfig;
+                return res.render('manjusri/index', viewData);
+            })
+            .catch(function (err) {
+                return res.setError(500, null, err);
+            });
     },
 
     dailyVirtue: function (req, res) {

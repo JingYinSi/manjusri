@@ -6,6 +6,7 @@ const querystring = require('querystring');
 var urlMap = {
     //TODO:尚未实现/jingyin/rest/virtues/:id服务
     virtue: '/jingyin/rest/virtues/:id',
+    prepay: '/jingyin/rest/virtues/prepay',
     //pay: 'http://jingyintemple.top/jingyin/manjusri/pay/confirm',
     pay: '/jingyin/manjusri/pay/confirm',
     weixinPaymentNotify: '/jingyin/manjusri/pay/notify',
