@@ -4,6 +4,7 @@
 const VirtueSchema = require('../wechat/models/virtue'),
     PartSchema = require('../wechat/models/part'),
     dateUtils = require('../../modules/utils').dateUtils,
+    utils = require('../../modules/utils'),
     mongoose = require('mongoose'),
     Promise = require('bluebird');
 
@@ -33,8 +34,9 @@ Virtues.prototype.findNewVirtueById = function (virtueId, checkState) {
         });
 }
 
-Virtues.prototype.listLordVirtues = function (lordId, day) {
+Virtues.prototype.listLordVirtues = function (lordId, day, limit) {
     var theday = day ? day : new Date();
+    var rows = limit ? limit : 100;
     var result = {
         daily: {
             thisday: {count: 0, sum: 0},
@@ -92,8 +94,10 @@ Virtues.prototype.listLordVirtues = function (lordId, day) {
                         };
                         result.virtues.count++;
                         result.virtues.sum += v.amount;
-                        result.virtues.details.push(d);
+                        if(result.virtues.count <= rows)
+                            result.virtues.details.push(d);
                     });
+                    utils.round(result.virtues.sum, 2);
                     return result;
                 })
         ];

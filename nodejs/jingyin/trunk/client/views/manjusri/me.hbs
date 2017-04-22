@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>我</title>
     <link href="/assets/css/reset.css" rel="stylesheet">
-    <!--<link href="/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/css/me.css" rel="stylesheet">
     <link href="/assets/css/jw.css" rel="stylesheet">
@@ -14,6 +13,27 @@
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style>
+        .left{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 70px;
+        }
+        .center{
+
+            width: auto;    /*如果没有这一句，那么，center这个div的文字就不会自动换行*/
+            margin: 0 30px 0 70px;
+
+        }
+        .right{
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+
+        }
+    </style>
 
 </head>
 <body>
@@ -43,25 +63,17 @@
     <div class="row  tabsMenu">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs">
-            <li class="col-xs-4 active"><a href="#count" aria-controls="count" role="tab" data-toggle="tab">
-                <div class="tabsMenuIcon"><img src="/assets/images/icon1.png" alt=""></div>
-                捐助</a></li>
-            <li class="col-xs-4 "><a href="#rank" aria-controls="rank" role="tab" data-toggle="tab">
-                <div class="tabsMenuIcon"><img src="/assets/images/icon2.png" alt=""></div>
-                祈福</a></li>
-            <li class="col-xs-4 "><a href="#sound" aria-controls="sound" role="tab" data-toggle="tab">
-                <div class="tabsMenuIcon"><img src="/assets/images/icon3.png" alt=""></div>
-                功课</a></li>
-            <!--<li class="col-xs-3 "><a href="#share" aria-controls="share" role="tab" data-toggle="tab">
-                <div class="tabsMenuIcon"><img src="/assets/images/icon4.png" alt=""></div>
-                义工</a></li>-->
+            <li class="col-xs-3 active"><a href="#count" aria-controls="count" role="tab" data-toggle="tab"><div class="tabsMenuIcon"><img src="/assets/images/icon1.png" alt=""></div>捐助</a></li>
+            <li class="col-xs-3 "><a href="#rank" aria-controls="rank" role="tab" data-toggle="tab"><div class="tabsMenuIcon"><img src="/assets/images/icon2.png" alt=""></div>功课</a></li>
+            <!--<li class="col-xs-3 "><a href="#sound" aria-controls="sound" role="tab" data-toggle="tab"><div class="tabsMenuIcon"><img src="/assets/images/icon3.png" alt=""></div>活动</a></li>
+            <li class="col-xs-3 "><a href="#share" aria-controls="share" role="tab" data-toggle="tab"><div class="tabsMenuIcon"><img src="/assets/images/icon4.png" alt=""></div>义工</a></li>-->
         </ul>
 
     </div>
     <!-- Tab panes -->
     <div class="tab-content">
         <!-- 捐助 -->
-        <div class="tab-pane active  fade in  count" id="count">
+        <div class="tab-pane fade in active count" id="count">
             <div class=" l50 mlr-15 plr15 bcfff c666 ">
                 <div class="bb1seee">
                     <img src="/assets/images/a.png" alt="" class="w20 p-r t-2">
@@ -99,8 +111,8 @@
                     <span class="#ccc pull-right pr15">></span>
                 </div>
                 <div class="bb1seee h30 fs14">
-                    <div class="col-xs-6">总次数：<span class="cf00 fw6">{{virtues.virtues.count}}</span></div>
-                    <div class="col-xs-6">累计金额：<span class="cf00 fw6">{{virtues.virtues.sum}}</span></div>
+                    <div class="col-xs-6"><img src="/assets/images/a.png" alt="" class="w20 p-r t-2"> 总次数 <span class="cf00 fw6 ">{{virtues.virtues.count}}</span></div>
+                    <div class="col-xs-6"><img src="/assets/images/a.png" alt="" class="w20 p-r t-2"> 累计金额 <span class="cf00 fw6 ">{{virtues.virtues.sum}}</span></div>
                 </div>
                 <div class="bcfff tl">
                     {{#each virtues.virtues.details}}
@@ -126,16 +138,79 @@
         </div>
 
         <!-- 功课 -->
-        <div class="tab-pane fade   rank" id="rank">
+        <div class="tab-pane fade rank" id="rank">
+            <ul class=" mt10 ">
+                <li class=" h130 ptb20 bcfff mlr-15 pl30">
+                    <p class="fs20 fw7 ">文殊心咒共修</p>
+                    <p class="fl "><span>00</span>人共修了<span>00</span>遍 我念诵了<span>00</span>遍</p>
+                    <p class="fr mr20"><span class="mr20 cff8c05" data-toggle="modal" data-target="#myModal">报数</span><span>></span></p>
+                    <div class="fc"></div>
+                    <div class="p-r">
+                        <img src="/assets/images/icon20.png" alt="" class=" op04 w15 p-a le-22 t3">
+                        <p class="fl c999"> <span>2017-03-10</span> <span>12:00</span>开始</p>
+                    </div>
+                </li>
+                <li class=" h130 ptb20 bt2sfcf6d4 bcfff mlr-15 pl30">
+                    <p class="fs20 fw7 ">禅修</p>
+                    <p class="fl "><span>00</span>人共修了<span>00</span>小时 我修了<span>00</span>小时</p>
+                    <p class="fr mr20"><span class="mr20 cff8c05">结束</span><span>></span></p>
+                    <div class="fc"></div>
+                    <div class="p-r">
+                        <img src="/assets/images/icon20.png" alt="" class=" op04 w15 p-a le-22 t3">
+                        <p class="fl c999"> <span>2017-03-10</span> <span>12:00</span>开始——<span>2017-04-13</span>结束</p>
+                    </div>
+                </li>
+                <li class=" h130 ptb20 bt2sfcf6d4 bcfff mlr-15 pl30">
+                    <p class="fs20 fw7 ">亿遍文殊心咒</p>
+                    <p class="fl "><span>00</span>人共修了<span>00</span>遍 我念诵了<span>00</span>遍</p>
+                    <p class="fr mr20"><span class="mr20 cff8c05">报数</span><span>></span></p>
+                    <div class="fc"></div>
+                    <div class="p-r">
+                        <img src="/assets/images/icon20.png" alt="" class=" op04 w15 p-a le-22 t3">
+                        <p class="fl c999"> <span>2017-03-10</span> <span>12:00</span>开始——<span>2017-04-13</span>结束</p>
+                    </div>
+                </li>
+
+            </ul>
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog mt100" role="document">
+                    <div class="modal-content">
+
+                        <div class="modal-body">
+                            <!-- <div class="p-r pl30 h100" >
+                                <img src="assets/images/a.png" alt="" class=" w15 p-a le10 t3">
+                                报数<input type="text">遍
+                            </div> -->
+                            <div class="p-r w100- fs14">
+                                <div class="left l25">
+                                    <img src="/assets/images/a.png" alt="" class="w20"> 报数
+                                </div>
+                                <div class="center l25" >
+                                    <input type="number" class="w100- bceee bn br2 pl5">
+                                </div>
+                                <div class="right tr l25">遍</div>
+                            </div>
+                            <div class="mt10 fs14 l25">
+                                <img src="/assets/images/a.png" alt="" class="w20"> 回向
+                            </div>
+                            <textarea class="form-control mt10 oln bceee mb20" rows="6"></textarea>
+                            <button type="button" class="db bn br5 bcf5ecc3 w60- h40 mc" data-dismiss="modal">确认</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- 活动 -->
+        <!--&lt;!&ndash; 活动 &ndash;&gt;
         <div class="tab-pane  fade sound" id="sound">
         </div>
 
-        <!-- 义工 -->
+        &lt;!&ndash; 义工 &ndash;&gt;
         <div class="tab-pane  fade share" id="share">
-        </div>
+        </div>-->
     </div>
     <!-- 页脚 -->
     <footer>
