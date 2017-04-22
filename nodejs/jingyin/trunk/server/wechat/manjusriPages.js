@@ -166,6 +166,11 @@ module.exports = {
             })
     },
 
+    lesson: function (req, res) {
+        var viewData = {}
+        return res.render('manjusri/lesson', viewData);
+    },
+
     lordVirtues: function (req, res) {
         var viewdata, virtues;
         var resWrap = createResponseWrap(res);
