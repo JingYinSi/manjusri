@@ -109,7 +109,7 @@ module.exports = {
                     },
                     menu: linkages.getMainMenuLinkages()
                 };
-                //return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url));
+                return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url));
             })
             .then(function (shareConfig) {
                 viewData.shareConfig = shareConfig;
