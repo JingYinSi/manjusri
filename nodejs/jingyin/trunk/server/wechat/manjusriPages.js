@@ -146,7 +146,9 @@ module.exports = {
             .then(function (virtues) {
                 viewdata.virtues = virtues;
                 viewdata.links = {
-                    profile: linkages.getLink('profile', {openid: openid})
+                    profile: linkages.getLink('profile', {openid: openid}),
+                    daily: linkages.getLink('dailyVirtue'),
+                    suixi: linkages.getLink('suixi'),
                 }
                 viewdata.menu = linkages.getMainMenuLinkages();
                 return res.render('manjusri/me', viewdata);
