@@ -31,7 +31,7 @@ module.exports = {
         app.get(linkages.getUrlTemplete('pray'), auth, manjusriPages.pray);
         //app.get(linkages.getUrlTemplete('pray'), manjusriPages.pray);
         app.get(linkages.getUrlTemplete('lesson'), manjusriPages.lesson);
-        //app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);
+        app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);
 
         app.get('/jingyin/manjusri/pay/confirm', auth, payment.pay);
         app.get(linkages.getUrlTemplete('weixinPaymentNotify'), payment.result);
@@ -39,8 +39,8 @@ module.exports = {
         app.get('/jingyin/manjusri/lordvirtues', auth, manjusriPages.lordVirtues);
         //app.get('/jingyin/manjusri/lordvirtues', manjusriPages.lordVirtues);
 
-        app.get('/jingyin/manjusri/lords/:openid/profile', auth, manjusriPages.lordProfile);
-        //app.get('/jingyin/manjusri/lords/:openid/profile', manjusriPages.lordProfile);
+        app.get(linkages.getUrlTemplete('profile'), auth, manjusriPages.lordProfile);
+        //app.get(linkages.getUrlTemplete('profile'), manjusriPages.lordProfile);
         app.put('/jingyin/manjusri/lords/:openid/profile', manjusri.updateLordProfile);
 
         /*----------------------------restful--------------------------------------------------*/
