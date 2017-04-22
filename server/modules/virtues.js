@@ -97,7 +97,7 @@ Virtues.prototype.listLordVirtues = function (lordId, day, limit) {
                         if(result.virtues.count <= rows)
                             result.virtues.details.push(d);
                     });
-                    utils.round(result.virtues.sum, 2);
+                    result.virtues.sum = utils.round(result.virtues.sum, 2);
                     return result;
                 })
         ];
