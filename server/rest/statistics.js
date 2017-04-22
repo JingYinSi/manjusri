@@ -28,6 +28,30 @@ const checkTop = function (t) {
 }
 
 module.exports = {
+    index: function (req, res) {
+        var data = {
+            links: [
+                {
+                    desc: '查询N名排名，当前默认使用前20000名',
+                    link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN'
+                },
+                {
+                    desc: '查询当年当月22日N名排名，当前默认使用前20000名',
+                    link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&day=22'
+                },
+                {
+                    desc: '查询当年4月N名排名，当前默认使用前20000名',
+                    link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&month=4'
+                },
+                {
+                    desc: '查询2017年N名排名，当前默认使用前20000名',
+                    link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&year=2017'
+                },
+            ]
+        };
+        return res.status(200).json(data);
+    },
+
     query: function (req, res) {
         var type = req.query.type;
         if (!type)

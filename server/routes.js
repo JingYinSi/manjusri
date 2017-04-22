@@ -30,7 +30,8 @@ module.exports = {
         app.get(linkages.getUrlTemplete('jiansi'), manjusriPages.jiansi);
         app.get(linkages.getUrlTemplete('pray'), auth, manjusriPages.pray);
         //app.get(linkages.getUrlTemplete('pray'), manjusriPages.pray);
-        app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);
+        app.get(linkages.getUrlTemplete('lesson'), manjusriPages.lesson);
+        //app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);
 
         app.get('/jingyin/manjusri/pay/confirm', auth, payment.pay);
         app.get(linkages.getUrlTemplete('weixinPaymentNotify'), payment.result);
@@ -51,6 +52,7 @@ module.exports = {
         app.get(linkages.getUrlTemplete('manjusriStatistics'), statistics.query);
 
         app.get('/jingyin/rests/pray/print', pray.print);
+        app.get('/jingyin/rests/manjusri/statistics/index', statistics.index);
 
         /*------------------------------ Biz view--------------------------------------------------*/
         app.get('/jingyin/biz', function (req, res) {
