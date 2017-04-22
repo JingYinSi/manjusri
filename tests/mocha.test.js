@@ -3175,12 +3175,37 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('处理各个页面', function () {
-                    var menuLinks, getMenuLinksStub;
+                    var linkages;
+                    var menuLinks, getMenuLinksStub, shareLogo, getShareLogoImageStub, wrapUrlWithSitHostStub;
+                    var shareConfig, generateShareConfigStub;
+
                     beforeEach(function () {
+                        linkages = sinon.stub();
+
                         menuLinks = {home: "foo", jiansi: "fee"}
                         getMenuLinksStub = sinon.stub();
                         getMenuLinksStub.returns(menuLinks);
-                        stubs["../rests"] = {getMainMenuLinkages: getMenuLinksStub}
+                        stubs["../rests"] = {
+                            getLink: linkages,
+                            getMainMenuLinkages: getMenuLinksStub,
+                        };
+
+                        shareLogo = '/share/logo/image';
+                        getShareLogoImageStub = sinon.stub();
+                        getShareLogoImageStub.returns(shareLogo);
+
+                        wrapUrlWithSitHostStub = sinon.stub();
+                        shareConfig = {config: 'foo'};
+                        stubs['../weixin'] = {
+                            weixinConfig: {
+                                getShareLogoImage: getShareLogoImageStub,
+                                wrapUrlWithSitHost: wrapUrlWithSitHostStub,
+                            },
+                            weixinService: {
+                                generateShareConfig: generateShareConfigStub,
+                            }
+                        };
+
                     });
 
                     describe('显示首页', function () {
@@ -3188,25 +3213,44 @@ describe('静音寺业务系统', function () {
                         });
 
                         it('正确显示', function () {
+                            var url = '/home';
+                            reqStub.url = url;
+                            var currentShareUrl = '/current/share/url';
+                            wrapUrlWithSitHostStub.withArgs(url).returns(currentShareUrl);
+
+                            generateShareConfigStub = createPromiseStub([currentShareUrl], [shareConfig]);
+                            stubs['../weixin'].weixinService.generateShareConfig = generateShareConfigStub;
+
                             var dailyVirtueLink = "/dailyVirtueLink";
                             var suixiLink = "/suixiLink";
                             var prayLink = "/prayLink";
-                            var linkages = sinon.stub();
+                            var homeLink = "/homeLink";
+                            //var linkages = sinon.stub();
                             linkages.withArgs("dailyVirtue").returns(dailyVirtueLink);
                             linkages.withArgs("suixi").returns(suixiLink);
                             linkages.withArgs("pray").returns(prayLink);
-                            stubs["../rests"].getLink = linkages;
+                            linkages.withArgs("home").returns(homeLink);
+                            //stubs["../rests"].getLink = linkages;
 
                             controller = proxyquire('../server/wechat/manjusriPages', stubs).home;
-                            controller(reqStub, resStub);
-                            expect(resRenderSpy).calledWith('manjusri/index',
-                                {
-                                    linkages: {
-                                        dailyVirtue: dailyVirtueLink,
-                                        suixi: suixiLink,
-                                        pray: prayLink
-                                    },
-                                    menu: menuLinks
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    expect(resRenderSpy).calledWith('manjusri/index',
+                                        {
+                                            share: {
+                                                title: '静音寺.文殊禅林', // 分享标题
+                                                desc: '传承正法，培养僧才，实修实证，弘扬人间佛教，共建人间净土！', // 分享描述
+                                                link: homeLink,  // 分享链接
+                                                imgUrl: shareLogo, // 分享图标
+                                            },
+                                            linkages: {
+                                                dailyVirtue: dailyVirtueLink,
+                                                suixi: suixiLink,
+                                                pray: prayLink
+                                            },
+                                            shareConfig: shareConfig,
+                                            menu: menuLinks
+                                        });
                                 });
                         });
                     });
@@ -3230,13 +3274,31 @@ describe('静音寺业务系统', function () {
                         });
 
                         it('正确显示', function () {
+                            var url = '/daily';
+                            reqStub.url = url;
+                            var currentShareUrl = '/current/share/url';
+                            wrapUrlWithSitHostStub.withArgs(url).returns(currentShareUrl);
+
+                            generateShareConfigStub = createPromiseStub([currentShareUrl], [shareConfig]);
+                            stubs['../weixin'].weixinService.generateShareConfig = generateShareConfigStub;
+
+                            var dailyLink = '/daily/link';
+                            linkages.withArgs('dailyVirtue').returns(dailyLink);
+
                             virtueListStub = createPromiseStub(["daily", 30], [virtuesList]);
                             stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
 
                             controller = proxyquire('../server/wechat/manjusriPages', stubs).dailyVirtue;
                             return controller(reqStub, resStub)
                                 .then(function () {
+                                    virtuesList.share = {
+                                        title: '日行一善', // 分享标题
+                                        desc: '捐助五台山静音寺建设，圆满福慧资粮！', // 分享描述
+                                        link: dailyLink,  // 分享链接
+                                        imgUrl: shareLogo, // 分享图标
+                                    };
                                     virtuesList.menu = menuLinks;
+                                    virtuesList.shareConfig = shareConfig;
                                     expect(resRenderSpy).calledWith('manjusri/dailyVirtue', virtuesList);
                                 });
                         });
@@ -3260,13 +3322,31 @@ describe('静音寺业务系统', function () {
                         });
 
                         it('正确显示', function () {
+                            var url = '/suixi';
+                            reqStub.url = url;
+                            var currentShareUrl = '/current/share/url';
+                            wrapUrlWithSitHostStub.withArgs(url).returns(currentShareUrl);
+
+                            generateShareConfigStub = createPromiseStub([currentShareUrl], [shareConfig]);
+                            stubs['../weixin'].weixinService.generateShareConfig = generateShareConfigStub;
+
+                            var suixiLink = '/suixi/link';
+                            linkages.withArgs('suixi').returns(suixiLink);
+
                             virtueListStub = createPromiseStub(["suixi", 30], [virtuesList]);
                             stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
 
                             controller = proxyquire('../server/wechat/manjusriPages', stubs).suixi;
                             return controller(reqStub, resStub)
                                 .then(function () {
+                                    virtuesList.share = {
+                                        title: '随喜五台山静音寺建设', // 分享标题
+                                        desc: '五台山静音寺文殊禅林是以培养僧才为核心，弘扬人间佛教的道场！', // 分享描述
+                                        link: suixiLink,  // 分享链接
+                                        imgUrl: shareLogo, // 分享图标
+                                    };
                                     virtuesList.menu = menuLinks;
+                                    virtuesList.shareConfig = shareConfig;
                                     expect(resRenderSpy).calledWith('manjusri/suixi', virtuesList);
                                 });
                         });

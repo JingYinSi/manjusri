@@ -71,6 +71,7 @@ describe('资源', function () {
                 home: "/jingyin/manjusri/index",
                 jiansi: "/jingyin/manjusri/jiansi",
                 pray: "/jingyin/manjusri/pray",
+                lesson: "/jingyin/manjusri/lesson",
                 lord: "/jingyin/manjusri/lordvirtues"
             });
         });
