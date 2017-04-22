@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>填写祈福卡</title>
     <link href="/assets/css/reset.css" rel="stylesheet">
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="/assets/css/pray.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/jw.css">
     <!--[if lt IE 9]>
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -37,31 +38,17 @@
         <h3>
             填写祈愿卡
         </h3>
-        <form action="#" class="threewrap-form">
-            <div class="threewrap-form-one">
-                <figure class="threewrap-form-one-top">
-                    <img src="/assets/images/yuan.png" alt="">
-                </figure>
-                <div class="row threewrap-form-one-middle">
-                    <div class="col-xs-10">
-                        <span id="lordopenid" hidden>{{lord}}</span>
-                        <textarea id="mypray" class="form-control" rows="3" maxlength="290"
-                                  style="font-size: 15px"></textarea>
-                    </div>
-                    <div class="col-xs-2 threewrap-form-one-middle-right">
-                        <figure>
-                            <img src="/assets/images/yuan-right.png" alt="">
-                        </figure>
-                    </div>
-                </div>
-                <figure class="threewrap-form-one-bottom">
+        <form action="#">
+            <div class=" mlr15 b3se39022 p-r" id="fang">
+                <p class="ce39022 fffs fs30 fw7 mt10 ml10">愿：</p>
+                <textarea class="form-control b1sfff oln bsn fs16" rows="10" placeholder="愿所有众生(在此填写愿望)"></textarea>
+                <figure class="p-a b0">
                     <img src="/assets/images/yuan-bottom.png" alt="">
                 </figure>
             </div>
             <div class="row threewrap-form-submit">
                 <input id="show-confirm" type="button" class="btn btn-default col-xs-6 col-xs-offset-3" value="确认">
             </div>
-
         </form>
     </div>
 
@@ -86,6 +73,13 @@
 <script src="/js/jquery-3.1.1.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+    function gaodu() {
+        $("#fang").css("height", $("#fang").css("width"));
+    }
+    $(document).ready(function () {
+        gaodu();
+    });
+
     var going = false;
     $('#mypray').attr("placeholder", "示例：\n"
             + "1、诸佛菩萨怎样发愿，我则如是发愿。愿法界众生离苦得乐、速证菩提 ；\n"

@@ -109,7 +109,7 @@ module.exports = {
                     },
                     menu: linkages.getMainMenuLinkages()
                 };
-                return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url));
+                //return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url));
             })
             .then(function (shareConfig) {
                 viewData.shareConfig = shareConfig;
@@ -128,6 +128,7 @@ module.exports = {
         if (!req.session || !req.session.user)
             return resWrap.setError(400);
         var openid = req.session.user.openid;
+
         //var openid = 'o0ghywcUHxUdazzXEBvYPxU1PVPk';
         //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
         //var token = sess.user.access_token;
@@ -140,7 +141,7 @@ module.exports = {
                     return Promise.reject(errmsg);
                 }
                 viewdata = {lord: lord};
-                return virtuesModule.listLordVirtues(lord._id);
+                return virtuesModule.listLordVirtues(lord._id, null, 5);
             })
             .then(function (virtues) {
                 viewdata.virtues = virtues;
@@ -156,15 +157,25 @@ module.exports = {
             });
     },
 
+    //TODO:实现点击查看更多内容
     lordProfile: function (req, res) {
-        //var resWrap = createResponseWrap(res);
+        var resWrap = createResponseWrap(res);
         var openid = req.params.openid;
         if (req.session.user.openid !== openid) {
             return redirects.toHome(req, res);
         }
+        var viewdata = {
+            links:{
+                self: linkages.getLink('profile', openid),
+                lord: linkages.getLink('me'),
+            },
+            menu: linkages.getMainMenuLinkages(),
+        };
+
         return usersModule.findByOpenid(openid)
             .then(function (lord) {
-                return res.render('manjusri/info', lord);
+                viewdata.data = lord;
+                return res.render('manjusri/info', viewdata);
             })
             .catch(function (err) {
                 return resWrap.setError(500, null, err);
