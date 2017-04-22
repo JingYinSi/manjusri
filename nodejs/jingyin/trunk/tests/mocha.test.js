@@ -3544,8 +3544,12 @@ describe('静音寺业务系统', function () {
                             getMainMenuLinksStub.returns(mainmenulinks);
 
                             var profilelink = "profile link";
+                            var dailylink = "daily link";
+                            var suixilink = "suixi link";
                             var getLinkStub = sinon.stub();
                             getLinkStub.withArgs('profile', {openid: openid}).returns(profilelink);
+                            getLinkStub.withArgs('dailyVirtue').returns(dailylink);
+                            getLinkStub.withArgs('suixi').returns(suixilink);
 
                             stubs["../rests"] = {
                                 getMainMenuLinkages: getMainMenuLinksStub,
@@ -3558,7 +3562,11 @@ describe('静音寺业务系统', function () {
                                     viewdata = {
                                         lord: lord,
                                         virtues: virtues,
-                                        links: {profile: profilelink},
+                                        links: {
+                                            profile: profilelink,
+                                            daily: dailylink,
+                                            suixi: suixilink
+                                        },
                                         menu: mainmenulinks
                                     };
                                     expect(resRenderSpy).calledOnce.calledWith('manjusri/me', viewdata);
