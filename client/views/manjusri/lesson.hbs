@@ -57,7 +57,7 @@
                             </div>
                             <div class="center pl20">
                                 <p class="pt20 fw7">{{lesson.name}}</p>
-                                <p class="fs12 c999"><span>{{join}}</span>人共修<span>{{practice}}</span>{{lesson.unit}}
+                                <p class="fs12 c999"><span>{{join}}</span>人共修<span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
                                 </p>
                             </div>
                             <div class="right tr mr20">
@@ -80,7 +80,8 @@
                                         data:JSON.stringify({num: num}),
                                         success:function(result){
                                             alert('您已成功报数' + num + "{{lesson.unit}}!");
-                                            $('#accordion_{{lesson._id}}').click();
+                                            //$('#accordion_{{lesson._id}}').click();
+                                            window.location = window.location.href;
                                         }
                                     })
                                 })
