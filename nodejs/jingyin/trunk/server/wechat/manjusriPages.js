@@ -22,7 +22,7 @@ var dealwithVirtue = function (type, req, res) {
         share = {
             title: '日行一善', // 分享标题
             desc: '捐助五台山静音寺建设，圆满福慧资粮！', // 分享描述
-            link: linkages.getLink('dailyVirtue'),  // 分享链接
+            link: wx.weixinConfig.wrapUrlWithSitHost(linkages.getLink('dailyVirtue')),  // 分享链接
             imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
         };
     }else{
@@ -31,7 +31,7 @@ var dealwithVirtue = function (type, req, res) {
         share = {
             title: '随喜五台山静音寺建设', // 分享标题
             desc: '五台山静音寺文殊禅林是以培养僧才为核心，弘扬人间佛教的道场！', // 分享描述
-            link: linkages.getLink('suixi'),  // 分享链接
+            link: wx.weixinConfig.wrapUrlWithSitHost(linkages.getLink('suixi')),  // 分享链接
             imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
         };
     }
@@ -68,13 +68,14 @@ module.exports = {
             share: {
                 title: '静音寺.文殊禅林', // 分享标题
                 desc: '传承正法，培养僧才，实修实证，弘扬人间佛教，共建人间净土！', // 分享描述
-                link: linkages.getLink('home'),  // 分享链接
+                link: wx.weixinConfig.wrapUrlWithSitHost(linkages.getLink('home')),  // 分享链接
                 imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
             },
             menu: linkages.getMainMenuLinkages()
         }
-
-        return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url))
+        var url = wx.weixinConfig.wrapUrlWithSitHost(req.url);
+        logger.debug("The url of the share page is: " + url);
+        return wx.weixinService.generateShareConfig(url)
             .then(function (shareConfig) {
                 viewData.shareConfig = shareConfig;
                 return res.render('manjusri/index', viewData);
