@@ -29,7 +29,8 @@ module.exports = {
     announcePractice: function (req, res) {
         var lordid = req.params.lordid;
         var lessonid = req.params.lessonid;
-        return lessons.announce(lordid, lessonid, req.body.num)
+        var num = Math.round(req.body.num * 1);
+        return lessons.announce(lordid, lessonid, num)
             .then(function (doc) {
                 return res.status(200).json({
                     data: doc,
