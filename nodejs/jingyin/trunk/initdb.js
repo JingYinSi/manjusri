@@ -4,12 +4,12 @@
 const mongoose = require('mongoose'),
     Part = require('./server/wechat/models/part');
 
-var connStr = 'mongodb://121.41.93.210:17914/jingyin';
+/*var connStr = 'mongodb://121.41.93.210:17914/jingyin';
  mongoose.connect(connStr, function (err) {
     if(err) {
         console.log('Mongoose:' + connStr + ' is failed connect!');
     }
-});
+});*/
 
 var db = mongoose.connection;
 db.once('open', function() {

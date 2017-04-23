@@ -19,8 +19,8 @@ describe('静音寺业务系统', function () {
     });
 
     describe('业务', function (done) {
-        var partsData, usersData;
-        var virtuesInDb, partsInDb, usersInDb, praysInDb;
+        var partsData, usersData, lessonsData;
+        var virtuesInDb, partsInDb, usersInDb, praysInDb, lessonsInDb, practicesInDb;
         var ObjectID;
 
         function initDB(insertDocs, callback) {
@@ -28,9 +28,12 @@ describe('静音寺业务系统', function () {
             var UserModel = require('../server/wechat/models/user');
             var VirtueModel = require('../server/wechat/models/virtue');
             var PrayModel = require('../server/wechat/models/pray');
+            var LessonModel = require('../server/wechat/models/lesson');
+            var PracticeModel = require('../server/wechat/models/practice');
 
             partsData = require('./data/partsdata').data;
             usersData = require('./data/usersdata').data;
+            lessonsData = require('./data/lessonsdata').data;
 
             insertDocs(PartModel, partsData, function (err, docs) {
                 if (err) return callback(err);
@@ -137,7 +140,26 @@ describe('静音寺业务系统', function () {
                         insertDocs(PrayModel, praysData, function (err, docs) {
                             if (err) return callback(err);
                             praysInDb = docs;
-                            return callback();
+                            insertDocs(LessonModel, lessonsData, function (err, docs) {
+                                if (err) return callback(err);
+                                lessonsInDb = docs;
+                                var parcticesData = [
+                                    {
+                                        lord: usersInDb[0],
+                                        lesson: lessonsInDb[0],
+                                        num: 2000
+                                    },
+                                    {
+                                        lord: usersInDb[1],
+                                        lesson: lessonsInDb[1],
+                                        num: 3000
+                                    }
+                                ];
+                                insertDocs(PracticeModel, parcticesData, function (err, docs) {
+                                    practicesInDb = docs;
+                                    return callback();
+                                });
+                            });
                         });
                     });
                 });
@@ -1362,6 +1384,163 @@ describe('静音寺业务系统', function () {
                 });
             });
 
+            describe('功课', function () {
+                var lessons, lordid, lessonid;
+
+                beforeEach(function () {
+                    lessons = require("../server/modules/lessons");
+                    lordid = usersInDb[0]._id;
+                    lessonid = lessonsInDb[1]._id;
+                });
+
+                describe('列出各功课的当前状态', function () {
+                    it('功德主标识不合法', function (done) {
+                        lessons.listLessons("58f1d1c9a")
+                            .then(function () {
+                                done(err);
+                            })
+                            .catch(function (err) {
+                                expect(err).not.null;
+                                done();
+                            })
+                    });
+
+                    it('列出各功课的当前状态', function (done) {
+                        lessons.listLessons(lordid)
+                            .then(function (list) {
+                                expect(list).eql([
+                                    {
+                                        lesson: {
+                                            _id: lessonsInDb[0]._id,
+                                            name: lessonsInDb[0].name,
+                                            img: lessonsInDb[0].img,
+                                            unit: lessonsInDb[0].unit
+                                        },
+                                        join: 1,
+                                        practice: 2000,
+                                        me: 2000,
+                                    },
+                                    {
+                                        lesson: {
+                                            _id: lessonsInDb[1]._id,
+                                            name: lessonsInDb[1].name,
+                                            img: lessonsInDb[1].img,
+                                            unit: lessonsInDb[1].unit
+                                        },
+                                        join: 1,
+                                        practice: 3000,
+                                        me: 0,
+                                    },
+                                ]);
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('列出指定用户参与的各功课的当前状态', function (done) {
+                        lessons.listMyLessons(lordid)
+                            .then(function (list) {
+                                expect(list).eql([
+                                    {
+                                        lesson: {
+                                            _id: lessonsInDb[0]._id,
+                                            name: lessonsInDb[0].name,
+                                            img: lessonsInDb[0].img,
+                                            unit: lessonsInDb[0].unit
+                                        },
+                                        join: 1,
+                                        practice: 2000,
+                                        me: 2000,
+                                    },
+                                ]);
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                });
+
+                describe('功课报数', function () {
+                    it('功德主标识不合法', function (done) {
+                        lessons.announce("58f1d1c9a", lessonid, 5000)
+                            .then(function () {
+                                done(err);
+                            })
+                            .catch(function (err) {
+                                expect(err).not.null;
+                                done();
+                            })
+                    });
+
+                    it('功课标识不合法', function (done) {
+                        lessons.announce(lordid, "58f1d1c9a", 5000)
+                            .then(function () {
+                                done(err);
+                            })
+                            .catch(function (err) {
+                                expect(err).not.null;
+                                done();
+                            })
+                    });
+
+                    it('功德主不存在', function (done) {
+                        lessons.announce("58fc5f7d9395a84aaad50dad", lessonid, 5000)
+                            .then(function () {
+                                done(err);
+                            })
+                            .catch(function (err) {
+                                expect(err).not.null;
+                                done();
+                            })
+                    });
+
+                    it('功课不存在', function (done) {
+                        lessons.announce(lordid, "58fc5f7d9395a84aaad50dad", 5000)
+                            .then(function () {
+                                done(err);
+                            })
+                            .catch(function (err) {
+                                expect(err).not.null;
+                                done();
+                            })
+                    });
+
+                    it('功课报数正确 - 功德主首次报数', function (done) {
+                        lessons.announce(lordid, lessonid, 5000)
+                            .then(function (anno) {
+                                expect(anno.lord).eql(lordid);
+                                expect(anno.lesson).eql(lessonid);
+                                expect(anno.begDate.getDate()).eql(new Date().getDate());
+                                expect(anno.num).eql(5000);
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('功课报数正确 - 功德主再次报数', function (done) {
+                        lordid = lordid.toString();
+                        lessonid = lessonsInDb[0]._id.toString();
+                        lessons.announce(lordid, lessonid, 5000)
+                            .then(function (anno) {
+                                expect(anno.lord).eql(usersInDb[0]._id);
+                                expect(anno.lesson).eql(lessonsInDb[0]._id);
+                                expect(anno.begDate).eql(practicesInDb[0].begDate);
+                                expect(anno.num).eql(7000);
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+                });
+            });
+
             describe('缓存accesstoken等', function () {
                 var wxcache;
                 var val, timeout;
@@ -1601,6 +1780,30 @@ describe('静音寺业务系统', function () {
                 request.get(url)
                     .expect(200, {data: 'ok'}, done);
             });
+
+            describe('功课', function () {
+                it('功课报数', function (done) {
+                    url = linkages.getLink('announcePracticeNum', {lordid: 43567, lessonid: 3456});
+                    stubs['./rest/practices'] = {announcePractice: controller}
+                    routes = proxyquire('../server/routes', stubs);
+                    routes.attachTo(app);
+
+                    expect(url).eql('/jingyin/rests/practices/lords/43567/lessons/3456');
+                    request.post(url)
+                        .expect(200, {data: 'ok'}, done);
+                });
+
+                it('新增功课', function (done) {
+                    url = linkages.getLink('lessonsResource');
+                    stubs['./rest/practices'] = {addLesson: controller}
+                    routes = proxyquire('../server/routes', stubs);
+                    routes.attachTo(app);
+
+                    expect(url).eql('/jingyin/rests/lessons');
+                    request.post(url)
+                        .expect(200, {data: 'ok'}, done);
+                });
+            })
         });
 
         describe('祈福', function () {
@@ -2012,8 +2215,89 @@ describe('静音寺业务系统', function () {
                 var virtueId, openId, payDataFromWeixin
             })
         });
-    })
-    ;
+
+        describe('功课', function () {
+            describe('功课报数', function () {
+                var lordid, lessonid, num, practice;
+                var announceStub;
+
+                beforeEach(function () {
+                    lordid = "43564747";
+                    lessonid = "aaaa64747";
+                    num = 100;
+                    practice = {foo: "ff"};
+                    url = linkages.getUrlTemplete('announcePracticeNum');
+                });
+
+                it('保存功课报数失败', function (done) {
+                    announceStub = createPromiseStub([lordid, lessonid, num], null, err);
+                    stubs['../modules/lessons'] = {announce: announceStub};
+                    controller = proxyquire('../server/rest/practices', stubs).announcePractice;
+
+                    app.post(url, controller);
+                    request
+                        .post(linkages.getLink('announcePracticeNum', {lordid: lordid, lessonid: lessonid}))
+                        .send({num: num})
+                        .expect(500, err, done);
+                });
+
+                it('保存功课报数成功', function (done) {
+                    announceStub = createPromiseStub([lordid, lessonid, num], [practice]);
+                    stubs['../modules/lessons'] = {announce: announceStub};
+                    controller = proxyquire('../server/rest/practices', stubs).announcePractice;
+
+                    app.post(url, controller);
+                    request
+                        .post(linkages.getLink('announcePracticeNum', {lordid: lordid, lessonid: lessonid}))
+                        .send({num: num})
+                        .expect(200, {
+                            data: practice
+                        }, done);
+                });
+            });
+
+            describe('新增功课', function () {
+                var lessonid, newlessonData, lessonData, addStub, selflink;
+
+                beforeEach(function () {
+                    lessonid = 12345;
+                    newlessonData = {name: 'foo'};
+                    lessonData = {_id: lessonid, name: 'foo'};
+                    selflink = "/self/link";
+                    url = linkages.getUrlTemplete('lessonsResource');
+                });
+
+                it('新增功课失败', function (done) {
+                    addStub = createPromiseStub([newlessonData], null, err);
+                    stubs['../modules/lessons'] = {add: addStub};
+                    controller = proxyquire('../server/rest/practices', stubs).addLesson;
+
+                    app.post(url, controller);
+                    request
+                        .post(linkages.getLink('lessonsResource'))
+                        .send(newlessonData)
+                        .expect(500, err, done);
+                });
+
+                it('新增功课成功', function (done) {
+                    addStub = createPromiseStub([newlessonData], [lessonData]);
+                    stubs['../modules/lessons'] = {add: addStub};
+                    controller = proxyquire('../server/rest/practices', stubs).addLesson;
+
+                    app.post(url, controller);
+                    request
+                        .post(linkages.getLink('lessonsResource'))
+                        .send(newlessonData)
+                        .expect(201, {
+                            data: lessonData,
+                            links: {
+                                self: linkages.getLink("lessonResource", {id: lessonid})
+                            }
+                        }, done);
+                });
+            });
+        });
+    });
 
     describe('技术', function () {
         describe('Http请求', function () {
@@ -3175,20 +3459,17 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('处理各个页面', function () {
-                    var linkages;
+                    var linkages, selfLink;
                     var menuLinks, getMenuLinksStub, shareLogo, getShareLogoImageStub, wrapUrlWithSitHostStub;
                     var shareConfig, generateShareConfigStub;
 
                     beforeEach(function () {
                         linkages = sinon.stub();
+                        selfLink = '/self/link';
 
                         menuLinks = {home: "foo", jiansi: "fee"}
                         getMenuLinksStub = sinon.stub();
                         getMenuLinksStub.returns(menuLinks);
-                        stubs["../rests"] = {
-                            getLink: linkages,
-                            getMainMenuLinkages: getMenuLinksStub,
-                        };
 
                         shareLogo = '/share/logo/image';
                         getShareLogoImageStub = sinon.stub();
@@ -3206,6 +3487,10 @@ describe('静音寺业务系统', function () {
                             }
                         };
 
+                        stubs["../rests"] = {
+                            getLink: linkages,
+                            getMainMenuLinkages: getMenuLinksStub,
+                        };
                     });
 
                     describe('显示首页', function () {
@@ -3222,6 +3507,11 @@ describe('静音寺业务系统', function () {
                             linkages.withArgs("suixi").returns(suixiLink);
                             linkages.withArgs("pray").returns(prayLink);
                             linkages.withArgs("home").returns(homeLink);
+
+                            stubs["../rests"] = {
+                                getLink: linkages,
+                                getMainMenuLinkages: getMenuLinksStub,
+                            };
 
                             var url = '/home';
                             reqStub.url = url;
@@ -3392,7 +3682,10 @@ describe('静音寺业务系统', function () {
                             linkages.withArgs("suixi").returns(suixiLink);
                             linkages.withArgs("trans", {partId: "foo"}).returns(transfooLink);
                             linkages.withArgs("trans", {partId: "fee"}).returns(transfeeLink);
-                            stubs["../rests"].getLink = linkages;
+                            stubs["../rests"] = {
+                                getLink: linkages,
+                                getMainMenuLinkages: getMenuLinksStub,
+                            };
 
                             findPartsStub = createPromiseStub([], [parts]);
                             stubs['../modules/parts'] = {listPartsOnSale: findPartsStub};
@@ -3548,6 +3841,107 @@ describe('静音寺业务系统', function () {
                                         menu: mainmenulinks
                                     };
                                     expect(resRenderSpy).calledOnce.calledWith('manjusri/pray', viewdata);
+                                });
+                        });
+                    });
+
+                    describe('功课', function () {
+                        var openid, lordid, lord, lessonsList;
+                        var getUserByOpenIdStub;
+
+                        beforeEach(function () {
+                            openid = "openid";
+                            lordid = "lordid";
+                            lord = {
+                                _id: lordid,
+                            };
+
+                            lessonsList = [{foo: 'foo'}, {foo: 'fee'}];
+                            reqStub.session = {
+                                user: {openid: openid},
+                            };
+                        });
+
+                        /*it('用户未登录', function () {
+                         delete reqStub.session;
+                         controller = proxyquire('../server/wechat/manjusriPages', stubs).pray;
+                         controller(reqStub, resStub)
+                         checkResponseStatusCodeAndMessage(400);
+                         });*/
+
+                        /*it('获取用户失败', function () {
+                         getUserByOpenIdStub = createPromiseStub([openid], null, err);
+                         stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
+
+                         controller = proxyquire('../server/wechat/manjusriPages', stubs).pray;
+                         return controller(reqStub, resStub)
+                         .then(function () {
+                         checkResponseStatusCodeAndMessage(500, null, err);
+                         });
+                         });*/
+
+                        /*it('当前用户不存在', function () {
+                         getUserByOpenIdStub = createPromiseStub([openid], [null]);
+                         stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
+
+                         controller = proxyquire('../server/wechat/manjusriPages', stubs).pray;
+                         return controller(reqStub, resStub)
+                         .then(function () {
+                         var errmsg = "the user with openid[" + openid + "] not exists!!!";
+                         checkResponseStatusCodeAndMessage(400, errmsg);
+                         });
+                         });*/
+
+                        it('获取功课列表失败', function () {
+                            /*getUserByOpenIdStub = createPromiseStub([openid], [lord]);
+                             stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};*/
+
+                            listLessonsStub = createPromiseStub(null, null, err);
+                            stubs['../modules/lessons'] = {listLessons: listLessonsStub};
+
+                            controller = proxyquire('../server/wechat/manjusriPages', stubs).lesson;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    checkResponseStatusCodeAndMessage(500, null, err);
+                                });
+                        });
+
+                        //TODO:将分享链接的相关过程整合为一个函数
+                        it('正确显示', function () {
+                            /*getUserByOpenIdStub = createPromiseStub([openid], [lord]);
+                             stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};*/
+
+                            listLessonsStub = createPromiseStub(null, [lessonsList]);
+                            stubs['../modules/lessons'] = {listLessons: listLessonsStub};
+
+                            linkages.withArgs("lesson").returns(selfLink);
+
+                            var url = '/lesson';
+                            reqStub.url = url;
+                            var currentShareUrl = '/current/share/url';
+                            wrapUrlWithSitHostStub.withArgs(url).returns(currentShareUrl);
+
+                            var shareUrl = '/www/shareurl';
+                            wrapUrlWithSitHostStub.withArgs(selfLink).returns(shareUrl);
+
+                            generateShareConfigStub = createPromiseStub([currentShareUrl], [shareConfig]);
+                            stubs['../weixin'].weixinService.generateShareConfig = generateShareConfigStub;
+
+                            controller = proxyquire('../server/wechat/manjusriPages', stubs).lesson;
+                            return controller(reqStub, resStub)
+                                .then(function () {
+                                    viewdata = {
+                                        share: {
+                                            title: '共修', // 分享标题
+                                            desc: '向五台山文殊菩萨许个愿！', // 分享描述
+                                            link: shareUrl,  // 分享链接
+                                            imgUrl: shareLogo, // 分享图标
+                                        },
+                                        shareConfig: shareConfig,
+                                        data: lessonsList,
+                                        menu: menuLinks
+                                    };
+                                    expect(resRenderSpy).calledOnce.calledWith('manjusri/lesson', viewdata);
                                 });
                         });
                     });

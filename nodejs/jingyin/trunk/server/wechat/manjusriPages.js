@@ -4,6 +4,7 @@ var linkages = require("../rests"),
     createResponseWrap = require('../../modules/responsewrap'),
     usersModule = require('../modules/users'),
     praysModule = require('../modules/prays'),
+    lessonsModule = require('../modules/lessons'),
     mongoose = require('mongoose'),
     redirects = require('./redirects'),
     wx = require('../weixin');
@@ -16,7 +17,7 @@ var logger = log4js.getLogger();
 //TODO:将manjusriPages.js并入manjusri.js中
 var dealwithVirtue = function (type, req, res) {
     var view, viewdata, selflink, share;
-    if(type === "daily") {
+    if (type === "daily") {
         view = 'manjusri/dailyVirtue';
         selflink = linkages.getLink('dailyVirtue');
         share = {
@@ -25,7 +26,7 @@ var dealwithVirtue = function (type, req, res) {
             link: wx.weixinConfig.wrapUrlWithSitHost(linkages.getLink('dailyVirtue')),  // 分享链接
             imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
         };
-    }else{
+    } else {
         view = 'manjusri/suixi';
         selflink = linkages.getLink('suixi');
         share = {
@@ -168,8 +169,54 @@ module.exports = {
     },
 
     lesson: function (req, res) {
-        var viewData = {}
-        return res.render('manjusri/lesson', viewData);
+        var code = 500;
+        var errmsg;
+        var resWrap = createResponseWrap(res);
+        /*if (!req.session || !req.session.user)
+            return resWrap.setError(400);
+        var openid = req.session.user.openid;*/
+        var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
+        var lordid;
+        var viewData = {
+            menu: linkages.getMainMenuLinkages(),
+        };
+        var resWrap = createResponseWrap(res);
+        return usersModule.findByOpenid(openid)
+            .then(function (user) {
+                if (!user) {
+                    errmsg = "the user with openid[" + openid + "] not exists!!!";
+                    logger.error(errmsg);
+                    code = 400;
+                    return Promise.reject(errmsg);
+                }
+                lordid = user._id;
+                return lessonsModule.listLessons(lordid);
+            })
+            .then(function (lessons) {
+                    lessons.forEach(function (item) {
+                        item.links = {
+                            announce: linkages.getLink("announcePracticeNum", {lordid:lordid, lessonid:item.lesson._id})
+                        }
+                    });
+                    viewData.data = lessons;
+                    return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url));
+                }
+            )
+            .then(function (shareConfig) {
+                viewData.share = {
+                    title: '共修', // 分享标题
+                    desc: '向五台山文殊菩萨许个愿！', // 分享描述
+                    link: wx.weixinConfig.wrapUrlWithSitHost(linkages.getLink('lesson')),  // 分享链接
+                    imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
+                };
+                viewData.shareConfig = shareConfig;
+                logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData));
+                return res.render('manjusri/lesson', viewData);
+            })
+            .catch(function (err) {
+                logger.debug("lesson page handler error:" + err);
+                return resWrap.setError(500, null, err);
+            })
     },
 
     lordVirtues: function (req, res) {
@@ -181,6 +228,8 @@ module.exports = {
 
         //var openid = 'o0ghywcUHxUdazzXEBvYPxU1PVPk';
         //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
+
+        var lordid;
         //var token = sess.user.access_token;
         var errmsg;
         return usersModule.findByOpenid(openid)
@@ -191,7 +240,8 @@ module.exports = {
                     return Promise.reject(errmsg);
                 }
                 viewdata = {lord: lord};
-                return virtuesModule.listLordVirtues(lord._id, null, 5);
+                lordid = lord._id;
+                return virtuesModule.listLordVirtues(lordid, null, 5);
             })
             .then(function (virtues) {
                 viewdata.virtues = virtues;
@@ -200,16 +250,22 @@ module.exports = {
                     daily: linkages.getLink('dailyVirtue'),
                     suixi: linkages.getLink('suixi'),
                 }
+                return lessonsModule.listMyLessons(lordid);
+            })
+            .then(function (list) {
+                viewdata.lessons = list;
                 viewdata.menu = linkages.getMainMenuLinkages();
+                logger.debug("The viewdata of lordvirtues is: " + JSON.stringify(viewdata));
                 return res.render('manjusri/me', viewdata);
             })
             .catch(function (err) {
                 logger.debug("error:" + err);
                 return resWrap.setError(500, errmsg, err);
             });
-    },
+    }
+    ,
 
-    //TODO:实现点击查看更多内容
+//TODO:实现点击查看更多内容
     lordProfile: function (req, res) {
         var resWrap = createResponseWrap(res);
         var openid = req.params.openid;
@@ -217,7 +273,7 @@ module.exports = {
             return redirects.toHome(req, res);
         }
         var viewdata = {
-            links:{
+            links: {
                 self: linkages.getLink('profile', openid),
                 lord: linkages.getLink('me'),
             },
@@ -232,6 +288,8 @@ module.exports = {
             .catch(function (err) {
                 return resWrap.setError(500, null, err);
             })
-    },
-};
+    }
+    ,
+}
+;
 
