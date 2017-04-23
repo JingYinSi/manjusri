@@ -82,7 +82,7 @@ module.exports = {
         /*var host = "http://jingyintemple.top";
         var relativeUrl = req.url;
         var url = host + relativeUrl;*/
-        var url = wx.generateShareConfig(wxConfig.wrapUrlWithSitHost(req.url));
+        var url = wxConfig.wrapUrlWithSitHost(req.url);
 
         return virtues.findNewVirtueById(virtueId, false)
             .then(function (doc) {
