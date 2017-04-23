@@ -1,33 +1,35 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
 <head>
-	<meta charset="utf-8">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>成功捐助一元 - 寺庙</title>
+    <title>成功捐助一元 - 寺庙</title>
 
-	<link href="/assets/css/reset.css" rel="stylesheet" >
+    <link href="/assets/css/reset.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/assets/css/jw.css" rel="stylesheet" >
+    <link href="/assets/css/jw.css" rel="stylesheet">
     <!--[if lt IE 9]>
-        <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-        <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     {{>sharepage}}
     <style>
-        .left{
-           position: absolute;
-           left: 0;
-           top: 0;
-           width: 70px;
+        .left {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 70px;
         }
-        .center{
 
-            width: auto;    /*如果没有这一句，那么，center这个div的文字就不会自动换行*/
+        .center {
+
+            width: auto; /*如果没有这一句，那么，center这个div的文字就不会自动换行*/
             margin: 0 30px 0 70px;
 
         }
-        .right{
+
+        .right {
             position: absolute;
             top: 0;
             right: 0;
@@ -38,52 +40,42 @@
 
 </head>
 <body>
-	<div class="wrapper container-fluid bcfcf6d4 w100v ">
-		<div class="mlr-15">
-            <img src="/assets/images/bg001.jpg" alt="" class="w100-">
-        </div>	
-        <ul class="mlr-15 mb0">
-            <li class=" p-r w100- bcfff h85 bb1sccc">
-                <div class="left ">
-                    <img src="/assets/images/logof.png" alt="" class="w50 br45 ml20 mt20">
-                </div>
-                <div class="center pl20" >
-                    <p class="pt20 fw7">亿遍文殊心咒大共修</p>
-                    <p class="fs12 c999"><span>0</span>人共修<span>100</span>遍</p>
-                </div>
-                <div class="right tr mr20">
-                    <p class="l80 c999"><span class="mr20 cff8c05">报数</span><span>></span></p>
-                </div>
-            </li>
-            <li class=" p-r w100- bcfff h85 bb1sccc">
-                <div class="left ">
-                    <img src="/assets/images/logoe.png" alt="" class="w50 br45 ml20 mt20">
-                </div>
-                <div class="center pl20" >
-                    <p class="pt20 fw7">禅修</p>
-                    <p class="fs12 c999"><span>0</span>人共修<span>100</span>小时</p>
-                </div>
-                <div class="right tr mr20">
-                    <p class="l80 c999"><span class="mr20 cff8c05">报数</span><span>></span></p>
-                </div>
-            </li>
-        </ul>
-        <div class="mlr-15 bcfff pb30 plr30">
-            <p class="tc fs20 fw7 l60 mb0 pt10">共修功德</p>
-            <p class="ti2 l30 ffht ">万人共造善恶因,每人均得万人果。众人共修之功德是各人所修功德的总和,也就是说,如果万人同时参加共修,每个人于共修期间所造善业都将增长一万倍。</p>
-        </div>
-
-		<!-- 页脚 -->
-        <footer>
-            <figure>
-                <img src="./assets/images/logo.png" alt="">
-            </figure>
-            <div class="copyright">
-                Copyright @2016 The Jin Yin Temple
-            </div>
-        </footer>
-        {{>footmenu}}
+<div class="wrapper container-fluid bcfcf6d4 w100v ">
+    <div class="mlr-15">
+        <img src="/assets/images/bg001.jpg" alt="" class="w100-">
     </div>
+    <ul class="mlr-15 mb0">
+        {{#each data}}
+            <li class=" p-r w100- bcfff h85 bb1sccc">
+                <div class="left ">
+                    <img src="{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
+                </div>
+                <div class="center pl20">
+                    <p class="pt20 fw7">{{lesson.name}}</p>
+                    <p class="fs12 c999"><span>{{join}}</span>人共修<span>{{practice}}</span>遍</p>
+                </div>
+                <div class="right tr mr20">
+                    <p class="l80 c999"><span class="mr20 cff8c05">报数</span><span>></span></p>
+                </div>
+            </li>
+        {{/each}}
+    </ul>
+    <div class="mlr-15 bcfff pb30 plr30">
+        <p class="tc fs20 fw7 l60 mb0 pt10">共修功德</p>
+        <p class="ti2 l30 ffht ">万人共造善恶因,每人均得万人果。众人共修之功德是各人所修功德的总和,也就是说,如果万人同时参加共修,每个人于共修期间所造善业都将增长一万倍。</p>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <figure>
+            <img src="./assets/images/logo.png" alt="">
+        </figure>
+        <div class="copyright">
+            Copyright @2016 The Jin Yin Temple
+        </div>
+    </footer>
+    {{>footmenu}}
+</div>
 
 
 <script src="/js/jquery-3.1.1.min.js"></script>
