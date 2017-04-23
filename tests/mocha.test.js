@@ -3213,14 +3213,6 @@ describe('静音寺业务系统', function () {
                         });
 
                         it('正确显示', function () {
-                            var url = '/home';
-                            reqStub.url = url;
-                            var currentShareUrl = '/current/share/url';
-                            wrapUrlWithSitHostStub.withArgs(url).returns(currentShareUrl);
-
-                            generateShareConfigStub = createPromiseStub([currentShareUrl], [shareConfig]);
-                            stubs['../weixin'].weixinService.generateShareConfig = generateShareConfigStub;
-
                             var dailyVirtueLink = "/dailyVirtueLink";
                             var suixiLink = "/suixiLink";
                             var prayLink = "/prayLink";
@@ -3230,7 +3222,18 @@ describe('静音寺业务系统', function () {
                             linkages.withArgs("suixi").returns(suixiLink);
                             linkages.withArgs("pray").returns(prayLink);
                             linkages.withArgs("home").returns(homeLink);
-                            //stubs["../rests"].getLink = linkages;
+
+                            var url = '/home';
+                            reqStub.url = url;
+                            var currentShareUrl = '/current/share/url';
+                            wrapUrlWithSitHostStub.withArgs(url).returns(currentShareUrl);
+
+
+                            var sharelink = '/share/link';
+                            wrapUrlWithSitHostStub.withArgs(homeLink).returns(sharelink);
+
+                            generateShareConfigStub = createPromiseStub([currentShareUrl], [shareConfig]);
+                            stubs['../weixin'].weixinService.generateShareConfig = generateShareConfigStub;
 
                             controller = proxyquire('../server/wechat/manjusriPages', stubs).home;
                             return controller(reqStub, resStub)
@@ -3240,7 +3243,7 @@ describe('静音寺业务系统', function () {
                                             share: {
                                                 title: '静音寺.文殊禅林', // 分享标题
                                                 desc: '传承正法，培养僧才，实修实证，弘扬人间佛教，共建人间净土！', // 分享描述
-                                                link: homeLink,  // 分享链接
+                                                link: sharelink,  // 分享链接
                                                 imgUrl: shareLogo, // 分享图标
                                             },
                                             linkages: {
