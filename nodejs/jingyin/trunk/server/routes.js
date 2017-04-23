@@ -37,8 +37,8 @@ module.exports = {
         app.get('/jingyin/manjusri/pay/confirm', auth, payment.pay);
         app.get(linkages.getUrlTemplete('weixinPaymentNotify'), payment.result);
         app.post(linkages.getUrlTemplete('weixinPaymentNotify'), virtues.paidNotify);
-        app.get('/jingyin/manjusri/lordvirtues', auth, manjusriPages.lordVirtues);
-        //app.get('/jingyin/manjusri/lordvirtues', manjusriPages.lordVirtues);
+        //app.get('/jingyin/manjusri/lordvirtues', auth, manjusriPages.lordVirtues);
+        app.get('/jingyin/manjusri/lordvirtues', manjusriPages.lordVirtues);
 
         app.get(linkages.getUrlTemplete('profile'), auth, manjusriPages.lordProfile);
         //app.get(linkages.getUrlTemplete('profile'), manjusriPages.lordProfile);
