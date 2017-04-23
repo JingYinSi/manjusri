@@ -110,6 +110,7 @@ module.exports = {
             })
             .then(function (shareConfig) {
                 viewdata.shareConfig = shareConfig;
+                //TODO:更换支付成功页面
                 return res.render('wechat/paymentShare', viewdata);
             })
             .catch(function (err) {

@@ -27,6 +27,9 @@ var urlMap = {
     manjusriStatistics: "/jingyin/rests/manjusri/statistics",
     lordPray:"/jingyin/rests/lords/:lordid/prays/:prayid",
     lordPrays: "/jingyin/rests/lords/:id/prays",
+    lessonsResource: "/jingyin/rests/lessons",
+    lessonResource: "/jingyin/rests/lessons/:id",
+    announcePracticeNum: '/jingyin/rests/practices/lords/:lordid/lessons/:lessonid',
 };
 
 function ResourceRegistry() {

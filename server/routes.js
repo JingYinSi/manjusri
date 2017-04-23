@@ -12,6 +12,7 @@ const manjusri = require('./wechat/manjusri'),
     statistics = require('./rest/statistics'),
     lords = require('./rest/lords'),
     pray = require('./rest/prays');
+    practices = require('./rest/practices');
 
 var log4js = require('log4js');
 log4js.configure("log4js.conf", {reloadSecs: 300});
@@ -49,6 +50,8 @@ module.exports = {
         app.get(linkages.getUrlTemplete('lord'), lords.lord);
         app.get(linkages.getUrlTemplete('lordPray'), pray.pray);
         app.post(linkages.getUrlTemplete('lordPrays'), pray.add);
+        app.post(linkages.getUrlTemplete('lessonsResource'), practices.addLesson);
+        app.post(linkages.getUrlTemplete('announcePracticeNum'), practices.announcePractice);
         app.get(linkages.getUrlTemplete('manjusriStatistics'), statistics.query);
 
         app.get('/jingyin/rests/pray/print', pray.print);
