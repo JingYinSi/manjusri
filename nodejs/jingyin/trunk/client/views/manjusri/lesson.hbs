@@ -69,7 +69,13 @@
                     </div>
                     <div id="lession_{{lesson._id}}" class="accordion-body collapse">
                         <div class="accordion-inner">
-                            <div>报数<input id="txt_{{lesson._id}}"/><button type="button" class="btn btn-primary" id="btn_{{lesson._id}}">确定</button></div>
+                            <div class="row">
+                                <div class="row c999">
+                                    <div class="col-xs-3" style="text-align: right;">报数</div>
+                                    <div class="col-xs-6"><input id="txt_{{lesson._id}}"/></div>
+                                    <div class="col-xs-3"><button type="button" class="btn btn-primary" id="btn_{{lesson._id}}">确定</button></div>
+                                </div>
+                            </div>
                             <script type="text/javascript">
                                 $('#btn_{{lesson._id}}').click(function(){
                                     var num = $('#txt_{{lesson._id}}').val();
