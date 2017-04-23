@@ -13,6 +13,8 @@
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script src="/js/jquery-3.1.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     {{>sharepage}}
     <style>
         .left {
@@ -46,18 +48,47 @@
     </div>
     <ul class="mlr-15 mb0">
         {{#each data}}
-            <li class=" p-r w100- bcfff h85 bb1sccc">
-                <div class="left ">
-                    <img src="{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
+            <div class="accordion" id="lessonAccordion">
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <li class=" p-r w100- bcfff h85 bb1sccc">
+                            <div class="left ">
+                                <img src="{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
+                            </div>
+                            <div class="center pl20">
+                                <p class="pt20 fw7">{{lesson.name}}</p>
+                                <p class="fs12 c999"><span>{{join}}</span>人共修<span>{{practice}}</span>{{lesson.unit}}
+                                </p>
+                            </div>
+                            <div class="right tr mr20">
+                                <p class="l80 c999">
+                                    <a id="accordion_{{lesson._id}}" class="mr20 cff8c05" class="accordion-toggle" data-toggle="collapse" data-parent="#lessonAccordion" href="#lession_{{lesson._id}}">报数</a>
+                                    <span>></span></p>
+                            </div>
+                        </li>
+                    </div>
+                    <div id="lession_{{lesson._id}}" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                            <div>报数<input id="txt_{{lesson._id}}"/><button type="button" class="btn btn-primary" id="btn_{{lesson._id}}">确定</button></div>
+                            <script type="text/javascript">
+                                $('#btn_{{lesson._id}}').click(function(){
+                                    var num = $('#txt_{{lesson._id}}').val();
+                                    $.ajax({
+                                        url: '{{links.announce}}',
+                                        method:'POST',
+                                        contentType: "application/json",
+                                        data:JSON.stringify({num: num}),
+                                        success:function(result){
+                                            alert('您已成功报数' + num + "{{lesson.unit}}!");
+                                            $('#accordion_{{lesson._id}}').click();
+                                        }
+                                    })
+                                })
+                            </script>
+                        </div>
+                    </div>
                 </div>
-                <div class="center pl20">
-                    <p class="pt20 fw7">{{lesson.name}}</p>
-                    <p class="fs12 c999"><span>{{join}}</span>人共修<span>{{practice}}</span>{{lesson.unit}}</p>
-                </div>
-                <div class="right tr mr20">
-                    <p class="l80 c999"><span class="mr20 cff8c05">报数</span><span>></span></p>
-                </div>
-            </li>
+            </div>
         {{/each}}
     </ul>
     <div class="mlr-15 bcfff pb30 plr30">
@@ -76,9 +107,5 @@
     </footer>
     {{>footmenu}}
 </div>
-
-
-<script src="/js/jquery-3.1.1.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
 </body>
 </html>
