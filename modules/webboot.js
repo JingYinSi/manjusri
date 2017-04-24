@@ -50,6 +50,9 @@ module.exports = function (ctx) {
         helpers: {
             dateMMDD: function (timestamp) {
                 return moment(timestamp).format('MM-DD');
+            },
+            dateYYYYMMDD: function (timestamp) {
+                return moment(timestamp).format('YYYY-MM-DD');
             }
         }
     }).engine);
