@@ -20,6 +20,49 @@ module.exports = {
             });
     },
 
+    getLessonPractices: function (lessonid, lordid) {
+        var lesson, lord;
+        try {
+            lesson = ObjectID(lessonid);
+            lord = ObjectID(lordid);
+        }
+        catch (err) {
+            return Promise.reject(err);
+        }
+        var lines = [
+            {"$match": {"lesson": lesson}},
+            {
+                $facet: {
+                    total: [
+                        {
+                            $group: {
+                                _id: null,
+                                count: {$sum: 1}, sum: {$sum: "$num"}
+                            }
+                        }
+                    ],
+                    me: [
+                        {"$match": {"lord": lord}},
+                    ],
+                }
+            }
+        ];
+        return practiceModel.aggregate(lines)
+            .then(function (data) {
+                data = data[0];
+                var result = {
+                    join: data.total[0].count,
+                    practice: data.total[0].sum,
+                };
+                if(data.me.length > 0)
+                    result.me = {
+                        practice: data.me[0].num,
+                        begDate: data.me[0].begDate
+                    };
+                return result;
+            })
+    },
+
     listLessons: function (lordid) {
         var lord;
         try {
@@ -45,8 +88,8 @@ module.exports = {
                         {"$match": {"lord": lord}},
                         {
                             $group: {
-                                //_id: {lesson: "$lesson", begDate: "$begDate"},
-                                _id: "$lesson",
+                                _id: {lesson: "$lesson", begDate: "$begDate"},
+                                //_id: "$lesson",
                                 sum: {$sum: "$num"}
                             }
                         }
@@ -63,7 +106,9 @@ module.exports = {
                         lesson: item._doc,
                         join: 0,
                         practice: 0,
-                        me: 0,
+                        me: {
+                            practice: 0,
+                        },
                     };
                     lessons.push(data);
                 });
@@ -81,8 +126,9 @@ module.exports = {
                 });
                 data.me.forEach(function (item) {
                     lessons.forEach(function (les) {
-                        if (item._id.equals(les.lesson._id)) {
-                            les.me = item.sum;
+                        if (item._id.lesson.equals(les.lesson._id)) {
+                            les.me.practice = item.sum;
+                            if(item._id.begDate) les.me.begDate = item._id.begDate;
                         }
                     });
                 });
@@ -95,7 +141,7 @@ module.exports = {
         return this.listLessons(lordid)
             .then(function (list) {
                 list.forEach(function (item) {
-                    if (item.me > 0) result.push(item);
+                    if (item.me.practice > 0) result.push(item);
                 });
                 return result;
             })

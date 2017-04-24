@@ -147,11 +147,13 @@ describe('静音寺业务系统', function () {
                                     {
                                         lord: usersInDb[0],
                                         lesson: lessonsInDb[0],
+                                        begDate: new Date(2017, 3, 24),
                                         num: 2000
                                     },
                                     {
                                         lord: usersInDb[1],
                                         lesson: lessonsInDb[1],
+                                        begDate: new Date(2017, 2, 20),
                                         num: 3000
                                     }
                                 ];
@@ -1393,6 +1395,48 @@ describe('静音寺业务系统', function () {
                     lessonid = lessonsInDb[1]._id;
                 });
 
+                describe('查询指定功课的共修及指定同修的修行状况', function () {
+                    it('功课标识不合法', function (done) {
+                        lessons.getLessonPractices("58f1d1c9a", lordid)
+                            .then(function () {
+                                done(err);
+                            })
+                            .catch(function (err) {
+                                expect(err).not.null;
+                                done();
+                            })
+                    });
+
+                    it('功德主标识不合法', function (done) {
+                        lessons.getLessonPractices(lessonid, "58f1d1c9a")
+                            .then(function () {
+                                done(err);
+                            })
+                            .catch(function (err) {
+                                expect(err).not.null;
+                                done();
+                            })
+                    });
+
+                    it('获得共修状况', function (done) {
+                        lessons.getLessonPractices(lessonsInDb[0]._id, lordid)
+                            .then(function (practices) {
+                                expect(practices).eql({
+                                    join: 1,
+                                    practice: 2000,
+                                    me: {
+                                        practice: 2000,
+                                        begDate: practicesInDb[0].begDate
+                                    }
+                                });
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+                });
+
                 describe('列出各功课的当前状态', function () {
                     it('功德主标识不合法', function (done) {
                         lessons.listLessons("58f1d1c9a")
@@ -1418,7 +1462,10 @@ describe('静音寺业务系统', function () {
                                         },
                                         join: 1,
                                         practice: 2000,
-                                        me: 2000,
+                                        me: {
+                                            practice: 2000,
+                                            begDate: practicesInDb[0].begDate
+                                        },
                                     },
                                     {
                                         lesson: {
@@ -1429,7 +1476,9 @@ describe('静音寺业务系统', function () {
                                         },
                                         join: 1,
                                         practice: 3000,
-                                        me: 0,
+                                        me: {
+                                            practice: 0,
+                                        },
                                     },
                                 ]);
                                 done();
@@ -1452,7 +1501,10 @@ describe('静音寺业务系统', function () {
                                         },
                                         join: 1,
                                         practice: 2000,
-                                        me: 2000,
+                                        me: {
+                                            practice: 2000,
+                                            begDate: practicesInDb[0].begDate
+                                        },
                                     },
                                 ]);
                                 done();
@@ -1514,7 +1566,7 @@ describe('静音寺业务系统', function () {
                             .then(function (anno) {
                                 expect(anno.lord).eql(lordid);
                                 expect(anno.lesson).eql(lessonid);
-                                expect(anno.begDate.getDate()).eql(new Date().getDate());
+                                expect(new Date().getTime() - anno.begDate.getTime() < 5000).eql(true);
                                 expect(anno.num).eql(5000);
                                 done();
                             })
@@ -1707,7 +1759,7 @@ describe('静音寺业务系统', function () {
     });
 
     describe("Restful服务", function () {
-        var linkages, url, request, app, bodyParser;
+        var linkages, urlTemplete, url, request, app, bodyParser;
         var requestAgent;
         var controller;
 
@@ -1783,13 +1835,24 @@ describe('静音寺业务系统', function () {
 
             describe('功课', function () {
                 it('功课报数', function (done) {
-                    url = linkages.getLink('announcePracticeNum', {lordid: 43567, lessonid: 3456});
+                    url = linkages.getLink('lessonPractices', {lordid: 43567, lessonid: 3456});
                     stubs['./rest/practices'] = {announcePractice: controller}
                     routes = proxyquire('../server/routes', stubs);
                     routes.attachTo(app);
 
                     expect(url).eql('/jingyin/rests/practices/lords/43567/lessons/3456');
                     request.post(url)
+                        .expect(200, {data: 'ok'}, done);
+                });
+
+                it('查询功课共修状况', function (done) {
+                    url = linkages.getLink('lessonPractices', {lordid: 43567, lessonid: 3456});
+                    stubs['./rest/practices'] = {getLessonPractices: controller}
+                    routes = proxyquire('../server/routes', stubs);
+                    routes.attachTo(app);
+
+                    expect(url).eql('/jingyin/rests/practices/lords/43567/lessons/3456');
+                    request.get(url)
                         .expect(200, {data: 'ok'}, done);
                 });
 
@@ -1807,16 +1870,22 @@ describe('静音寺业务系统', function () {
         });
 
         describe('祈福', function () {
+            var userid;
+
+            beforeEach(function () {
+                userid = "gdggdgd";
+            });
+
             describe('获得功德主特定的祈福', function () {
                 var findPrayStub;
+                var prayid, prayObj;
 
                 beforeEach(function () {
                     prayid = '12345';
                     userid = "gdggdgd";
                     prayObj = {pray: "abcdef"};
-                    url = linkages.getUrlTemplete('lordPray');
-
-                    linkageStub = sinon.stub();
+                    urlTemplete = linkages.getUrlTemplete('lordPray');
+                    url = linkages.getLink('lordPray', {lordid: userid, prayid: prayid});
                 });
 
                 it('查找指定祈福失败', function (done) {
@@ -1824,9 +1893,9 @@ describe('静音寺业务系统', function () {
                     stubs['../modules/prays'] = {findByLordAndId: findPrayStub};
                     controller = proxyquire('../server/rest/prays', stubs).pray;
 
-                    app.get(url, controller);
+                    app.get(urlTemplete, controller);
                     request
-                        .get(linkages.getLink('lordPray', {lordid: userid, prayid: prayid}))
+                        .get(url)
                         .expect(500, err, done);
                 });
 
@@ -1835,9 +1904,9 @@ describe('静音寺业务系统', function () {
                     stubs['../modules/prays'] = {findByLordAndId: findPrayStub};
                     controller = proxyquire('../server/rest/prays', stubs).pray;
 
-                    app.get(url, controller);
+                    app.get(urlTemplete, controller);
                     request
-                        .get(linkages.getLink('lordPray', {lordid: userid, prayid: prayid}))
+                        .get(url)
                         .expect(404, done);
                 });
 
@@ -1847,13 +1916,13 @@ describe('静音寺业务系统', function () {
                     stubs['../modules/prays'] = {findByLordAndId: findPrayStub};
                     controller = proxyquire('../server/rest/prays', stubs).pray;
 
-                    app.get(url, controller);
+                    app.get(urlTemplete, controller);
                     request
-                        .get(linkages.getLink('lordPray', {lordid: userid, prayid: prayid}))
+                        .get(url)
                         .expect(200, {
                             data: thePray,
                             links: {
-                                self: linkages.getLink('lordPray', {lordid: userid, prayid: prayid}),
+                                self: url,
                                 related: {
                                     lord: linkages.getLink('lord', {id: userid})
                                 }
@@ -1863,15 +1932,15 @@ describe('静音寺业务系统', function () {
             });
 
             describe('提交祈福卡', function () {
-                var userid, dataToPost;
+                var dataToPost;
                 var linkageStub, addPrayStub;
 
                 beforeEach(function () {
-                    userid = "43564747";
                     dataToPost = {pray: "abcdef"};
-                    url = linkages.getUrlTemplete('lordPrays');
-
+                    urlTemplete = linkages.getUrlTemplete('lordPrays');
+                    url = linkages.getLink('lordPrays', {id: userid});
                     linkageStub = sinon.stub();
+                    stubs['../rests'] = {getLink: linkageStub};
                 });
 
                 it('保存祈福内容失败', function (done) {
@@ -1879,9 +1948,9 @@ describe('静音寺业务系统', function () {
                     stubs['../modules/prays'] = {add: addPrayStub};
                     controller = proxyquire('../server/rest/prays', stubs).add;
 
-                    app.post(url, controller);
+                    app.post(urlTemplete, controller);
                     request
-                        .post(linkages.getLink('lordPrays', {id: userid}))
+                        .post(url)
                         .send(dataToPost)
                         .expect(500, err, done);
                 });
@@ -1896,15 +1965,15 @@ describe('静音寺业务系统', function () {
                     linkageStub.withArgs("lordPrays", {id: userid}).returns(selflink);
                     linkageStub.withArgs("lordPray", {lordid: userid, prayid: prayid}).returns(lordpraylink);
                     linkageStub.withArgs("lord", {id: userid}).returns(lordlink);
-                    stubs['../rests'] = {getLink: linkageStub};
+
 
                     addPrayStub = createPromiseStub([userid, dataToPost.pray], [prayobj]);
                     stubs['../modules/prays'] = {add: addPrayStub};
                     controller = proxyquire('../server/rest/prays', stubs).add;
 
-                    app.post(url, controller);
+                    app.post(urlTemplete, controller);
                     request
-                        .post(linkages.getLink('lordPrays', {id: userid}))
+                        .post(url)
                         .send(dataToPost)
                         .expect(201, {
                             data: prayobj,
@@ -1921,13 +1990,12 @@ describe('静音寺业务系统', function () {
         });
 
         describe('统计', function () {
-            var url, statistics, queryStub;
+            var statistics, queryStub;
             var data;
 
             beforeEach(function () {
                 data = {foo: 1, fee: 2};
                 url = '/foo/url';
-
             });
 
             it('查询参数中未包含查询类型', function (done) {
@@ -2217,42 +2285,82 @@ describe('静音寺业务系统', function () {
         });
 
         describe('功课', function () {
-            describe('功课报数', function () {
-                var lordid, lessonid, num, practice;
-                var announceStub;
+            describe('功课', function () {
+                var lordid, lessonid, practice;
 
                 beforeEach(function () {
-                    lordid = "43564747";
+                    lordid = "sdcsdsdvsdv";
                     lessonid = "aaaa64747";
-                    num = 100;
                     practice = {foo: "ff"};
-                    url = linkages.getUrlTemplete('announcePracticeNum');
+                    urlTemplete = linkages.getUrlTemplete('lessonPractices');
+                    url = linkages.getLink('lessonPractices', {lordid: lordid, lessonid: lessonid});
                 });
 
-                it('保存功课报数失败', function (done) {
-                    announceStub = createPromiseStub([lordid, lessonid, num], null, err);
-                    stubs['../modules/lessons'] = {announce: announceStub};
-                    controller = proxyquire('../server/rest/practices', stubs).announcePractice;
+                describe('获得指定功课的共修状况', function () {
+                    var getLessonPracticesStub;
 
-                    app.post(url, controller);
-                    request
-                        .post(linkages.getLink('announcePracticeNum', {lordid: lordid, lessonid: lessonid}))
-                        .send({num: num})
-                        .expect(500, err, done);
+                    beforeEach(function () {
+                    });
+
+                    it('查询失败', function (done) {
+                        getLessonPracticesStub = createPromiseStub([lessonid, lordid], null, err);
+                        stubs['../modules/lessons'] = {getLessonPractices: getLessonPracticesStub};
+                        controller = proxyquire('../server/rest/practices', stubs).getLessonPractices;
+
+                        app.get(urlTemplete, controller);
+                        request
+                            .get(url)
+                            .expect(500, err, done);
+                    });
+
+                    it('查询成功', function (done) {
+                        getLessonPracticesStub = createPromiseStub([lessonid, lordid], [practice]);
+                        stubs['../modules/lessons'] = {getLessonPractices: getLessonPracticesStub};
+                        controller = proxyquire('../server/rest/practices', stubs).getLessonPractices;
+
+                        app.get(urlTemplete, controller);
+                        request
+                            .get(url)
+                            .expect(200, {
+                                data: practice,
+                                links: {self: url}
+                            }, done);
+                    });
                 });
 
-                it('保存功课报数成功', function (done) {
-                    announceStub = createPromiseStub([lordid, lessonid, num], [practice]);
-                    stubs['../modules/lessons'] = {announce: announceStub};
-                    controller = proxyquire('../server/rest/practices', stubs).announcePractice;
+                describe('功课报数', function () {
+                    var num;
+                    var announceStub;
 
-                    app.post(url, controller);
-                    request
-                        .post(linkages.getLink('announcePracticeNum', {lordid: lordid, lessonid: lessonid}))
-                        .send({num: num})
-                        .expect(200, {
-                            data: practice
-                        }, done);
+                    beforeEach(function () {
+                        num = 100;
+                    });
+
+                    it('保存功课报数失败', function (done) {
+                        announceStub = createPromiseStub([lordid, lessonid, num], null, err);
+                        stubs['../modules/lessons'] = {announce: announceStub};
+                        controller = proxyquire('../server/rest/practices', stubs).announcePractice;
+
+                        app.post(urlTemplete, controller);
+                        request
+                            .post(url)
+                            .send({num: num})
+                            .expect(500, err, done);
+                    });
+
+                    it('保存功课报数成功', function (done) {
+                        announceStub = createPromiseStub([lordid, lessonid, num], [practice]);
+                        stubs['../modules/lessons'] = {announce: announceStub};
+                        controller = proxyquire('../server/rest/practices', stubs).announcePractice;
+
+                        app.post(urlTemplete, controller);
+                        request
+                            .post(url)
+                            .send({num: num})
+                            .expect(200, {
+                                data: practice
+                            }, done);
+                    });
                 });
             });
 
@@ -2264,7 +2372,8 @@ describe('静音寺业务系统', function () {
                     newlessonData = {name: 'foo'};
                     lessonData = {_id: lessonid, name: 'foo'};
                     selflink = "/self/link";
-                    url = linkages.getUrlTemplete('lessonsResource');
+                    urlTemplete = linkages.getUrlTemplete('lessonsResource');
+                    url = linkages.getLink('lessonsResource');
                 });
 
                 it('新增功课失败', function (done) {
@@ -2272,9 +2381,9 @@ describe('静音寺业务系统', function () {
                     stubs['../modules/lessons'] = {add: addStub};
                     controller = proxyquire('../server/rest/practices', stubs).addLesson;
 
-                    app.post(url, controller);
+                    app.post(urlTemplete, controller);
                     request
-                        .post(linkages.getLink('lessonsResource'))
+                        .post(url)
                         .send(newlessonData)
                         .expect(500, err, done);
                 });
@@ -2284,9 +2393,9 @@ describe('静音寺业务系统', function () {
                     stubs['../modules/lessons'] = {add: addStub};
                     controller = proxyquire('../server/rest/practices', stubs).addLesson;
 
-                    app.post(url, controller);
+                    app.post(urlTemplete, controller);
                     request
-                        .post(linkages.getLink('lessonsResource'))
+                        .post(url)
                         .send(newlessonData)
                         .expect(201, {
                             data: lessonData,
@@ -3847,6 +3956,7 @@ describe('静音寺业务系统', function () {
 
                     describe('功课', function () {
                         var openid, lordid, lord, lessonsList;
+                        var lessonid1, lessonid2;
                         var getUserByOpenIdStub;
 
                         beforeEach(function () {
@@ -3856,7 +3966,18 @@ describe('静音寺业务系统', function () {
                                 _id: lordid,
                             };
 
-                            lessonsList = [{foo: 'foo'}, {foo: 'fee'}];
+                            lessonid1 = 'aaaaaaaaa';
+                            lessonid2 = 'bbbbbbbb';
+                            lessonsList = [
+                                {
+                                    lesson: {_id: lessonid1},
+                                    foo: 'foo'
+                                },
+                                {
+                                    lesson: {_id: lessonid2},
+                                    foo: 'fee'
+                                }
+                            ];
                             reqStub.session = {
                                 user: {openid: openid},
                             };
@@ -3893,8 +4014,8 @@ describe('静音寺业务系统', function () {
                          });*/
 
                         it('获取功课列表失败', function () {
-                            /*getUserByOpenIdStub = createPromiseStub([openid], [lord]);
-                             stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};*/
+                            getUserByOpenIdStub = createPromiseStub([openid], [lord]);
+                            stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
 
                             listLessonsStub = createPromiseStub(null, null, err);
                             stubs['../modules/lessons'] = {listLessons: listLessonsStub};
@@ -3908,13 +4029,23 @@ describe('静音寺业务系统', function () {
 
                         //TODO:将分享链接的相关过程整合为一个函数
                         it('正确显示', function () {
-                            /*getUserByOpenIdStub = createPromiseStub([openid], [lord]);
-                             stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};*/
+                            getUserByOpenIdStub = createPromiseStub([openid], [lord]);
+                            stubs['../modules/users'] = {findByOpenid: getUserByOpenIdStub};
 
-                            listLessonsStub = createPromiseStub(null, [lessonsList]);
+                            listLessonsStub = createPromiseStub([lordid], [lessonsList]);
                             stubs['../modules/lessons'] = {listLessons: listLessonsStub};
 
                             linkages.withArgs("lesson").returns(selfLink);
+                            var announceLink1 = "/announce/link/1";
+                            var announceLink2 = "/announce/link/2";
+                            linkages.withArgs("lessonPractices", {
+                                lordid: lordid,
+                                lessonid: lessonid1
+                            }).returns(announceLink1);
+                            linkages.withArgs("lessonPractices", {
+                                lordid: lordid,
+                                lessonid: lessonid2
+                            }).returns(announceLink2);
 
                             var url = '/lesson';
                             reqStub.url = url;
@@ -3927,18 +4058,30 @@ describe('静音寺业务系统', function () {
                             generateShareConfigStub = createPromiseStub([currentShareUrl], [shareConfig]);
                             stubs['../weixin'].weixinService.generateShareConfig = generateShareConfigStub;
 
+                            var expectedLessonsList = [
+                                {
+                                    lesson: {_id: lessonid1},
+                                    links: {self: announceLink1},
+                                    foo: 'foo'
+                                },
+                                {
+                                    lesson: {_id: lessonid2},
+                                    links: {self: announceLink2},
+                                    foo: 'fee'
+                                }
+                            ];
                             controller = proxyquire('../server/wechat/manjusriPages', stubs).lesson;
                             return controller(reqStub, resStub)
                                 .then(function () {
                                     viewdata = {
                                         share: {
                                             title: '共修', // 分享标题
-                                            desc: '向五台山文殊菩萨许个愿！', // 分享描述
+                                            desc: '众人共修之功德是各人所修功德的总和！', // 分享描述
                                             link: shareUrl,  // 分享链接
                                             imgUrl: shareLogo, // 分享图标
                                         },
                                         shareConfig: shareConfig,
-                                        data: lessonsList,
+                                        data: expectedLessonsList,
                                         menu: menuLinks
                                     };
                                     expect(resRenderSpy).calledOnce.calledWith('manjusri/lesson', viewdata);
@@ -3948,7 +4091,7 @@ describe('静音寺业务系统', function () {
 
                     describe('功德主', function () {
                         var token, openid, lord, virtues, viewdata;
-                        var getOpenIdStub, getUserByOpenIdStub, listLordVirtuesStub;
+                        var getUserByOpenIdStub, listLordVirtuesStub, listMyLessonsStub;
 
                         beforeEach(function () {
                             token = 'ddfffffdffffffffff';
@@ -4016,6 +4159,10 @@ describe('静音寺业务系统', function () {
                             listLordVirtuesStub = createPromiseStub([lord._id], [virtues]);
                             stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
 
+                            var lessons = [{foo: "foo"}, {foo: "fee"}];
+                            listMyLessonsStub = createPromiseStub([lord._id], [lessons]);
+                            stubs['../modules/lessons'] = {listMyLessons: listMyLessonsStub}
+
                             var mainmenulinks = {foo: "foo", fee: "fee"}
                             var getMainMenuLinksStub = sinon.stub();
                             getMainMenuLinksStub.returns(mainmenulinks);
@@ -4039,6 +4186,7 @@ describe('静音寺业务系统', function () {
                                     viewdata = {
                                         lord: lord,
                                         virtues: virtues,
+                                        lessons: lessons,
                                         links: {
                                             profile: profilelink,
                                             daily: dailylink,

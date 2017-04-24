@@ -31,14 +31,15 @@ module.exports = {
         app.get(linkages.getUrlTemplete('jiansi'), manjusriPages.jiansi);
         app.get(linkages.getUrlTemplete('pray'), auth, manjusriPages.pray);
         //app.get(linkages.getUrlTemplete('pray'), manjusriPages.pray);
-        app.get(linkages.getUrlTemplete('lesson'), manjusriPages.lesson);
+        app.get(linkages.getUrlTemplete('lesson'), auth, manjusriPages.lesson);
+        //app.get(linkages.getUrlTemplete('lesson'), manjusriPages.lesson);
         app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);
 
         app.get('/jingyin/manjusri/pay/confirm', auth, payment.pay);
         app.get(linkages.getUrlTemplete('weixinPaymentNotify'), payment.result);
         app.post(linkages.getUrlTemplete('weixinPaymentNotify'), virtues.paidNotify);
-        //app.get('/jingyin/manjusri/lordvirtues', auth, manjusriPages.lordVirtues);
-        app.get('/jingyin/manjusri/lordvirtues', manjusriPages.lordVirtues);
+        app.get('/jingyin/manjusri/lordvirtues', auth, manjusriPages.lordVirtues);
+        //app.get('/jingyin/manjusri/lordvirtues', manjusriPages.lordVirtues);
 
         app.get(linkages.getUrlTemplete('profile'), auth, manjusriPages.lordProfile);
         //app.get(linkages.getUrlTemplete('profile'), manjusriPages.lordProfile);
@@ -51,7 +52,8 @@ module.exports = {
         app.get(linkages.getUrlTemplete('lordPray'), pray.pray);
         app.post(linkages.getUrlTemplete('lordPrays'), pray.add);
         app.post(linkages.getUrlTemplete('lessonsResource'), practices.addLesson);
-        app.post(linkages.getUrlTemplete('announcePracticeNum'), practices.announcePractice);
+        app.get(linkages.getUrlTemplete('lessonPractices'), practices.getLessonPractices);
+        app.post(linkages.getUrlTemplete('lessonPractices'), practices.announcePractice);
         app.get(linkages.getUrlTemplete('manjusriStatistics'), statistics.query);
 
         app.get('/jingyin/rests/pray/print', pray.print);

@@ -172,10 +172,12 @@ module.exports = {
         var code = 500;
         var errmsg;
         var resWrap = createResponseWrap(res);
-        /*if (!req.session || !req.session.user)
+
+        if (!req.session || !req.session.user)
             return resWrap.setError(400);
-        var openid = req.session.user.openid;*/
-        var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
+        var openid = req.session.user.openid;
+        //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
+
         var lordid;
         var viewData = {
             menu: linkages.getMainMenuLinkages(),
@@ -193,19 +195,23 @@ module.exports = {
                 return lessonsModule.listLessons(lordid);
             })
             .then(function (lessons) {
+                    var list = [];
                     lessons.forEach(function (item) {
-                        item.links = {
-                            announce: linkages.getLink("announcePracticeNum", {lordid:lordid, lessonid:item.lesson._id})
-                        }
+                        var lesson = Object.assign({
+                            links: {
+                                self: linkages.getLink("lessonPractices", {lordid: lordid, lessonid: item.lesson._id}),
+                            }
+                        }, item);
+                        list.push(lesson);
                     });
-                    viewData.data = lessons;
+                    viewData.data = list;
                     return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url));
                 }
             )
             .then(function (shareConfig) {
                 viewData.share = {
                     title: '共修', // 分享标题
-                    desc: '向五台山文殊菩萨许个愿！', // 分享描述
+                    desc: '众人共修之功德是各人所修功德的总和！', // 分享描述
                     link: wx.weixinConfig.wrapUrlWithSitHost(linkages.getLink('lesson')),  // 分享链接
                     imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
                 };
@@ -222,12 +228,12 @@ module.exports = {
     lordVirtues: function (req, res) {
         var viewdata, virtues;
         var resWrap = createResponseWrap(res);
-        /*if (!req.session || !req.session.user)
-            return resWrap.setError(400);
-        var openid = req.session.user.openid;*/
+        if (!req.session || !req.session.user)
+         return resWrap.setError(400);
+         var openid = req.session.user.openid;
 
         //var openid = 'o0ghywcUHxUdazzXEBvYPxU1PVPk';
-        var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
+        //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
 
         var lordid;
         //var token = sess.user.access_token;

@@ -162,32 +162,6 @@ module.exports = {
             });
     },
 
-    lordVirtues: function (req, res) {
-        var viewdata, virtues;
-        var resWrap = createResponseWrap(res);
-        var openid = req.session.user.openid;
-        //var token = sess.user.access_token;
-        var errmsg;
-        return usersModule.findByOpenid(openid)
-            .then(function (lord) {
-                if (!lord) {
-                    errmsg = "The User with openid(" + openid + ") not exists?";
-                    logger.error(errmsg);
-                    return Promise.reject();
-                }
-                viewdata = {lord: lord};
-                return virtuesModule.listLordVirtues(lord._id);
-            })
-            .then(function (virtues) {
-                viewdata.virtues = virtues;
-                return res.render('wechat/lordVirtues', viewdata);
-            })
-            .catch(function (err) {
-                logger.debug("error:" + err);
-                return resWrap.setError(500, errmsg, err);
-            });
-    },
-
     lordProfile: function (req, res) {
         //var resWrap = createResponseWrap(res);
         var openid = req.params.openid;

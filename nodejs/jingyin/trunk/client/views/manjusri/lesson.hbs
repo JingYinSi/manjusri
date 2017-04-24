@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>成功捐助一元 - 寺庙</title>
+    <title>共修</title>
 
     <link href="/assets/css/reset.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -13,8 +13,6 @@
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <script src="/js/jquery-3.1.1.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
     {{>sharepage}}
     <style>
         .left {
@@ -48,54 +46,34 @@
     </div>
     <ul class="mlr-15 mb0">
         {{#each data}}
-            <div class="accordion" id="lessonAccordion">
-                <div class="accordion-group">
-                    <div class="accordion-heading">
-                        <li class=" p-r w100- bcfff h85 bb1sccc">
-                            <div class="left ">
-                                <img src="{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
-                            </div>
-                            <div class="center pl20">
-                                <p class="pt20 fw7">{{lesson.name}}</p>
-                                <p class="fs12 c999"><span>{{join}}</span>人共修<span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
-                                </p>
-                            </div>
-                            <div class="right tr mr20">
-                                <p class="l80 c999">
-                                    <a id="accordion_{{lesson._id}}" class="mr20 cff8c05" class="accordion-toggle" data-toggle="collapse" data-parent="#lessonAccordion" href="#lession_{{lesson._id}}">报数</a>
-                                    <span>></span></p>
-                            </div>
-                        </li>
-                    </div>
-                    <div id="lession_{{lesson._id}}" class="accordion-body collapse">
-                        <div class="accordion-inner">
-                            <div class="row">
-                                <div class="row c999">
-                                    <div class="col-xs-3" style="text-align: right;">报数</div>
-                                    <div class="col-xs-6"><input id="txt_{{lesson._id}}"/></div>
-                                    <div class="col-xs-3"><button type="button" class="btn btn-primary" id="btn_{{lesson._id}}">确定</button></div>
-                                </div>
-                            </div>
-                            <script type="text/javascript">
-                                $('#btn_{{lesson._id}}').click(function(){
-                                    var num = $('#txt_{{lesson._id}}').val();
-                                    $.ajax({
-                                        url: '{{links.announce}}',
-                                        method:'POST',
-                                        contentType: "application/json",
-                                        data:JSON.stringify({num: num}),
-                                        success:function(result){
-                                            //alert('您已成功报数' + num + "{{lesson.unit}}!");
-                                            //$('#accordion_{{lesson._id}}').click();
-                                            window.location = window.location.href;
-                                        }
-                                    })
-                                })
-                            </script>
-                        </div>
-                    </div>
+            <li class="p-r w100- bcfff bb1sccc ofa">
+                <div class="left ">
+                    <img src="{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
                 </div>
-            </div>
+                <div class="center pl20">
+                    <p class="pt20 fw7">{{lesson.name}}</p>
+                    <p class="fs12 c999">
+                        <span id="join_{{lesson._id}}">{{join}}</span>人共修
+                        <span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
+                    </p>
+                </div>
+                <div class="right tr mr20">
+                    <p class="l80 c999"><span id="flip_{{lesson._id}}" class="mr20 cff8c05 flip">报数</span>
+                        <span class="glyphicon glyphicon-chevron-right cccc "></span>
+                    </p>
+                </div>
+                <div class="pb20 plr15 panel dn mb0">
+                    <div class="p-r w100- fs14 mb20">
+                        <div class="left l25"><img src="/assets/images/a.png" alt="" class="w20"> 报数</div>
+                        <div class="center l25"><input id="input_{{lesson._id}}" type="number"
+                                                       class="w100- bceee bn br2 pl5"></div>
+                        <div class="right tr l25">{{lesson.unit}}</div>
+                    </div>
+                    <button type="button" class="db bn br5 bcf5ecc3 w60- h40 mc " data-dismiss="modal"
+                            onclick="announce('{{links.self}}', '{{lesson._id}}')">确认
+                    </button>
+                </div>
+            </li>
         {{/each}}
     </ul>
     <div class="mlr-15 bcfff pb30 plr30">
@@ -114,5 +92,43 @@
     </footer>
     {{>footmenu}}
 </div>
+
+<script src="/js/jquery-3.1.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".flip").click(function () {
+            $(this).closest("div").siblings(".panel").slideToggle();
+            if ($(this).siblings(".glyphicon").hasClass("glyphicon-chevron-right")) {
+                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
+            } else {
+                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
+            }
+        })
+    });
+
+    function announce(url, inputid) {
+        var num = Math.round($("#input_" + inputid).val() * 1);
+        if(num <= 0) return;
+        $.ajax({
+            url: url,
+            method: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify({num: num}),
+            success: function () {
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    contentType: "application/json",
+                    success: function (result) {
+                        $("#join_" + inputid).text(result.data.join);
+                        $("#practice_" + inputid).text(result.data.practice);
+                        $("#flip_" + inputid).click();
+                    }
+                });
+            }
+        })
+    }
+</script>
 </body>
 </html>

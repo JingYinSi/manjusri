@@ -26,6 +26,21 @@ module.exports = {
             })
     },
 
+    getLessonPractices: function (req, res) {
+        var lordid = req.params.lordid;
+        var lessonid = req.params.lessonid;
+        return lessons.getLessonPractices(lessonid, lordid)
+            .then(function (data) {
+                var links = {
+                    self: linkage.getLink('lessonPractices', {lessonid:lessonid, lordid:lordid}),
+                }
+                return res.status(200).json({data:data, links:links});
+            })
+            .catch(function (err) {
+                return res.status(500).json(err);
+            })
+    },
+
     announcePractice: function (req, res) {
         var lordid = req.params.lordid;
         var lessonid = req.params.lessonid;
