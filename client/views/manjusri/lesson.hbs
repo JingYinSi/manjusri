@@ -62,13 +62,17 @@
                         <span class="glyphicon glyphicon-chevron-right cccc "></span>
                     </p>
                 </div>
-                <div class="pb20 plr15 panel dn mb0">
-                    <div class="p-r w100- fs14 mb20">
+                <div class="pb20 plr15 panel dn">
+                    <div class="p-r w100- fs14">
                         <div class="left l25"><img src="/assets/images/a.png" alt="" class="w20"> 报数</div>
                         <div class="center l25"><input id="input_{{lesson._id}}" type="number"
                                                        class="w100- bceee bn br2 pl5"></div>
                         <div class="right tr l25">{{lesson.unit}}</div>
                     </div>
+                    <div class="mt10 fs14 l25">
+                        < img src="/assets/images/a.png" alt="" class="w20"> 回向
+                    </div>
+                    <textarea class="form-control mt10 oln bceee mb20" rows="6"></textarea>
                     <button type="button" class="db bn br5 bcf5ecc3 w60- h40 mc " data-dismiss="modal"
                             onclick="announce('{{links.self}}', '{{lesson._id}}')">确认
                     </button>
