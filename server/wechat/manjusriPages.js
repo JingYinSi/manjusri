@@ -216,7 +216,7 @@ module.exports = {
                     imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
                 };
                 viewData.shareConfig = shareConfig;
-                logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData));
+                //logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData));
                 return res.render('manjusri/lesson', viewData);
             })
             .catch(function (err) {
@@ -270,7 +270,7 @@ module.exports = {
                 });
                 viewdata.lessons = lessons;
                 viewdata.menu = linkages.getMainMenuLinkages();
-                logger.debug("The viewdata of lordvirtues is: " + JSON.stringify(viewdata));
+                //logger.debug("The viewdata of lordvirtues is: " + JSON.stringify(viewdata));
                 return res.render('manjusri/me', viewdata);
             })
             .catch(function (err) {
