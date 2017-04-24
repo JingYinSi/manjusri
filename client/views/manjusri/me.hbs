@@ -73,14 +73,14 @@
                     捐助
                 </a>
             </li>
-            <!--<li class="col-xs-3 ">
+            <li class="col-xs-3 ">
                 <a href="#rank" aria-controls="rank" role="tab" data-toggle="tab" class="plr0imp">
                     <div class="tabsMenuIcon">
                         <img src="/assets/images/icon2.png" alt="">
                     </div>
                     共修
                 </a>
-            </li>-->
+            </li>
             <!--<li class="col-xs-3 "><a href="#sound" aria-controls="sound" role="tab" data-toggle="tab" class="plr0imp"><div class="tabsMenuIcon"><img src="/assets/images/icon3.png" alt=""></div>活动</a></li>
             <li class="col-xs-3 "><a href="#share" aria-controls="share" role="tab" data-toggle="tab" class="plr0imp"><div class="tabsMenuIcon"><img src="/assets/images/icon4.png" alt=""></div>义工</a></li>-->
         </ul>
@@ -161,17 +161,18 @@
                 {{#each lessons}}
                     <li class=" ofa pt20 bcfff mlr-15 pl30">
                         <p class="fs20 fw7 ">{{lesson.name}}</p>
-                        <p class="fl "><span>{{join}}</span>人共修了<span>{{practice}}</span>{{lesson.unit}}
-                            我念诵了<span>{{me.practice}}</span>{{lesson.unit}}</p>
+                        <p class="fl ">
+                            <span id="join_{{lesson._id}}">{{join}}</span>人共修了
+                            <span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
+                            我念诵了<span id="mypractice_{{lesson._id}}">{{me.practice}}</span>{{lesson.unit}}</p>
                         <p class="fr mr15">
                             <span class="mr15 cff8c05 flip">报数</span>
-                            ><span class="glyphicon glyphicon-chevron-right cccc"></span>
+                            <span class="glyphicon glyphicon-chevron-right cccc"></span>
                         </p>
                         <div class="fc"></div>
                         <div class="p-r">
                             <img src="{{lesson.img}}" alt="" class=" op04 w15 p-a le-22 t3">
-                            <!--<p class="fl c999"><span>{{me.begDate}}</span> <span>12:00</span>开始</p>-->
-                            <p class="fl c999"><span>{{dateYYYYMMDD me.begDate}}</span> 开始</p>
+                            <p class="fl c999"><span id="mybegdate_{{lesson._id}}">{{dateYYYYMMDD me.begDate}}</span> 开始</p>
                         </div>
                         <div class="fc"></div>
                         <div class="pb20 pr20 panel mb0 dn">
@@ -233,8 +234,6 @@
     });
 
     function announce(url, inputid) {
-        alert(url);
-        alert(inputid);
         var num = Math.round($("#input_" + inputid).val() * 1);
         if (num <= 0) return;
 
@@ -251,6 +250,11 @@
                     success: function (result) {
                         $("#join_" + inputid).text(result.data.join);
                         $("#practice_" + inputid).text(result.data.practice);
+                        $("#mypractice_" + inputid).text(result.data.me.practice);
+                        var d = result.data.me.begDate;
+                        $("#mybegdate_" + inputid).text(d.getFullYear()
+                                + '-' + ("0"+(d.getMonth()+1)).slice(-2)
+                                + '-' + ("0" + d.getDate()).slice(-2));
                         $("#flip_" + inputid).click();
                         $("#input_" + inputid).val('');
                     }

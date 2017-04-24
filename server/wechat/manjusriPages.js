@@ -259,7 +259,16 @@ module.exports = {
                 return lessonsModule.listMyLessons(lordid);
             })
             .then(function (list) {
-                viewdata.lessons = list;
+                var lessons = [];
+                list.forEach(function (item) {
+                    var lesson = Object.assign({
+                        links: {
+                            self: linkages.getLink("lessonPractices", {lordid: lordid, lessonid: item.lesson._id}),
+                        }
+                    }, item);
+                    lessons.push(lesson);
+                });
+                viewdata.lessons = lessons;
                 viewdata.menu = linkages.getMainMenuLinkages();
                 logger.debug("The viewdata of lordvirtues is: " + JSON.stringify(viewdata));
                 return res.render('manjusri/me', viewdata);
