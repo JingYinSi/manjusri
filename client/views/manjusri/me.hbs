@@ -166,7 +166,7 @@
                             <span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
                             我念诵了<span id="mypractice_{{lesson._id}}">{{me.practice}}</span>{{lesson.unit}}</p>
                         <p class="fr mr15">
-                            <span class="mr15 cff8c05 flip">报数</span>
+                            <span id="flip_{{lesson._id}} class="mr15 cff8c05 flip">报数</span>
                             <span class="glyphicon glyphicon-chevron-right cccc"></span>
                         </p>
                         <div class="fc"></div>
@@ -236,7 +236,6 @@
     function announce(url, inputid) {
         var num = Math.round($("#input_" + inputid).val() * 1);
         if (num <= 0) return;
-
         $.ajax({
             url: url,
             method: 'POST',
