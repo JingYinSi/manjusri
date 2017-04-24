@@ -185,7 +185,7 @@
                                 <img src="/assets/images/a.png" alt="" class="w20"> 回向
                             </div>
                             <textarea class="form-control mt10 oln bceee mb20" rows="6"></textarea>
-                            <button type="button" class="db bn br5 bcf5ecc3 w60- h40 mc sub" data-dismiss="modal"
+                            <button type="button" class="db bn br5 bcf5ecc3 w60- h40 mc sub"
                                     onclick="announce('{{links.self}}', '{{lesson._id}}')">确认
                             </button>
                         </div>
@@ -233,6 +233,8 @@
     });
 
     function announce(url, inputid) {
+        alert(url);
+        alert(inputid);
         var num = Math.round($("#input_" + inputid).val() * 1);
         if (num <= 0) return;
 
