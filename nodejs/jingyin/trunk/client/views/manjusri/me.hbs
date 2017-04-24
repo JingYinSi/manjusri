@@ -166,13 +166,14 @@
                             <span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
                             我念诵了<span id="mypractice_{{lesson._id}}">{{me.practice}}</span>{{lesson.unit}}</p>
                         <p class="fr mr15">
-                            <span id="flip_{{lesson._id}} class="mr15 cff8c05 flip">报数</span>
+                            <span id="flip_{{lesson._id}}" class="mr15 cff8c05 flip">报数</span>
                             <span class="glyphicon glyphicon-chevron-right cccc"></span>
                         </p>
                         <div class="fc"></div>
                         <div class="p-r">
                             <img src="{{lesson.img}}" alt="" class=" op04 w15 p-a le-22 t3">
-                            <p class="fl c999"><span id="mybegdate_{{lesson._id}}">{{dateYYYYMMDD me.begDate}}</span> 开始</p>
+                            <p class="fl c999"><span id="mybegdate_{{lesson._id}}">{{dateYYYYMMDD me.begDate}}</span> 开始
+                            </p>
                         </div>
                         <div class="fc"></div>
                         <div class="pb20 pr20 panel mb0 dn">
@@ -236,6 +237,8 @@
     function announce(url, inputid) {
         var num = Math.round($("#input_" + inputid).val() * 1);
         if (num <= 0) return;
+        $("#input_" + inputid).val('');
+        alert($("#input_" + inputid).val());
         $.ajax({
             url: url,
             method: 'POST',
@@ -252,10 +255,9 @@
                         $("#mypractice_" + inputid).text(result.data.me.practice);
                         var d = result.data.me.begDate;
                         $("#mybegdate_" + inputid).text(d.getFullYear()
-                                + '-' + ("0"+(d.getMonth()+1)).slice(-2)
+                                + '-' + ("0" + (d.getMonth() + 1)).slice(-2)
                                 + '-' + ("0" + d.getDate()).slice(-2));
                         $("#flip_" + inputid).click();
-                        $("#input_" + inputid).val('');
                     }
                 });
             }
