@@ -114,6 +114,7 @@
     function announce(url, inputid) {
         var num = Math.round($("#input_" + inputid).val() * 1);
         if(num <= 0) return;
+
         $.ajax({
             url: url,
             method: 'POST',
@@ -128,6 +129,7 @@
                         $("#join_" + inputid).text(result.data.join);
                         $("#practice_" + inputid).text(result.data.practice);
                         $("#flip_" + inputid).click();
+                        $("#input_" + inputid).val('');
                     }
                 });
             }
