@@ -73,14 +73,14 @@
                     捐助
                 </a>
             </li>
-            <!--<li class="col-xs-3 ">
+            <li class="col-xs-3 ">
                 <a href="#rank" aria-controls="rank" role="tab" data-toggle="tab" class="plr0imp">
                     <div class="tabsMenuIcon">
                         <img src="/assets/images/icon2.png" alt="">
                     </div>
                     共修
                 </a>
-            </li>-->
+            </li>
             <!--<li class="col-xs-3 "><a href="#sound" aria-controls="sound" role="tab" data-toggle="tab" class="plr0imp"><div class="tabsMenuIcon"><img src="/assets/images/icon3.png" alt=""></div>活动</a></li>
             <li class="col-xs-3 "><a href="#share" aria-controls="share" role="tab" data-toggle="tab" class="plr0imp"><div class="tabsMenuIcon"><img src="/assets/images/icon4.png" alt=""></div>义工</a></li>-->
         </ul>
@@ -159,13 +159,13 @@
         <div class="tab-pane fade rank" id="rank">
             <ul class=" mt10 fs14">
                 {{#each lessons}}
-                    <li class=" h130 ptb20 bcfff mlr-15 pl30">
+                    <li class=" ofa pt20 bcfff mlr-15 pl30">
                         <p class="fs20 fw7 ">{{lesson.name}}</p>
                         <p class="fl "><span>{{join}}</span>人共修了<span>{{practice}}</span>{{lesson.unit}}
                             我念诵了<span>{{me.practice}}</span>{{lesson.unit}}</p>
                         <p class="fr mr15">
-                            <span class="mr15 cff8c05" data-toggle="modal" data-target="#myModal_{{lesson._id}}">报数</span>
-                            ><span></span>
+                            <span class="mr15 cff8c05 flip">报数</span>
+                            ><span class="glyphicon glyphicon-chevron-right cccc"></span>
                         </p>
                         <div class="fc"></div>
                         <div class="p-r">
@@ -173,36 +173,23 @@
                             <!--<p class="fl c999"><span>{{me.begDate}}</span> <span>12:00</span>开始</p>-->
                             <p class="fl c999"><span>{{dateYYYYMMDD me.begDate}}</span> 开始</p>
                         </div>
-                    </li>
-                    <!-- Modal -->
-                    <div class="modal fade" id="myModal_{{lesson._id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                        <div class="modal-dialog mt100" role="document">
-                            <div class="modal-content">
-                                <div class="modal-body">
-                                    <!-- <div class="p-r pl30 h100" >
-                                        <img src="assets/images/a.png" alt="" class=" w15 p-a le10 t3">
-                                        报数<input type="text">遍
-                                    </div> -->
-                                    <div class="p-r w100- fs14">
-                                        <div class="left l25">
-                                            <img src="/assets/images/a.png" alt="" class="w20"> 报数
-                                        </div>
-                                        <div class="center l25">
-                                            <input type="number" class="w100- bceee bn br2 pl5">
-                                        </div>
-                                        <div class="right tr l25">遍</div>
-                                    </div>
-                                    <div class="mt10 fs14 l25">
-                                        <img src="/assets/images/a.png" alt="" class="w20"> 回向
-                                    </div>
-                                    <textarea class="form-control mt10 oln bceee mb20" rows="6"></textarea>
-                                    <button type="button" class="db bn br5 bcf5ecc3 w60- h40 mc" data-dismiss="modal">确认
-                                    </button>
-                                </div>
-
+                        <div class="fc"></div>
+                        <div class="pb20 pr20 panel dn">
+                            <div class="p-r w100- fs14">
+                                <div class="left l25"><img src="/assets/images/a.png" alt="" class="w20"> 报数</div>
+                                <div class="center l25"><input id="input_{{lesson._id}}" type="number"
+                                                               class="w100- bceee bn br2 pl5"></div>
+                                <div class="right tr l25">{{lesson.unit}}</div>
                             </div>
+                            <div class="mt10 fs14 l25">
+                                <img src="/assets/images/a.png" alt="" class="w20"> 回向
+                            </div>
+                            <textarea class="form-control mt10 oln bceee mb20" rows="6"></textarea>
+                            <button type="button" class="db bn br5 bcf5ecc3 w60- h40 mc sub" data-dismiss="modal"
+                                    onclick="announce('{{links.self}}', '{{lesson._id}}')">确认
+                            </button>
                         </div>
-                    </div>
+                    </li>
                 {{/each}}
             </ul>
         </div>
@@ -230,5 +217,45 @@
 
 <script src="/js/jquery-3.1.1.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".flip").click(function () {
+            $(this).closest("div").siblings(".panel").slideToggle();
+            if ($(this).siblings(".glyphicon").hasClass("glyphicon-chevron-right")) {
+                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
+            } else {
+                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
+            }
+        })
+    });
+    $(".sub").click(function () {
+        $(this).closest("li").find(".flip").click();
+    });
+
+    function announce(url, inputid) {
+        var num = Math.round($("#input_" + inputid).val() * 1);
+        if (num <= 0) return;
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify({num: num}),
+            success: function () {
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    contentType: "application/json",
+                    success: function (result) {
+                        $("#join_" + inputid).text(result.data.join);
+                        $("#practice_" + inputid).text(result.data.practice);
+                        $("#flip_" + inputid).click();
+                        $("#input_" + inputid).val('');
+                    }
+                });
+            }
+        })
+    }
+</script>
 </body>
 </html>
