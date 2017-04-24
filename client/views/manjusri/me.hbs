@@ -174,7 +174,7 @@
                             <p class="fl c999"><span>{{dateYYYYMMDD me.begDate}}</span> 开始</p>
                         </div>
                         <div class="fc"></div>
-                        <div class="pb20 pr20 panel dn">
+                        <div class="pb20 pr20 panel mb0 dn">
                             <div class="p-r w100- fs14">
                                 <div class="left l25"><img src="/assets/images/a.png" alt="" class="w20"> 报数</div>
                                 <div class="center l25"><input id="input_{{lesson._id}}" type="number"
@@ -220,7 +220,7 @@
 <script>
     $(document).ready(function () {
         $(".flip").click(function () {
-            $(this).closest("div").siblings(".panel").slideToggle();
+            $(this).closest("li").find(".panel").slideToggle();
             if ($(this).siblings(".glyphicon").hasClass("glyphicon-chevron-right")) {
                 $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
             } else {
