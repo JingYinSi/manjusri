@@ -8,7 +8,6 @@ function HttpRequest(requestor){
     this.requestor = requestor;
 }
 
-//TODO:以后直接将simpleget.concat promisfy
 HttpRequest.prototype.concat = function(opt){
     var self = this;
     return new Promise(function (resolve, reject) {
