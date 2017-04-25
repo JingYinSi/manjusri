@@ -249,7 +249,9 @@
                     method: 'GET',
                     contentType: "application/json",
                     success: function (result) {
-                        if(result.data.me.practice === 0){
+                        alert(JSON.stringify(result.data));
+                        if (result.data.me.practice === 0) {
+                            alert($("#li_" + inputid));
                             $("#li_" + inputid).remove();
                             return;
                         }
