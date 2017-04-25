@@ -30,28 +30,60 @@ const checkTop = function (t) {
 module.exports = {
     index: function (req, res) {
         var data = {
-            links: [
-                {
-                    desc: '查询N名排名，当前默认使用前20000名',
-                    link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN'
-                },
-                {
-                    desc: '查询当年当月22日N名排名，当前默认使用前20000名',
-                    link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&day=22'
-                },
-                {
-                    desc: '查询当年4月N名排名，当前默认使用前20000名',
-                    link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&month=4'
-                },
-                {
-                    desc: '查询2017年N名排名，当前默认使用前20000名',
-                    link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&year=2017'
-                },
-                {
-                    desc: '查询2017年前40名',
-                    link: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&top=40'
-                },
-            ]
+            prayPrint: {
+                desc: '打印祈福卡',
+                url: 'http://www.jingyintemple.top/jingyin/rests/pray/print'
+            },
+            statistics: {
+                desc: '统计',
+                links: {
+                    topN: {
+                        desc: '按金额从大到小排名',
+                        links: {
+                            all: {
+                                desc: '全部捐助排名',
+                                url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN',
+                            },
+                            top40: {
+                                desc: '捐助前40名',
+                                url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&top=40',
+                            },
+                            byDateOfThisMonthOfThisYear: {
+                                desc: '当年当月指定日的排名，如当年当月22日的排名',
+                                url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&day=22'
+                            },
+                            byMonthOfThisYear: {
+                                desc: '当年指定月份的排名，如当年4月份的排名',
+                                url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&month=4'
+                            },
+                            byYear: {
+                                desc: '指定年份的排名，如2017年排名',
+                                url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&year=2017'
+                            },
+                            byTheDate: {
+                                desc: '指定年月日的排名，如2017年4月20日排名',
+                                url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=topN&year=2017&month=4&day=20'
+                            },
+                        }
+                    },
+                    byYears: {
+                        desc: '各年度及总计',
+                        url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=byYears'
+                    },
+                    byMonthsInTheYear: {
+                        desc: '指定年度各月份及总计',
+                        url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=byMonthesOfTheYear'
+                    },
+                    byProvincesAndCities: {
+                        desc: '指定年度各省市及总计',
+                        url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=byProvicesAndCities'
+                    },
+                    byRanks: {
+                        desc: '指定年度各金额区间及总计',
+                        url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=eachRangeOfAmount'
+                    },
+                }
+            }
         };
         return res.status(200).json(data);
     },
@@ -67,18 +99,18 @@ module.exports = {
         if (type === 'topN') {
             var topNum = req.query.top;
             topNum = topNum ? topNum * 1 : top;
-            if(!checkTop(topNum))
+            if (!checkTop(topNum))
                 return res.status(400).json({error: "The value of query parameter[top] is invalide!"});
             args.push(topNum);
         }
         if (type === 'eachRangeOfAmount') args.push(range);
 
         var year = req.query.year;
-        if(year && !checkYear(year))
+        if (year && !checkYear(year))
             return res.status(400).json({error: "The value of query parameter[year] is invalide!"});
 
         var month = req.query.month;
-        if(month && !checkMonth(month))
+        if (month && !checkMonth(month))
             return res.status(400).json({error: "The value of query parameter[month] is invalide!"});
 
         var day = req.query.day;
@@ -86,7 +118,7 @@ module.exports = {
         if (!year && (month || day))  year = today.getFullYear();
         if (!month && day) month = today.getMonth() + 1;
 
-        if(day && !checkDay(month - 1, day))
+        if (day && !checkDay(month - 1, day))
             return res.status(400).json({error: "The value of query parameter[day] is invalide!"});
 
         if (year) args.push(year * 1);

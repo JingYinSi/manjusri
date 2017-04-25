@@ -60,7 +60,7 @@ module.exports = {
         app.get(linkages.getUrlTemplete('manjusriStatistics'), statistics.query);
 
         app.get('/jingyin/rests/pray/print', pray.print);
-        app.get('/jingyin/rests/manjusri/statistics/index', statistics.index);
+        app.get('/jingyin/rests/manjusri/index', statistics.index);
 
         /*------------------------------ Biz view--------------------------------------------------*/
         app.get('/jingyin/biz', function (req, res) {
