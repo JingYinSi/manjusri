@@ -168,6 +168,57 @@ module.exports = {
             })
     },
 
+    examPray: function (req, res) {
+        var code = 500;
+        var errmsg;
+        var resWrap = createResponseWrap(res);
+        /*if (!req.session || !req.session.user)
+            return resWrap.setError(400);
+        var openid = req.session.user.openid;*/
+        var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
+
+        var lordid, viewData;
+        return usersModule.findByOpenid(openid)
+            .then(function (user) {
+                if (!user) {
+                    errmsg = "the user with openid[" + openid + "] not exists!!!";
+                    logger.error(errmsg);
+                    code = 400;
+                    return Promise.reject(errmsg);
+                }
+                lordid = user._id;
+                return praysModule.countTimesOfPrays(lordid);
+            })
+            .then(function (data) {
+                var selflink = linkages.getLink('examPray');
+                var url = wx.weixinConfig.wrapUrlWithSitHost(selflink);
+                viewData = {
+                    data: data,
+                    share: {
+                        title: '填写中高考祈愿卡', // 分享标题
+                        desc: '向五台山文殊菩萨许个愿，学业有成，开大智慧！', // 分享描述
+                        link: url,  // 分享链接
+                        imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
+                    },
+                    self: selflink,
+                    links: {
+                        addPray: linkages.getLink('lordPrays', {id: lordid})
+                    },
+                    menu: linkages.getMainMenuLinkages()
+                };
+                return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url));
+            })
+            .then(function (shareConfig) {
+                viewData.shareConfig = shareConfig;
+                logger.debug("view data of pray page:" + JSON.stringify(viewData));
+                return res.render('manjusri/examPray', viewData);
+            })
+            .catch(function (err) {
+                logger.debug("error:" + err);
+                return resWrap.setError(code, errmsg, err);
+            })
+    },
+
     lesson: function (req, res) {
         var code = 500;
         var errmsg;

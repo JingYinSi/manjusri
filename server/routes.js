@@ -30,6 +30,9 @@ module.exports = {
         //app.get(linkages.getUrlTemplete('suixi'), manjusriPages.suixi);
         app.get(linkages.getUrlTemplete('jiansi'), manjusriPages.jiansi);
         app.get(linkages.getUrlTemplete('pray'), auth, manjusriPages.pray);
+
+        app.get(linkages.getUrlTemplete('examPray'), auth, manjusriPages.examPray);
+        //app.get(linkages.getUrlTemplete('examPray'), manjusriPages.examPray);
         //app.get(linkages.getUrlTemplete('pray'), manjusriPages.pray);
         app.get(linkages.getUrlTemplete('lesson'), auth, manjusriPages.lesson);
         //app.get(linkages.getUrlTemplete('lesson'), manjusriPages.lesson);

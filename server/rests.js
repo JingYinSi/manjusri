@@ -20,6 +20,7 @@ var urlMap = {
     "trans": '/jingyin/manjusri/trans/:partId',
     "jiansi": "/jingyin/manjusri/jiansi",
     "pray": "/jingyin/manjusri/pray",
+    "examPray": "/jingyin/manjusri/pray/exam",
     "lesson": "/jingyin/manjusri/lesson",
     "me": "/jingyin/manjusri/lordvirtues",
 
