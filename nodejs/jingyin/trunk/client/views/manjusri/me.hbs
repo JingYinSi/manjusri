@@ -238,7 +238,6 @@
         var num = Math.round($("#input_" + inputid).val() * 1);
         if (num == 0) return;
         $("#input_" + inputid).val('');
-        alert($("#input_" + inputid).val());
         $.ajax({
             url: url,
             method: 'POST',
