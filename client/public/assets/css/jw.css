@@ -429,7 +429,10 @@
 .le10{left: 10px;}
 .oln{outline: none;}
 
-
+body{
+    font-family: "黑体";
+    font-size: 16px;
+}
 
 footer{
     text-align: center;
