@@ -116,7 +116,7 @@ module.exports = {
             .then(function (shareConfig) {
                 viewdata.shareConfig = shareConfig;
                 //TODO:更换支付成功页面
-                return res.render('wechat/paymentShare', viewdata);
+                return res.render('manjusri/paymentShare', viewdata);
             })
             .catch(function (err) {
                 res.status(500).end();
