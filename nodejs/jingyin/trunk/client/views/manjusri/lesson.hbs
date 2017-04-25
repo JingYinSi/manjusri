@@ -19,13 +19,13 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 70px;
+            width: 80px;
         }
 
         .center {
 
             width: auto; /*如果没有这一句，那么，center这个div的文字就不会自动换行*/
-            margin: 0 30px 0 70px;
+            margin: 0 80px 0 80px;
 
         }
 
@@ -33,7 +33,7 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 100px;
+            width: 80px;
 
         }
     </style>
@@ -64,19 +64,22 @@
                 </div>
 
                 <div class="pb20 plr15 panel mb0 dn">
-                    <div class="p-r w100- fs14">
+                    <div class="p-r w100- fs16">
                         <div class="left l25"><img src="/assets/images/a.png" alt="" class="w20"> 报数</div>
-                        <div class="center l25"><input id="input_{{lesson._id}}" type="number"
-                                                       class="w100- bceee bn br2 pl5"></div>
-                        <div class="right tr l25">{{lesson.unit}}</div>
+                        <div class="center l25">
+                            <input id="input_{{lesson._id}}" type="number" class="w100- h30 bceee bn br5 pl5">
+                        </div>
+                        <div class="right tr pr30">{{lesson.unit}}</div>
                     </div>
                     <div class="mt10 fs14 l25">
                         <img src="/assets/images/a.png" alt="" class="w20"> 回向
                     </div>
-                    <textarea class="form-control mt10 oln bceee mb20" rows="6"></textarea>
-                    <button type="button" class="db bn br5 bcf5ecc3 w60- h40 mc " data-dismiss="modal"
-                            onclick="announce('{{links.self}}', '{{lesson._id}}')">确认
-                    </button>
+                    <div class="plr30">
+                        <textarea class="form-control mt10 oln bceee mb20" rows="6"></textarea>
+                        <button type="button" class="db bn br5 bcf5ecc3 w100- h30 sub "
+                                onclick="announce('{{links.self}}', '{{lesson._id}}')">确认
+                        </button>
+                    </div>
                 </div>
             </li>
         {{/each}}
@@ -114,7 +117,7 @@
 
     function announce(url, inputid) {
         var num = Math.round($("#input_" + inputid).val() * 1);
-        if(num <= 0) return;
+        if (num <= 0) return;
 
         $.ajax({
             url: url,

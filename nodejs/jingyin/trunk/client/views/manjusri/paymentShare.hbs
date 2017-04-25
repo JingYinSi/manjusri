@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>捐助成功</title>
+
+    <link href="/assets/css/reset.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/jw.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+        <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    {{>sharepage}}
+</head>
+<body>
+	<div class="wrapper container-fluid bcfcf6d4 w100v tc">
+		<div class="bcfff mlr-15 ">
+			<img src="/assets/images/isok.png" alt="" class="w20v mt40">
+			<p class="mt30 fs16 fw7 ls1">{{subjectname}}，成功捐助
+                <span class="cff8c05 ">{{amount}}</span> 元
+            </p>
+			<p class="mt20 ceab86a fs14 fw7">随喜赞叹!</p>
+			<img src="assets/images/f1.png" alt="" class="w20v mt10">
+			<div class="mt20">
+				<a href="{{backlink}}" class="db w40v h40 mt20 l40 bcf5ecc3 c333 mc br5">确定</a>
+			</div>
+			<div class="fs12 c999 mt30 pb20">
+				<p>愿以此功德，庄严佛净土，</p>
+				<p>上报四重恩，下济三途苦。</p>
+				<p>若有见闻者，悉发菩提心，</p>
+				<p>尽此一报身，同生极乐国。</p>
+			</div>
+		</div>		
+		<!-- 页脚 -->
+        <footer>
+            <figure>
+                <img src="/assets/images/logo.png" alt="">
+            </figure>
+            <div class="copyright">
+                Copyright @2016 The Jin Yin Temple
+            </div>
+        </footer>
+        {{>footnav}}
+    </div>
+
+
+<script src="/js/jquery-3.1.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>
