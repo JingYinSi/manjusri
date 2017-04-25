@@ -195,7 +195,7 @@ module.exports = {
                 viewData = {
                     data: data,
                     share: {
-                        title: '填写中高考祈愿卡', // 分享标题
+                        title: '填写求学祈愿卡', // 分享标题
                         desc: '向五台山文殊菩萨许个愿，学业有成，开大智慧！', // 分享描述
                         link: url,  // 分享链接
                         imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
