@@ -72,7 +72,7 @@ module.exports = {
                     },
                     byMonthsInTheYear: {
                         desc: '指定年度各月份及总计',
-                        url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=byMonthesOfTheYear'
+                        url: 'http://www.jingyintemple.top/jingyin/rests/manjusri/statistics?type=byMonthesOfTheYear&year=2017'
                     },
                     byProvincesAndCities: {
                         desc: '指定年度各省市及总计',
