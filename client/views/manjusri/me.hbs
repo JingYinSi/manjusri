@@ -159,7 +159,7 @@
         <div class="tab-pane fade rank" id="rank">
             <ul class=" mt10 fs14">
                 {{#each lessons}}
-                    <li class=" ofa pt20 bcfff mlr-15 pl30">
+                    <li id="li_{{lesson._id}}" class=" ofa pt20 bcfff mlr-15 pl30">
                         <p class="fs20 fw7 ">{{lesson.name}}</p>
                         <p class="fl ">
                             <span id="join_{{lesson._id}}">{{join}}</span>人共修了
@@ -249,6 +249,10 @@
                     method: 'GET',
                     contentType: "application/json",
                     success: function (result) {
+                        if(result.data.me.practice === 0){
+                            $("#li_" + inputid).remove();
+                            return;
+                        }
                         $("#join_" + inputid).text(result.data.join);
                         $("#practice_" + inputid).text(result.data.practice);
                         $("#mypractice_" + inputid).text(result.data.me.practice);
