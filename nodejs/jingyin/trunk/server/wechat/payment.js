@@ -75,7 +75,8 @@ module.exports = {
                 desc: '捐助静音寺建设', // 分享描述
                 link: 'http://jingyintemple.top/jingyin/manjusri/index',  // 分享链接
                 imgUrl: wxConfig.wrapUrlWithSitHost('/images/sharelogo.jpg'), // 分享图标
-            }
+            },
+            menu: linkages.getMainMenuLinkages(),
         };
 
         /*var host = "http://jingyintemple.top";
