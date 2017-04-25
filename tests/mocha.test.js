@@ -155,6 +155,13 @@ describe('静音寺业务系统', function () {
                                         lesson: lessonsInDb[1],
                                         begDate: new Date(2017, 2, 20),
                                         num: 3000
+                                    },
+                                    {
+                                        lord: usersInDb[2],
+                                        lesson: lessonsInDb[1],
+                                        begDate: new Date(2017, 2, 20),
+                                        num: 3000,
+                                        state: "deleted"
                                     }
                                 ];
                                 insertDocs(PracticeModel, parcticesData, function (err, docs) {
@@ -1419,14 +1426,14 @@ describe('静音寺业务系统', function () {
                     });
 
                     it('获得共修状况', function (done) {
-                        lessons.getLessonPractices(lessonsInDb[0]._id, lordid)
+                        lessons.getLessonPractices(lessonid, usersInDb[1]._id)
                             .then(function (practices) {
                                 expect(practices).eql({
                                     join: 1,
-                                    practice: 2000,
+                                    practice: 3000,
                                     me: {
-                                        practice: 2000,
-                                        begDate: practicesInDb[0].begDate
+                                        practice: 3000,
+                                        begDate: practicesInDb[1].begDate
                                     }
                                 });
                                 done();
@@ -1435,6 +1442,7 @@ describe('静音寺业务系统', function () {
                                 done(err);
                             })
                     });
+
                 });
 
                 describe('列出各功课的当前状态', function () {
@@ -1561,6 +1569,17 @@ describe('静音寺业务系统', function () {
                             })
                     });
 
+                    it('若功德主首次报负数或零，则未参加功课', function (done) {
+                        lessons.announce(lordid, lessonid, -1)
+                            .then(function (anno) {
+                                expect(anno).null;
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
                     it('功课报数正确 - 功德主首次报数', function (done) {
                         lessons.announce(lordid, lessonid, 5000)
                             .then(function (anno) {
@@ -1578,12 +1597,57 @@ describe('静音寺业务系统', function () {
                     it('功课报数正确 - 功德主再次报数', function (done) {
                         lordid = lordid.toString();
                         lessonid = lessonsInDb[0]._id.toString();
-                        lessons.announce(lordid, lessonid, 5000)
+                        lessons.announce(lordid, lessonid, -1000)
                             .then(function (anno) {
                                 expect(anno.lord).eql(usersInDb[0]._id);
                                 expect(anno.lesson).eql(lessonsInDb[0]._id);
                                 expect(anno.begDate).eql(practicesInDb[0].begDate);
-                                expect(anno.num).eql(7000);
+                                expect(anno.num).eql(1000);
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('功课报数正确 - 功德主再次报数 - 过去曾经退出', function (done) {
+                        lordid = usersInDb[2]._id;
+                        lessons.announce(lordid, lessonid, 1000)
+                            .then(function (anno) {
+                                expect(anno._id).eql(practicesInDb[2]._id);
+                                expect(anno.lord).eql(usersInDb[2]._id);
+                                expect(anno.lesson).eql(lessonsInDb[1]._id);
+                                expect(new Date().getTime() - anno.begDate.getTime() < 5000).eql(true);
+                                //expect(new Date().getTime() - anno.begDate.getTime()).eql(true);
+                                expect(anno.num).eql(1000);
+                                expect(anno.state).eql('on');
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('功德主再次报数无效 - 过去曾经退出', function (done) {
+                        lordid = usersInDb[2]._id;
+                        lessons.announce(lordid, lessonid, 0)
+                            .then(function (anno) {
+                                expect(anno).null;
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+
+
+                    it('功德主报数负数', function (done) {
+                        lordid = lordid.toString();
+                        lessonid = lessonsInDb[0]._id.toString();
+                        lessons.announce(lordid, lessonid, -2000)
+                            .then(function (anno) {
+                                expect(anno).null;
                                 done();
                             })
                             .catch(function (err) {
@@ -4159,7 +4223,7 @@ describe('静音寺业务系统', function () {
                             listLordVirtuesStub = createPromiseStub([lord._id], [virtues]);
                             stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
 
-                            var lessons = [{foo: "foo"}, {foo: "fee"}];
+                            var lessons = [{lesson:{_id: "foo"}}, {lesson:{_id: "fee"}}];
                             listMyLessonsStub = createPromiseStub([lord._id], [lessons]);
                             stubs['../modules/lessons'] = {listMyLessons: listMyLessonsStub}
 
@@ -4174,6 +4238,20 @@ describe('静音寺业务系统', function () {
                             getLinkStub.withArgs('profile', {openid: openid}).returns(profilelink);
                             getLinkStub.withArgs('dailyVirtue').returns(dailylink);
                             getLinkStub.withArgs('suixi').returns(suixilink);
+                            var lesslink1 = "less link1";
+                            var lesslink2 = "less link2";
+                            getLinkStub.withArgs('lessonPractices', {lordid:lord._id, lessonid:'foo'}).returns(lesslink1);
+                            getLinkStub.withArgs('lessonPractices', {lordid:lord._id, lessonid:'fee'}).returns(lesslink2);
+                            var expectedLessons = [
+                                {
+                                    lesson:{_id: "foo"},
+                                    links:{self: lesslink1}
+                                },
+                                {
+                                    lesson:{_id: "fee"},
+                                    links:{self: lesslink2}
+                                }
+                            ]
 
                             stubs["../rests"] = {
                                 getMainMenuLinkages: getMainMenuLinksStub,
@@ -4186,7 +4264,7 @@ describe('静音寺业务系统', function () {
                                     viewdata = {
                                         lord: lord,
                                         virtues: virtues,
-                                        lessons: lessons,
+                                        lessons: expectedLessons,
                                         links: {
                                             profile: profilelink,
                                             daily: dailylink,

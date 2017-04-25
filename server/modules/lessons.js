@@ -4,6 +4,7 @@
 const lessonModel = require('../wechat/models/lesson'),
     practiceModel = require('../wechat/models/practice'),
     userModel = require('../wechat/models/user'),
+    utils = require('../../modules/utils'),
     ObjectID = require('mongodb').ObjectID,
     Promise = require('bluebird');
 
@@ -30,7 +31,7 @@ module.exports = {
             return Promise.reject(err);
         }
         var lines = [
-            {"$match": {"lesson": lesson}},
+            {"$match": {"lesson": lesson, "state": 'on'}},
             {
                 $facet: {
                     total: [
@@ -54,7 +55,7 @@ module.exports = {
                     join: data.total[0].count,
                     practice: data.total[0].sum,
                 };
-                if(data.me.length > 0)
+                if (data.me.length > 0)
                     result.me = {
                         practice: data.me[0].num,
                         begDate: data.me[0].begDate
@@ -74,6 +75,7 @@ module.exports = {
 
         var lessons = [];
         var lines = [
+            {"$match": {"state": 'on'}},
             {
                 $facet: {
                     total: [
@@ -128,7 +130,7 @@ module.exports = {
                     lessons.forEach(function (les) {
                         if (item._id.lesson.equals(les.lesson._id)) {
                             les.me.practice = item.sum;
-                            if(item._id.begDate) les.me.begDate = item._id.begDate;
+                            if (item._id.begDate) les.me.begDate = item._id.begDate;
                         }
                     });
                 });
@@ -170,8 +172,33 @@ module.exports = {
                 var model;
                 if (doc) {
                     model = doc;
-                    model.num = Math.round(model.num + num);
+                    if (model.state === 'on') {
+                        // 再次报数
+                        var updatedNum = utils.round(model.num + num, 1);
+                        if (updatedNum <= 0) {
+                            model.state = 'deleted';
+                            return model.save()
+                                .then(function () {
+                                    return null;
+                                });
+                        } else {
+                            model.num = updatedNum;
+                        }
+                    }
+                    else {
+                        // 过去曾经退出过，本次再次参加， state==='deleted'
+                        if (num > 0) {
+                            model.num = utils.round(num, 1);
+                            model.begDate = new Date();
+                            model.state = 'on';
+                        } else {
+                            // 再次参加无效
+                            return null;
+                        }
+                    }
+
                 } else {
+                    if (num <= 0) return null;
                     model = new practiceModel({
                         lord: lord,
                         lesson: lesson,
@@ -181,7 +208,7 @@ module.exports = {
                 return model.save();
             })
             .then(function (doc) {
-                return doc._doc;
+                return doc ? doc._doc : null;
             })
     }
 };
