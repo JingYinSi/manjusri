@@ -214,7 +214,7 @@ Virtues.prototype.lastVirtuesAndTotalCount = function (type, count) {
 Virtues.prototype.place = function (subject, amount, detail, giving) {
     var self = this;
     var data = {
-        timestamp: self.getTimestamp()
+        timestamp: new Date()
     };
     if (subject) data.subject = subject;
     if (amount) data.amount = amount;
