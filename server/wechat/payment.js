@@ -64,7 +64,6 @@ module.exports = {
     },
 
     result: function (req, res) {
-        //TODO:在每一个页面设定分享内容
         var virtueId = req.query.virtueId;
         if (!virtueId) {
             return res.status(401).end();
@@ -89,23 +88,29 @@ module.exports = {
                 if (!doc) {
                     return Promise.reject(new Error('The virtue[id=' + virtueId + '] is not found'));
                 }
-                //viewdata.share.title = '静音寺.文殊禅林 - ' + doc.subject.name;
-                //if (doc.subject.img) viewdata.share.imgUrl = wxConfig.wrapUrlWithSitHost(doc.subject.img);
+                var backLink, actionname;
                 if (doc.subject.type === 'daily') {
+                    backLink = linkages.getLink('dailyVirtue');
+                    actionname = doc.subject.name;
                     viewdata.share.title = doc.subject.name;
                     viewdata.share.desc = '随喜捐助五台山静音寺建设，圆满福慧资粮！';
-                    viewdata.share.link = wxConfig.wrapUrlWithSitHost(linkages.getLink('dailyVirtue'));
+                    viewdata.share.link = wxConfig.wrapUrlWithSitHost(backLink);
                 } else if (doc.subject.type === 'suixi') {
+                    backLink = linkages.getLink('suixi');
+                    actionname = "随喜建寺";
                     viewdata.share.title = '随喜五台山静音寺建设';
                     viewdata.share.desc = '五台山静音寺文殊禅林是以培养僧才为核心，弘扬人间佛教的道场！';
-                    viewdata.share.link = wxConfig.wrapUrlWithSitHost(linkages.getLink('suixi'));
+                    viewdata.share.link = wxConfig.wrapUrlWithSitHost(backLink);
                 } else {
+                    backLink = linkages.getLink('jiansi');
+                    actionname = doc.subject.name;
                     viewdata.share.title = '随喜捐助';
                     viewdata.share.desc = '随喜您认捐' + doc.subject.name + ', ' + viewdata.share.desc;
-                    viewdata.share.link = wxConfig.wrapUrlWithSitHost(linkages.getLink('jiansi'));
+                    viewdata.share.link = wxConfig.wrapUrlWithSitHost(backLink);
                 }
-                viewdata.share.amount = doc.amount;
-                viewdata.share.subjectname = doc.subject.name;
+                viewdata.amount = doc.amount;
+                viewdata.subjectname = actionname;
+                viewdata.backlink = backLink;
                 return wx.generateShareConfig(url);
             })
             .then(function (shareConfig) {
