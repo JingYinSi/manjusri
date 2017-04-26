@@ -2963,7 +2963,6 @@ describe('静音寺业务系统', function () {
                         });
                 });
 
-                //TODO:实现accesstoken的缓存
                 it('正确获得', function () {
                     var accessToken = '233546457357';
                     var data = {access_token: accessToken};
