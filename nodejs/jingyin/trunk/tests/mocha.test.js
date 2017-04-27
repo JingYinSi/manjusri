@@ -368,12 +368,9 @@ describe('静音寺业务系统', function () {
                 });
 
                 describe('预置捐助交易', function () {
-                    var subject, timestamp, timestampStub;
+                    var subject, timestampStub;
 
                     beforeEach(function () {
-                        timestamp = Date.now();
-                        timestampStub = sinon.stub();
-                        timestampStub.returns(timestamp);
                         virtues.getTimestamp = timestampStub;
 
                         subject = partsInDb[0].id;
@@ -488,7 +485,7 @@ describe('静音寺业务系统', function () {
                                 expect(doc.price).eql(23.11);
                                 expect(doc.amount).eql(462.2);
                                 expect(doc.giving).eql('this is any giving');
-                                expect(doc.timestamp.valueOf()).eql(timestamp);
+                                expect(new Date().valueOf() - doc.timestamp.valueOf() < 100).eql(true);
                                 expect(doc.state).eql('new');
                             });
                     });
@@ -1641,7 +1638,6 @@ describe('静音寺业务系统', function () {
                     });
 
 
-
                     it('功德主报数负数', function (done) {
                         lordid = lordid.toString();
                         lessonid = lessonsInDb[0]._id.toString();
@@ -1808,6 +1804,96 @@ describe('静音寺业务系统', function () {
                         wxcache.setTicketForJsAPI(token, val, timeout)
                             .then(function (data) {
                                 return wxcache.getTicketForJsAPI(token)
+                                    .then(function (ticket) {
+                                        expect(ticket).eql(val);
+                                        done();
+                                    });
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+                });
+
+                describe('第三方授权access token', function () {
+                    var openid, refreshToken;
+
+                    beforeEach(function () {
+                        openid = 'ghywSHHoT2BINz0CV1mNaWxhjQ';
+                        refreshToken = 'ddddddddddddddddwvev';
+                    });
+
+                    it('首次缓存', function (done) {
+                        wxcache.setAuthAccessToken(openid, val, timeout, refreshToken)
+                            .then(function (data) {
+                                expect(data._id).not.null;
+                                expect(data.type).eql('AuthAccessToken');
+                                expect(data.ref).eql(openid);
+                                expect(data.val).eql(val);
+                                expect(data.timeout).not.null;
+                                expect(data.refresh).eql(refreshToken);
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('更新', function (done) {
+                        var id;
+                        wxcache.setAuthAccessToken('tokenccccc', "adfnnfnfnfnf", 100, 'aaaaaaaaa')
+                            .then(function (olddata) {
+                                id = olddata._id;
+                                return wxcache.setAuthAccessToken(openid, val, timeout, refreshToken);
+                            })
+                            .then(function (data) {
+                                expect(data._id).eql(id);
+                                expect(data.type).eql('AuthAccessToken');
+                                expect(data.ref).eql(openid);
+                                expect(data.val).eql(val);
+                                expect(data.timeout).not.null;
+                                expect(data.refresh).eql(refreshToken);
+                                done();
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('未读到指定openid相关的AccessToken', function (done) {
+                        wxcache.setAuthAccessToken(openid, val, timeout, refreshToken)
+                            .then(function (data) {
+                                return wxcache.getAuthAccessToken("unknown openid")
+                                    .then(function (token) {
+                                        expect(token).null;
+                                        done();
+                                    });
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('已过期', function (done) {
+                        wxcache.setAuthAccessToken(openid, val, timeout, refreshToken)
+                            .then(function (data) {
+                                setTimeout(function () {
+                                    return wxcache.getAccessToken()
+                                        .then(function (token) {
+                                            expect(token).null;
+                                            done();
+                                        });
+                                }, timeout);
+                            })
+                            .catch(function (err) {
+                                done(err);
+                            })
+                    });
+
+                    it('读取ticket', function (done) {
+                        wxcache.setTicketForJsAPI(openid, val, timeout)
+                            .then(function (data) {
+                                return wxcache.getTicketForJsAPI(openid)
                                     .then(function (ticket) {
                                         expect(ticket).eql(val);
                                         done();
@@ -3430,10 +3516,10 @@ describe('静音寺业务系统', function () {
                         lord = {name: "foo"};
                     });
 
-                    it('请求未包含查询参数code，客户端400错', function () {
+                    it('请求未包含查询参数code，客户端403错', function () {
                         controller = require('../server/wechat/manjusri').login;
                         controller(reqStub, resStub);
-                        expect(statusSpy).calledWith(400).calledOnce;
+                        expect(statusSpy).calledWith(403).calledOnce;
                     });
 
                     it('获得当前用户的OpenId失败', function () {
@@ -4222,7 +4308,7 @@ describe('静音寺业务系统', function () {
                             listLordVirtuesStub = createPromiseStub([lord._id], [virtues]);
                             stubs['../modules/virtues'] = {listLordVirtues: listLordVirtuesStub};
 
-                            var lessons = [{lesson:{_id: "foo"}}, {lesson:{_id: "fee"}}];
+                            var lessons = [{lesson: {_id: "foo"}}, {lesson: {_id: "fee"}}];
                             listMyLessonsStub = createPromiseStub([lord._id], [lessons]);
                             stubs['../modules/lessons'] = {listMyLessons: listMyLessonsStub}
 
@@ -4239,16 +4325,22 @@ describe('静音寺业务系统', function () {
                             getLinkStub.withArgs('suixi').returns(suixilink);
                             var lesslink1 = "less link1";
                             var lesslink2 = "less link2";
-                            getLinkStub.withArgs('lessonPractices', {lordid:lord._id, lessonid:'foo'}).returns(lesslink1);
-                            getLinkStub.withArgs('lessonPractices', {lordid:lord._id, lessonid:'fee'}).returns(lesslink2);
+                            getLinkStub.withArgs('lessonPractices', {
+                                lordid: lord._id,
+                                lessonid: 'foo'
+                            }).returns(lesslink1);
+                            getLinkStub.withArgs('lessonPractices', {
+                                lordid: lord._id,
+                                lessonid: 'fee'
+                            }).returns(lesslink2);
                             var expectedLessons = [
                                 {
-                                    lesson:{_id: "foo"},
-                                    links:{self: lesslink1}
+                                    lesson: {_id: "foo"},
+                                    links: {self: lesslink1}
                                 },
                                 {
-                                    lesson:{_id: "fee"},
-                                    links:{self: lesslink2}
+                                    lesson: {_id: "fee"},
+                                    links: {self: lesslink2}
                                 }
                             ]
 
@@ -4571,10 +4663,10 @@ describe('静音寺业务系统', function () {
                         lord = {name: "foo"};
                     });
 
-                    it('请求未包含查询参数code，客户端400错', function () {
+                    it('请求未包含查询参数code，客户端403错', function () {
                         controller = require('../server/wechat/manjusri').login;
                         controller(reqStub, resStub);
-                        expect(statusSpy).calledWith(400).calledOnce;
+                        expect(statusSpy).calledWith(403).calledOnce;
                     });
 
                     it('获得当前用户的OpenId失败', function () {
@@ -5088,13 +5180,8 @@ describe('静音寺业务系统', function () {
     });
 
 //TODO:在首页为用户建立一个反馈意见和建议的渠道
-//TODO:底部菜单条的文字应居中对齐
-//TODO:各页顶部图片顶部不应留有缝隙
-//TODO:首页功能列表之后，联系方式之前插入一段“静音寺感恩您的每一分心意”一类的一段话
-//TODO:首页标题当中的点太大啦
 
 //TODO:日行一善和随喜页面中的功德说明的文字应可以在后台系统中发布，每周/月定时替换
-//TODO:功课的页面要结合我的功德的页面一同考虑，它是该页下的一个page！！！！！
 })
 ;
 

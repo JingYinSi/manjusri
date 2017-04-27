@@ -172,10 +172,10 @@ module.exports = {
         var code = 500;
         var errmsg;
         var resWrap = createResponseWrap(res);
-        /*if (!req.session || !req.session.user)
+        if (!req.session || !req.session.user)
             return resWrap.setError(400);
-        var openid = req.session.user.openid;*/
-        var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
+        var openid = req.session.user.openid;
+        //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
 
         var lordid, viewData;
         return usersModule.findByOpenid(openid)

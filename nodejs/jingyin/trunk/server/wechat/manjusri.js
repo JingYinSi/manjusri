@@ -36,7 +36,8 @@ module.exports = {
         var wrapedRes = createResponseWrap(res);
         var code = req.query.code;
         if (!code) {
-            return wrapedRes.setError(400);
+            logger.info('Current user refuse the authority to access user information!')
+            return wrapedRes.setError(403);
         }
         var openid, accessToken;
 
