@@ -6,6 +6,7 @@ var WxCacheSchema = new Schema({
     val: String,
     ref: String,
     timeout: Number,
+    refresh: String,
 });
 
 module.exports = mongoose.model('Wxcache', WxCacheSchema);
