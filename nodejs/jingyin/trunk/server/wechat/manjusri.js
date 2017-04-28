@@ -48,7 +48,7 @@ module.exports = {
                 var sess = req.session;
                 sess.user = {openid: openid, access_token: data.access_token};
                 logger.debug("session is built, and context of current session is:" + JSON.stringify(sess));
-                //TODO:全局性地缓存refresh_token
+                //TODO:全局性地缓存refresh_token，在我的基础资料处可从该全局缓存中获得accesstoken, 以同步用户资料
                 //sess.refresh_token = data.refresh_token;
 
                 return usersModule.findByOpenid(openid);

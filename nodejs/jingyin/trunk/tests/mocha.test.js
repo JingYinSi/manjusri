@@ -1878,7 +1878,7 @@ describe('静音寺业务系统', function () {
                         wxcache.setAuthAccessToken(openid, val, timeout, refreshToken)
                             .then(function (data) {
                                 setTimeout(function () {
-                                    return wxcache.getAccessToken()
+                                    return wxcache.getAuthAccessToken(openid)
                                         .then(function (token) {
                                             expect(token).null;
                                             done();
@@ -3838,6 +3838,8 @@ describe('静音寺业务系统', function () {
 
                             virtueListStub = createPromiseStub(["daily", 30], [virtuesList]);
                             stubs['../modules/virtues'] = {lastVirtuesAndTotalCount: virtueListStub};
+
+
 
                             controller = proxyquire('../server/wechat/manjusriPages', stubs).dailyVirtue;
                             return controller(reqStub, resStub)
