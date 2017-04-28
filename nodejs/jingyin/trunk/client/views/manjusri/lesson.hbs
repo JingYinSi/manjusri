@@ -25,7 +25,7 @@
         .center {
 
             width: auto; /*如果没有这一句，那么，center这个div的文字就不会自动换行*/
-            margin: 0 80px 0 70px;
+            margin: 0 80px 0 80px;
 
         }
 
@@ -33,7 +33,7 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 70px;
+            width: 80px;
 
         }
     </style>
@@ -50,10 +50,10 @@
                 <div class="left ">
                     <img src="{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
                 </div>
-                <div class="center pl10">
-                    <p class="pt20 fw7 fs14">{{lesson.name}}</p>
+                <div class="center pl20">
+                    <p class="pt20 fw7">{{lesson.name}}</p>
                     <p class="fs12 c999">
-                        <span id="join_{{lesson._id}}" class="mr10">{{join}}</span>人共修
+                        <span id="join_{{lesson._id}}">{{join}}</span>人共修
                         <span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
                     </p>
                 </div>
