@@ -106,7 +106,7 @@
                     </li>
                 {{/each}}
             </ul>-->
-            <table width="100%" >
+            <table width="100%">
                 {{#each virtues}}
                     <tr style="padding-bottom: 2cm;height:26px;">
                         <td width="150">{{month}}月{{day}}号</td>
@@ -153,30 +153,32 @@
         document.getElementById('input_amount').value = amount;
     }
 
-    $("#show-confirm").click(function () {
+    $(document).ready(function () {
         var giving = sessionStorage['giving'];
         if (giving) {
             $('#input_giving').val(giving);
         }
 
-        var amount = $('#input_amount').val();
-        var giving = $('#input_giving').val();
-        if (amount == '') {
-            return;
-        }
+        $("#show-confirm").click(function () {
+            var amount = $('#input_amount').val();
+            var giving = $('#input_giving').val();
+            if (amount == '') {
+                return;
+            }
 
-        amount = Math.round(amount * 100) / 100;
-        var dataToPost = {
-            subject: $('#subject').text(),
-            amount: amount
-        };
+            amount = Math.round(amount * 100) / 100;
+            var dataToPost = {
+                subject: $('#subject').text(),
+                amount: amount
+            };
 
-        sessionStorage['giving'] = giving;
-        if (giving) {
-            dataToPost.giving = giving;
-        }
+            sessionStorage['giving'] = giving;
+            if (giving) {
+                dataToPost.giving = giving;
+            }
 
-        requestDoTansaction(dataToPost);
+            requestDoTansaction(dataToPost);
+        });
     });
 </script>
 <script>
