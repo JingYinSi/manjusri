@@ -154,6 +154,11 @@
     }
 
     $("#show-confirm").click(function () {
+        var giving = sessionStorage['giving'];
+        if (giving) {
+            $('#input_giving').val(giving);
+        }
+
         var amount = $('#input_amount').val();
         var giving = $('#input_giving').val();
         if (amount == '') {
@@ -165,7 +170,11 @@
             subject: $('#subject').text(),
             amount: amount
         };
-        if (giving) dataToPost.giving = giving;
+
+        sessionStorage['giving'] = giving;
+        if (giving) {
+            dataToPost.giving = giving;
+        }
 
         requestDoTansaction(dataToPost);
     });
