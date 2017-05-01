@@ -44,7 +44,7 @@
         <form action="#">
             <div class=" mlr15 b3se39022 p-r" id="fang">
                 <p class="ce39022 fffs fs30 fw7 mt10 ml10" style="text-align: center">填写祈愿卡</p>
-                <textarea class="form-control b1sfff oln bsn fs16" rows="10">祈愿xx省xx市xx学校xx班xxx（姓名），2017年高考（中考）顺利考上理想的学习（xx大学），学业有成、将来广行慈善、利益社会、发菩提心......
+                <textarea id="mypray" class="form-control b1sfff oln bsn fs16" rows="10">祈愿xx省xx市xx学校xx班xxx（姓名），2017年高考（中考）顺利考上理想的学习（xx大学），学业有成、将来广行慈善、利益社会、发菩提心......
                 </textarea>
                 <figure class="p-a b0">
                     <img src="/assets/images/yuan-bottom.png" alt="">
@@ -85,15 +85,6 @@
     });
 
     var going = false;
-    $('#mypray').attr("placeholder", "示例：\n"
-            + "1、诸佛菩萨怎样发愿，我则如是发愿。愿法界众生离苦得乐、速证菩提 ；\n"
-            + "2、愿xx事业顺利、广行布施、福慧圆满、普利群生；\n"
-            + "3、愿xx能找有缘人，同修福慧，同行菩提道；\n"
-            + "4、愿xx学习有成，智慧圆满，学以致用，广种善根，行菩萨道，普利有情；\n"
-            + "5、愿父母身体健康… \n"
-            + "6、愿国泰民安、风调雨顺、世界和平……\n"
-            + "7、愿佛法兴盛、所有高僧长久住世、弘传佛法……\n"
-            + "\n祈愿人：XXX");
     $("#show-confirm").click(function () {
         if (going) return;
         going = true;

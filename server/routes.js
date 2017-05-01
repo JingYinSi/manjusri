@@ -47,7 +47,7 @@ module.exports = {
 
         app.get(linkages.getUrlTemplete('profile'), auth, manjusriPages.lordProfile);
         //app.get(linkages.getUrlTemplete('profile'), manjusriPages.lordProfile);
-        app.put('/jingyin/manjusri/lords/:openid/profile', manjusri.updateLordProfile);
+        app.put('/jingyin/manjusri/lords/:openid/profile', auth, manjusri.updateLordProfile);
 
         /*----------------------------restful--------------------------------------------------*/
         //TODO:重构这里的prepay restful服务
