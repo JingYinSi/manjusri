@@ -151,57 +151,63 @@ module.exports = {
     },
 
     lastVirtuesAndTotalCount: function (type, count) {
-        var lines = [
-            {$lookup: {from: "parts", localField: "subject", foreignField: "_id", as: "partdoc"}},
-            {$lookup: {from: "users", localField: "lord", foreignField: "_id", as: "userdoc"}},
-            {"$match": {"state": "payed", "partdoc.type": type}},
-            {"$sort": {"timestamp": -1}},
-            {
-                "$facet": {
-                    "byDaily": [
-                        {
-                            $project: {
-                                "_id": 0,
-                                "name": "$userdoc.name",
-                                "date": "$timestamp",
-                                /*"year": {"$year": "$timestamp"},
-                                 "month": {"$month": "$timestamp"},
-                                 "day": {"$dayOfMonth": "$timestamp"},*/
-                                "city": "$userdoc.city",
-                                "amount": 1
-                            }
-                        },
-                        {"$limit": count},
-                    ],
-                    "total": [{
-                        "$group": {"_id": "$subject", "count": {"$sum": 1}}
-                    }]
-                }
-            }];
+        return PartSchema.findOne({type: type}).exec()
+            .then(function (part) {
+                var lines = [
+                    {
+                        "$match": {
+                            "$and":[
+                                {"state": "payed"},
+                                {"subject": part._id}
+                            ]
+                        }
+                    },
+                    {"$sort": {"timestamp": -1}},
+                    {$lookup: {from: "users", localField: "lord", foreignField: "_id", as: "userdoc"}},
+                    {
+                        "$facet": {
+                            "byDaily": [
+                                {
+                                    $project: {
+                                        "_id": 0,
+                                        "name": "$userdoc.name",
+                                        "date": "$timestamp",
+                                        "city": "$userdoc.city",
+                                        "amount": 1
+                                    }
+                                },
+                                {"$limit": count},
+                            ],
+                            "total": [{
+                                "$group": {"_id": "$subject", "count": {"$sum": 1}}
+                            }]
+                        }
+                    }];
 
-        var result = {
-            count: 0,
-            virtues: []
-        }
+                var result = {
+                    count: 0,
+                    virtues: []
+                };
 
-        return VirtueSchema.aggregate(lines)
-            .then(function (data) {
-                if (data.length < 1 || !data[0].total || !data[0].byDaily)
-                    return result;
-                data = data[0];
-                result.id = data.total[0]._id;
-                result.count = data.total[0].count;
-                data.byDaily.forEach(function (item) {
-                    result.virtues.push({
-                        "amount": item.amount,
-                        "city": item.city.length > 0 ? item.city[0] : '未知',
-                        "day": item.date.getDate(),
-                        "month": item.date.getMonth() + 1,
-                        "name": item.name.length > 0 ? item.name[0] : '未知',
-                        "year": item.date.getFullYear()
-                    })
-                });
-                return result;
+                return VirtueSchema.aggregate(lines)
+                    .then(function (data) {
+                        if (data.length < 1 || !data[0].total || !data[0].byDaily)
+                            return result;
+                        data = data[0];
+                        result.id = data.total[0]._id;
+                        result.count = data.total[0].count;
+                        data.byDaily.forEach(function (item) {
+                            result.virtues.push({
+                                "amount": item.amount,
+                                "city": item.city.length > 0 ? item.city[0] : '未知',
+                                "day": item.date.getDate(),
+                                "month": item.date.getMonth() + 1,
+                                "name": item.name.length > 0 ? item.name[0] : '未知',
+                                "year": item.date.getFullYear()
+                            })
+                        });
+                        return result;
+                    });
             });
     },
 
