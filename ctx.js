@@ -25,7 +25,7 @@ log4js.configure("log4js.conf", {reloadSecs: 300});
 const logger = log4js.getLogger();
 
 module.exports = {
-    port: 80,
+    port: 8080,
     env: 'development',
 
     connectDb: function () {
