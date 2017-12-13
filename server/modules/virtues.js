@@ -3,6 +3,7 @@
  */
 const VirtueSchema = require('../wechat/models/virtue'),
     PartSchema = require('../wechat/models/part'),
+    UserSchema = require('../wechat/models/user'),
     dateUtils = require('../../modules/utils').dateUtils,
     utils = require('../../modules/utils'),
     mongoose = require('mongoose'),
