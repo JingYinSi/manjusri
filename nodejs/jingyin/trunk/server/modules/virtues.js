@@ -3,7 +3,6 @@
  */
 const VirtueSchema = require('../wechat/models/virtue'),
     PartSchema = require('../wechat/models/part'),
-    UserSchema = require('../wechat/models/user'),
     dateUtils = require('../../modules/utils').dateUtils,
     utils = require('../../modules/utils'),
     mongoose = require('mongoose'),
@@ -152,51 +151,64 @@ module.exports = {
     },
 
     lastVirtuesAndTotalCount: function (type, count) {
-        var result = {
-            count: 0,
-            virtues: []
-        };
+        return PartSchema.findOne({type: type}).exec()
+            .then(function (part) {
+                var lines = [
+                    {
+                        "$match": {
+                            "$and":[
+                                {"state": "payed"},
+                                {"subject": part._id}
+                            ]
+                        }
+                    },
+                    {"$sort": {"timestamp": -1}},
+                    {$lookup: {from: "users", localField: "lord", foreignField: "_id", as: "userdoc"}},
+                    {
+                        "$facet": {
+                            "byDaily": [
+                                {
+                                    $project: {
+                                        "_id": 0,
+                                        "name": "$userdoc.name",
+                                        "date": "$timestamp",
+                                        "city": "$userdoc.city",
+                                        "amount": 1
+                                    }
+                                },
+                                {"$limit": count},
+                            ],
+                            "total": [{
+                                "$group": {"_id": "$subject", "count": {"$sum": 1}}
+                            }]
+                        }
+                    }];
 
-        var Part = PartSchema;
-        var User = UserSchema;
-        var Virtue = VirtueSchema;
-        var part;
-        return Part.findOne({type: type})
-            .exec()
-            .then(function (data) {
-                part = data;
-                return Virtue.find({state: 'payed', subject: part._id})
-                    .sort({timestamp: -1})
-                    .limit(30)
-                    .exec();
-            }).then(function (virtues) {
-                function process(virtue, index) {
-                    return User.findOne({_id: virtue.lord})
-                        .exec()
-                        .then(function (user) {
-                            result.virtues[index] = {
-                                "amount": virtue.amount,
-                                "city": user.city.length > 0 ? user.city : '未知',
-                                "day": virtue.timestamp.getDate(),
-                                "month": virtue.timestamp.getMonth() + 1,
-                                "name": user.name.length > 0 ? user.name : '未知',
-                                "year": virtue.timestamp.getFullYear()
-                            };
-                        })
+                var result = {
+                    count: 0,
+                    virtues: []
                 };
-                var tasks = [];
-                for (var i = 0; i < virtues.length; i++) {
-                    tasks.push(process(virtues[i], i));
-                }
-                return Promise.all(tasks);
-            }).then(function () {
-                return Virtue.find({state: 'payed', subject: part._id})
-                    .count()
-                    .exec();
-            }).then(function (data) {
-                result.count = data;
-                return result;
-            })
+
+                return VirtueSchema.aggregate(lines)
+                    .then(function (data) {
+                        if (data.length < 1 || !data[0].total || !data[0].byDaily)
+                            return result;
+                        data = data[0];
+                        result.id = data.total[0]._id;
+                        result.count = data.total[0].count;
+                        data.byDaily.forEach(function (item) {
+                            result.virtues.push({
+                                "amount": item.amount,
+                                "city": item.city.length > 0 ? item.city[0] : '未知',
+                                "day": item.date.getDate(),
+                                "month": item.date.getMonth() + 1,
+                                "name": item.name.length > 0 ? item.name[0] : '未知',
+                                "year": item.date.getFullYear()
+                            })
+                        });
+                        return result;
+                    });
+            });
     },
 
     place: function (subject, amount, detail, giving) {
