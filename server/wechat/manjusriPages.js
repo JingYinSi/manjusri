@@ -10,8 +10,8 @@ var linkages = require("../rests"),
     wx = require('../weixin');
 
 var log4js = require('log4js');
-log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
+logger.level = 'debug';
 
 //TODO:当用户更新微信头像等信息时，应能使数据同微信同步
 //TODO:将manjusriPages.js并入manjusri.js中

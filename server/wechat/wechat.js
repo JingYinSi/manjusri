@@ -2,8 +2,8 @@ var Users = require('../modules/users'),
     welcome = require('../modules/welcome');
 
 var log4js = require('log4js');
-log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
+logger.level = 'debug';
 
 var msgHandlers = {
     subscribe: Users.register

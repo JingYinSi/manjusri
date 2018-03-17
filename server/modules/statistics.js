@@ -7,8 +7,8 @@ const VirtueSchema = require('../wechat/models/virtue'),
     mongoose = require('mongoose');
 
 var log4js = require('log4js');
-log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
+logger.level = 'debug';
 
 const sortTemplete = {$sort: {sum: -1}}
 const matchStageWithPayedStateAndTheYearMonthDay = function (theYear, theMonth, theDay) {

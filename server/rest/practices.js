@@ -5,8 +5,8 @@ const lessons = require('../modules/lessons'),
     linkage = require('../rests');
 
 var log4js = require('log4js');
-log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
+logger.level = 'debug';
 
 module.exports = {
     addLesson: function (req, res) {

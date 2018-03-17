@@ -5,9 +5,10 @@
 var signMd5 = require('./weixinsignmd5'),
     signSha1 = require('./weixinsignsha1'),
     js2xmlparser = require('js2xmlparser');
+
 var log4js = require('log4js');
-log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
+logger.level = 'debug';
 
 var nonceGen = function () {
     return Math.random().toString(36).substr(2, 15);

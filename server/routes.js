@@ -15,8 +15,8 @@ const manjusri = require('./wechat/manjusri'),
     practices = require('./rest/practices');
 
 var log4js = require('log4js');
-log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
+logger.level = 'debug';
 
 const virtues = require('./rest/virtues');
 

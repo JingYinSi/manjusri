@@ -8,8 +8,8 @@ const TYPE_ACCESSTOKEN = 'accesstoken';
 const TYPE_TicketForJsAPI = 'TicketForJsAPI';
 
 var log4js = require('log4js');
-log4js.configure("log4js.conf", {reloadSecs: 300});
 var logger = log4js.getLogger();
+logger.level = 'debug';
 
 const __setAccessToken = function (type, val, timeout, ref) {
     var condition = {type: type};

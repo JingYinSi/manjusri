@@ -3,9 +3,9 @@
  */
 const userModel = require('../models/bizuser');
 
-const log4js = require('log4js');
-log4js.configure("log4js.conf", {reloadSecs: 300});
-const logger = log4js.getLogger();
+var log4js = require('log4js');
+var logger = log4js.getLogger();
+logger.level = 'debug';
 
 module.exports = {
     localReg: function (username, password) {
