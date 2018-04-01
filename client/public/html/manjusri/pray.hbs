@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>填写祈福卡</title>
+    <link href="../../assets/css/reset.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/pray.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/jw.css">
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    {{>sharepage}}
+</head>
+<body>
+<div class="wrapper container-fluid">
+    <div class="row firwrap mt0">
+        <div class="firwrap-banner pt0">
+            <figure>
+                <img src="../../uploads/banner4.png" alt="">
+            </figure>
+        </div>
+    </div>
+    <div class="row twowrap">
+        <h3>祈福卡</h3>
+        <!--<span>CONTRIBUTION TO TAMPLE BUILDING</span>-->
+        <p>祈愿卡是静音寺文殊禅林为广大信众居士提供的发许愿卡，希望借此在五台山向文殊菩萨许愿，我们先发大愿，再许小愿，发大愿本身就能积累无量福德，我们的愿望会更快的实现。</p>
+        <!--<p>若人发心起塔、建寺、造像，如是诸人等，如见无数佛，自成无上道，广度无数众。三宝门中福好求，一文种下万文收。一沙一石都承载着佛法的事业，没一份发心都融入佛陀的功德海洋。</p>-->
+        <figure>
+            <img src="../../assets/images/d.png" alt="">
+        </figure>
+    </div>
+    <div class="row threewrap">
+        <h3>我已<span>{{data.me}}</span>次许愿</h3>
+        <h3>
+            填写祈愿卡
+        </h3>
+        <form action="#">
+            <div class=" mlr15 b3se39022 p-r" id="fang">
+                <p class="ce39022 fffs fs30 fw7 mt10 ml10">愿：</p>
+                <textarea id="mypray" class="form-control b1sfff oln bsn fs16" rows="10" placeholder="愿所有众生(在此填写愿望)"></textarea>
+                <figure class="p-a b0">
+                    <img src="../../assets/images/yuan-bottom.png" alt="">
+                </figure>
+            </div>
+            <div class="row threewrap-form-submit">
+                <input id="show-confirm" type="button" class="btn btn-default col-xs-6 col-xs-offset-3" value="确认">
+            </div>
+        </form>
+    </div>
+
+    <div class="row fourwrap">
+        <h3>已有<span>{{data.total.NOP}}</span>人<span>{{data.total.times}}</span>次许愿</h3>
+        <p>此许愿卡完全免费，填写完成后，经审核，然后寺庙僧众诵经祈福，把许愿卡挂在五台山贡布神山。愿每个人的愿望也都能实现。</p>
+
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <figure>
+            <img src="../../assets/images/logo.png" alt="">
+        </figure>
+        <div class="copyright">
+            Copyright @2016 The Jin Yin Temple
+        </div>
+    </footer>
+    {{>footmenu}}
+</div>
+
+<script src="../../js/jquery-3.1.1.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function gaodu() {
+        $("#fang").css("height", $("#fang").css("width"));
+    }
+    $(document).ready(function () {
+        gaodu();
+    });
+
+    var going = false;
+    $('#mypray').attr("placeholder", "示例：\n"
+            + "1、诸佛菩萨怎样发愿，我则如是发愿。愿法界众生离苦得乐、速证菩提 ；\n"
+            + "2、愿xx事业顺利、广行布施、福慧圆满、普利群生；\n"
+            + "3、愿xx能找有缘人，同修福慧，同行菩提道；\n"
+            + "4、愿xx学习有成，智慧圆满，学以致用，广种善根，行菩萨道，普利有情；\n"
+            + "5、愿父母身体健康… \n"
+            + "6、愿国泰民安、风调雨顺、世界和平……\n"
+            + "7、愿佛法兴盛、所有高僧长久住世、弘传佛法……\n"
+            + "\n祈愿人：XXX");
+    $("#show-confirm").click(function () {
+        if (going) return;
+        going = true;
+        var pray = $('#mypray').val();
+        if (pray == '') {
+            return;
+        }
+        var dataToPost = {
+            pray: pray
+        };
+        var openid = $('#lordopenid').text();
+        $.ajax({
+            type: 'POST',
+            url: '{{links.addPray}}',
+            data: dataToPost,
+            success: function (data, textStatus, request) {
+                going = false;
+                window.location = '{{self}}';
+            }
+        });
+    });
+</script>
+</body>
+</html>
