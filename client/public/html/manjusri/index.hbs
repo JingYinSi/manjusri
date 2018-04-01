@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<title>静音寺●文殊禅林</title>-->
+    <title>静音寺文殊禅林</title>
+    <link href="../../assets/css/reset.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/jw.css">
+
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- <link href="./assets/css/3.css" rel="stylesheet" > -->
+    {{>sharepage}}
+
+</head>
+<body>
+<div class="wrapper container-fluid">
+    <div class="row firwrap mt0">
+        <div class="firwrap-banner pt0">
+            <figure>
+                <img src="../../images/banner.jpg" alt="">
+            </figure>
+        </div>
+    </div>
+
+    <ul class="row twowrap">
+        <li onclick="linkto('{{linkages.dailyVirtue}}');">
+            <div class="col-xs-3 twowrap-left">
+                <figure>
+                    <img src="../../uploads/userd.png" alt="">
+                </figure>
+            </div>
+            <div class="col-xs-8 twowrap-center">
+                <h4>日行一善</h4>
+                <p>日行一善，善福增长</p>
+            </div>
+                <div class="col-xs-1 twowrap-right">
+                    <span>></span>
+                </div>
+        </li>
+        <li onclick="linkto('{{linkages.suixi}}');">
+            <div class="col-xs-3 twowrap-left">
+                <figure>
+                    <img src="../../uploads/userc.png" alt="">
+                </figure>
+            </div>
+            <div class="col-xs-8 twowrap-center">
+                <h4>随喜建寺</h4>
+                <p>随喜建寺</p>
+            </div>
+            <div class="col-xs-1 twowrap-right">
+                <span>></span>
+            </div>
+        </li>
+        <li onclick="linkto('/jingyin/manjusri/pray/exam');">
+            <div class="col-xs-3 twowrap-left">
+                <figure>
+                    <img src="../../uploads/usera.png" alt="">
+                </figure>
+            </div>
+            <div class="col-xs-8 twowrap-center">
+                <h4>求学祈愿卡</h4>
+                <p>向五台山文殊菩萨许个愿，学业有成，开大智慧！</p>
+            </div>
+            <div class="col-xs-1 twowrap-right">
+                <span>></span>
+            </div>
+        </li>
+        <!--<li onclick="linkto('{{linkages.pray}}');">
+            <div class="col-xs-3 twowrap-left">
+                <figure>
+                    <img src="/uploads/usera.png" alt="">
+                </figure>
+            </div>
+            <div class="col-xs-8 twowrap-center">
+                <h4>祈愿卡</h4>
+                <p>向五台山文殊菩萨许个愿</p>
+            </div>
+            <div class="col-xs-1 twowrap-right">
+                <span>></span>
+            </div>
+        </li>-->
+        <!--<li>
+            <div class="col-xs-3 twowrap-left">
+                <figure>
+                    <img src="/uploads/userb.png" alt="">
+                </figure>
+            </div>
+            <div class="col-xs-8 twowrap-center">
+                <h4>文殊心咒共修</h4>
+                <p>念诵文殊菩萨心咒能开开大智慧</p>
+            </div>
+            <div class="col-xs-1 twowrap-right">
+                <span>></span>
+            </div>
+        </li>
+        -->
+    </ul>
+    <div class="row threewrap">
+        <figure>
+            <img src="../../assets/images/tel.png" alt="">
+        </figure>
+        <span>联系电话</span>
+        <p>18335092780 释同证</p>
+        <p>18235175556 释同明</p>
+        <hr>
+        <figure>
+            <img src="../../assets/images/addr.png" alt="">
+        </figure>
+        <span>地址</span>
+        <p>山西省忻州市五台山风景区护银沟村</p>
+
+    </div>
+    <!-- 页脚 -->
+    <footer>
+        <figure>
+            <img src="../../assets/images/logo.png" alt="">
+        </figure>
+        <div class="copyright">
+            Copyright @2016 The Jin Yin Temple
+        </div>
+    </footer>
+    {{>footmenu}}
+</div>
+
+<script src="../../js/jquery-3.1.1.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function linkto(link) {
+        window.location = link;
+    }
+</script>
+</body>
+</html>
