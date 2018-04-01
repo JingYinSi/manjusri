@@ -490,3 +490,74 @@ textarea {
 .dn{display: none;}
 .ofa{overflow: auto;}
 .cl{ clear:both;}
+
+.cz_table{
+	text-align: center;
+	background: #ffffff;
+	padding: 15px 0 5px 0 ;
+	border-bottom: 1px solid #cdcdcd;
+}
+.cz_title{
+	padding: 10px 0;
+	font-size: 18px;
+}
+.name_tb{
+	width:100%;
+	padding: 0 20px;
+}
+.name_tb table{
+	width:100%;
+}
+.cz_tit{
+	
+}
+.cz_tit table{
+	background: #f5ecc3;
+}
+.cz_tit table td{
+	height: 30px;
+}
+.tit_tr{
+	
+}
+.tit_tr td{
+	font-size: 14px;
+	padding: 10px 0;
+}
+.cz_list{
+	margin: 1px 0 0 0;
+	height: 180px;
+	border: 1px solid #cacaca;
+}
+.cz_list table{
+}
+.cz_list td{
+	font-size: 14px;
+	padding: 5px 0;
+}
+.cz_td1{
+	width: 20%;
+	
+}
+.cz_td2{
+	width: 20%;
+}
+.cz_td3{
+	width: 30%;
+}
+.cz_td4{
+	width: 30%;
+}
+.cz_all{
+	color: #4c4c4c;
+	padding: 10px 0;
+}
+.cz_all img{
+	width: 32px;
+}
+.cz_all span{
+	padding: 0 2px;
+	color: #ff7300;
+}
+
+

@@ -109,24 +109,25 @@
 				   <!-- <div class="right tr pr30">{{lesson.unit}}</div>-->
 					<div class="right l35">遍</div>
 				</div>
-				<div class="mt15 p-r w100- fs16 user_name2">
-					<div class="name_list">
-						<div class="left l35 wp3"><img src="../../assets/images/a.png" alt="" class="w20"> 学生姓名</div>
-						<div class="center l35">
-							<input id="input_{{lesson._id}}"  class="input_name w100- h35 bceee bn br5 pl5">
+				<div class="mt15 p-r w100- fs16">
+					
+					<div class="user_name wp10">
+						<div class="name_list">
+							<div class="left l35 wp3"><img src="../../assets/images/a.png" alt="" class="w20"> 学生姓名</div>
+							<div class="center l35">
+								<input id="input_{{lesson._id}}"  class="input_name w100- h35 bceee bn br5 pl5" />
+							</div>
+						   <!-- <div class="right tr pr30">{{lesson.unit}}</div>-->
+							<div class="add_name right"><img src="../../images/btn_add_name.png"></div>
+							<div class="name_history dn">
+								<ul>
+									<li>张三</li>
+									<li>李四</li>
+									<li>王五</li>
+								</ul>
+							</div>
 						</div>
-					   <!-- <div class="right tr pr30">{{lesson.unit}}</div>-->
-						<div class="add_name right"><img src="../../images/btn_add_name.png"></div>
-						<div class="name_history dn">
-							<ul>
-								<li>张三</li>
-								<li>李四</li>
-								<li>王五</li>
-							</ul>
-						</div>
-					</div>
-					<div class="user_name user_name2 wp10">
-						<div class='name_list'>
+						<!--<div class='name_list'>
 							<div class='center l35'>
 								<input id='input_{{lesson._id}}' class='input_name w100- h35 bceee bn br5 pl5' value="" /></div>
 								<div class='del_name right'><img src='../../images/btn_del_name.png'>
@@ -138,7 +139,7 @@
 									<li>王五</li>
 								</ul>
 							</div>
-						</div>
+						</div>-->
 					</div>
 				</div>
 				<div class="mt15 p-r w100- fs16">
@@ -156,6 +157,56 @@
 			</div>
 		</li>
     </ul>
+	
+	<div class="cz_table mlr-15">
+		<div class="cz_title">今日持咒汇总</div>
+		<div class="name_tb">
+			<div class="cz_tit">
+				<table>
+					<tr class="tit_tr">
+						<td class="cz_td1">持咒人</td>
+						<td class="cz_td2">地区</td>
+						<td class="cz_td3">遍数</td>
+						<td class="cz_td4">学生名称</td>
+					</tr>
+				</table>
+			</div>
+			<div class="cz_list">
+				<table>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+							<div class="cz_name">陈吖</div>
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="cz_all">
+				<img src="../../images/icon_zc_all.png" />文殊心咒共修<span>333</span>人，<span>12324</span>遍随喜功德
+				
+			</div>
+		</div>
+	</div>
     <div class="mlr-15 bcfff pb30 plr30">
         <p class="tc fs20 fw7 l60 mb0 pt10">共修功德</p>
         <p class="ti2 l30 ffht ">万人共造善恶因,每人均得万人果。众人共修之功德是各人所修功德的总和,也就是说,如果万人同时参加共修,每个人于共修期间所造善业都将增长一万倍。</p>
@@ -196,12 +247,12 @@
 				alert("最多添加三个名称！");
 			}
 		});
-		$(".user_name2").on("click",".del_name",function(){
+		$(".user_name").on("click",".del_name",function(){
 			$(this).parent('.name_list').remove();
 			namen--;
 		});
 		
-		$(".user_name2").on("click",".input_name",function(){
+		$(".user_name").on("click",".input_name",function(){
 			var li_n=0;
 			$(this).parents(".name_list").find("li").each(function(){
 				li_n++;
@@ -213,7 +264,7 @@
 			}
 			
 		});
-		$(".user_name2").on("click",".name_history li",function(){
+		$(".user_name").on("click",".name_history li",function(){
 			var nameList=$(this).text();
 			$(this).parents(".name_list").find("input").attr("value",nameList);
 			$(".name_history").hide();
