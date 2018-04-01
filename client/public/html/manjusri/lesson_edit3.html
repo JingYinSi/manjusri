@@ -9,7 +9,6 @@
     <link href="../../assets/css/reset.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link href="../../assets/css/jw.css" rel="stylesheet">
-    <link rel="stylesheet" href="../../css/liMarquee.css">
     <!--[if lt IE 9]>
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -26,10 +25,10 @@
         .center {
 
             width: auto; /*如果没有这一句，那么，center这个div的文字就不会自动换行*/
-            margin: 0 90px 15px 100px;
+            margin: 0 80px 15px 80px;
 
         }
-		.center2 {
+        .center2 {
 
             width: auto; /*如果没有这一句，那么，center这个div的文字就不会自动换行*/
             margin: 0 0px 15px 80px;
@@ -46,45 +45,13 @@
             width: 80px;
 
         }
-		.add_name,.del_name{
-			padding: 6px 0 0 0 ;
+		.input_z{
+			margin: 0 10px 0 70px ;
+			width:20%;
 		}
-		.add_name img,.del_name img{
-			with:27px;
-			height:27px;
-		}
-		.input_tips{
-			width: auto;
-            margin: 0 0 0px 100px;
-			position: relative;
-			top:-12px;
-			font-size: 14px;
-			color: #6d6d6d;
-		}
-		.input_tips span{
-			color: #ff0000;
-		}
-		.name_list{
-			position: relative;
-		}
-		.name_history{
-			position: absolute;
-			top:40px;
-			z-index: 2;
-			left: 100px;
-			width: 50%;
-		}
-		.name_history ul{
-			background: #ffffff;
-			box-shadow: 0 0 10px;
-			padding: 10px 0;
-			margin: 0 20px 0 0;
-		}
-		.name_history li{
-			line-height: 40px;
-			height: 40px;
-			padding: 0 15px;
-			
+		.input_f{
+			margin: 0 10px 0 10px ;
+			width:20%;
 		}
     </style>
 
@@ -92,7 +59,7 @@
 <body>
 <div class="wrapper container-fluid bcfcf6d4 w100v ">
     <div class="mlr-15">
-        <img src="../../images/img_gongxiu_2.jpg" alt="" class="w100-">
+        <img src="../../images/img_banner_gt.jpg" alt="" class="w100-">
     </div>
     <ul class="mlr-15 mb0">
 		<li class="p-r w100- bcfff bb1sccc ofa">
@@ -100,7 +67,7 @@
 				<img src="{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
 			</div>
 			<div class="center2 pl20">
-				<p class="pt20 fw7">{{lesson.name}}求学文殊心咒共修</p>
+				<p class="pt20 fw7">{{lesson.name}}共同禅修</p>
 				<p class="fs12 c666">
 					<span id="join_{{lesson._id}}">{{join}}</span>人共修
 					<span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
@@ -110,47 +77,16 @@
 			<div class="pb20 plr15 panel mb0">
 				<div class="p-r w100- fs16">
 					<div class="left l35"><img src="../../assets/images/a.png" alt="" class="w20"> 报数</div>
-					<div class="center l35">
+					<div class="center l35 input_z fl">
 						<input id="input_{{lesson._id}}" type="number" class="w100- h35 bceee bn br5 pl5">
 					</div>
 				   <!-- <div class="right tr pr30">{{lesson.unit}}</div>-->
-					<div class="right l35">遍</div>
-				</div>
-				<div class="mt15 p-r w100- fs16">
-					
-					<div class="user_name wp10">
-						<div class="name_list">
-							<div class="left l35 wp3"><img src="../../assets/images/a.png" alt="" class="w20"> 学生姓名</div>
-							<div class="center l35">
-								<input id="input_{{lesson._id}}"  class="input_name w100- h35 bceee bn br5 pl5" />
-							</div>
-						   <!-- <div class="right tr pr30">{{lesson.unit}}</div>-->
-							<div class="add_name right"><img src="../../images/btn_add_name.png"></div>
-							<div class="name_history dn">
-								<ul>
-									<li>张三</li>
-									<li>李四</li>
-									<li>王五</li>
-								</ul>
-							</div>
-						</div>
-						<!--<div class='name_list'>
-							<div class='center l35'>
-								<input id='input_{{lesson._id}}' class='input_name w100- h35 bceee bn br5 pl5' value="" /></div>
-								<div class='del_name right'><img src='../../images/btn_del_name.png'>
-							</div>
-							<div class="name_history dn">
-								<ul>
-									<li>张三</li>
-									<li>李四</li>
-									<li>王五</li>
-								</ul>
-							</div>
-						</div>-->
+					<div class="l35 fl">座</div>
+					<div class="center l35 input_f fl">
+						<input id="input_{{lesson._id}}" type="number" class="w100- h35 bceee bn br5 pl5">
 					</div>
-				</div>
-				<div class="mt15 p-r w100- fs16">
-				   <div class="input_tips">每格限填<span>1</span>人名字</div>
+					<div class="l35 fl">分钟</div>
+					<div class="cl"></div>
 				</div>
 				<div class="l30">
 					<img src="../../assets/images/a.png" alt="" class="w20"> 回向
@@ -164,80 +100,6 @@
 			</div>
 		</li>
     </ul>
-	
-	<div class="cz_table mlr-15">
-		<div class="cz_title">今日持咒汇总</div>
-		<div class="name_tb">
-			<div class="cz_tit">
-				<table>
-					<tr class="tit_tr">
-						<td class="cz_td1">持咒人</td>
-						<td class="cz_td2">地区</td>
-						<td class="cz_td3">遍数</td>
-						<td class="cz_td4">学生名称</td>
-					</tr>
-				</table>
-			</div>
-			<div class="cz_list">
-					<table>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-								<div class="cz_name">陈吖</div>
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-					</table>
-			</div>
-			<div class="cz_all">
-				<img src="../../images/icon_zc_all.png" />文殊心咒共修<span>333</span>人，<span>12324</span>遍随喜功德
-				
-			</div>
-		</div>
-	</div>
     <div class="mlr-15 bcfff pb30 plr30">
         <p class="tc fs20 fw7 l60 mb0 pt10">共修功德</p>
         <p class="ti2 l30 ffht ">《金刚顶瑜伽文殊师利菩萨经》曰：持诵“文殊智慧咒”，罪障消灭，获无尽辩才，所求世间、出世间事悉得成就，离诸苦恼，五无间等一切罪障永尽无余，证悟一切诸三昧门，获大闻持，成阿耨多罗三藐三菩提等等。</p>
@@ -258,10 +120,7 @@
 
 <script src="../../js/jquery-3.1.1.min.js"></script>
 <script src="../../js/bootstrap.min.js"></script>
-<script src="../../js/jquery.liMarquee.js"></script>
 <script>
-	
-	
     $(document).ready(function () {
         //$(".flip").click(function () {
 //            $(this).closest("div").siblings(".panel").slideToggle();
@@ -271,13 +130,6 @@
 //                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
 //            }
 //        })
-		
-        $('.cz_list').liMarquee({
-            direction: 'up',
-            scrollamount:30,
-            // circular:true
-        });
-		
 		
 		//点击添加名称输入框
 		var namen=0;
@@ -311,9 +163,6 @@
 			$(this).parents(".name_list").find("input").attr("value",nameList);
 			$(".name_history").hide();
 		});
-		
-		
-		
 		
     });
 

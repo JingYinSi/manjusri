@@ -42,7 +42,7 @@
 <body>
 <div class="wrapper container-fluid bcfcf6d4 w100v ">
     <div class="mlr-15">
-        <img src="../../assets/images/img_gongxiu.jpg" alt="" class="w100-">
+        <img src="../../images/img_gongxiu.jpg" alt="" class="w100-">
     </div>
     <ul class="mlr-15 mb0">
         {{#each data}}
@@ -105,14 +105,7 @@
 <script src="../../js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function () {
-        $(".flip").click(function () {
-            $(this).closest("div").siblings(".panel").slideToggle();
-            if ($(this).siblings(".glyphicon").hasClass("glyphicon-chevron-right")) {
-                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
-            } else {
-                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
-            }
-        })
+       
     });
 
     function announce(url, inputid) {

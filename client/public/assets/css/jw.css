@@ -495,11 +495,11 @@ textarea {
 	text-align: center;
 	background: #ffffff;
 	padding: 15px 0 5px 0 ;
-	border-bottom: 1px solid #cdcdcd;
+	border-bottom:1px solid #ccc;
 }
 .cz_title{
 	padding: 10px 0;
-	font-size: 18px;
+	font-size: 16px;
 }
 .name_tb{
 	width:100%;
@@ -528,12 +528,14 @@ textarea {
 	margin: 1px 0 0 0;
 	height: 180px;
 	border: 1px solid #cacaca;
+	overflow: hidden;
+	position: relative;
 }
 .cz_list table{
 }
 .cz_list td{
 	font-size: 14px;
-	padding: 5px 0;
+	padding: 8px 0;
 }
 .cz_td1{
 	width: 20%;
@@ -551,6 +553,7 @@ textarea {
 .cz_all{
 	color: #4c4c4c;
 	padding: 10px 0;
+	font-size: 14px;
 }
 .cz_all img{
 	width: 32px;
@@ -558,6 +561,8 @@ textarea {
 .cz_all span{
 	padding: 0 2px;
 	color: #ff7300;
+	font-size: 18px;
 }
+
 
 

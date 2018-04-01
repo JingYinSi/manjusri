@@ -32,6 +32,9 @@ body{
 	font-weight: 100;
 	
 }
+.index_notice marquee{
+	 margin:0 20px;
+}
 .twowrap{
     position: relative;
     margin:0 -15px;

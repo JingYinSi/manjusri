@@ -29,7 +29,7 @@
             margin: 0 90px 15px 100px;
 
         }
-		.center2 {
+        .center2 {
 
             width: auto; /*如果没有这一句，那么，center这个div的文字就不会自动换行*/
             margin: 0 0px 15px 80px;
@@ -100,7 +100,7 @@
 				<img src="{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
 			</div>
 			<div class="center2 pl20">
-				<p class="pt20 fw7">{{lesson.name}}求学文殊心咒共修</p>
+				<p class="pt20 fw7">{{lesson.name}}亿遍文殊心咒共修</p>
 				<p class="fs12 c666">
 					<span id="join_{{lesson._id}}">{{join}}</span>人共修
 					<span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
@@ -115,42 +115,6 @@
 					</div>
 				   <!-- <div class="right tr pr30">{{lesson.unit}}</div>-->
 					<div class="right l35">遍</div>
-				</div>
-				<div class="mt15 p-r w100- fs16">
-					
-					<div class="user_name wp10">
-						<div class="name_list">
-							<div class="left l35 wp3"><img src="../../assets/images/a.png" alt="" class="w20"> 学生姓名</div>
-							<div class="center l35">
-								<input id="input_{{lesson._id}}"  class="input_name w100- h35 bceee bn br5 pl5" />
-							</div>
-						   <!-- <div class="right tr pr30">{{lesson.unit}}</div>-->
-							<div class="add_name right"><img src="../../images/btn_add_name.png"></div>
-							<div class="name_history dn">
-								<ul>
-									<li>张三</li>
-									<li>李四</li>
-									<li>王五</li>
-								</ul>
-							</div>
-						</div>
-						<!--<div class='name_list'>
-							<div class='center l35'>
-								<input id='input_{{lesson._id}}' class='input_name w100- h35 bceee bn br5 pl5' value="" /></div>
-								<div class='del_name right'><img src='../../images/btn_del_name.png'>
-							</div>
-							<div class="name_history dn">
-								<ul>
-									<li>张三</li>
-									<li>李四</li>
-									<li>王五</li>
-								</ul>
-							</div>
-						</div>-->
-					</div>
-				</div>
-				<div class="mt15 p-r w100- fs16">
-				   <div class="input_tips">每格限填<span>1</span>人名字</div>
 				</div>
 				<div class="l30">
 					<img src="../../assets/images/a.png" alt="" class="w20"> 回向
@@ -179,58 +143,66 @@
 				</table>
 			</div>
 			<div class="cz_list">
-					<table>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-								<div class="cz_name">陈吖</div>
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="cz_td1" valign="top">陈悦</td>
-							<td class="cz_td2" valign="top">五台山</td>
-							<td class="cz_td3" valign="top">1000</td>
-							<td class="cz_td4" valign="top">
-								<div class="cz_name">陈吖</div>
-							</td>
-						</tr>
-					</table>
+				<table>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+							<div class="cz_name">陈吖</div>
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+				</table>
 			</div>
 			<div class="cz_all">
 				<img src="../../images/icon_zc_all.png" />文殊心咒共修<span>333</span>人，<span>12324</span>遍随喜功德
@@ -260,8 +232,6 @@
 <script src="../../js/bootstrap.min.js"></script>
 <script src="../../js/jquery.liMarquee.js"></script>
 <script>
-	
-	
     $(document).ready(function () {
         //$(".flip").click(function () {
 //            $(this).closest("div").siblings(".panel").slideToggle();
@@ -271,8 +241,7 @@
 //                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
 //            }
 //        })
-		
-        $('.cz_list').liMarquee({
+		$('.cz_list').liMarquee({
             direction: 'up',
             scrollamount:30,
             // circular:true
@@ -311,9 +280,6 @@
 			$(this).parents(".name_list").find("input").attr("value",nameList);
 			$(".name_history").hide();
 		});
-		
-		
-		
 		
     });
 
