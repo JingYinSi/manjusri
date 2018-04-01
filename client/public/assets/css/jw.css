@@ -84,6 +84,7 @@
 .h10v{height: 10vh;}
 .h20v{height: 20vh;}
 .h30v{height: 30vh;}
+.h35v{height: 35vh;}
 .h40v{height: 40vh;}
 .h50v{height: 50vh;}
 .h60v{height: 60vh;}
@@ -99,6 +100,7 @@
 .l20{line-height: 20px;}
 .l25{line-height: 25px;}
 .l30{line-height: 30px;}
+.l35{line-height: 35px;}
 .l40{line-height: 40px;}
 .l50{line-height: 50px;}
 .l60{line-height: 60px;}
@@ -125,6 +127,7 @@
 .m80{margin:80px;}
 .m100{margin:100px;}
 /*.mt* margin-top*/
+.mt-15{margin-top:-15px;}
 .mt0{margin-top: 0;}
 .mt5{margin-top: 5px;}
 .mt10{margin-top: 10px;}
@@ -256,6 +259,17 @@
 .ptb20{padding-top: 20px;padding-bottom: 20px;}
 .plr30{padding-left: 30px;padding-right: 30px;}
 
+/*with persent*/
+.wp1{ width: 10%;}
+.wp2{ width: 20%;}
+.wp3{ width: 30%;}
+.wp4{ width: 40%;}
+.wp5{ width: 50%;}
+.wp6{ width: 60%;}
+.wp7{ width: 70%;}
+.wp8{ width: 80%;}
+.wp9{ width: 90%;}
+.wp10{ width: 100%;}
 
 .t42{top:42px;}
 .r20{right: 20px;}
@@ -475,3 +489,4 @@ textarea {
 .plr0imp{padding-left: 0!important;padding-right: 0!important;}
 .dn{display: none;}
 .ofa{overflow: auto;}
+.cl{ clear:both;}
