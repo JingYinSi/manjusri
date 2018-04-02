@@ -37,11 +37,11 @@ var dealwithVirtue = function (type, req, res) {
         };
     }
     var res = createResponseWrap(res);
-    logger.debug("列出前类型为"+type+"30条已支付的记录...");
+    logger.debug("列出前类型为" + type + "30条已支付的记录...");
 
     return virtuesModule.lastVirtuesAndTotalCount(type, 30)
         .then(function (data) {
-            logger.debug("列出前类型为"+type+"30条已支付的记录完成。");
+            logger.debug("列出前类型为" + type + "30条已支付的记录完成。");
             logger.debug("开始生成分享配置信息...");
             viewdata = data;
             viewdata.links = {
@@ -229,10 +229,13 @@ module.exports = {
         var errmsg;
         var resWrap = createResponseWrap(res);
 
-        if (!req.session || !req.session.user)
-            return resWrap.setError(400);
-        var openid = req.session.user.openid;
-        //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
+        var openis;
+        if (!process.env.DEVELOPMENT) {
+            if (!req.session || !req.session.user)
+                return resWrap.setError(400);
+            openid = req.session.user.openid;
+        } else
+            openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
 
         var lordid;
         var viewData = {
@@ -285,8 +288,8 @@ module.exports = {
         var viewdata, virtues;
         var resWrap = createResponseWrap(res);
         if (!req.session || !req.session.user)
-         return resWrap.setError(400);
-         var openid = req.session.user.openid;
+            return resWrap.setError(400);
+        var openid = req.session.user.openid;
 
         //var openid = 'o0ghywcUHxUdazzXEBvYPxU1PVPk';
         //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
