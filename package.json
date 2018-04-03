@@ -39,6 +39,7 @@
     "querystring": "^0.2.0",
     "request": "^2.75.0",
     "serve-favicon": "^2.3.0",
+    "sessionstorage": "0.0.2",
     "sha1": "^1.1.1",
     "simple-get": "^2.3.0",
     "wechat": "^2.0.3",
