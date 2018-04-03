@@ -1,5 +1,3 @@
-svn update
-npm install
-./killport.sh 80
-outfile=`date +%Y%m%d`".log"
-nohup node server.js &
+cnpm install
+pm2 stop jingyintest
+pm2 start server.js --name jingyintest
