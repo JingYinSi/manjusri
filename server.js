@@ -48,7 +48,7 @@ var app = function () {
         .setWebRoot('/website', './client/public')
         .setFavicon('client/public/images/icon1.jpg')
         .setSessionStore(sessionStore)
-        //.useMiddleware('/jingyin/wechat', wechatLib)
+        .useMiddleware('/jingyin/wechat', wechatLib)
         .setRoutes(routes)
         .end();
 
