@@ -363,7 +363,5 @@ module.exports = {
                 return resWrap.setError(500, null, err);
             })
     }
-    ,
-}
-;
+};
 
