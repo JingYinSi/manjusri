@@ -45,7 +45,7 @@ var app = function () {
         .begin(__dirname)
         .setViewEngine(viewEngineFactory)
         .setResources(resourceRegistry, resourceDescriptors)
-        .setWebRoot('/website', './client/public')
+        .setWebRoot('/', './client/public')
         .setFavicon('client/public/images/icon1.jpg')
         .setSessionStore(sessionStore)
         .useMiddleware('/jingyin/wechat', wechatLib)
