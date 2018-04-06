@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    transform = require('@finelets/hyper-rest').db.mongoDb.transform;
 
 var UserSchema = new Schema({
     name: String,
@@ -14,7 +15,7 @@ var UserSchema = new Schema({
     watching: Boolean,
     realname:String,
     email:String
-});
+}, transform);
 
 module.exports = mongoose.model('User', UserSchema);
 

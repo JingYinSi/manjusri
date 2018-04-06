@@ -7,7 +7,8 @@ var linkages = require("../rests"),
     lessonsModule = require('../modules/lessons'),
     mongoose = require('mongoose'),
     redirects = require('./redirects'),
-    wx = require('../weixin');
+    wx = require('../weixin'),
+    createSessionUser = require('../modules/2.1/SessionUser');
 
 var log4js = require('log4js');
 var logger = log4js.getLogger();
@@ -241,16 +242,9 @@ module.exports = {
             menu: linkages.getMainMenuLinkages(),
         };
         var resWrap = createResponseWrap(res);
-        return usersModule.findByOpenid(openid)
+        return createSessionUser(openid)
             .then(function (user) {
-                if (!user) {
-                    errmsg = "the user with openid[" + openid + "] not exists!!!";
-                    logger.error(errmsg);
-                    code = 400;
-                    return Promise.reject(errmsg);
-                }
-                lordid = user._id;
-                return lessonsModule.listLessons(lordid);
+                return user.listLessonDetails();
             })
             .then(function (lessons) {
                     var list = [];
