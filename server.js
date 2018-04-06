@@ -55,7 +55,7 @@ var app = function () {
     connectDb(function () {
         logger.info('connect mongodb success .......');
         var port = process.env.PORT || 922;
-        var server = app.listen(port, '39.106.52.82', function () {
+        var server = app.listen(port, function () {
             //var addr = server.address();
             const h = server.address().address
             const p = server.address().port
