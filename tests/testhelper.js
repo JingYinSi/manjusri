@@ -9,11 +9,8 @@ var chai = require('chai'),
 var sinonStubPromise = require('sinon-stub-promise');
 sinonStubPromise(sinon);
 
-//global.dbURI = 'mongodb://121.41.93.210:17914/test';
-//global.dbURI = 'mongodb://test:tEsT228793@121.41.93.210:17915/test';
 global.dbURI = 'mongodb://localhost/test';
-//global.dbURI = 'mongodb://shitongming:jIngyIn228793@121.41.93.210:17914/test';
-global.clearDB = require('mocha-mongoose')(dbURI);
+global.clearDB = require('./clearDB')(dbURI);
 
 global.expect = chai.expect;
 global.sinon = sinon;
@@ -72,4 +69,7 @@ global.createPromiseStub = function createPromiseStub(withArgs, resolves, err) {
         promise.resolves.apply(promise, resolves);
     }
     return stub;
+}
+function __clearDB(url) {
+
 }

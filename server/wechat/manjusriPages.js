@@ -274,7 +274,7 @@ module.exports = {
                     imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
                 };
                 viewData.shareConfig = shareConfig;
-                logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData));
+                logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData, null, 4));
                 return res.render('manjusri/lesson', viewData);
             })
             .catch(function (err) {
