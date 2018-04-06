@@ -41,7 +41,7 @@ var app = function () {
             }
         });
 
-    appBuilder
+    var app = appBuilder
         .begin(__dirname)
         .setViewEngine(viewEngineFactory)
         .setResources(resourceRegistry, resourceDescriptors)
@@ -54,9 +54,15 @@ var app = function () {
 
     connectDb(function () {
         logger.info('connect mongodb success .......');
-        var server = appBuilder.run(function () {
+        var port = process.env.PORT || 922;
+        app.listen(port, function () {
+            //var addr = server.address();
+            logger.info('The server is running and listening at ' + port);
+        });
+
+        /*var server = appBuilder.run(function () {
             var addr = server.address();
             logger.info('the server is running and listening at ' + addr.port);
-        });
+        });*/
     });
 }();
