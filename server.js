@@ -55,9 +55,11 @@ var app = function () {
     connectDb(function () {
         logger.info('connect mongodb success .......');
         var port = process.env.PORT || 922;
-        app.listen(port, function () {
+        var server = app.listen(port, 'localhost', function () {
             //var addr = server.address();
-            logger.info('The server is running and listening at ' + port);
+            const h = server.address().address
+            const p = server.address().port
+            logger.info('The server is running and listening at ' + h + ":" + p);
         });
 
         /*var server = appBuilder.run(function () {
