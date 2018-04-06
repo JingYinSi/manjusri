@@ -23,7 +23,18 @@ var log4js = require('log4js');
 var logger = log4js.getLogger();
 logger.level = 'debug';
 
-var app = function () {
+var express = require('express');
+var app = express();
+
+app.get('/', function (req, res) {
+    res.send('Hello World!');
+});
+
+app.listen(3000, function () {
+    console.log('Example app listening on port 3000!');
+});
+
+/*var app = function () {
     //配置view engine
     var viewEngineFactory = finelets.express.handlebarsFactory(
         //按缺省规约：
@@ -62,9 +73,9 @@ var app = function () {
             logger.info('The server is running and listening at ' + h + ":" + p);
         });
 
-        /*var server = appBuilder.run(function () {
+        /!*var server = appBuilder.run(function () {
             var addr = server.address();
             logger.info('the server is running and listening at ' + addr.port);
-        });*/
+        });*!/
     });
-}();
+}();*/
