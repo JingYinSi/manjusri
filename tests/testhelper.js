@@ -70,6 +70,3 @@ global.createPromiseStub = function createPromiseStub(withArgs, resolves, err) {
     }
     return stub;
 }
-function __clearDB(url) {
-
-}
