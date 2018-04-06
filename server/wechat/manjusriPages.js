@@ -229,7 +229,6 @@ module.exports = {
         var errmsg;
         var resWrap = createResponseWrap(res);
 
-        var openis;
         if (!process.env.DEVELOPMENT) {
             if (!req.session || !req.session.user)
                 return resWrap.setError(400);
@@ -275,12 +274,12 @@ module.exports = {
                     imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
                 };
                 viewData.shareConfig = shareConfig;
-                //logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData));
+                logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData));
                 return res.render('manjusri/lesson', viewData);
             })
             .catch(function (err) {
                 logger.debug("lesson page handler error:" + err);
-                return resWrap.setError(500, null, err);
+                return resWrap.setError(code, null, err);
             })
     },
 
