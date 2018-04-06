@@ -4,13 +4,14 @@
 var chai = require('chai'),
     sinon = require('sinon'),
     chaiXml = require('chai-xml'),
-    sinonChai = require('sinon-chai');
+    sinonChai = require('sinon-chai'),
+    finelets = require('@finelets/hyper-rest');
 
 var sinonStubPromise = require('sinon-stub-promise');
 sinonStubPromise(sinon);
 
 global.dbURI = 'mongodb://localhost/test';
-global.clearDB = require('./clearDB')(dbURI);
+global.clearDB = finelets.db.mongoDb.clearDB(dbURI);
 
 global.expect = chai.expect;
 global.sinon = sinon;
