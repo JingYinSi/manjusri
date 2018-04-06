@@ -1,4 +1,4 @@
-require('dotenv').config();
+/*require('dotenv').config();
 const path = require('path'),
     restsDir = path.join(__dirname, './server/rests'),
     finelets = require('@finelets/hyper-rest'),
@@ -21,7 +21,7 @@ const routes = require('./server/routes');
 
 var log4js = require('log4js');
 var logger = log4js.getLogger();
-logger.level = 'debug';
+logger.level = 'debug';*/
 
 var express = require('express');
 var app = express();
