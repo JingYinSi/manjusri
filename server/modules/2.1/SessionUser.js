@@ -1,17 +1,18 @@
 const Users = require('./users'),
     Lessons = require('./lessons'),
-    models = require('../../wechat/models/models');
+    createErrorReason = require('@finelets/hyper-rest/app').createErrorReason;
 
 module.exports = function (openid) {
     return Users.findByOpenid(openid)
         .then(function (user) {
-            if (!user) return Promise.reject({
-                code: 401,
-                err: 'the user with openid ' + openid + ' not found!'
-            });
+            if (!user) {
+                var reason = createErrorReason(404, 'the user with openid ' + openid + ' not found!');
+                return Promise.reject(reason);
+            }
             return {
+                user: user,
                 listLessonDetails: function () {
-                    return Lessons.listLessons(user.id);
+                    return Lessons.listLessonPracticesDetails(user.id);
                 }
             }
         })

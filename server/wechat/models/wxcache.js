@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    transform = require('@finelets/hyper-rest').db.mongoDb.transform;
 
 var WxCacheSchema = new Schema({
     type: String,
@@ -7,7 +8,7 @@ var WxCacheSchema = new Schema({
     ref: String,
     timeout: Number,
     refresh: String,
-});
+}, transform);
 
 module.exports = mongoose.model('Wxcache', WxCacheSchema);
 

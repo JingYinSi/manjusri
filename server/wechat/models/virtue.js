@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    PartModel = require('./part');
+    PartModel = require('./part'),
+    transform = require('@finelets/hyper-rest').db.mongoDb.transform;
 
 function validateAmount(val) {
     return Math.round(val*100)/100 === val && val > 0;
@@ -35,7 +36,7 @@ var VirtueSchema = new Schema({
     paymentNo: String,
     timestamp: {type: Date, default: Date.now()},
     state: {type: String, default: 'new', enum: ['new', 'payed']}
-});
+}, transform);
 
 module.exports = mongoose.model('Virtue', VirtueSchema);
 

@@ -226,13 +226,9 @@ module.exports = {
     },
 
     lesson: function (req, res) {
-        var code = 500;
-        var errmsg;
-        var resWrap = createResponseWrap(res);
-
         if (!process.env.DEVELOPMENT) {
             if (!req.session || !req.session.user)
-                return resWrap.setError(400);
+                return res.sendStatus(400);
             openid = req.session.user.openid;
         } else
             openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
@@ -241,13 +237,16 @@ module.exports = {
         var viewData = {
             menu: linkages.getMainMenuLinkages(),
         };
-        var resWrap = createResponseWrap(res);
         return createSessionUser(openid)
-            .then(function (user) {
-                return user.listLessonDetails();
+            .then(function (sessionUser) {
+                lordid = sessionUser.user.id;
+                logger.debug("find current user, id is " + lordid);
+                return sessionUser.listLessonDetails();
             })
             .then(function (lessons) {
+                    logger.debug(("we have found " + lessons.length + " lessons"));
                     var list = [];
+                    var index = 1;
                     lessons.forEach(function (item) {
                         var lesson = Object.assign({
                             links: {
@@ -271,9 +270,8 @@ module.exports = {
                 logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData, null, 4));
                 return res.render('manjusri/lesson', viewData);
             })
-            .catch(function (err) {
-                logger.debug("lesson page handler error:" + err);
-                return resWrap.setError(code, null, err);
+            .catch(function (reason) {
+                return reason.sendStatusTo(res);
             })
     },
 

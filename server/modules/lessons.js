@@ -6,11 +6,8 @@ const lessonModel = require('../wechat/models/lesson'),
     userModel = require('../wechat/models/user'),
     utils = require('../../modules/utils'),
     ObjectID = require('mongodb').ObjectID,
-    Promise = require('bluebird');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+    Promise = require('bluebird'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 module.exports = {
     add: function (data) {

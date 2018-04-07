@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    transform = require('@finelets/hyper-rest').db.mongoDb.transform;
 
 var LessonSchema = new Schema({
     name: String,
@@ -10,7 +11,7 @@ var LessonSchema = new Schema({
     endDate: {type: Date, default: new Date(3000, 11, 31)},
     target: Number,
     state: {type: String, default: 'open'}
-});
+}, transform);
 
 module.exports = mongoose.model('Lesson', LessonSchema);
 
