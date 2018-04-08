@@ -1,5 +1,5 @@
 const Users = require('./users'),
-    Lessons = require('./lessons'),
+    Practics = require('./Practics'),
     createErrorReason = require('@finelets/hyper-rest/app').createErrorReason;
 
 module.exports = function (openid) {
@@ -12,7 +12,7 @@ module.exports = function (openid) {
             return {
                 user: user,
                 listLessonDetails: function () {
-                    return Lessons.listLessonPracticesDetails(user.id);
+                    return Practics.listDetails(user.id);
                 }
             }
         })

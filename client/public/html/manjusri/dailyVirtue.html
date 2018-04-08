@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>日行一善</title>
+    <link href="../../assets/css/reset.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/jw.css">
+    <link rel="stylesheet" href="../../css/liMarquee.css">
+    <link rel="stylesheet" href="../../assets/css/doGoodDeedADay.css">
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    {{>sharepage}}
+</head>
+<body>
+<div class="wrapper container-fluid">
+    <div class="row firwrap mt0">
+        <figure>
+            <img src="../../uploads/banner-user.png" alt="">
+            <!--<img src="/images/dailyvirtues.jpg" alt="">-->
+        </figure>
+    </div>
+
+    <div class="row twowrap">
+        <form action="#">
+            <div class="row twowrapIpt">
+                <div class="col-xs-3 twowrapIpt-left">
+                    <figure>
+                        <img src="../../assets/images/a.png" alt="">
+                    </figure>
+                    <span>金额：</span>
+                    <span id="subject" hidden>{{id}}</span>
+                </div>
+                <div class="col-xs-7 twowrapIpt-center">
+                    <input id="input_amount" type="number" placeholder="请输入数字" style="text-align: right">
+                </div>
+                <div class="col-xs-1 twowrapIpt-right f-r mr15">
+                    <span>元</span>
+                </div>
+            </div>
+            <div class="row twowrapBtn">
+                <div class="col-xs-4 pr5">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(1);">
+                        1元
+                    </div>
+                </div>
+                <div class="col-xs-4 pl10 pr10">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(3);">
+                        3元
+                    </div>
+                </div>
+                <div class="col-xs-4 pl5">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(5);">
+                        5元
+                    </div>
+                </div>
+                <div class="col-xs-4 pr5">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(10);">
+                        10元
+                    </div>
+                </div>
+                <div class="col-xs-4 pl10 pr10">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(88);">
+                        88元
+                    </div>
+                </div>
+                <div class="col-xs-4 pl5">
+                    <div class="twowrapBtn-Item" onclick="selectMoney(99);">
+                        99元
+                    </div>
+                </div>
+            </div>
+            <div class="row twowrapTextarea">
+                <div class="col-xs-3 twowrapTextarea-top">
+                    <figure>
+                        <img src="../../assets/images/a.png" alt="">
+                    </figure>
+                    <span>回向&nbsp;&nbsp;</span>
+                </div>
+                <div class="col-xs-12 twowrapTextarea-bottom p030">
+                    <textarea id="input_giving" class="form-control fs20" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="row twowrapSubmit">
+                <div class="col-xs-6 col-xs-offset-3">
+                    <input id="show-confirm" type="button" value="确定" class="btn btn-default h40 140 p0">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row threewrap">
+        <div class="dowebok">
+            <!--<ul>
+                {{#each virtues}}
+                    <li>
+                        <div class="col-xs-2 time">{{month}}月{{day}}号</div>
+                        <div class="col-xs-8 name">{{name}}</div>
+                        &lt;!&ndash;<div class="col-xs-2 purpose">{{city}}</div>&ndash;&gt;
+                        <div class="col-xs-2 count">计{{amount}}元</div>
+                    </li>
+                {{/each}}
+            </ul>-->
+            <table width="100%">
+                {{#each virtues}}
+                    <tr style="padding-bottom: 2cm;height:26px;">
+                        <td width="150">{{month}}月{{day}}号</td>
+                        <td width="250">{{name}}</td>
+                        <td width="150">{{city}}</td>
+                        <td width="150">计{{amount}}元</td>
+                    </tr>
+                    <tr style="padding-bottom: 2cm;height:26px;">
+                        <td width="150">{{month}}月{{day}}号</td>
+                        <td width="250">{{name}}</td>
+                        <td width="150">{{city}}</td>
+                        <td width="150">计{{amount}}元</td>
+                    </tr>
+                    <tr style="padding-bottom: 2cm;height:26px;">
+                        <td width="150">{{month}}月{{day}}号</td>
+                        <td width="250">{{name}}</td>
+                        <td width="150">{{city}}</td>
+                        <td width="150">计{{amount}}元</td>
+                    </tr>
+                    <tr style="padding-bottom: 2cm;height:26px;">
+                        <td width="150">{{month}}月{{day}}号</td>
+                        <td width="250">{{name}}</td>
+                        <td width="150">{{city}}</td>
+                        <td width="150">计{{amount}}元</td>
+                    </tr>
+                    <tr style="padding-bottom: 2cm;height:26px;">
+                        <td width="150">{{month}}月{{day}}号</td>
+                        <td width="250">{{name}}</td>
+                        <td width="150">{{city}}</td>
+                        <td width="150">计{{amount}}元</td>
+                    </tr>
+                    <tr style="padding-bottom: 2cm;height:26px;">
+                        <td width="150">{{month}}月{{day}}号</td>
+                        <td width="250">{{name}}</td>
+                        <td width="150">{{city}}</td>
+                        <td width="150">计{{amount}}元</td>
+                    </tr>
+                    <tr style="padding-bottom: 2cm;height:26px;">
+                        <td width="150">{{month}}月{{day}}号</td>
+                        <td width="250">{{name}}</td>
+                        <td width="150">{{city}}</td>
+                        <td width="150">计{{amount}}元</td>
+                    </tr>
+                    <tr style="padding-bottom: 2cm;height:26px;">
+                        <td width="150">{{month}}月{{day}}号</td>
+                        <td width="250">{{name}}</td>
+                        <td width="150">{{city}}</td>
+                        <td width="150">计{{amount}}元</td>
+                    </tr>
+                {{/each}}
+            </table>
+        </div>
+        <div class="threewrap-bottom">
+            <figure>
+                <img src="../../assets/images/c.png" alt="">
+            </figure>
+            随缘乐助<span>{{count}}</span>次，功德无量
+        </div>
+    </div>
+
+    <div class="row fourwrap">
+        <h3>行善功德</h3>
+        <span>ONE SMALL ACT EVERYDALL</span>
+        <p>五台山静音寺正在筹建，每天发心给寺院一点捐助，不仅获得人天福报，也利于我们早日圆满福慧资粮，而且，清净的善心善行也将利益无边的父母有情，寺院建成，它将是修学佛法的依托，众生解脱的家园。</p>
+        <p>日行一善，每日为寺院义捐，我们一起为建设解脱家园而努力！</p>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <figure>
+            <img src="../../assets/images/logo.png" alt="">
+        </figure>
+        <div class="copyright">
+            Copyright @2016 The Jin Yin Temple
+        </div>
+    </footer>
+    {{>footmenu}}
+</div>
+
+<script src="../../js/jquery-3.1.1.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/jquery.liMarquee.js"></script>
+<script src="../../js/js.js"></script>
+<script type="text/javascript">
+    function selectMoney(amount) {
+        document.getElementById('input_amount').value = amount;
+    }
+
+    $(document).ready(function () {
+        var giving = sessionStorage['giving'];
+        if (giving) {
+            $('#input_giving').val(giving);
+        }
+
+        $("#show-confirm").click(function () {
+            var amount = $('#input_amount').val();
+            var giving = $('#input_giving').val();
+            if (amount == '') {
+                return;
+            }
+            amount = Math.round(amount * 100) / 100;
+            var dataToPost = {
+                subject: $('#subject').text(),
+                amount: amount
+            };
+
+            sessionStorage['giving'] = giving;
+            if (giving) {
+                dataToPost.giving = giving;
+            }
+
+            requestDoTansaction(dataToPost);
+        });
+
+        $('.dowebok').liMarquee({
+            direction: 'up',
+            // scrollamount:30,
+            // circular:true
+        });
+    });
+</script>
+
+</body>
+</html>

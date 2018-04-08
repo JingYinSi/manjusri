@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>共修</title>
+    <title>全国共修</title>
 
-    <link href="/assets/css/reset.css" rel="stylesheet">
+    <link href="../../assets/css/reset.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/assets/css/jw.css" rel="stylesheet">
+    <link href="../../assets/css/jw.css" rel="stylesheet">
     <!--[if lt IE 9]>
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -42,7 +42,7 @@
 <body>
 <div class="wrapper container-fluid bcfcf6d4 w100v ">
     <div class="mlr-15">
-        <img src="/assets/images/bg001.jpg" alt="" class="w100-">
+        <img src="../../images/img_gongxiu.jpg" alt="" class="w100-">
     </div>
     <ul class="mlr-15 mb0">
         {{#each data}}
@@ -57,7 +57,7 @@
                         <span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
                     </p>
                 </div>
-                <div class="right tr mr20">
+                <div class="right tr mr20" onclick="linkto('{{links.toReport}}');">
                     <p class="l80 c999"><span id="flip_{{lesson._id}}" class="mr20 cff8c05 flip">报数</span>
                         <span class="glyphicon glyphicon-chevron-right cccc "></span>
                     </p>
@@ -65,14 +65,14 @@
 
                 <div class="pb20 plr15 panel mb0 dn">
                     <div class="p-r w100- fs16">
-                        <div class="left l25"><img src="/assets/images/a.png" alt="" class="w20"> 报数</div>
+                        <div class="left l25"><img src="../../assets/images/a.png" alt="" class="w20"> 报数</div>
                         <div class="center l25">
                             <input id="input_{{lesson._id}}" type="number" class="w100- h30 bceee bn br5 pl5">
                         </div>
                         <div class="right tr pr30">{{lesson.unit}}</div>
                     </div>
                     <div class="mt10 l25">
-                        <img src="/assets/images/a.png" alt="" class="w20"> 回向
+                        <img src="../../assets/images/a.png" alt="" class="w20"> 回向
                     </div>
                     <div class="plr30">
                         <textarea class="form-control mt10 oln bceee mb20" rows="4"></textarea>
@@ -92,7 +92,7 @@
     <!-- 页脚 -->
     <footer>
         <figure>
-            <img src="/assets/images/logo.png" alt="">
+            <img src="../../assets/images/logo.png" alt="">
         </figure>
         <div class="copyright">
             Copyright @2016 The Jin Yin Temple
@@ -101,20 +101,16 @@
     {{>footmenu}}
 </div>
 
-<script src="/js/jquery-3.1.1.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
+<script src="../../js/jquery-3.1.1.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+
 <script>
     $(document).ready(function () {
-        $(".flip").click(function () {
-            $(this).closest("div").siblings(".panel").slideToggle();
-            if ($(this).siblings(".glyphicon").hasClass("glyphicon-chevron-right")) {
-                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
-            } else {
-                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
-            }
-        })
-    });
 
+    });
+    function linkto(url) {
+        window.location = url;
+    }
     function announce(url, inputid) {
         var num = Math.round($("#input_" + inputid).val() * 1);
         if (num == 0) return;

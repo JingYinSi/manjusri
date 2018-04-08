@@ -19,11 +19,25 @@ body{
 .firwrap-banner{
     padding-top:20px;
 }
-
+.index_notice{
+	background: #ffffff;
+	position:relative;
+	margin: 0 -15px;
+	color: #ff7300;
+	padding: 5px 0 0 0;
+	font-size: 14px;
+}
+.index_notice label{
+	text-decoration: underline;
+	font-weight: 100;
+	
+}
+.index_notice marquee{
+	 margin:0 20px;
+}
 .twowrap{
     position: relative;
     margin:0 -15px;
-    padding-top: 15px;
     background-color: #fff;
     /*height: 200px;*/
     
@@ -58,11 +72,12 @@ body{
     overflow: hidden;
     text-overflow:ellipsis;
     white-space: nowrap;
+	color: #484848;
 }
 .twowrap-center p{
     position: relative;
     top:-10px;
-    color: #c9c9c9;
+    color: #767676;
     line-height: 30px;
     overflow: hidden;
     text-overflow:ellipsis;

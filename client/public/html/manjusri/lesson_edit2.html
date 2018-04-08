@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>全国共修</title>
+
+    <link href="../../assets/css/reset.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/jw.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/liMarquee.css">
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    {{>sharepage}}
+    <style>
+        .left {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100px;
+        }
+
+        .center {
+
+            width: auto; /*如果没有这一句，那么，center这个div的文字就不会自动换行*/
+            margin: 0 90px 15px 100px;
+
+        }
+        .center2 {
+
+            width: auto; /*如果没有这一句，那么，center这个div的文字就不会自动换行*/
+            margin: 0 0px 15px 80px;
+
+        }
+		.center input{
+			width:100%;
+		}
+
+        .right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+
+        }
+		.add_name,.del_name{
+			padding: 6px 0 0 0 ;
+		}
+		.add_name img,.del_name img{
+			with:27px;
+			height:27px;
+		}
+		.input_tips{
+			width: auto;
+            margin: 0 0 0px 100px;
+			position: relative;
+			top:-12px;
+			font-size: 14px;
+			color: #6d6d6d;
+		}
+		.input_tips span{
+			color: #ff0000;
+		}
+		.name_list{
+			position: relative;
+		}
+		.name_history{
+			position: absolute;
+			top:40px;
+			z-index: 2;
+			left: 100px;
+			width: 50%;
+		}
+		.name_history ul{
+			background: #ffffff;
+			box-shadow: 0 0 10px;
+			padding: 10px 0;
+			margin: 0 20px 0 0;
+		}
+		.name_history li{
+			line-height: 40px;
+			height: 40px;
+			padding: 0 15px;
+			
+		}
+    </style>
+
+</head>
+<body>
+<div class="wrapper container-fluid bcfcf6d4 w100v ">
+    <div class="mlr-15">
+        <img src="../../images/img_gongxiu_2.jpg" alt="" class="w100-">
+    </div>
+    <ul class="mlr-15 mb0">
+		<li class="p-r w100- bcfff bb1sccc ofa">
+			<div class="left ">
+				<img src="{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
+			</div>
+			<div class="center2 pl20">
+				<p class="pt20 fw7">{{lesson.name}}亿遍文殊心咒共修</p>
+				<p class="fs12 c666">
+					<span id="join_{{lesson._id}}">{{join}}</span>人共修
+					<span id="practice_{{lesson._id}}">{{practice}}</span>{{lesson.unit}}
+				</p>
+			</div>
+
+			<div class="pb20 plr15 panel mb0">
+				<div class="p-r w100- fs16">
+					<div class="left l35"><img src="../../assets/images/a.png" alt="" class="w20"> 报数</div>
+					<div class="center l35">
+						<input id="input_{{lesson._id}}" type="number" class="w100- h35 bceee bn br5 pl5">
+					</div>
+				   <!-- <div class="right tr pr30">{{lesson.unit}}</div>-->
+					<div class="right l35">遍</div>
+				</div>
+				<div class="l30">
+					<img src="../../assets/images/a.png" alt="" class="w20"> 回向
+				</div>
+				<div class="plr30">
+					<textarea class="form-control mt10 oln bceee mb20" rows="4"></textarea>
+					<button type="button" class="db bn br5 bcf5ecc3 w100- h30 sub "
+							onclick="announce('{{links.self}}', '{{lesson._id}}')">确认
+					</button>
+				</div>
+			</div>
+		</li>
+    </ul>
+	
+	<div class="cz_table mlr-15">
+		<div class="cz_title">今日持咒汇总</div>
+		<div class="name_tb">
+			<div class="cz_tit">
+				<table>
+					<tr class="tit_tr">
+						<td class="cz_td1">持咒人</td>
+						<td class="cz_td2">地区</td>
+						<td class="cz_td3">遍数</td>
+						<td class="cz_td4">学生名称</td>
+					</tr>
+				</table>
+			</div>
+			<div class="cz_list">
+				<table>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+							<div class="cz_name">陈吖</div>
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="cz_td1" valign="top">陈悦</td>
+						<td class="cz_td2" valign="top">五台山</td>
+						<td class="cz_td3" valign="top">1000</td>
+						<td class="cz_td4" valign="top">
+							<div class="cz_name">陈吖</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="cz_all">
+				<img src="../../images/icon_zc_all.png" />文殊心咒共修<span>333</span>人，<span>12324</span>遍随喜功德
+				
+			</div>
+		</div>
+	</div>
+    <div class="mlr-15 bcfff pb30 plr30">
+        <p class="tc fs20 fw7 l60 mb0 pt10">共修功德</p>
+        <p class="ti2 l30 ffht ">《金刚顶瑜伽文殊师利菩萨经》曰：持诵“文殊智慧咒”，罪障消灭，获无尽辩才，所求世间、出世间事悉得成就，离诸苦恼，五无间等一切罪障永尽无余，证悟一切诸三昧门，获大闻持，成阿耨多罗三藐三菩提等等。</p>
+        <p class="ti2 l30 ffht ">常常念诵文殊心咒，可以增长福德、智慧，还可以增强记忆力，辩才无碍。对修行人来说，更可消除愚痴，了知诸法实相。</p>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <figure>
+            <img src="../../assets/images/logo.png" alt="">
+        </figure>
+        <div class="copyright">
+            Copyright @2016 The Jin Yin Temple
+        </div>
+    </footer>
+    {{>footmenu}}
+</div>
+
+<script src="../../js/jquery-3.1.1.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/jquery.liMarquee.js"></script>
+<script>
+    $(document).ready(function () {
+        //$(".flip").click(function () {
+//            $(this).closest("div").siblings(".panel").slideToggle();
+//            if ($(this).siblings(".glyphicon").hasClass("glyphicon-chevron-right")) {
+//                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-right").addClass("glyphicon-chevron-down");
+//            } else {
+//                $(this).siblings(".glyphicon").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-right");
+//            }
+//        })
+		$('.cz_list').liMarquee({
+            direction: 'up',
+            scrollamount:30,
+            // circular:true
+        });
+		
+		
+		//点击添加名称输入框
+		var namen=0;
+		$(".add_name").bind("click",function(){
+			if(namen<2){
+				$(".user_name").append("<div class='name_list'><div class='center l35'><input id='input_{{lesson._id}}' class='input_name w100- h35 bceee bn br5 pl5'  /></div><div class='del_name right'><img src='../../images/btn_del_name.png'></div><div class='name_history dn'><ul><li>张三</li><li>李四</li><li>王五</li></ul></div></div>");
+				namen++;
+			}else{
+				alert("最多添加三个名称！");
+			}
+		});
+		$(".user_name").on("click",".del_name",function(){
+			$(this).parent('.name_list').remove();
+			namen--;
+		});
+		
+		$(".user_name").on("click",".input_name",function(){
+			var li_n=0;
+			$(this).parents(".name_list").find("li").each(function(){
+				li_n++;
+			});
+			if(li_n>1){
+			 	$(this).parents(".name_list").find(".name_history").show(); 
+			}else{
+				$(this).parents(".name_list").find(".name_history").hide();
+			}
+			
+		});
+		$(".user_name").on("click",".name_history li",function(){
+			var nameList=$(this).text();
+			$(this).parents(".name_list").find("input").attr("value",nameList);
+			$(".name_history").hide();
+		});
+		
+    });
+
+    function announce(url, inputid) {
+        var num = Math.round($("#input_" + inputid).val() * 1);
+        if (num == 0) return;
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify({num: num}),
+            success: function () {
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    contentType: "application/json",
+                    success: function (result) {
+                        $("#join_" + inputid).text(result.data.join);
+                        $("#practice_" + inputid).text(result.data.practice);
+                        $("#flip_" + inputid).click();
+                        $("#input_" + inputid).val('');
+                    }
+                });
+            }
+        })
+    }
+</script>
+</body>
+</html>

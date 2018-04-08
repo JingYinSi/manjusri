@@ -39,6 +39,8 @@ module.exports = {
         app.get(linkages.getUrlTemplete('lesson'), auth, manjusriPages.lesson);
         else app.get(linkages.getUrlTemplete('lesson'), manjusriPages.lesson);
 
+        app.get(linkages.getUrlTemplete('practics'), manjusriPages.practics);
+
         app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);
 
         app.get('/jingyin/manjusri/pay/confirm', auth, payment.pay);

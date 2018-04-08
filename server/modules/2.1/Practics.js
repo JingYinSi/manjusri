@@ -1,12 +1,12 @@
-const lessonModel = require('../../wechat/models/lesson'),
-    practiceModel = require('../../wechat/models/practice'),
-    ObjectID = require('mongodb').ObjectID,
+const ObjectID = require('mongodb').ObjectID,
     Promise = require('bluebird'),
-    logger = require('@finelets/hyper-rest/app/Logger'),
     createErrorReason = require('@finelets/hyper-rest/app/CreateErrorReason');
+    logger = require('@finelets/hyper-rest/app/Logger');
+    _ = require('underscore'),
+    dbModel = require('../../wechat/models');
 
 module.exports = {
-    listLessonPracticesDetails: function (lordid) {
+    listDetails: function (lordid) {
         var lord;
         try {
             lord = ObjectID(lordid);
@@ -42,14 +42,14 @@ module.exports = {
                 }
             }
         ];
-        return lessonModel.find({state: 'open'})
+        return dbModel.Lessons.find({state: 'open'})
             .select('name img unit')
             .exec()
             .then(function (list) {
                 if(list.length < 1) return [];
                 list.forEach(function (item) {
                     var data = {
-                        lesson: item._doc,
+                        lesson: item.toJSON(),
                         join: 0,
                         practice: 0,
                         me: {
@@ -58,12 +58,12 @@ module.exports = {
                     };
                     lessons.push(data);
                 });
-                return practiceModel.aggregate(lines)
+                return dbModel.Practices.aggregate(lines)
                     .then(function (data) {
                         data = data[0];
                         data.total.forEach(function (item) {
                             lessons.forEach(function (les) {
-                                if (item._id.equals(les.lesson._id)) {
+                                if (item._id.toString() === les.lesson.id) {
                                     les.join = item.count;
                                     les.practice = item.sum;
                                 }
@@ -71,7 +71,7 @@ module.exports = {
                         });
                         data.me.forEach(function (item) {
                             lessons.forEach(function (les) {
-                                if (item._id.lesson.equals(les.lesson._id)) {
+                                if (item._id.lesson.toString() === les.lesson.id) {
                                     les.me.practice = item.sum;
                                     if (item._id.begDate) les.me.begDate = item._id.begDate;
                                 }

@@ -22,6 +22,7 @@ var urlMap = {
     "pray": "/jingyin/manjusri/pray",
     "examPray": "/jingyin/manjusri/pray/exam",
     "lesson": "/jingyin/manjusri/lesson",
+    "practics": "/jingyin/manjusri/practics/:lessonId",
     "me": "/jingyin/manjusri/lordvirtues",
 
     lord: "/jingyin/rests/lords/:id",

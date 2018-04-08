@@ -5,14 +5,10 @@ var linkages = require("../rests"),
     usersModule = require('../modules/users'),
     praysModule = require('../modules/prays'),
     lessonsModule = require('../modules/lessons'),
-    mongoose = require('mongoose'),
     redirects = require('./redirects'),
     wx = require('../weixin'),
-    createSessionUser = require('../modules/2.1/SessionUser');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+    createSessionUser = require('../modules/2.1/SessionUser'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 //TODO:当用户更新微信头像等信息时，应能使数据同微信同步
 //TODO:将manjusriPages.js并入manjusri.js中
@@ -239,8 +235,6 @@ module.exports = {
         };
         return createSessionUser(openid)
             .then(function (sessionUser) {
-                lordid = sessionUser.user.id;
-                logger.debug("find current user, id is " + lordid);
                 return sessionUser.listLessonDetails();
             })
             .then(function (lessons) {
@@ -250,7 +244,7 @@ module.exports = {
                     lessons.forEach(function (item) {
                         var lesson = Object.assign({
                             links: {
-                                self: linkages.getLink("lessonPractices", {lordid: lordid, lessonid: item.lesson._id}),
+                                toReport: linkages.getLink("practics", {lessonId: item.lesson.id})
                             }
                         }, item);
                         list.push(lesson);
@@ -273,6 +267,10 @@ module.exports = {
             .catch(function (reason) {
                 return reason.sendStatusTo(res);
             })
+    },
+
+    practics: function (req, res) {
+        return res.render('manjusri/lesson_edit1', {});
     },
 
     lordVirtues: function (req, res) {

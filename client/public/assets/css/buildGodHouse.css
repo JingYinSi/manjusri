@@ -109,6 +109,10 @@ figure img{
 .threewrap-right{
     padding:0;
 }
+.threewrap_gx{
+    margin:0 -15px;
+	padding:10px 0;
+}
 .fourwrap{
     margin:10px -15px;
     padding:15px;
@@ -151,6 +155,10 @@ figure img{
     color: #a3a3a3;
 }
 
+.fourwrap_gx{
+    margin:0 -15px;
+	padding:25px 15px;
+}
 footer{
     text-align: center;
     margin:15px 0 30px 0;

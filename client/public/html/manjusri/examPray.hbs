@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>求学祈福卡</title>
+    <link href="../../assets/css/reset.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/pray.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/jw.css">
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    {{>sharepage}}
+</head>
+<body>
+<div class="wrapper container-fluid">
+    <div class="row firwrap mt0">
+        <div class="firwrap-banner pt0">
+            <figure>
+                <img src="../../uploads/banner4.png" alt="">
+            </figure>
+        </div>
+    </div>
+    <div class="row twowrap">
+        <h4 style='font-family:"微软雅黑";
+        font-size: 20px;
+        letter-spacing: 8px;
+        font-weight: 600;
+        text-align: center;'>求学祈愿卡</h4>
+        <!--<span>CONTRIBUTION TO TAMPLE BUILDING</span>-->
+        <p>求学祈愿卡是静音寺文殊禅林为广大考生提供的，希望考生借此向五台山文殊菩萨许愿，增长智慧，取得理想成绩。我们可以发一个善愿，“人有善愿，天必佑之！”定会得到诸佛菩萨加持，护法诸天的护佑！</p>
+        <figure>
+            <img src="../../assets/images/d.png" alt="">
+        </figure>
+    </div>
+    <div class="row threewrap">
+        <h3>我已<span>{{data.me}}</span>次许愿</h3>
+        <!--<h3>
+            填写祈愿卡
+        </h3>-->
+        <form action="#">
+            <div class=" mlr15 b3se39022 p-r" id="fang">
+                <p class="ce39022 fffs fs30 fw7 mt10 ml10" style="text-align: center">填写祈愿卡</p>
+                <textarea id="mypray" class="form-control b1sfff oln bsn fs16" rows="10">祈愿xx省xx市xx学校xx班xxx（姓名），2017年高考（中考）顺利考上理想的学习（xx大学），学业有成、将来广行慈善、利益社会、发菩提心......
+                </textarea>
+                <figure class="p-a b0">
+                    <img src="../../assets/images/yuan-bottom.png" alt="">
+                </figure>
+            </div>
+            <div class="row threewrap-form-submit">
+                <input id="show-confirm" type="button" class="btn btn-default col-xs-6 col-xs-offset-3" value="确认">
+            </div>
+        </form>
+    </div>
+
+    <div class="row fourwrap">
+        <h3>已有<span>{{data.total.NOP}}</span>人<span>{{data.total.times}}</span>次许愿</h3>
+        <p>此许愿卡为免费结缘，填写完成后，经审核，由寺庙僧众诵经祈福，并将许愿卡挂在五台山文殊菩萨智慧剑之化现的娑罗树上，愿每个学子智慧如海，每个人的愿望都能实现！</p>
+
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <figure>
+            <img src="../../assets/images/logo.png" alt="">
+        </figure>
+        <div class="copyright">
+            Copyright @2016 The Jin Yin Temple
+        </div>
+    </footer>
+    {{>footmenu}}
+</div>
+
+<script src="../../js/jquery-3.1.1.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function gaodu() {
+        $("#fang").css("height", $("#fang").css("width"));
+    }
+    $(document).ready(function () {
+        gaodu();
+    });
+
+    var going = false;
+    $("#show-confirm").click(function () {
+        if (going) return;
+        going = true;
+        var pray = $('#mypray').val();
+        if (pray == '') {
+            return;
+        }
+        var dataToPost = {
+            pray: pray
+        };
+        var openid = $('#lordopenid').text();
+        $.ajax({
+            type: 'POST',
+            url: '{{links.addPray}}',
+            data: dataToPost,
+            success: function (data, textStatus, request) {
+                going = false;
+                window.location = '{{self}}';
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>全国共修</title>
+    <link href="../../assets/css/reset.css" rel="stylesheet" >
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/buildGodHouse.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/jw.css">
+    <!--[if lt IE 9]>
+        <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+</head>
+<body>
+    <div class="wrapper container-fluid">
+        <div class="row firwrap mt0">
+            <figure>
+                <img src="../../images/img_gongxiu.jpg" alt="">
+            </figure>
+        </div>
+        <!--<div class="row twowrap">
+            <h3>建寺功德</h3>
+            <span>CONTRIBUTION TO TAMPLE BUILDING</span>
+            <p>佛说：“供养佛殿和文字等同于供养我的真身，功德永远不会耗尽”。</p>
+            <p>若人发心起塔、建寺、造像，如是诸人等，如见无数佛，自成无上道，广度无数众。三宝门中福好求，一文种下万文收。一沙一石都承载着佛法的事业，没一份发心都融入佛陀的功德海洋。</p>
+            <figure>
+                <img src="/assets/images/d.png" alt="">
+            </figure>
+        </div>-->
+        <ul class="row threewrap threewrap_gx">
+            <li onclick="linkto('{{daily}}');">
+                <div class="col-xs-3 threewrap-left">
+                    <figure>
+                        <img src="../../uploads/userd.png" alt="">
+                    </figure>
+                </div>
+                <div class="col-xs-8 threewrap-center">
+                    <h4>日行一善</h4>
+                    <p>日行一善，善福增长</p>
+                </div>
+                <div class="col-xs-1 threewrap-right">
+                    <span>></span>
+                </div>
+            </li>
+            <li onclick="linkto('{{suixi}}');">
+                <div class="col-xs-3 threewrap-left">
+                    <figure>
+                        <img src="../../uploads/userc.png" alt="">
+                    </figure>
+                </div>
+                <div class="col-xs-8 threewrap-center">
+                    <h4>随喜建寺</h4>
+                    <p>随喜建寺</p>
+                </div>
+                <div class="col-xs-1 threewrap-right">
+                    <span>></span>
+                </div>
+            </li>
+            <li onclick="linkto('{{suixi}}');">
+                <div class="col-xs-3 threewrap-left">
+                    <figure>
+                        <img src="../../uploads/userc.png" alt="">
+                    </figure>
+                </div>
+                <div class="col-xs-8 threewrap-center">
+                    <h4>随喜建寺</h4>
+                    <p>随喜建寺</p>
+                </div>
+                <div class="col-xs-1 threewrap-right">
+                    <span>></span>
+                </div>
+            </li>
+            <li onclick="linkto('{{suixi}}');">
+                <div class="col-xs-3 threewrap-left">
+                    <figure>
+                        <img src="../../uploads/userc.png" alt="">
+                    </figure>
+                </div>
+                <div class="col-xs-8 threewrap-center">
+                    <h4>随喜建寺</h4>
+                    <p>随喜建寺</p>
+                </div>
+                <div class="col-xs-1 threewrap-right">
+                    <span>></span>
+                </div>
+            </li>
+        </ul>
+        <div class="row fourwrap fourwrap_gx">
+            
+        </div>
+
+        <!-- 页脚 -->
+        <footer>
+            <figure>
+                <img src="../../assets/images/logo.png" alt="">
+            </figure>
+            <div class="copyright">
+                Copyright @2016 The Jin Yin Temple
+            </div>
+        </footer>
+        {{>footmenu}}
+    </div>
+
+    <script src="../../js/jquery-3.1.1.min.js"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function linkto(link) {
+            window.location = link;
+        }
+    </script>
+</body>
+</html>
