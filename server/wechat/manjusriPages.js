@@ -7,8 +7,16 @@ var linkages = require("../rests"),
     lessonsModule = require('../modules/lessons'),
     redirects = require('./redirects'),
     wx = require('../weixin'),
+    _ = require('underscore'),
     createSessionUser = require('../modules/2.1/SessionUser'),
     logger = require('@finelets/hyper-rest/app/Logger');
+
+const LessonTypes = ['5ac0c25b0f72e70cd9d065b0', '58fc8f60ac2ce751088d7842',
+    '58fc996291d7d1531481ee5a', '5ac8cd8186d97ed48fba402d'];
+function __getViewName(lessonId) {
+    var index = _.indexOf(LessonTypes, lessonId) + 1;
+    return 'manjusri/lesson_edit' + index;
+}
 
 //TODO:当用户更新微信头像等信息时，应能使数据同微信同步
 //TODO:将manjusriPages.js并入manjusri.js中
@@ -270,7 +278,9 @@ module.exports = {
     },
 
     practics: function (req, res) {
-        return res.render('manjusri/lesson_edit1', {});
+        var lessonid = req.params.lessonId;
+        var view = __getViewName(lessonid);
+        return res.render(view, {});
     },
 
     lordVirtues: function (req, res) {
