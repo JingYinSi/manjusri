@@ -34,7 +34,7 @@ module.exports = {
                                         sum: {$sum: "$num"}
                                     }
                                 }
-                            ],
+                            ]
                         }
                     }
                 ];
@@ -79,7 +79,7 @@ module.exports = {
             })
     },
     lessonDetails: function (lordId, lessonId) {
-        //var lid = lessonId; // TODO:检查为什么不加这行测试通不过?
+        var lid = lessonId; // TODO:检查为什么不加这行测试通不过?
         var result = {
             lesson: null,
             join: 0,
@@ -92,11 +92,11 @@ module.exports = {
         return createObjectId(lordId)
             .then(function (id) {
                 myId = id;
-                return Lessons.findById(lessonId, ["type", "name", "img", "unit"]);
+                return Lessons.findById(lid, ["type", "name", "img", "unit"]);
             })
             .then(function (lesson) {
                 if (!lesson) {
-                    var msg = 'the lesson with id ' + lessonId + ' not found!';
+                    var msg = 'the lesson with id ' + lid + ' not found!';
                     logger.error(msg);
                     return Promise.reject(createErrorReason(404, msg));
                 }
