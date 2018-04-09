@@ -3,6 +3,7 @@ var mongoose = require('mongoose'),
     transform = require('@finelets/hyper-rest').db.mongoDb.transform;
 
 var LessonSchema = new Schema({
+    type: String,
     name: String,
     desc: String,
     img: String,

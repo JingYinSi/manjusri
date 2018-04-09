@@ -1,52 +1,49 @@
 const ObjectID = require('mongodb').ObjectID,
     Promise = require('bluebird'),
-    createErrorReason = require('@finelets/hyper-rest/app/CreateErrorReason');
-    logger = require('@finelets/hyper-rest/app/Logger');
+    createErrorReason = require('@finelets/hyper-rest/app').createErrorReason,
+    logger = require('@finelets/hyper-rest/app/Logger'),
     _ = require('underscore'),
-    dbModel = require('../../wechat/models');
+    dbModel = require('../../wechat/models'),
+    createObjectId = require('@finelets/hyper-rest/db/mongoDb/CreateObjectId'),
+    Lessons = require('./Lessons');
 
 module.exports = {
     listDetails: function (lordid) {
-        var lord;
-        try {
-            lord = ObjectID(lordid);
-        }
-        catch (err) {
-            logger.error(err.stack);
-            return Promise.reject(createErrorReason(500, err.stack));
-        }
-
         var lessons = [];
-        var lines = [
-            {"$match": {"state": 'on'}},
-            {
-                $facet: {
-                    total: [
-                        {
-                            $group: {
-                                _id: "$lesson",
-                                count: {$sum: 1}, sum: {$sum: "$num"}
-                            }
+        var lines;
+        return createObjectId(lordid)
+            .then(function (id) {
+                lines = [
+                    {"$match": {"state": 'on'}},
+                    {
+                        $facet: {
+                            total: [
+                                {
+                                    $group: {
+                                        _id: "$lesson",
+                                        count: {$sum: 1}, sum: {$sum: "$num"}
+                                    }
+                                }
+                            ],
+                            me: [
+                                {"$match": {"lord": id}},
+                                {
+                                    $group: {
+                                        _id: {lesson: "$lesson", begDate: "$begDate"},
+                                        //_id: "$lesson",
+                                        sum: {$sum: "$num"}
+                                    }
+                                }
+                            ],
                         }
-                    ],
-                    me: [
-                        {"$match": {"lord": lord}},
-                        {
-                            $group: {
-                                _id: {lesson: "$lesson", begDate: "$begDate"},
-                                //_id: "$lesson",
-                                sum: {$sum: "$num"}
-                            }
-                        }
-                    ],
-                }
-            }
-        ];
-        return dbModel.Lessons.find({state: 'open'})
-            .select('name img unit')
-            .exec()
+                    }
+                ];
+                return dbModel.Lessons.find({state: 'open'})
+                    .select('name img unit')
+                    .exec();
+            })
             .then(function (list) {
-                if(list.length < 1) return [];
+                if (list.length < 1) return [];
                 list.forEach(function (item) {
                     var data = {
                         lesson: item.toJSON(),
@@ -80,5 +77,67 @@ module.exports = {
                         return lessons;
                     })
             })
+    },
+    lessonDetails: function (lordId, lessonId) {
+        //var lid = lessonId; // TODO:检查为什么不加这行测试通不过?
+        var result = {
+            lesson: null,
+            join: 0,
+            practice: 0,
+            me: {
+                practice: 0
+            }
+        };
+        var myId;
+        return createObjectId(lordId)
+            .then(function (id) {
+                myId = id;
+                return Lessons.findById(lessonId, ["type", "name", "img", "unit"]);
+            })
+            .then(function (lesson) {
+                if (!lesson) {
+                    var msg = 'the lesson with id ' + lessonId + ' not found!';
+                    logger.error(msg);
+                    return Promise.reject(createErrorReason(404, msg));
+                }
+                result.lesson = lesson;
+                var lessonId = ObjectID(lesson.id);
+                lines = [
+                    {"$match": {"lesson": lessonId, "state": 'on'}},
+                    {
+                        $facet: {
+                            total: [
+                                {
+                                    $group: {
+                                        _id: "$lesson",
+                                        count: {$sum: 1}, sum: {$sum: "$num"}
+                                    }
+                                }
+                            ],
+                            me: [
+                                {"$match": {"lord": myId}},
+                                {
+                                    $group: {
+                                        _id: {lesson: "$lesson"},
+                                        //_id: "$lesson",
+                                        sum: {$sum: "$num"}
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ];
+                return dbModel.Practices.aggregate(lines)
+                    .then(function (data) {
+                        data = data[0];
+                        var total = data.total;
+                        if(total.length > 0){
+                            result.join = data.total[0].count;
+                            result.practice = data.total[0].sum;
+                        }
+                        if(data.me.length > 0) result.me.practice = data.me[0].sum;
+                        return result;
+                    });
+            });
     }
 }
