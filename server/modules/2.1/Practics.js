@@ -79,7 +79,6 @@ module.exports = {
             })
     },
     lessonDetails: function (lordId, lessonId) {
-        var lid = lessonId; // TODO:检查为什么不加这行测试通不过?
         var result = {
             lesson: null,
             join: 0,
@@ -88,56 +87,53 @@ module.exports = {
                 practice: 0
             }
         };
-        var myId;
         return createObjectId(lordId)
-            .then(function (id) {
-                myId = id;
-                return Lessons.findById(lid, ["type", "name", "img", "unit"]);
-            })
-            .then(function (lesson) {
-                if (!lesson) {
-                    var msg = 'the lesson with id ' + lid + ' not found!';
-                    logger.error(msg);
-                    return Promise.reject(createErrorReason(404, msg));
-                }
-                result.lesson = lesson;
-                var lessonId = ObjectID(lesson.id);
-                lines = [
-                    {"$match": {"lesson": lessonId, "state": 'on'}},
-                    {
-                        $facet: {
-                            total: [
-                                {
-                                    $group: {
-                                        _id: "$lesson",
-                                        count: {$sum: 1}, sum: {$sum: "$num"}
-                                    }
-                                }
-                            ],
-                            me: [
-                                {"$match": {"lord": myId}},
-                                {
-                                    $group: {
-                                        _id: {lesson: "$lesson"},
-                                        //_id: "$lesson",
-                                        sum: {$sum: "$num"}
-                                    }
-                                }
-                            ]
+            .then(function (myId) {
+                return Lessons.findById(lessonId, ["type", "name", "img", "unit"])
+                    .then(function (lesson) {
+                        if (!lesson) {
+                            var msg = 'the lesson with id ' + lessonId + ' not found!';
+                            logger.error(msg);
+                            return Promise.reject(createErrorReason(404, msg));
                         }
-                    }
-                ];
-                return dbModel.Practices.aggregate(lines)
-                    .then(function (data) {
-                        data = data[0];
-                        var total = data.total;
-                        if(total.length > 0){
-                            result.join = data.total[0].count;
-                            result.practice = data.total[0].sum;
-                        }
-                        if(data.me.length > 0) result.me.practice = data.me[0].sum;
-                        return result;
+                        result.lesson = lesson;
+                        lines = [
+                            {"$match": {"lesson": ObjectID(lesson.id), "state": 'on'}},
+                            {
+                                $facet: {
+                                    total: [
+                                        {
+                                            $group: {
+                                                _id: "$lesson",
+                                                count: {$sum: 1}, sum: {$sum: "$num"}
+                                            }
+                                        }
+                                    ],
+                                    me: [
+                                        {"$match": {"lord": myId}},
+                                        {
+                                            $group: {
+                                                _id: {lesson: "$lesson"},
+                                                //_id: "$lesson",
+                                                sum: {$sum: "$num"}
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ];
+                        return dbModel.Practices.aggregate(lines)
+                            .then(function (data) {
+                                data = data[0];
+                                var total = data.total;
+                                if(total.length > 0){
+                                    result.join = data.total[0].count;
+                                    result.practice = data.total[0].sum;
+                                }
+                                if(data.me.length > 0) result.me.practice = data.me[0].sum;
+                                return result;
+                            });
                     });
-            });
+            })
     }
 }

@@ -101,10 +101,11 @@ describe('Jingyin Manjusri', function () {
     });
 
     describe('数据库', function () {
-        var dbModels, createObjectIdStub;
+        const ObjectID = require('mongodb').ObjectID,
+        dbModels = require('../server/wechat/models');
+        var createObjectIdStub;
         before(function () {
             mongoose.Promise = global.Promise;
-            dbModels = require('../server/wechat/models');
         });
 
         beforeEach(function (done) {
@@ -288,11 +289,8 @@ describe('Jingyin Manjusri', function () {
                 });
 
                 it('指定功课不存在', function () {
-                    createObjectIdStub.withArgs(userid).returns(Promise.resolve(userid));
-                    var findByIdStub = sinon.stub();
-                    findByIdStub.withArgs(lessonId).returns(Promise.resolve(null));
-                    stubs['./Lesson'] = {findById: findByIdStub}
-                    //LessonsMock.findById.withArgs(lessonId).returns(Promise.resolve(null));
+                    createObjectIdStub.withArgs(userid).returns(Promise.resolve(ObjectID(userid)));
+                    LessonsMock.findById.withArgs(lessonId).returns(Promise.resolve(null));
                     createReasonStub.withArgs(404, 'the lesson with id ' + lessonId + ' not found!').returns(reason);
                     func = proxyquire('../server/modules/2.1/Practics', stubs).lessonDetails;
                     return func(userid, lessonId)
