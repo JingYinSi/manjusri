@@ -102,7 +102,7 @@ describe('Jingyin Manjusri', function () {
 
     describe('数据库', function () {
         const ObjectID = require('mongodb').ObjectID,
-        dbModels = require('../server/wechat/models');
+            dbModels = require('../server/wechat/models');
         var createObjectIdStub;
         before(function () {
             mongoose.Promise = global.Promise;
@@ -174,7 +174,7 @@ describe('Jingyin Manjusri', function () {
                 it('找到记录', function () {
                     var theLesson;
                     func = require('../server/modules/2.1/Lessons', stubs).findById;
-                    return dbSave(dbModels.Lessons, {name:'foo'})
+                    return dbSave(dbModels.Lessons, {name: 'foo'})
                         .then(function (data) {
                             theLesson = data.toJSON();
                             return func(theLesson.id);
@@ -183,20 +183,77 @@ describe('Jingyin Manjusri', function () {
                             expect(data).eqls(theLesson);
                         })
                 })
+            });
+
+            describe('listOpeningLessons', function () {
+                it('无任何功课', function () {
+                    func = require('../server/modules/2.1/Lessons').listOpeningLessons;
+                    return func()
+                        .then(function (list) {
+                            expect(list).eqls([]);
+                        })
+                });
+
+                it('无opening功课', function () {
+                    func = require('../server/modules/2.1/Lessons').listOpeningLessons;
+                    return dbSave(dbModels.Lessons, {
+                        type: 'type',
+                        name: 'foo',
+                        img: 'img',
+                        state: 'not open'
+                    })
+                        .then(function () {
+                            return func();
+                        })
+                        .then(function (list) {
+                            expect(list).eqls([]);
+                        })
+                });
+
+                it('列出所有opening功课', function () {
+                    func = require('../server/modules/2.1/Lessons').listOpeningLessons;
+                    var fooId;
+                    return dbSave(dbModels.Lessons, {
+                        type: 'type',
+                        name: 'foo',
+                        img: 'img',
+                        state: 'open'
+                    })
+                        .then(function (data) {
+                            fooId = data.id;
+                            return func(['type', 'name', 'img', 'unit']);
+                        })
+                        .then(function (list) {
+                            expect(list).eqls([{
+                                id: fooId,
+                                type: 'type',
+                                name: 'foo',
+                                img: 'img',
+                                unit: '遍'
+                            }]);
+                        })
+                })
             })
-        })
+        });
 
         describe('practics', function () {
-            var practics;
+            var Practics;
+            var LessonsStubs;
+
             beforeEach(function () {
-                practics = require('../server/modules/2.1/Practics');
+                Practics = require('../server/modules/2.1/Practics');
+                LessonsStubs = {
+                    listOpeningLessons: sinon.stub(),
+                    findById: sinon.stub()
+                };
+                stubs['./Lessons'] = LessonsStubs;
             });
 
             describe('列出所有功课实修详情', function () {
                 var userid, listDetails;
                 beforeEach(function () {
                     userid = "5872ce00376dfa6b8ad85259";
-                    listDetails = practics.listDetails;
+                    listDetails = Practics.listDetails;
                 });
 
                 it('User Id 非法', function () {
@@ -213,43 +270,24 @@ describe('Jingyin Manjusri', function () {
                 });
 
                 it('无任何功课', function () {
-                    return listDetails(userid)
-                        .then(function (list) {
-                            expect(list).eqls([]);
-                        })
-                });
-
-                it('需选入状态为open的功课', function () {
-                    return dbSave(dbModels.Lessons, {state: 'closed'})
-                        .then(function () {
-                            return listDetails(userid)
-                        })
+                    createObjectIdStub.withArgs(userid).returns(Promise.resolve(ObjectID(userid)));
+                    LessonsStubs.listOpeningLessons.returns(Promise.resolve([]));
+                    func = proxyquire('../server/modules/2.1/Practics', stubs).listDetails;
+                    return func(userid)
                         .then(function (list) {
                             expect(list).eqls([]);
                         })
                 });
 
                 it('无任何实修记录', function () {
-                    var fooLesson = {
-                        name: 'foo',
-                        img: 'fooimg',
-                        unit: 'u',
-                        state: 'open'
-                    }
-                    var fooLessonId;
-                    return dbSave(dbModels.Lessons, fooLesson)
-                        .then(function (lesson) {
-                            fooLessonId = lesson.toJSON().id;
-                            return listDetails(userid)
-                        })
+                    var fooLesson = {foolesson: 'any data of the lesson'};
+                    createObjectIdStub.withArgs(userid).returns(Promise.resolve(ObjectID(userid)));
+                    LessonsStubs.listOpeningLessons.withArgs(['type', 'name', 'img', 'unit']).returns(Promise.resolve([fooLesson]));
+                    func = proxyquire('../server/modules/2.1/Practics', stubs).listDetails;
+                    return func(userid)
                         .then(function (list) {
                             expect(list).eqls([{
-                                lesson: {
-                                    unit: "u",
-                                    id: fooLessonId,
-                                    name: 'foo',
-                                    img: 'fooimg'
-                                },
+                                lesson: fooLesson,
                                 "join": 0,
                                 "practice": 0,
                                 "me": {
@@ -328,7 +366,7 @@ describe('Jingyin Manjusri', function () {
                         myId = ObjectId(userid);
                         func = require('../server/modules/2.1/Practics').lessonDetails;
                         theLesson = {
-                            type:'incant',
+                            type: 'incant',
                             name: 'foo',
                             img: 'img',
                             unit: '遍'

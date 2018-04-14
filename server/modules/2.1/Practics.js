@@ -30,7 +30,6 @@ module.exports = {
                                 {
                                     $group: {
                                         _id: {lesson: "$lesson", begDate: "$begDate"},
-                                        //_id: "$lesson",
                                         sum: {$sum: "$num"}
                                     }
                                 }
@@ -38,15 +37,13 @@ module.exports = {
                         }
                     }
                 ];
-                return dbModel.Lessons.find({state: 'open'})
-                    .select('name img unit')
-                    .exec();
+                return Lessons.listOpeningLessons(['type', 'name', 'img', 'unit']);
             })
             .then(function (list) {
                 if (list.length < 1) return [];
                 list.forEach(function (item) {
                     var data = {
-                        lesson: item.toJSON(),
+                        lesson: item,
                         join: 0,
                         practice: 0,
                         me: {
