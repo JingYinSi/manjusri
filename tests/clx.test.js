@@ -53,6 +53,7 @@ describe('Jingyin Manjusri', function () {
                 findUserByOpenIdStub.withArgs(openid).returns(Promise.resolve(userMock));
                 return proxyquire('../server/modules/2.1/SessionUser', stubs)(openid)
                     .then(function (sessionUser) {
+                        expect(sessionUser.openid).eqls(openid);
                         expect(sessionUser.user).eqls(userMock);
                     })
             });

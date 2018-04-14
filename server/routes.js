@@ -4,7 +4,7 @@
 const manjusri = require('./wechat/manjusri'),
     manjusriPages = require('./wechat/manjusriPages'),
     linkages = require('./rests'),
-    auth = require('./auth').manjusri,
+    auth = require('./auth'),
     passport = require('passport'),
     payment = require('./wechat/payment'),
     part = require('./biz/part'),
@@ -25,32 +25,21 @@ module.exports = {
         app.get('/jingyin/manjusri/login', manjusri.login);
         app.get(linkages.getUrlTemplete('home'), manjusriPages.home);
         app.get(linkages.getUrlTemplete('dailyVirtue'), auth, manjusriPages.dailyVirtue);
-        //app.get(linkages.getUrlTemplete('dailyVirtue'), manjusriPages.dailyVirtue);
         app.get(linkages.getUrlTemplete('suixi'), auth, manjusriPages.suixi);
-        //app.get(linkages.getUrlTemplete('suixi'), manjusriPages.suixi);
         app.get(linkages.getUrlTemplete('jiansi'), manjusriPages.jiansi);
 
         app.get(linkages.getUrlTemplete('pray'), auth, manjusriPages.examPray);
         app.get(linkages.getUrlTemplete('examPray'), auth, manjusriPages.examPray);
-
-        //app.get(linkages.getUrlTemplete('examPray'), manjusriPages.examPray);
-        //app.get(linkages.getUrlTemplete('pray'), manjusriPages.pray);
-        if(!process.env.DEVELOPMENT)
         app.get(linkages.getUrlTemplete('lesson'), auth, manjusriPages.lesson);
-        else app.get(linkages.getUrlTemplete('lesson'), manjusriPages.lesson);
-
-        app.get(linkages.getUrlTemplete('practics'), manjusriPages.practics);
-
+        app.get(linkages.getUrlTemplete('practics'), auth, manjusriPages.practics);
         app.get('/jingyin/manjusri/trans/:partId', auth, manjusri.trans);
 
         app.get('/jingyin/manjusri/pay/confirm', auth, payment.pay);
         app.get(linkages.getUrlTemplete('weixinPaymentNotify'), payment.result);
         app.post(linkages.getUrlTemplete('weixinPaymentNotify'), virtues.paidNotify);
         app.get('/jingyin/manjusri/lordvirtues', auth, manjusriPages.lordVirtues);
-        //app.get('/jingyin/manjusri/lordvirtues', manjusriPages.lordVirtues);
 
         app.get(linkages.getUrlTemplete('profile'), auth, manjusriPages.lordProfile);
-        //app.get(linkages.getUrlTemplete('profile'), manjusriPages.lordProfile);
         app.put('/jingyin/manjusri/lords/:openid/profile', auth, manjusri.updateLordProfile);
 
         /*----------------------------restful--------------------------------------------------*/

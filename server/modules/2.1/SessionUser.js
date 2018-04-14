@@ -10,6 +10,7 @@ module.exports = function (openid) {
                 return Promise.reject(reason);
             }
             return {
+                openid: openid,
                 user: user,
                 // 所有功课的共修情况（包括会话用户本人的实修情况）
                 listLessonDetails: function () {
