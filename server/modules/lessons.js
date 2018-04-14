@@ -146,7 +146,7 @@ module.exports = {
             })
     },
 
-    announce: function (lordid, lessonid, num) {
+    announce: function (lordid, lessonid, num, give) {
         var lord, lesson;
         try {
             lord = ObjectID(lordid);
@@ -167,8 +167,10 @@ module.exports = {
             })
             .then(function (doc) {
                 var model;
+                var now = new Date();
                 if (doc) {
                     model = doc;
+                    model.give = give;
                     if (model.state === 'on') {
                         // 再次报数
                         var updatedNum = utils.round(model.num + num, 1);
@@ -180,13 +182,19 @@ module.exports = {
                                 });
                         } else {
                             model.num = updatedNum;
+                            if(num > 0){
+                                model.lastNum = utils.round(model.lastNum + num, 1);
+                                model.endDate = now;
+                            }
                         }
                     }
                     else {
                         // 过去曾经退出过，本次再次参加， state==='deleted'
                         if (num > 0) {
                             model.num = utils.round(num, 1);
-                            model.begDate = new Date();
+                            model.lastNum = model.num;
+                            model.begDate = now;
+                            model.endDate = now;
                             model.state = 'on';
                         } else {
                             // 再次参加无效
@@ -200,6 +208,10 @@ module.exports = {
                         lord: lord,
                         lesson: lesson,
                         num: num,
+                        begDate: now,
+                        endDate: now,
+                        lastNum: num
+                        //give: String,
                     });
                 }
                 return model.save();

@@ -84,21 +84,6 @@ describe('Jingyin Manjusri', function () {
                     })
             })
         });
-
-        describe('开发环境下', function () {
-            beforeEach(function () {
-                session = require('../server/modules/2.1/sessionForDevMode')();
-            });
-
-            it('在开发环境下将缺省返回一个测试用openid', function () {
-                expect(session.getOpenId().length > 0).eqls(true);
-            });
-
-            it('在开发环境下可以通过环境变量OPENID设置测试用openid', function () {
-                process.env.OPENID = 'o0ghywcfW_2Dp4oN-7NADengZAVk';
-                expect(session.getOpenId()).eqls(process.env.OPENID);
-            })
-        });
     });
 
     describe('数据库', function () {
@@ -406,6 +391,99 @@ describe('Jingyin Manjusri', function () {
                             })
                     })
                 });
+            });
+
+            describe('列出当日指定功课所有实修', function (done) {
+                var lessons, users, practics;
+                beforeEach(function (done) {
+                    insertDocsInParallel(dbModels.Lessons, [
+                            {name: 'foo'},
+                            {name: 'fee'},
+                            {name: 'fff'}
+                        ],
+                        function (err, data) {
+                            lessons = data;
+                            insertDocsInParallel(dbModels.Users, [
+                                {
+                                    name: '张三',
+                                    city: 'nj'
+                                },
+                                {
+                                    name: '李四',
+                                    city: 'bj'
+                                }
+                            ], function (err, data) {
+                                users = data;
+                                insertDocsInParallel(dbModels.Practices, [
+                                    {
+                                        lord: users[0].id,
+                                        lesson: lessons[0].id,
+                                        lastNum: 10
+                                    },
+                                    {
+                                        lord: users[0].id,
+                                        lesson: lessons[1].id,
+                                        lastNum: 15,
+                                        give: 'give 15'
+                                    },
+                                    {
+                                        lord: users[1].id,
+                                        lesson: lessons[0].id,
+                                        lastNum: 30,
+                                        give: 'give 30'
+                                    },
+                                    {
+                                        lord: users[1].id,
+                                        lesson: lessons[1].id,
+                                        lastNum: 50,
+                                        give: 'give 50'
+                                    }
+                                ], function (err, data) {
+                                    practics = data;
+                                    done();
+                                })
+                            })
+                        })
+                });
+
+                it('无任何记录', function () {
+                    return Practics.listPracticsForTheLessonOfToday(lessons[2]._id)
+                        .then(function (data) {
+                            expect(data).eqls({
+                                total: {count: 0, sum: 0},
+                                list: []
+                            });
+                        })
+                });
+
+                it('正确', function () {
+                    return Practics.listPracticsForTheLessonOfToday(lessons[1]._id)
+                        .then(function (data) {
+                            expect(data).eqls({
+                                total: {count: 2, sum: 65},
+                                list: [
+                                    {
+                                        _id: {
+                                            lord: users[1]._id,
+                                            give: "give 50",
+                                            lastNum: 50,
+                                            num: 0,
+                                            time: practics[3].endDate
+                                        }
+                                    },
+                                    {
+                                        _id: {
+                                            lord: users[0]._id,
+                                            give: "give 15",
+                                            lastNum: 15,
+                                            num: 0,
+                                            time: practics[1].endDate
+                                        }
+                                    }
+                                ]
+                            });
+                        })
+                })
             })
         });
     });

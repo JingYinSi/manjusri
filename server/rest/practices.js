@@ -45,7 +45,8 @@ module.exports = {
         var lordid = req.params.lordid;
         var lessonid = req.params.lessonid;
         var num = Math.round(req.body.num * 1);
-        return lessons.announce(lordid, lessonid, num)
+        var give = req.body.give;
+        return lessons.announce(lordid, lessonid, num, give)
             .then(function (doc) {
                 return res.status(200).json({
                     data: doc,

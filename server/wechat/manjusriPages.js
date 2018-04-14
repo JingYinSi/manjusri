@@ -5,7 +5,9 @@ var linkages = require("../rests"),
     usersModule = require('../modules/users'),
     praysModule = require('../modules/prays'),
     lessonsModule = require('../modules/lessons'),
+    Practics = require('../modules/2.1/Practics'),
     redirects = require('./redirects'),
+    dbModels = require('./models'),
     wx = require('../weixin'),
     _ = require('underscore'),
     createSessionUser = require('../modules/2.1/SessionUser'),
@@ -225,15 +227,13 @@ module.exports = {
     },
 
     lesson: function (req, res) {
-        var lordid;
         var viewData = {
-            menu: linkages.getMainMenuLinkages(),
+            menu: linkages.getMainMenuLinkages()
         };
         return req.user.listLessonDetails()
             .then(function (lessons) {
                     logger.debug(("we have found " + lessons.length + " lessons"));
                     var list = [];
-                    var index = 1;
                     lessons.forEach(function (item) {
                         var lesson = Object.assign({
                             links: {
@@ -251,7 +251,7 @@ module.exports = {
                     title: '共修', // 分享标题
                     desc: '众人共修之功德是各人所修功德的总和！', // 分享描述
                     link: wx.weixinConfig.wrapUrlWithSitHost(linkages.getLink('lesson')),  // 分享链接
-                    imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
+                    imgUrl: wx.weixinConfig.getShareLogoImage() // 分享图标
                 };
                 viewData.shareConfig = shareConfig;
                 logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData, null, 4));
@@ -265,7 +265,58 @@ module.exports = {
     practics: function (req, res) {
         var lessonid = req.params.lessonId;
         var view = __getViewName(lessonid);
-        return res.render(view, {});
+        var user = req.user;
+        var viewData = {
+            menu: linkages.getMainMenuLinkages(),
+            links: {
+                lessons: linkages.getLink("lesson"),
+                toReport: linkages.getLink("lessonPractices", {lordid: user.user.id, lessonid: lessonid})
+            },
+            list: []
+        };
+        return user.lessonDetails(lessonid)
+            .then(function (data) {
+                viewData.data = data;
+                return Practics.listPracticsForTheLessonOfToday(lessonid)
+            })
+            .then(function (data) {
+                viewData.totalOfToday = data.total;
+                function process(pra, index) {
+                    return dbModels.Users.findById(pra.lord, ['name', 'city'])
+                        .then(function (user) {
+                            viewData.list[index] = {
+                                "name": user.name,
+                                "city": user.city,
+                                "num": pra.num,
+                                "lastNum": pra.lastNum,
+                                "time": pra.time,
+                                "give": pra.give
+                            };
+                        })
+                };
+                var tasks = [];
+                for (var i = 0; i < data.list.length; i++) {
+                    tasks.push(process(data.list[i]._id, i));
+                }
+                return Promise.all(tasks);
+            })
+            .then(function () {
+                return wx.weixinService.generateShareConfig(wx.weixinConfig.wrapUrlWithSitHost(req.url));
+            })
+            .then(function (shareConfig) {
+                viewData.share = {
+                    title: '共修', // 分享标题
+                    desc: '众人共修之功德是各人所修功德的总和！', // 分享描述
+                    link: wx.weixinConfig.wrapUrlWithSitHost(linkages.getLink('lesson')),  // 分享链接
+                    imgUrl: wx.weixinConfig.getShareLogoImage() // 分享图标
+                };
+                viewData.shareConfig = shareConfig;
+                logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData, null, 4));
+                return res.render(view, viewData);
+            })
+            .catch(function (reason) {
+                return reason.sendStatusTo(res);
+            })
     },
 
     lordVirtues: function (req, res) {

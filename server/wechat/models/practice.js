@@ -5,9 +5,11 @@ var mongoose = require('mongoose'),
 var PracticeSchema = new Schema({
     lord: {type: Schema.Types.ObjectId, ref: 'User'},
     lesson: {type: Schema.Types.ObjectId, ref: 'Lesson'},
-    begDate: {type: Date, default: Date.now()},
-    endDate: Date,
+    begDate: Date,
+    endDate: {type: Date, default: Date.now()},
     num: {type: Number, default: 0},
+    lastNum: {type: Number, default: 0},
+    give: String,
     state: {type: String, default: 'on'}
 }, transform);
 

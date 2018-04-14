@@ -67,7 +67,7 @@
                     <div class="p-r w100- fs16">
                         <div class="left l25"><img src="../../assets/images/a.png" alt="" class="w20"> 报数</div>
                         <div class="center l25">
-                            <input id="input_{{lesson._id}}" type="number" class="w100- h30 bceee bn br5 pl5">
+                            <input id="input_{{lesson.id}}" type="number" class="w100- h30 bceee bn br5 pl5">
                         </div>
                         <div class="right tr pr30">{{lesson.unit}}</div>
                     </div>
@@ -77,7 +77,7 @@
                     <div class="plr30">
                         <textarea class="form-control mt10 oln bceee mb20" rows="4"></textarea>
                         <button type="button" class="db bn br5 bcf5ecc3 w100- h30 sub "
-                                onclick="announce('{{links.self}}', '{{lesson._id}}')">确认
+                                onclick="announce('{{links.toReport}}', '{{lesson.id}}')">确认
                         </button>
                     </div>
                 </div>
