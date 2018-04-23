@@ -16,10 +16,10 @@ var linkages = require("../rests"),
 const LessonTypes = ['5ac0c25b0f72e70cd9d065b0', '58fc8f60ac2ce751088d7842',
     '58fc996291d7d1531481ee5a', '5ac8cd8186d97ed48fba402d'];
 
-function __getViewName(lessonId) {
+/*function __getViewName(lessonId) {
     var index = _.indexOf(LessonTypes, lessonId) + 1;
     return 'manjusri/lesson_edit' + index;
-}
+}*/
 
 //TODO:当用户更新微信头像等信息时，应能使数据同微信同步
 //TODO:将manjusriPages.js并入manjusri.js中
@@ -78,6 +78,7 @@ module.exports = {
                 dailyVirtue: linkages.getLink("dailyVirtue"),
                 suixi: linkages.getLink("suixi"),
                 pray: linkages.getLink('pray'),
+                lessons: linkages.getLink('lesson')
             },
             share: {
                 title: '静音寺.文殊禅林', // 分享标题
@@ -264,7 +265,6 @@ module.exports = {
 
     practics: function (req, res) {
         var lessonid = req.params.lessonId;
-        var view = __getViewName(lessonid);
         var user = req.user;
         var viewData = {
             menu: linkages.getMainMenuLinkages(),
@@ -305,14 +305,14 @@ module.exports = {
             })
             .then(function (shareConfig) {
                 viewData.share = {
-                    title: '共修', // 分享标题
+                    title: viewData.data.lesson.name, // 分享标题
                     desc: '众人共修之功德是各人所修功德的总和！', // 分享描述
-                    link: wx.weixinConfig.wrapUrlWithSitHost(linkages.getLink('lesson')),  // 分享链接
+                    link: wx.weixinConfig.wrapUrlWithSitHost(req.url),  // 分享链接
                     imgUrl: wx.weixinConfig.getShareLogoImage() // 分享图标
                 };
                 viewData.shareConfig = shareConfig;
                 logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData, null, 4));
-                return res.render(view, viewData);
+                return res.render('manjusri/lesson_edit', viewData);
             })
             .catch(function (reason) {
                 return reason.sendStatusTo(res);
@@ -322,9 +322,7 @@ module.exports = {
     lordVirtues: function (req, res) {
         var viewdata, virtues;
         var resWrap = createResponseWrap(res);
-        if (!req.session || !req.session.user)
-            return resWrap.setError(400);
-        var openid = req.session.user.openid;
+        var openid = req.user.openid;
 
         //var openid = 'o0ghywcUHxUdazzXEBvYPxU1PVPk';
         //var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
@@ -378,7 +376,7 @@ module.exports = {
     lordProfile: function (req, res) {
         var resWrap = createResponseWrap(res);
         var openid = req.params.openid;
-        if (req.session.user.openid !== openid) {
+        if (req.user.openid !== openid) {
             return redirects.toHome(req, res);
         }
         var viewdata = {
