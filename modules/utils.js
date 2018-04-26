@@ -13,6 +13,17 @@ module.exports = {
     },
 
     dateUtils: {
+        offsetMonthes: function (from, to) {
+            var offset = (to.getFullYear() - from.getFullYear()) * 12 - from.getMonth() + to.getMonth();
+            return offset;
+        },
+
+        offsetDays: function (from, to) {
+            var f = new Date(from.setHours(0, 0, 0, 0)).valueOf();
+            var t = new Date(to.setHours(0, 0, 0, 0)).valueOf();
+            return Math.round((t - f) / 1000 / 86400);
+        },
+
         maxYestoday: function (day) {
             var theDay = day ? day : new Date();
             return new Date(theDay.setHours(0, 0, 0, 0) - 1);

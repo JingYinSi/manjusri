@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>全国共修</title>
+    <title>{{data.lesson.name}}</title>
 
     <link href="/assets/css/reset.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -92,12 +92,12 @@
 <body>
 <div class="wrapper container-fluid bcfcf6d4 w100v ">
     <div class="mlr-15">
-        <img src="/images/img_gongxiu_2.jpg" alt="" class="w100-">
+        <img src="/uploads/{{data.lesson.banner}}" alt="" class="w100-">
     </div>
     <ul class="mlr-15 mb0">
 		<li class="p-r w100- bcfff bb1sccc ofa">
 			<div class="left ">
-				<img src="{{data.lesson.img}}" alt="" class="w50 br45 ml20 mt20">
+				<img src="/uploads/{{data.lesson.img}}" alt="" class="w50 br45 ml20 mt20">
 			</div>
 			<div class="center2 pl20">
 				<p class="pt20 fw7">{{data.lesson.name}}</p>
@@ -109,15 +109,15 @@
 
 			<div class="pb20 plr15 panel mb0">
 				<div class="p-r w100- fs16">
-					<div class="left l35"><img src="/assets/images/a.png" alt="" class="w20"> 报数</div>
+					<div class="left l35"><img src="/img/a.png" alt="" class="w20"> 报数</div>
 					<div class="center l35">
 						<input id="input_number" type="number" class="w100- h35 bceee bn br5 pl5">
 					</div>
-				   <!-- <div class="right tr pr30">{{lesson.unit}}</div>-->
+					<!-- <div class="right tr pr30">{{lesson.unit}}</div>-->
 					<div class="right l35">遍</div>
 				</div>
 				<div class="l30">
-					<img src="/assets/images/a.png" alt="" class="w20"> 回向
+					<img src="/img/a.png" alt="" class="w20"> 回向
 				</div>
 				<div class="plr30">
 					<textarea id="input_give" class="form-control mt10 oln bceee mb20" rows="4">{{data.me.give}}</textarea>
@@ -169,7 +169,7 @@
     <!-- 页脚 -->
     <footer>
         <figure>
-            <img src="/assets/images/logo.png" alt="">
+            <img src="/img/logo.png" alt="">
         </figure>
         <div class="copyright">
             Copyright @2016 The Jin Yin Temple
@@ -198,7 +198,7 @@
             url: url,
             method: 'POST',
             contentType: "application/json",
-            data: JSON.stringify({num: num, give:give}),
+            data: JSON.stringify({times:0, num: num, give:give}),
             success: function () {
                 window.location = destUrl;
             }

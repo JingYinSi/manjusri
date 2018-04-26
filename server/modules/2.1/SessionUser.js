@@ -19,6 +19,10 @@ module.exports = function (openid) {
                 // 指定功课的共修情况（包括会话用户本人的实修情况）
                 lessonDetails: function (lessonId) {
                     return Practics.lessonDetails(user.id, lessonId);
+                },
+                // 申报会话用户指定共修项目的修量
+                announcePractics: function (lessonId, practics) {
+                    return Practics.announcePractics(user.id, lessonId, practics);
                 }
             }
         })

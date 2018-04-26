@@ -10,16 +10,12 @@ var linkages = require("../rests"),
     dbModels = require('./models'),
     wx = require('../weixin'),
     _ = require('underscore'),
-    createSessionUser = require('../modules/2.1/SessionUser'),
     logger = require('@finelets/hyper-rest/app/Logger');
 
-const LessonTypes = ['5ac0c25b0f72e70cd9d065b0', '58fc8f60ac2ce751088d7842',
-    '58fc996291d7d1531481ee5a', '5ac8cd8186d97ed48fba402d'];
-
-/*function __getViewName(lessonId) {
-    var index = _.indexOf(LessonTypes, lessonId) + 1;
-    return 'manjusri/lesson_edit' + index;
-}*/
+const __getViewName = function __getViewName(lessonType) {
+    var view = 'manjusri/lesson_edit_' + (lessonType === '1' ? 'cx' : 'cz');
+    return view;
+};
 
 //TODO:当用户更新微信头像等信息时，应能使数据同微信同步
 //TODO:将manjusriPages.js并入manjusri.js中
@@ -274,6 +270,7 @@ module.exports = {
             },
             list: []
         };
+
         return user.lessonDetails(lessonid)
             .then(function (data) {
                 viewData.data = data;
@@ -312,7 +309,7 @@ module.exports = {
                 };
                 viewData.shareConfig = shareConfig;
                 logger.debug("The viewdata of lesson is: " + JSON.stringify(viewData, null, 4));
-                return res.render('manjusri/lesson_edit', viewData);
+                return res.render(__getViewName(viewData.data.lesson.type), viewData);
             })
             .catch(function (reason) {
                 return reason.sendStatusTo(res);

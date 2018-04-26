@@ -1,6 +1,5 @@
 const Promise = require('bluebird'),
     dbModels = require('../../wechat/models'),
-    createErrorReason = require('@finelets/hyper-rest/app').createErrorReason,
     createObjectId = require('@finelets/hyper-rest/db/mongoDb/CreateObjectId');
 
 module.exports = {
@@ -26,8 +25,5 @@ module.exports = {
                 });
                 return result;
             })
-        /*return dbModel.Lessons.find()
-            .select('name img unit')
-            .exec();*/
     }
 }

@@ -2657,45 +2657,6 @@ describe('静音寺业务系统', function () {
             expect(round(2 / 3, 2)).eql(0.67);
         });
 
-        describe('日期 utils', function () {
-
-            var theDay, expected;
-            beforeEach(function () {
-                theDay = new Date(2017, 1, 17);
-                utils = require('../modules/utils').dateUtils;
-            });
-
-            it('昨日最晚', function () {
-                expected = new Date(new Date(2017, 1, 16).setHours(23, 59, 59, 999));
-                expect(utils.maxYestoday(theDay)).eql(expected);
-            });
-
-            it('明日最早', function () {
-                expected = new Date(new Date(2017, 1, 18).setHours(0, 0, 0, 0));
-                var actual = utils.minTomorrow(theDay);
-                expect(actual).eql(expected);
-            });
-
-            it('今日最早', function () {
-                expect(utils.minToday(theDay)).eql(theDay);
-            });
-
-            it('今日最晚', function () {
-                expected = new Date(theDay.setHours(23, 59, 59, 999));
-                expect(utils.maxToday(theDay)).eql(expected);
-            });
-
-            it('本月最早', function () {
-                expected = utils.minToday(new Date(2017, 1, 1));
-                expect(utils.minThisMonth(theDay)).eql(expected);
-            });
-
-            it('本月最晚', function () {
-                expected = utils.maxToday(new Date(2017, 1, 28));
-                expect(utils.maxThisMonth(theDay)).eql(expected);
-            });
-        });
-
         describe('范围', function () {
             var range;
 

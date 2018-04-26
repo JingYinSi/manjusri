@@ -2,6 +2,7 @@
  * Created by clx on 2017/4/8.
  */
 const lessons = require('../modules/lessons'),
+    Practics = require('../modules/2.1/Practics'),
     linkage = require('../rests');
 
 var log4js = require('log4js');
@@ -44,16 +45,15 @@ module.exports = {
     announcePractice: function (req, res) {
         var lordid = req.params.lordid;
         var lessonid = req.params.lessonid;
+        var times = Math.round(req.body.times * 1);
         var num = Math.round(req.body.num * 1);
         var give = req.body.give;
-        return lessons.announce(lordid, lessonid, num, give)
-            .then(function (doc) {
-                return res.status(200).json({
-                    data: doc,
-                })
+        return Practics.announcePractics(lordid, lessonid, {times: times, num: num, give: give})
+            .then(function () {
+                return res.status(200).end();
             })
-            .catch(function (err) {
-                return res.json(500, err);
+            .catch(function (reason) {
+                return reason.sendStatusTo(res);
             })
-    },
+    }
 }

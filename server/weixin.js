@@ -5,22 +5,22 @@ var weixinConfigFactory = require('../modules/weixinconfig'),
     weixinServiceFactory = require('../modules/weixinfactory');
 
 const configData = {
-    appId: "wx76c06da9928cd6c3",
-    appSecret: "f4d498d87cf8641b83671a533c3999ec",
-    mchId: "1364986702",
-    mchKey: "womendoushiwutaishanjingyinsidet",
+    appId: process.env.appId,
+    appSecret: process.env.appSecret,
+    mchId: process.env.mchId,
+    mchKey: process.env.mchKey,
     apiBaseURL: "https://api.weixin.qq.com/sns/oauth2/",
     oauth2BaseURL: "https://open.weixin.qq.com/connect/oauth2/authorize",
-    siteBaseUrl:"http://jingyintemple.top",
-    payServerIp: '121.41.93.210',
-    payNotifyUrl: 'http://jingyintemple.top/jingyin/manjusri/pay/notify'
-}
+    siteBaseUrl:process.env.siteBaseUrl,
+    payServerIp: process.env.payServerIp,
+    payNotifyUrl: process.env.payNotifyUrl
+};
 
 var weixinConfigObj = weixinConfigFactory(configData);
 
 module.exports = {
     weixinConfig: weixinConfigObj,
     weixinService: weixinServiceFactory(weixinConfigObj)
-}
+};
 
 

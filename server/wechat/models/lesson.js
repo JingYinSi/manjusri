@@ -6,6 +6,7 @@ var LessonSchema = new Schema({
     type: String,
     name: String,
     desc: String,
+    banner: String,
     img: String,
     unit: {type: String, default: '遍'},
     begDate: Date,

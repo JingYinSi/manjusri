@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>全国共修</title>
 
-    <link href="../../assets/css/reset.css" rel="stylesheet">
+    <link href="/assets/css/reset.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../../assets/css/jw.css" rel="stylesheet">
+    <link href="/assets/css/jw.css" rel="stylesheet">
     <!--[if lt IE 9]>
     <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -42,13 +42,13 @@
 <body>
 <div class="wrapper container-fluid bcfcf6d4 w100v ">
     <div class="mlr-15">
-        <img src="../../images/img_gongxiu.jpg" alt="" class="w100-">
+        <img src="/img/gongxiu_banner.jpg" alt="" class="w100-">
     </div>
     <ul class="mlr-15 mb0">
         {{#each data}}
             <li class="p-r w100- bcfff bb1sccc ofa">
                 <div class="left ">
-                    <img src="{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
+                    <img src="/uploads/{{lesson.img}}" alt="" class="w50 br45 ml20 mt20">
                 </div>
                 <div class="center pl20">
                     <p class="pt20 fw7">{{lesson.name}}</p>
@@ -62,26 +62,7 @@
                         <span class="glyphicon glyphicon-chevron-right cccc "></span>
                     </p>
                 </div>
-
-                <div class="pb20 plr15 panel mb0 dn">
-                    <div class="p-r w100- fs16">
-                        <div class="left l25"><img src="../../assets/images/a.png" alt="" class="w20"> 报数</div>
-                        <div class="center l25">
-                            <input id="input_{{lesson.id}}" type="number" class="w100- h30 bceee bn br5 pl5">
-                        </div>
-                        <div class="right tr pr30">{{lesson.unit}}</div>
-                    </div>
-                    <div class="mt10 l25">
-                        <img src="../../assets/images/a.png" alt="" class="w20"> 回向
-                    </div>
-                    <div class="plr30">
-                        <textarea class="form-control mt10 oln bceee mb20" rows="4"></textarea>
-                        <button type="button" class="db bn br5 bcf5ecc3 w100- h30 sub "
-                                onclick="announce('{{links.toReport}}', '{{lesson.id}}')">确认
-                        </button>
-                    </div>
-                </div>
-            </li>
+           </li>
         {{/each}}
     </ul>
     <div class="mlr-15 bcfff pb30 plr30">
@@ -92,7 +73,7 @@
     <!-- 页脚 -->
     <footer>
         <figure>
-            <img src="../../assets/images/logo.png" alt="">
+            <img src="/img/logo.png" alt="">
         </figure>
         <div class="copyright">
             Copyright @2016 The Jin Yin Temple
@@ -101,8 +82,8 @@
     {{>footmenu}}
 </div>
 
-<script src="../../js/jquery-3.1.1.min.js"></script>
-<script src="../../js/bootstrap.min.js"></script>
+<script src="/js/jquery-3.1.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
 
 <script>
     $(document).ready(function () {
