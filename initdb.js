@@ -1,6 +1,20 @@
 /**
  * Created by clx on 2016/11/1.
  */
+const connectMongoDb = require('@finelets/hyper-rest/db/mongoDb/ConnectMongoDb'),
+    dbSave = require("@finelets/hyper-rest/db/mongoDb/SaveObjectToDb),
+    ObjectID = require('mongodb').ObjectID,
+    logger = require('@finelets/hyper-rest/app/Logger'),
+    _ = require('underscore'),
+    moment = require('moment'),
+    dbModel = require('../../wechat/models');
+
+if(process.argv.length < 3) return;
+const connstr = process.argv[2];
+connectMongoDb(function () {
+
+}, connstr);
+
 const mongoose = require('mongoose'),
     Part = require('./server/wechat/models/part');
 
