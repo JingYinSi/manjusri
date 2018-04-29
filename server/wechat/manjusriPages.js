@@ -41,11 +41,10 @@ var dealwithVirtue = function (type, req, res) {
         };
     }
     var res = createResponseWrap(res);
-    logger.debug("列出前类型为" + type + "30条已支付的记录...");
-
+    logger.debug("to list last 30 payment records with the type of '" + type + "'...");
     return virtuesModule.lastVirtuesAndTotalCount(type, 30)
         .then(function (data) {
-            logger.debug("列出前类型为" + type + "30条已支付的记录完成。");
+            logger.debug("has listed last 30 payment records with the type of '" + type + "'...");
             logger.debug("开始生成分享配置信息...");
             viewdata = data;
             viewdata.links = {

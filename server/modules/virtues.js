@@ -198,6 +198,11 @@ module.exports = {
                 result.count = data;
                 return result;
             })
+            .catch(function (err) {
+                logger.fatal('lastVirtuesAndTotalCount error !!!!!!');
+                logger.fatal(err.stack);
+                throw err;
+            })
     },
 
     place: function (subject, amount, detail, giving) {
