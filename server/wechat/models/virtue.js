@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     PartModel = require('./part'),
+    logger = require('@finelets/hyper-rest/app/Logger'),
     transform = require('@finelets/hyper-rest').db.mongoDb.transform;
 
 function validateAmount(val) {
@@ -11,6 +12,9 @@ function validateSubjectMustExist(subject, res) {
     return PartModel.findById(subject)
         .then(function (doc) {
             return res(doc)
+        })
+        .catch(function (err) {
+            logger.error("validateSubjectMustExist error: " + JSON.stringify(err));
         })
 }
 
@@ -36,7 +40,7 @@ var VirtueSchema = new Schema({
     paymentNo: String,
     timestamp: {type: Date, default: Date.now()},
     state: {type: String, default: 'new', enum: ['new', 'payed']}
-});
+}, transform);
 
 module.exports = mongoose.model('Virtue', VirtueSchema);
 
