@@ -358,7 +358,7 @@ module.exports = {
                 });
                 viewdata.lessons = lessons;
                 viewdata.menu = linkages.getMainMenuLinkages();
-                logger.debug("The viewdata of lordvirtues is: " + JSON.stringify(viewdata));
+                logger.debug("The viewdata of lordvirtues is: " + JSON.stringify(viewdata, null, 4));
                 return res.render('manjusri/me', viewdata);
             })
             .catch(function (err) {
