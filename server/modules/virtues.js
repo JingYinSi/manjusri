@@ -218,7 +218,7 @@ module.exports = {
         }
         if (giving) data.giving = giving;
 
-
+        logger.debug("will save virtue record:" + JSON.stringify(data));
         return new VirtueSchema(data).save();
-    },
+    }
 }
