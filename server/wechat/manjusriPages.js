@@ -351,14 +351,14 @@ module.exports = {
                 list.forEach(function (item) {
                     var lesson = Object.assign({
                         links: {
-                            self: linkages.getLink("lessonPractices", {lordid: lordid, lessonid: item.lesson._id}),
+                            self: linkages.getLink("lessonPractices", {lordid: lordid, lessonid: item.lesson._id})
                         }
                     }, item);
                     lessons.push(lesson);
                 });
                 viewdata.lessons = lessons;
                 viewdata.menu = linkages.getMainMenuLinkages();
-                //logger.debug("The viewdata of lordvirtues is: " + JSON.stringify(viewdata));
+                logger.debug("The viewdata of lordvirtues is: " + JSON.stringify(viewdata));
                 return res.render('manjusri/me', viewdata);
             })
             .catch(function (err) {

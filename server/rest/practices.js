@@ -3,11 +3,8 @@
  */
 const lessons = require('../modules/lessons'),
     Practics = require('../modules/2.1/Practics'),
+    logger = require('@finelets/hyper-rest/app/Logger'),
     linkage = require('../rests');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
 
 module.exports = {
     addLesson: function (req, res) {
@@ -48,6 +45,13 @@ module.exports = {
         var times = Math.round(req.body.times * 1);
         var num = Math.round(req.body.num * 1);
         var give = req.body.give;
+        logger.debug('~~~~~~~~announcePractics data:' + JSON.stringify({
+            lord: lordid,
+            lesson: lessonid,
+            times: times,
+            num: num,
+            give: give
+        }));
         return Practics.announcePractics(lordid, lessonid, {times: times, num: num, give: give})
             .then(function () {
                 return res.status(200).end();
