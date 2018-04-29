@@ -6,12 +6,8 @@ const VirtueSchema = require('../wechat/models/virtue'),
     UserSchema = require('../wechat/models/user'),
     dateUtils = require('../../modules/utils').dateUtils,
     utils = require('../../modules/utils'),
-    mongoose = require('mongoose'),
+    logger = require('@finelets/hyper-rest/app/Logger'),
     Promise = require('bluebird');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
 
 var virtueListQuery = VirtueSchema
     .find({state: 'payed'})

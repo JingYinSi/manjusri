@@ -20,10 +20,9 @@ function Virtues() {
 
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
-    logger.debug("the prepay data in request body is:" + JSON.stringify(obj));
     if (!req.session || !req.session.user)
         logger.error("We are prepaying, but the user does't login, How come ？？？？？");
-    logger.debug("entering prepay: " + JSON.stringify(obj));
+    logger.debug("entering prepay: " + JSON.stringify(obj, null, 4));
     var resWrap = createResponseWrap(res);
 
     function responseVirtue(virtue) {
@@ -44,7 +43,7 @@ Virtues.prototype.prepay = function (req, res) {
     if (obj.num) details = {price: obj.price, num: obj.num};
     return virtues.place(obj.subject, obj.amount, details, obj.giving)
         .then(function (virtue) {
-            logger.debug("We place a virtue to database: " + JSON.stringify(obj));
+            logger.debug("We place a virtue to database: " + JSON.stringify(virtue, null, 4));
             if (!details || !details.num) {
                 return responseVirtue(virtue);
             }
@@ -54,7 +53,7 @@ Virtues.prototype.prepay = function (req, res) {
                 });
         })
         .catch(function (err) {
-            logger.error('微信预支付出错:' + JSON.stringify(err));
+            logger.error('微信预支付出错:' + JSON.stringify(err, null, 4));
             if (err.name === 'ValidationError') {
                 return resWrap.setError(400, null, err);
             }

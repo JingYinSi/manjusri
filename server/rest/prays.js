@@ -5,12 +5,9 @@ const prays = require('../modules/prays'),
     path = require('path'),
     mime = require('mime'),
     fs = require('fs'),
+    logger = require('@finelets/hyper-rest/app/Logger'),
     docx = require('../../modules/templeteddocx'),
     linkage = require('../rests');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
 
 module.exports = {
     pray: function (req, res) {

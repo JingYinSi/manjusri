@@ -213,7 +213,7 @@ module.exports = {
             })
             .then(function (shareConfig) {
                 viewData.shareConfig = shareConfig;
-                logger.debug("view data of pray page:" + JSON.stringify(viewData));
+                logger.debug("view data of pray page:" + JSON.stringify(viewData, null, 4));
                 return res.render('manjusri/examPray', viewData);
             })
             .catch(function (err) {
