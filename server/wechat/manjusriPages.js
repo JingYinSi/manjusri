@@ -45,7 +45,7 @@ var dealwithVirtue = function (type, req, res) {
     return virtuesModule.lastVirtuesAndTotalCount(type, 30)
         .then(function (data) {
             logger.debug("has listed last 30 payment records with the type of '" + type + "'...");
-            logger.debug("开始生成分享配置信息...");
+            logger.debug("going to generate config for share infomation ....");
             viewdata = data;
             viewdata.links = {
                 self: selflink,
