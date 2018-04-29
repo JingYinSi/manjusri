@@ -36,7 +36,7 @@ var VirtueSchema = new Schema({
     paymentNo: String,
     timestamp: {type: Date, default: Date.now()},
     state: {type: String, default: 'new', enum: ['new', 'payed']}
-}, transform);
+});
 
 module.exports = mongoose.model('Virtue', VirtueSchema);
 
