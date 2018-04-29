@@ -41,6 +41,7 @@ Virtues.prototype.prepay = function (req, res) {
 
     var details = null;
     if (obj.num) details = {price: obj.price, num: obj.num};
+    logger.debug("we are going to place a virtue " + JSON.stringify(details));
     return virtues.place(obj.subject, obj.amount, details, obj.giving)
         .then(function (virtue) {
             logger.debug("We place a virtue to database: " + JSON.stringify(obj));
