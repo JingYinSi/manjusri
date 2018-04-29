@@ -236,7 +236,6 @@
 
     function announce(url, inputid) {
         alert('此处申报暂时封闭，请使用共修申报实修数量，带来不便敬请原谅！');
-        $("#flip_" + inputid).click();
         return;
         var num = Math.round($("#input_" + inputid).val() * 1);
         if (num == 0) return;
