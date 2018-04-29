@@ -6,8 +6,6 @@ const redirects = require('../server/wechat/redirects'),
     logger = require('@finelets/hyper-rest/app/Logger');
 
 module.exports = function (req, res, next) {
-    logger.debug('enter auth ..................');
-    logger.debug('process.env.DEVELOPMENT is' + process.env.DEVELOPMENT);
     var openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
     if (!process.env.DEVELOPMENT) {
         logger.debug('now we are going to check session user ........');

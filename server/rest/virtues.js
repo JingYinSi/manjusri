@@ -20,14 +20,13 @@ function Virtues() {
 
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
-    logger.debug("entering prepay: " + JSON.stringify(obj));
     if (!req.session || !req.session.user)
         logger.error("We are prepaying, but the user does't login, How come ？？？？？");
+    logger.debug("entering prepay: " + JSON.stringify(obj));
     var resWrap = createResponseWrap(res);
 
     function responseVirtue(virtue) {
         var selfUrl = linkages.getLink('virtue', {id: virtue.id});
-
         var payUrl = linkages.getLink('pay', {virtue: virtue.id});
         logger.debug("The pay url from resources registry is: " + payUrl);
 

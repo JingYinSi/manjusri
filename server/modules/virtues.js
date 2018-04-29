@@ -218,6 +218,7 @@ module.exports = {
         }
         if (giving) data.giving = giving;
 
+
         return new VirtueSchema(data).save();
     },
 }
