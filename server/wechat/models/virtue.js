@@ -13,7 +13,7 @@ function validateSubjectMustExist(subject, res) {
     return PartModel.findById(subject)
         .then(function (doc) {
             logger.debug('we found the subject: ' + JSON.stringify(doc.toJSON()));
-            return doc
+            return true;
         })
         .catch(function (err) {
             logger.error("validateSubjectMustExist error: " + JSON.stringify(err));
