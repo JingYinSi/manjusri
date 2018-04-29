@@ -79,7 +79,7 @@ module.exports = {
                 title: '静音寺.文殊禅林', // 分享标题
                 desc: '传承正法，培养僧才，实修实证，弘扬人间佛教，共建人间净土！', // 分享描述
                 link: wx.weixinConfig.wrapUrlWithSitHost(linkages.getLink('home')),  // 分享链接
-                imgUrl: wx.weixinConfig.getShareLogoImage(), // 分享图标
+                imgUrl: wx.weixinConfig.getShareLogoImage() // 分享图标
             },
             menu: linkages.getMainMenuLinkages()
         }
