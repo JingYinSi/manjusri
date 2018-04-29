@@ -9,12 +9,15 @@ function validateAmount(val) {
 }
 
 function validateSubjectMustExist(subject, res) {
+    logger.debug("The subject of the vitrue is " + subject);
     return PartModel.findById(subject)
         .then(function (doc) {
+            logger.debug('we found the subject: ' + JSON.stringify(doc.toJSON()));
             return res(doc)
         })
         .catch(function (err) {
             logger.error("validateSubjectMustExist error: " + JSON.stringify(err));
+            return Promise.reject(err);
         })
 }
 
