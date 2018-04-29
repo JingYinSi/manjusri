@@ -20,6 +20,7 @@ function Virtues() {
 
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
+    logger.debug("the prepay data in request body is:" + JSON.stringify(obj));
     if (!req.session || !req.session.user)
         logger.error("We are prepaying, but the user does't login, How come ？？？？？");
     logger.debug("entering prepay: " + JSON.stringify(obj));
