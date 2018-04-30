@@ -30,9 +30,9 @@ module.exports = {
         return lessons.getLessonPractices(lessonid, lordid)
             .then(function (data) {
                 var links = {
-                    self: linkage.getLink('lessonPractices', {lessonid:lessonid, lordid:lordid}),
+                    self: linkage.getLink('lessonPractices', {lessonid: lessonid, lordid: lordid}),
                 }
-                return res.status(200).json({data:data, links:links});
+                return res.status(200).json({data: data, links: links});
             })
             .catch(function (err) {
                 return res.status(500).json(err);
@@ -57,7 +57,12 @@ module.exports = {
                 return res.status(200).end();
             })
             .catch(function (reason) {
-                return reason.sendStatusTo(res);
+                if (!reason.sendStatusTo) {
+                    logger.error('we catch a error which type is expected to Reason, but actually not: '
+                        + JSON.stringify(reason, null, 4));
+                    return res.status(500).end();
+                } else
+                    return reason.sendStatusTo(res);
             })
     }
 }
