@@ -50,7 +50,7 @@ module.exports = {
         app.post(linkages.getUrlTemplete('lordPrays'), pray.add);
         app.post(linkages.getUrlTemplete('lessonsResource'), practices.addLesson);
         app.get(linkages.getUrlTemplete('lessonPractices'), practices.getLessonPractices);
-        app.post(linkages.getUrlTemplete('lessonPractices'), practices.announcePractice);
+        app.post(linkages.getUrlTemplete('lessonPractices'), auth, practices.announcePractice);
         app.get(linkages.getUrlTemplete('manjusriStatistics'), statistics.query);
 
         app.get('/jingyin/rests/pray/print', pray.print);
