@@ -2,4 +2,8 @@
 .idea/
 node_modules/
 db/
+/client/public/img/*.db
+/client/public/uploads/*.db
+
+
 
