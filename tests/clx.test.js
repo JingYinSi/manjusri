@@ -5,7 +5,6 @@ var proxyquire = require('proxyquire'),
     _ = require('underscore'),
     moment = require('moment'),
     mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
     finelets = require('@finelets/hyper-rest'),
     dbSave = finelets.db.mongoDb.save;
 
