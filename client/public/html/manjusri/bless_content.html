@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>全国共修</title>
+
+    <link href="../../assets/css/reset.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../assets/css/jw.css" rel="stylesheet">
+	<link href="../../assets/css/mobiscroll.css" rel="stylesheet" />
+	<link href="../../assets/css/mobiscroll_date.css" rel="stylesheet" />
+    <!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    {{>sharepage}}
+    <style>
+        .center {
+            width: auto; /*如果没有这一句，那么，center这个div的文字就不会自动换行*/ 
+			font-size: 1.8em;
+        }
+		.center img{
+			float: left;
+		}
+		.center span{
+			float:left;
+		}
+        .right {
+            position: absolute;
+            top: 20px;
+            right: 0;
+
+        }
+		.bless_word{
+			
+		}
+		.bless_word img{
+			width:75%;
+		}
+		.bless_input{
+			padding: 0 0 40px 0;
+			
+		}
+		.bless_input .b_li{
+			border-top:1px solid #f2f2f2;
+			padding: 15px 0 ;
+			font-size: 1.4em;
+		}
+		.bless_input .b_li span{
+			line-height: 35px;
+		}
+		.bless_input .b_li span label{
+			font-size: 18px;
+		}
+		.bless_input .b_num{
+			float: right;
+		}
+		.bless_input .b_num input{
+			float: left;
+			height: 35px;
+			border: 2px solid #fcf6d4;
+
+		}
+		.bless_input .b_num p{
+			width: 35px;
+			height:35px;
+			float: left;
+			line-height: 35px;
+			text-align: center;
+			font-size: 24px;
+			color: #bfb4b4;
+		}
+		.bless_input .bn_left{
+			border-radius: 5px 0 0 5px;
+		}
+		.bless_input .bn_right{
+			border-radius: 0  5px 5px 0;
+			
+		}
+		.bless_input .b_time{
+			line-height: 35px;
+			border: 0;
+			
+		}
+		.bless_input .b_time img{
+		    margin: 8px 0 0 10px;
+		}
+    </style>
+
+</head>
+<body>
+<div class="wrapper container-fluid bcfcf6d4 w100v ">
+    <div class="mlr-15">
+        <img src="../../images/img_gongdengqifu2.jpg" alt="" class="w100-">
+    </div>
+    <ul class="mlr-15 mb0">
+        {{#each data}}
+            <li class="p-r w100- bcfff bb1sfcf ofa">
+				<div class="bless_li pt20 pb20">
+					<div class="center pl20 ">
+						<div class=" l30 cl">
+							<img src="../../assets/images/a.png" alt="" class="w30">
+							<span class="pl10">求学供灯</span>
+						</div>
+					</div>
+					<div class="right tr mr20">
+						<p class="c999 mb0">
+							<img src="../../images/icon_hron_r.jpg" class="fr w10 mt10 " />
+							<span id="flip_{{lesson._id}}" class="cff8c05 flip fs25 mr10">￥5.00/盏</span>
+						</p>
+					</div>
+				</div>
+
+                <div class="bless_input m20 mt0 mb0 dn">
+                 	<div class="b_li plr30">
+						<span>每天盏数</span>
+						<div class="b_num">
+							<p class="bn_left bcfcf6d4">-</p>
+							<input type="text" class="w40 b0 bt2sfcf6d4 tc " value="1" />
+							<p class="bn_right bcfcf6d4">+</p>
+						</div>
+					</div>
+					<div class="b_li plr30">
+						<span>从</span>
+						<div class="b_time fr">
+							<img src="../../images/icon_hron_r.jpg" class="fr w10" />
+							<input type="text"  id="" class="b_time fr tr time_from" placeholder="2018年04月10日" />
+						</div>
+					</div>
+					<div class="b_li plr30">
+						<span>至</span>
+						<div class="b_time fr">
+							<img src="../../images/icon_hron_r.jpg" class="fr w10" />
+							<input type="text"  id="" class="b_time fr tr time_to" placeholder="2018年04月10日" />
+						</div>
+					</div>
+					<div class="b_li plr30">
+						<span>供灯者<label>(限1人)</label></span>
+						<div class="l35 fr">
+							<input id="input_{{lesson._id}}"  class="w120 h35 bceee bn br5 pl5"/>
+						</div>
+					</div>
+					<div class="b_li plr30">
+						<div class="bless_total fs50 tc pb20">
+							￥<label>5</label>
+						</div>
+						<button type="button" class="db bn br5 bcf5ecc3 w100- h35 sub "
+								onclick="announce('{{links.self}}', '{{lesson._id}}')">确认
+						</button>
+					</div>
+                </div>
+            </li>
+            <li class="p-r w100- bcfff bb1sfcf ofa">
+				<div class="bless_li pt20 pb20">
+					<div class="center pl20 ">
+						<div class=" l30 cl">
+							<img src="../../assets/images/a.png" alt="" class="w30">
+							<span class="pl10">求学供灯</span>
+						</div>
+					</div>
+					<div class="right tr mr20">
+						<p class="c999 mb0">
+							<img src="../../images/icon_hron_r.jpg" class="fr w10 mt10 " />
+							<span id="flip_{{lesson._id}}" class="cff8c05 flip fs25 mr10">￥5.00/盏</span>
+						</p>
+					</div>
+				</div>
+
+                <div class="bless_input m20 mt0 mb0 dn">
+                 	<div class="b_li plr30">
+						<span>每天盏数</span>
+						<div class="b_num">
+							<p class="bn_left bcfcf6d4">-</p>
+							<input type="text" class="w40 b0 bt2sfcf6d4 tc " value="1" />
+							<p class="bn_right bcfcf6d4">+</p>
+						</div>
+					</div>
+					<div class="b_li plr30">
+						<span>从</span>
+						<div class="b_time fr">
+							<img src="../../images/icon_hron_r.jpg" class="fr w10" />
+							<input type="text"  id="" class="b_time fr tr time_from" placeholder="2018年04月10日" />
+						</div>
+					</div>
+					<div class="b_li plr30">
+						<span>至</span>
+						<div class="b_time fr">
+							<img src="../../images/icon_hron_r.jpg" class="fr w10" />
+							<input type="text"  id="" class="b_time fr tr time_to" placeholder="2018年04月10日" />
+						</div>
+					</div>
+					<div class="b_li plr30">
+						<span>供灯者<label>(限1人)</label></span>
+						<div class="l35 fr">
+							<input id="input_{{lesson._id}}"  class="w120 h35 bceee bn br5 pl5"/>
+						</div>
+					</div>
+					<div class="b_li plr30">
+						<div class="bless_total fs50 tc pb20">
+							￥<label>5</label>
+						</div>
+						<button type="button" class="db bn br5 bcf5ecc3 w100- h35 sub "
+								onclick="announce('{{links.self}}', '{{lesson._id}}')">确认
+						</button>
+					</div>
+                </div>
+            </li>
+        {{/each}}
+    </ul>
+    <div class="bless_word mlr-15 bcfff plr30 ptb60 tc ">
+		<img src="../../images/img_bless_word.jpg" alt="" class=""  />
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <figure>
+            <img src="../../assets/images/logo.png" alt="">
+        </figure>
+        <div class="copyright">
+            Copyright @2016 The Jin Yin Temple
+        </div>
+    </footer>
+    {{>footmenu}}
+</div>
+
+<script src="../../js/jquery-3.1.1.min.js"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/mobiscroll_date.js" charset="gb2312"></script> 
+<script src="../../js/mobiscroll.js"></script> 
+<script>
+    $(function () {
+		//时间控件
+		var currYear = (new Date()).getFullYear();	
+		var opt={};
+		opt.date = {preset : 'date'};
+		opt.datetime = {preset : 'datetime'};
+		opt.time = {preset : 'time'};
+		opt.default = {
+			theme: 'android-ics light', //皮肤样式
+			display: 'modal', //显示方式 
+			mode: 'scroller', //日期选择模式
+			dateFormat: 'yyyy年mm月dd日',
+			lang: 'zh',
+			//showNow: true,
+			//nowText: "今天",
+			startYear: currYear - 10, //开始年份
+			endYear: currYear + 10 //结束年份
+		};
+		$(".b_time").mobiscroll($.extend(opt['date'], opt['default']));
+		//$(".time_to").mobiscroll($.extend(opt['date'], opt['default']));
+
+		//时间控件  end
+		
+		//
+		$(".bless_li").click(function(){
+			var input = $(this).parents("li").find(".bless_input");
+			if(input.is(':hidden')){
+				input.show();
+			}else{
+				input.hide();
+			}
+		});
+		//祈福次数加减
+		var b_num=$(".b_num input").val();
+		$(".b_num input").blur(function(){
+			var b_num=$(this).parents("li").find(".b_num input").val();
+			if(b_num<1||b_num==null){
+				$(this).val(1);
+				$(this).parents("li").find(".bless_total label").html(5);
+			}else{
+				$(this).parents("li").find(".bless_total label").html(b_num*5);
+			}
+		});
+		$(".b_num .bn_left").click(function(){
+			var b_num=$(this).parents("li").find(".b_num input").val();
+			if(b_num>1){
+				b_num--;
+			}
+			$(this).parents(".b_num").find("input").val(b_num);
+			$(this).parents("li").find(".bless_total label").html(b_num*5);
+		});
+		$(".b_num .bn_right").click(function(){
+			var b_num=$(this).parents("li").find(".b_num input").val();
+			b_num++;
+			$(this).parents(".b_num").find("input").val(b_num);
+			$(this).parents("li").find(".bless_total label").html(b_num*5);
+		});
+		
+		
+		
+	});
+
+    function announce(url, inputid) {
+        var num = Math.round($("#input_" + inputid).val() * 1);
+        if (num == 0) return;
+
+        $.ajax({
+            url: url,
+            method: 'POST',
+            contentType: "application/json",
+            data: JSON.stringify({num: num}),
+            success: function () {
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    contentType: "application/json",
+                    success: function (result) {
+                        $("#join_" + inputid).text(result.data.join);
+                        $("#practice_" + inputid).text(result.data.practice);
+                        $("#flip_" + inputid).click();
+                        $("#input_" + inputid).val('');
+                    }
+                });
+            }
+        })
+    }
+</script>
+</body>
+</html>

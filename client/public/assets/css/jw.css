@@ -55,6 +55,7 @@
 .h20{height: 20px;}
 .h25{height: 25px;}
 .h30{height: 30px;}
+.h35{height: 35px;}
 .h40{height: 40px;}
 .h50{height: 50px;}
 .h60{height: 60px;}
@@ -126,6 +127,7 @@
 .m60{margin:60px;}
 .m80{margin:80px;}
 .m100{margin:100px;}
+.m120{margin:120px;}
 /*.mt* margin-top*/
 .mt-15{margin-top:-15px;}
 .mt0{margin-top: 0;}
@@ -257,6 +259,7 @@
 .mp0{margin:0;padding:0;}
 
 .ptb20{padding-top: 20px;padding-bottom: 20px;}
+.ptb60{padding-top: 60px;padding-bottom: 60px;}
 .plr30{padding-left: 30px;padding-right: 30px;}
 
 /*with persent*/
@@ -329,6 +332,7 @@
 .bb1sccc{border-bottom:1px solid #ccc;}
 .bb1seee{border-bottom:1px solid #eee;}
 .bb1sfff{border-bottom:1px solid #fff;}
+.bb1sfcf{border-bottom:2px solid #fcf6d4;}
 /*.bl  border-left*/
 .bl1s000{border-left:1px solid #000;}
 .bl1s333{border-left:1px solid #333;}
