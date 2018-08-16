@@ -4,11 +4,8 @@
  */
 var signMd5 = require('./weixinsignmd5'),
     signSha1 = require('./weixinsignsha1'),
-    js2xmlparser = require('js2xmlparser');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+    js2xmlparser = require('js2xmlparser'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 var nonceGen = function () {
     return Math.random().toString(36).substr(2, 15);
@@ -23,8 +20,7 @@ var appId, appSecret, mchId, mchKey;
 var siteBaseUrl, payServerIp, payNotifyUrl;
 
 
-function WeixinConfig() {
-}
+function WeixinConfig() {}
 
 WeixinConfig.prototype.setNonceGenerator = function (nonceGenerator) {
     nonceGen = nonceGenerator;
@@ -43,8 +39,8 @@ WeixinConfig.prototype.getUrlToGetAccessToken = function () {
 };
 
 WeixinConfig.prototype.getUrlToGetOpenId = function (code) {
-    var url = apiBaseURL + "access_token?appid="
-        + appId + "&secret=" + appSecret + "&code=" + code + "&grant_type=authorization_code";
+    var url = apiBaseURL + "access_token?appid=" +
+        appId + "&secret=" + appSecret + "&code=" + code + "&grant_type=authorization_code";
     return url;
 };
 
@@ -123,16 +119,16 @@ WeixinConfig.prototype.generatePayData = function (prepayId) {
 WeixinConfig.prototype.wrapRedirectURLByOath2WayBaseScope = function (url) {
     var redirectUrl = url.indexOf(siteBaseUrl) < 0 ? siteBaseUrl + url : url;
     logger.debug("the url weixin（Oath2WayBaseScope） will redirect to is: " + redirectUrl);
-    var wrapedUrl = oauth2BaseURL + "?appid=" + appId
-        + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
+    var wrapedUrl = oauth2BaseURL + "?appid=" + appId +
+        "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
     return wrapedUrl;
 };
 
 WeixinConfig.prototype.wrapRedirectURLByOath2Way = function (url) {
     var redirectUrl = url.indexOf(siteBaseUrl) < 0 ? siteBaseUrl + url : url;
     logger.debug("the url weixin（Oath2Way） will redirect to is: " + redirectUrl);
-    var wrapedUrl = oauth2BaseURL + "?appid=" + appId
-        + "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";
+    var wrapedUrl = oauth2BaseURL + "?appid=" + appId +
+        "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";
     return wrapedUrl;
 };
 

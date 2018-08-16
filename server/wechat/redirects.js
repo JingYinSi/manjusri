@@ -2,11 +2,8 @@
  * Created by clx on 2017/3/22.
  */
 const wx = require('../weixin'),
-    urlRegister = require('../rests');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+    urlRegister = require('../rests'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 module.exports = {
     toLogin: function (req, res) {
@@ -17,7 +14,9 @@ module.exports = {
     },
 
     toProfile: function (openid, req, res) {
-        var url = urlRegister.getLink("profile", {openid: openid});
+        var url = urlRegister.getLink("profile", {
+            openid: openid
+        });
         return res.redirect(url);
     },
 

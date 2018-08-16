@@ -2,17 +2,16 @@
  * Created by clx on 2017/4/21.
  */
 const wxcacheModel = require('../wechat/models/wxcache'),
-    Promise = require('bluebird');
+    Promise = require('bluebird'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 const TYPE_ACCESSTOKEN = 'accesstoken';
 const TYPE_TicketForJsAPI = 'TicketForJsAPI';
 
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
-
 const __setAccessToken = function (type, val, timeout, ref) {
-    var condition = {type: type};
+    var condition = {
+        type: type
+    };
     //if(ref) condition.ref = ref;
     return wxcacheModel.findOne(condition)
         .then(function (doc) {
@@ -36,8 +35,10 @@ const __setAccessToken = function (type, val, timeout, ref) {
 };
 
 const __getAccessToken = function (type, ref) {
-    var condition = {type: type};
-    if(ref) condition.ref = ref;
+    var condition = {
+        type: type
+    };
+    if (ref) condition.ref = ref;
     return wxcacheModel.findOne(condition)
         .then(function (data) {
             if (!data) return null;

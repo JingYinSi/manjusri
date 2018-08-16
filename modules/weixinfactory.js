@@ -5,11 +5,8 @@
 var Promise = require('bluebird'),
     XML = require('pixl-xml'),
     httpRequest = require('./httprequest'),
-    wxcache = require('../server/modules/wxcache');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+    wxcache = require('../server/modules/wxcache'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 var config;
 const weixin = {
@@ -18,7 +15,10 @@ const weixin = {
             .then(function (token) {
                 if (token) return token;
                 var url = config.getUrlToGetAccessToken();
-                return httpRequest.concat({url: url, json: true})
+                return httpRequest.concat({
+                        url: url,
+                        json: true
+                    })
                     .then(function (data) {
                         return wxcache.setAccessToken(data.access_token, 7000000);
                     })
@@ -30,14 +30,20 @@ const weixin = {
 
     getOpenId: function (code) {
         var url = config.getUrlToGetOpenId(code);
-        return httpRequest.concat({url: url, json: true});
+        return httpRequest.concat({
+            url: url,
+            json: true
+        });
     },
 
     getUserInfoByOpenId: function (openid) {
         return this.getAccessToken()
             .then(function (token) {
                 var url = config.getUrlToGetUserInfo(token, openid);
-                return httpRequest.concat({url: url, json: true})
+                return httpRequest.concat({
+                    url: url,
+                    json: true
+                })
             });
     },
 
@@ -48,7 +54,10 @@ const weixin = {
      */
     getUserInfoByOpenIdAndToken: function (token, openid) {
         var url = config.getSnsUrlToGetUserInfo(token, openid);
-        return httpRequest.concat({url: url, json: true});
+        return httpRequest.concat({
+            url: url,
+            json: true
+        });
     },
 
     prepay: function (openId, transId, transName, amount) {
@@ -87,7 +96,10 @@ const weixin = {
             .then(function (ticket) {
                 if (ticket) return ticket;
                 var url = config.getTicketURLForJsApi(token);
-                return httpRequest.concat({url: url, json: true})
+                return httpRequest.concat({
+                        url: url,
+                        json: true
+                    })
                     .then(function (data) {
                         return wxcache.setTicketForJsAPI(token, data.ticket, 6000000);
                     })

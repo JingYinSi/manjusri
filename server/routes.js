@@ -11,12 +11,9 @@ const manjusri = require('./wechat/manjusri'),
     payRoute = require('./payurl').payRoute,
     statistics = require('./rest/statistics'),
     lords = require('./rest/lords'),
-    pray = require('./rest/prays');
-    practices = require('./rest/practices');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+    pray = require('./rest/prays'),
+    practices = require('./rest/practices'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 const virtues = require('./rest/virtues');
 
@@ -58,29 +55,29 @@ module.exports = {
 
         /*------------------------------ Biz view--------------------------------------------------*/
         app.get('/jingyin/biz', function (req, res) {
-            res.render('biz/home', {user: req.user});
+            res.render('biz/home', {
+                user: req.user
+            });
         });
 
-//displays our signup page
+        //displays our signup page
         app.get('/jingyin/biz/signin', function (req, res) {
             res.render('biz/signin');
         });
 
-//sends the request through our local signup strategy, and if successful takes user to homepage, otherwise returns then to signin page
+        //sends the request through our local signup strategy, and if successful takes user to homepage, otherwise returns then to signin page
         app.post('/jingyin/biz/local-reg', passport.authenticate('local-signup', {
-                successRedirect: '/jingyin/biz',
-                failureRedirect: '/jingyin/biz/signin'
-            })
-        );
+            successRedirect: '/jingyin/biz',
+            failureRedirect: '/jingyin/biz/signin'
+        }));
 
-//sends the request through our local login/signin strategy, and if successful takes user to homepage, otherwise returns then to signin page
+        //sends the request through our local login/signin strategy, and if successful takes user to homepage, otherwise returns then to signin page
         app.post('/jingyin/biz/login', passport.authenticate('local-signin', {
-                successRedirect: '/jingyin/biz',
-                failureRedirect: '/jingyin/biz/signin'
-            })
-        );
+            successRedirect: '/jingyin/biz',
+            failureRedirect: '/jingyin/biz/signin'
+        }));
 
-//logs user out of site, deleting them from the session, and returns to homepage
+        //logs user out of site, deleting them from the session, and returns to homepage
         app.get('/jingyin/biz/logout', function (req, res) {
             var name = req.user.username;
             console.log("LOGGIN OUT " + req.user.username)

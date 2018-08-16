@@ -1,21 +1,19 @@
 /**
  * Created by clx on 2017/4/9.
  */
-const userModel = require('../models/bizuser');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+const userModel = require('../models/bizuser'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 module.exports = {
     localReg: function (username, password) {
-        return userModel.findOne({'name': username})
+        return userModel.findOne({
+                'name': username
+            })
             .then(function (result) {
                 if (null != result) {
                     logger.info("USERNAME ALREADY EXISTS:", result.name);
                     return false; // username exists
-                }
-                else {
+                } else {
                     logger.info("CREATING USER:", username);
                     var user = new userModel({
                         "name": username,
@@ -31,13 +29,14 @@ module.exports = {
     },
 
     localAuth: function (username, password) {
-        return userModel.findOne({'name': username})
+        return userModel.findOne({
+                'name': username
+            })
             .then(function (result) {
                 if (!result) {
                     logger.info("USERNAME NOT FOUND:", username);
                     return false;
-                }
-                else {
+                } else {
                     logger.info("FOUND USER: " + result.name);
                     if (password === result.pwd) {
                         return result._doc;

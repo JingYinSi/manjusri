@@ -1,9 +1,6 @@
 var Users = require('../modules/users'),
-    welcome = require('../modules/welcome');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+    welcome = require('../modules/welcome'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 var msgHandlers = {
     subscribe: Users.register

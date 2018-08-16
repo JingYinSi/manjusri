@@ -2,7 +2,7 @@
  * Created by clx on 2016/11/1.
  */
 const connectMongoDb = require('@finelets/hyper-rest/db/mongoDb/ConnectMongoDb'),
-    dbSave = require("@finelets/hyper-rest/db/mongoDb/SaveObjectToDb),
+    dbSave = require("@finelets/hyper-rest/db/mongoDb/SaveObjectToDb"),
     ObjectID = require('mongodb').ObjectID,
     logger = require('@finelets/hyper-rest/app/Logger'),
     _ = require('underscore'),

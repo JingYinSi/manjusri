@@ -3,11 +3,8 @@ var wx = require('../weixin').weixinService,
     virtues = require('../modules/virtues'),
     Promise = require('bluebird'),
     linkages = require("../rests"),
-    responseWrapFactory = require('../../modules/responsewrap');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+    responseWrapFactory = require('../../modules/responsewrap'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 module.exports = {
     pay: function (req, res) {
@@ -37,11 +34,11 @@ module.exports = {
             })
             .then(function () {
                 logger.debug("Start to submit to weixin prepay process: " + JSON.stringify({
-                        openid: openId,
-                        virtueid: virtueId,
-                        subjectName: subjectName,
-                        amount: amount
-                    }));
+                    openid: openId,
+                    virtueid: virtueId,
+                    subjectName: subjectName,
+                    amount: amount
+                }));
                 return wx.prepay(openId, virtueId, subjectName, amount);
             })
             .then(function (payData) {
@@ -73,7 +70,7 @@ module.exports = {
             share: {
                 title: '日行一善', // 分享标题
                 desc: '捐助静音寺建设', // 分享描述
-                link: 'http://jingyintemple.top/jingyin/manjusri/index',  // 分享链接
+                link: 'http://jingyintemple.top/jingyin/manjusri/index', // 分享链接
                 imgUrl: wxConfig.wrapUrlWithSitHost('/images/sharelogo.jpg'), // 分享图标
             },
             menu: linkages.getMainMenuLinkages(),
@@ -124,4 +121,3 @@ module.exports = {
             });
     },
 };
-

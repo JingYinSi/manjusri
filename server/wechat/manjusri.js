@@ -6,11 +6,8 @@ var Part = require('./models/part'),
     usersModule = require('../modules/users'),
     mongoose = require('mongoose'),
     redirects = require('./redirects'),
-    wx = require('../weixin');
-
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
+    wx = require('../weixin'),
+    logger = require('@finelets/hyper-rest/app/Logger');
 
 function listVirtuesAndTotalTimes() {
     return new Promise(function (resolve, reject) {
@@ -18,7 +15,9 @@ function listVirtuesAndTotalTimes() {
         return virtuesModule.listLastVirtues(30)
             .then(function (list) {
                 data.virtues = list;
-                return Virtue.count({state: 'payed'});
+                return Virtue.count({
+                    state: 'payed'
+                });
             })
             .then(function (times) {
                 data.times = times;
@@ -46,7 +45,10 @@ module.exports = {
                 openid = data.openid;
                 accessToken = data.access_token;
                 var sess = req.session;
-                sess.user = {openid: openid, access_token: data.access_token};
+                sess.user = {
+                    openid: openid,
+                    access_token: data.access_token
+                };
                 logger.debug("session is built, and context of current session is:" + JSON.stringify(sess));
                 //TODO:全局性地缓存refresh_token，在我的基础资料处可从该全局缓存中获得accesstoken, 以同步用户资料
                 //sess.refresh_token = data.refresh_token;
@@ -75,8 +77,8 @@ module.exports = {
                 } else {
                     //TODO:访问微信用户资料补充当前不足的用户信息
                     var redirectToUrl = req.session.redirectToUrl;
-                    return redirectToUrl ? res.redirect(redirectToUrl)
-                        : redirects.toHome(req, res);
+                    return redirectToUrl ? res.redirect(redirectToUrl) :
+                        redirects.toHome(req, res);
                 }
             })
             .catch(function (err) {
@@ -102,14 +104,16 @@ module.exports = {
             parts: []
         };
         var res = createResponseWrap(res);
-        return Part.find({type: 'part', onSale: true})
+        return Part.find({
+                type: 'part',
+                onSale: true
+            })
             .then(function (parts) {
-                    data.parts = parts;
-                    return res.render('wechat/jiansi', data);
-                }, function (err) {
-                    return res.setError(500, null, err);
-                }
-            );
+                data.parts = parts;
+                return res.render('wechat/jiansi', data);
+            }, function (err) {
+                return res.setError(500, null, err);
+            });
     },
 
     dailyVirtue: function (req, res) {
@@ -118,7 +122,10 @@ module.exports = {
         return listVirtuesAndTotalTimes()
             .then(function (result) {
                 data = result;
-                return Part.findOne({type: 'daily', onSale: true});
+                return Part.findOne({
+                    type: 'daily',
+                    onSale: true
+                });
             })
             .then(function (part) {
                 if (!part) return res.setError(500, '日行一善相关信息未建立');
@@ -136,7 +143,10 @@ module.exports = {
             title: '建寺-随喜所有建庙功德'
         };
         var res = createResponseWrap(res);
-        return Part.findOne({type: 'suixi', onSale: true})
+        return Part.findOne({
+                type: 'suixi',
+                onSale: true
+            })
             .then(function (part) {
                 if (!part) return res.setError(500, '随喜相关信息未建立');
                 data.part = part;
@@ -193,4 +203,3 @@ module.exports = {
             });
     }
 };
-

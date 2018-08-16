@@ -9,14 +9,10 @@ var virtues = require('../modules/virtues'),
     createResponseWrap = require('../../modules/responsewrap'),
     weixin = require('../weixin'),
     weixinConfig = weixin.weixinConfig,
-    weixinService = weixin.weixinService;
+    weixinService = weixin.weixinService,
+    logger = require('@finelets/hyper-rest/app/Logger');
 
-var log4js = require('log4js');
-var logger = log4js.getLogger();
-logger.level = 'debug';
-
-function Virtues() {
-}
+function Virtues() {}
 
 Virtues.prototype.prepay = function (req, res) {
     var obj = req.body;
@@ -26,8 +22,12 @@ Virtues.prototype.prepay = function (req, res) {
     var resWrap = createResponseWrap(res);
 
     function responseVirtue(virtue) {
-        var selfUrl = linkages.getLink('virtue', {id: virtue.id});
-        var payUrl = linkages.getLink('pay', {virtue: virtue.id});
+        var selfUrl = linkages.getLink('virtue', {
+            id: virtue.id
+        });
+        var payUrl = linkages.getLink('pay', {
+            virtue: virtue.id
+        });
         logger.debug("The pay url from resources registry is: " + payUrl);
 
         var links = {
@@ -40,7 +40,10 @@ Virtues.prototype.prepay = function (req, res) {
     }
 
     var details = null;
-    if (obj.num) details = {price: obj.price, num: obj.num};
+    if (obj.num) details = {
+        price: obj.price,
+        num: obj.num
+    };
     return virtues.place(obj.subject, obj.amount, details, obj.giving)
         .then(function (virtue) {
             logger.debug("We place a virtue to database: " + JSON.stringify(virtue, null, 4));
@@ -76,11 +79,13 @@ Virtues.prototype.paidNotify = function (req, res) {
 
     var lord;
 
-    return userModel.findOne({openid: openId})
+    return userModel.findOne({
+            openid: openId
+        })
         .then(function (user) {
             if (!user) {
-                var errmsg = "We received a paid notification from weixin, but we Can't find the user with openid:"
-                    + notify.openid + '？ please check it ！！！！';
+                var errmsg = "We received a paid notification from weixin, but we Can't find the user with openid:" +
+                    notify.openid + '？ please check it ！！！！';
                 logger.error(errmsg);
                 return Promise.reject(new Error(errmsg));
             }
@@ -89,7 +94,7 @@ Virtues.prototype.paidNotify = function (req, res) {
             return virtueModel.findById(virtueId);
         })
         .then(function (virtue) {
-            if(!virtue){
+            if (!virtue) {
                 var errmsg = "We received a paid notification from weixin, but we Can't find such virtue？ please check it ！！！！";
                 logger.error(errmsg);
                 return Promise.reject(new Error(errmsg));
