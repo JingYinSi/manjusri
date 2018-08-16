@@ -173,10 +173,10 @@ module.exports = {
                         .then(function (user) {
                             result.virtues[index] = {
                                 "amount": virtue.amount,
-                                "city": user.city.length > 0 ? user.city : '',
+                                "city": user.city && user.city.length > 0 ? user.city : '',
                                 "day": virtue.timestamp.getDate(),
                                 "month": virtue.timestamp.getMonth() + 1,
-                                "name": user.name.length > 0 ? user.name : '未知',
+                                "name": user.name && user.name.length > 0 ? user.name : '未知',
                                 "year": virtue.timestamp.getFullYear()
                             };
                         })
