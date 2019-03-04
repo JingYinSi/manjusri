@@ -1,19 +1,15 @@
 require('dotenv').config();
-const logger = require('@finelets/hyper-rest/app/Logger'),
-	path = require('path'),
-	moment = require('moment'),
-	restsDir = path.join(__dirname, './server/rests'),
-	resourceDescriptorLoader = require('@finelets/hyper-rest/rests/DirectoryResourceDescriptorsLoader')(restsDir),
-	resourceDescriptors = resourceDescriptorLoader.loadAll(),
-	resourceRegistry = require('@finelets/hyper-rest/rests/ResourceRegistry'),
+const path = require('path'), 
+	appBuilder = require('@finelets/hyper-rest/express/AppBuilder').begin(__dirname),
+	restDir = path.join(__dirname, './server/rests'),
 	graph = require('./server/flow'),
-	transitionsGraph = require('@finelets/hyper-rest/rests/BaseTransitionGraph')(graph, resourceRegistry),
-    viewEngineFactory = require('@finelets/hyper-rest/express/HandlebarsFactory'),
-    connectDb = require('@finelets/hyper-rest/db/mongoDb/ConnectMongoDb'),
-	sessionStore = require('@finelets/hyper-rest/session/MongoDbSessionStore')(1000 * 60 * 60 * 24), // set session for 1 day
-	appBuilder = require('@finelets/hyper-rest/express/AppBuilder').begin(__dirname);
+	rests = require('@finelets/hyper-rest/rests')(restDir, graph);
 
-resourceRegistry.setTransitionGraph(transitionsGraph);
+const logger = require('@finelets/hyper-rest/app/Logger'),
+	moment = require('moment'),
+	viewEngineFactory = require('@finelets/hyper-rest/express/HandlebarsFactory'),
+    connectDb = require('@finelets/hyper-rest/db/mongoDb/ConnectMongoDb'),
+	sessionStore = require('@finelets/hyper-rest/session/MongoDbSessionStore')(1000 * 60 * 60 * 24);
 
 const wechat = require('./server/wechat/wechat'),
 	token = process.env.WECHAT_APP_TOKEN,
@@ -42,7 +38,7 @@ const viewEngine = viewEngineFactory(
 
 appBuilder
 	.setViewEngine(viewEngine)
-	.setResources(resourceRegistry, resourceDescriptors)
+	.setResources(...rests)
 	.setWebRoot('/', './client/public')
 	.setFavicon('client/public/images/icon1.jpg')
 	.setSessionStore(sessionStore)
