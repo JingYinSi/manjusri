@@ -12,10 +12,12 @@
   "dependencies": {
     "@finelets/hyper-rest": "^2.1.9",
     "async": "^2.6.1",
+    "axios": "^0.18.0",
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.5.1",
     "docxtemplater": "^3.8.3",
     "dotenv": "^6.0.0",
+    "export-to-csv": "^0.2.1",
     "express-xml-bodyparser": "^0.3.0",
     "isnumeric": "^0.3.3",
     "js2xmlparser": "^3.0.0",
