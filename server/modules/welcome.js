@@ -11,10 +11,10 @@ var welcomeMsg = [
         url: 'http://jingyintemple.top/jingyin/manjusri/index'
     },
     {
-        title: '欢迎您关注静音文殊禅林-建寺',
-        description: '描述-建寺',
-        picurl: 'http://jingyintemple.top/images/jiansi.jpg',
-        url: 'http://jingyintemple.top/jingyin/manjusri/jiansi'
+        title: '欢迎您关注静音文殊禅林-测试账号',
+        description: '静音文殊禅林测试版',
+        picurl: 'http://dev.jingyintemple.top/images/jiansi.jpg',
+        url: 'http://dev.jingyintemple.top/jingyin/manjusri/jiansi'
     },
     {
         title: '欢迎您关注静音文殊禅林-每日一善',
