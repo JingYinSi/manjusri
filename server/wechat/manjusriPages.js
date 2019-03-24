@@ -96,6 +96,7 @@ module.exports = {
     },
 
     dailyVirtue: function (req, res) {
+        logger.debug('enter to dailyVirtue page ...........')
         return dealwithVirtue('daily', req, res);
     },
 
