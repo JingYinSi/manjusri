@@ -31,6 +31,7 @@ function listVirtuesAndTotalTimes() {
 
 module.exports = {
     login: function (req, res) {
+        logger.debug('enter login ..........................')
         var errCode = 400;
         var wrapedRes = createResponseWrap(res);
         var code = req.query.code;
