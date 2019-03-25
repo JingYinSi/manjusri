@@ -118,19 +118,19 @@ WeixinConfig.prototype.generatePayData = function (prepayId) {
 
 WeixinConfig.prototype.wrapRedirectURLByOath2WayBaseScope = function (url) {
     var redirectUrl = url.indexOf(siteBaseUrl) < 0 ? siteBaseUrl + url : url;
-    logger.debug("the url weixin（Oath2WayBaseScope） will redirect to is: " + redirectUrl);
-    logger.debug("oauth2BaseUrl:" + oauth2BaseURL);
+    logger.debug("the url weixin(Oath2WayBaseScope) will redirect to is: " + redirectUrl);
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId +
         "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_base#wechat_redirect";
-    logger.debug("wrapedUrl:" + wrapedUrl);
     return wrapedUrl;
 };
 
 WeixinConfig.prototype.wrapRedirectURLByOath2Way = function (url) {
     var redirectUrl = url.indexOf(siteBaseUrl) < 0 ? siteBaseUrl + url : url;
     logger.debug("the url weixin(Oath2Way) will redirect to is: " + redirectUrl);
+    logger.debug("oauth2BaseUrl:" + oauth2BaseURL);
     var wrapedUrl = oauth2BaseURL + "?appid=" + appId +
         "&redirect_uri=" + redirectUrl + "&response_type=code&scope=snsapi_userinfo#wechat_redirect";
+    logger.debug("wrapedUrl:" + wrapedUrl);
     return wrapedUrl;
 };
 
