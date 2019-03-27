@@ -1,4 +1,6 @@
-const data = {
+const __ = require('underscore')
+
+const lamps = {
     type: 'lamping',
     summary: '供灯之功德总述',
     title: '供灯祈福',
@@ -31,7 +33,13 @@ const data = {
   }
 
 const handler = function () {
-    return Promise.resolve(data)
+    lamps.items = __.map(lamps.items, item => {
+        return {
+          ...item,
+          img: item.img || '/static/img/lamps.jpg'
+        }
+      })
+    return Promise.resolve(lamps)
 };
 
 module.exports = {
