@@ -14,9 +14,10 @@ const logger = require('@finelets/hyper-rest/app/Logger'),
 
 const wechat = require('./server/wechat/wechat'),
 	token = process.env.WECHAT_APP_TOKEN,
+	// auth = require('./server/auth'),
 	wechatLib = require('wechat')(token, wechat);
 
-const routes = require('./server/routes');
+// const routes = require('./server/routes');
 
 //配置view engine
 const viewEngine = viewEngineFactory(
@@ -39,6 +40,7 @@ const viewEngine = viewEngineFactory(
 
 var app = appBuilder.getApp()
 app.use(cors())
+// app.use(auth)
 
 appBuilder
 	.setViewEngine(viewEngine)
