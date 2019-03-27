@@ -3,6 +3,7 @@ const path = require('path'),
 	appBuilder = require('@finelets/hyper-rest/express/AppBuilder').begin(__dirname),
 	restDir = path.join(__dirname, './server/rests'),
 	graph = require('./server/flow'),
+	cors = require('cors'),
 	rests = require('@finelets/hyper-rest/rests')(restDir, graph);
 
 const logger = require('@finelets/hyper-rest/app/Logger'),
@@ -35,6 +36,9 @@ const viewEngine = viewEngineFactory(
 		}
 	}
 );
+
+var app = appBuilder.getApp()
+app.use(cors())
 
 appBuilder
 	.setViewEngine(viewEngine)
