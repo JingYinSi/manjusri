@@ -49,7 +49,7 @@ appBuilder
 	.setFavicon('client/public/images/icon1.jpg')
 	.setSessionStore(sessionStore)
 	.useMiddleware('/jingyin/wechat', wechatLib)
-	.setRoutes(routes)
+	// .setRoutes(routes)
 	.end();
 
 connectDb(function() {
