@@ -3,7 +3,8 @@
  */
 module.exports = {
     Manjusri: {
-        Lamps: "Lamps"
+        Lamps: "Lamps",
+        Monks: "Monks"
     },
     Lamps: {
         "exit": "Manjusri"
