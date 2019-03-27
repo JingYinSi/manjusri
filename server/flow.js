@@ -3,10 +3,9 @@
  */
 module.exports = {
     Manjusri: {
-        Quotor: "Quotor"
+        Lamps: "Lamps"
     },
-    Quotor: {
-        //"search": "SearchQuotes",
+    Lamps: {
         "exit": "Manjusri"
     }
 }
