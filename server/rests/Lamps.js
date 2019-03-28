@@ -2,7 +2,7 @@ const __ = require('underscore')
 
 const lamps = {
     type: 'lamping',
-    summary: '供灯之功德总述',
+    summary: '供灯之功德总述-from server',
     title: '供灯祈福',
     items: [{
       img: '/static/img/lamps.jpg',

@@ -2,7 +2,7 @@ const __ = require('underscore')
 
 const monks = {
   type: 'formonks',
-  summary: '供僧的功德总述',
+  summary: '供僧的功德总述-from server',
   title: '随喜供斋僧位',
   items: [{
     img: '/static/img/img_gongxiu_2.jpg',
