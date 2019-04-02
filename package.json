@@ -10,7 +10,7 @@
   "author": "clx",
   "license": "ISC",
   "dependencies": {
-    "@finelets/hyper-rest": "^2.1.10-cross-1.17",
+    "@finelets/hyper-rest": "^2.1.10-cross-1.19",
     "async": "^2.6.2",
     "axios": "^0.18.0",
     "bcrypt-nodejs": "0.0.3",
