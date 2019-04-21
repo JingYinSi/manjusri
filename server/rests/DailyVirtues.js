@@ -55,10 +55,21 @@ const handler = function (req, res) {
     return dealwithVirtue('daily', req, res);
 };
 
+const prepay = function (data) {
+    logger.debug('prepay info: ' + JSON.stringify(data, null, 2))
+    return Promise.resolve({...data, id: 12345677})
+}
+
 module.exports = {
-    url: '/jingyin/rests/manjusri/dailyVirtue',
+    url: '/jingyin/rests/manjusri/dailyVirtues',
     rests: [{
-        type: 'get',
-        handler: handler
-    }]
+            type: 'get',
+            handler: handler
+        },
+        {
+            type: 'create',
+            target: 'Virtue',
+            handler: prepay
+        }
+    ]
 }

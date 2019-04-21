@@ -3,7 +3,11 @@
  */
 module.exports = {
     Manjusri: {
+        VirtueTypes: 'VirtueTypes',
         Onlines: 'Onlines',
-        DailyVirtue: 'DailyVirtue'
+        DailyVirtues: 'DailyVirtues'
+    },
+    Virtue: {
+        pay: 'WechatPay'
     }
 }

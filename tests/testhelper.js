@@ -4,17 +4,23 @@
 var chai = require('chai'),
     sinon = require('sinon'),
     chaiXml = require('chai-xml'),
-    sinonChai = require('sinon-chai'),
-    finelets = require('@finelets/hyper-rest');
+    sinonChai = require('sinon-chai');
+
+var chaiAsPromised = require("chai-as-promised");
+
+chai.use(chaiAsPromised);
 
 var sinonStubPromise = require('sinon-stub-promise');
 sinonStubPromise(sinon);
 
-global.dbURI = 'mongodb://localhost/test';
-global.clearDB = finelets.db.mongoDb.clearDB(dbURI);
+global.dbURI = 'mongodb://127.0.0.1:27017/test';
+global.mongoose = require('mongoose');
+global.clearDB = require('@finelets/hyper-rest/db/mongoDb/clearDB')(dbURI);
 
 global.expect = chai.expect;
+global.assert = chai.assert;
 global.sinon = sinon;
+global.should = require('should');
 chai.use(chaiXml);
 chai.use(sinonChai);
 
@@ -31,10 +37,11 @@ global.insertDocsInSequential = function insertDocsInSequential(model, docs, cal
     }
 
     iterate(0);
-}
+};
 global.insertDocsInParallel = function insertDocsInParallel(model, docs, callback) {
     var result = [];
-    var finished = 0, errored = false;
+    var finished = 0,
+        errored = false;
 
     function done(err, data) {
         if (err) {
@@ -51,7 +58,7 @@ global.insertDocsInParallel = function insertDocsInParallel(model, docs, callbac
     docs.forEach(function (item) {
         new model(item).save(done);
     });
-}
+};
 global.createPromiseStub = function createPromiseStub(withArgs, resolves, err) {
     var stub = sinon.stub();
     var mid;
@@ -70,4 +77,17 @@ global.createPromiseStub = function createPromiseStub(withArgs, resolves, err) {
         promise.resolves.apply(promise, resolves);
     }
     return stub;
-}
+};
+global.toJSON = function toJSON(obj) {
+    var result = Object.assign({}, obj);
+    for (var prop in result) {
+        if (result[prop] instanceof Date) {
+            result[prop] = result[prop].toJSON();
+        } else {
+            if (!Array.isArray(result[prop]) && result[prop] instanceof Object) {
+                result[prop] = toJSON(result[prop]);
+            }
+        }
+    }
+    return result;
+};

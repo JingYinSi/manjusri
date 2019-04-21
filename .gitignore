@@ -2,7 +2,7 @@
 .vscode/
 .idea/
 node_modules/
-db/
+/db/
 /client/public/img/*.db
 /client/public/uploads/*.db
 initdb.js
