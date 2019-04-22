@@ -1,9 +1,8 @@
 const createEntity = require('@finelets/hyper-rest/db/mongoDb/DbEntity'),
-dbModel = require('../db/models/VirtueType'),
+dbModel = require('../db/models/Project'),
 entityConfig = {
     schema: dbModel,
-    refs: ['project'],
-    updatables: ['img', 'name', 'desc', 'target', 'price', 'onAction']
+    updatables: ['title', 'summary', 'onAction']
 }
 
 const entity = createEntity(entityConfig)

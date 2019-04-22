@@ -7,14 +7,14 @@ const {
     update,
     remove,
     findById
-} = require('../biz/VirtueTypes');
+} = require('../biz/Projects');
 
 module.exports = {
-    url: '/jingyin/rests/biz/virtueTypes/:id',
+    url: '/jingyin/rests/biz/projects/:id',
+    transitions: {'VirtueType': {id: 'context.project'}},
     rests: [{
             type: 'read',
             ifNoneMatch,
-            dataRef: {project: 'Project'},
             handler: findById
         },
         {

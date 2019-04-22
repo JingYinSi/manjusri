@@ -1,15 +1,24 @@
-const createCollection = require('@finelets/hyper-rest/db/mongoDb/CreateCollection')
+const createCollection = require('@finelets/hyper-rest/db/mongoDb/CreateCollection'),
+mongoose = require('mongoose')
 
 const dbModel = createCollection({
     name: 'VirtueType',
     schema: {
-        type: String,
-        title: String,
-        summary: String
+        project: mongoose.Schema.Types.ObjectId,
+        img: String,
+        name: String,
+        desc: String,
+        target: Number,
+        price: Number,
+        onAction: {
+            type: Boolean,
+            default: true
+        }
     },
     indexes: [{
             index: {
-                type: 1
+                project: 1,
+                name: 1
             },
             options: {
                 unique: true

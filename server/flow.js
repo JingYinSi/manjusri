@@ -3,9 +3,16 @@
  */
 module.exports = {
     Manjusri: {
+        Projects: 'Projects',
         VirtueTypes: 'VirtueTypes',
         Onlines: 'Onlines',
         DailyVirtues: 'DailyVirtues'
+    },
+    Project: {
+        Projects: 'Projects'
+    },
+    VirtueType: {
+        VirtueTypes: 'VirtueTypes'
     },
     Virtue: {
         pay: 'WechatPay'
