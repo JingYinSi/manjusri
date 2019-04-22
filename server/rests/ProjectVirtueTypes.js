@@ -19,9 +19,6 @@ module.exports = {
             ...req.body,
             project: req.params.id
           })
-          .catch((err) => {
-            return Promise.reject(err)
-          })
       }
     },
     {

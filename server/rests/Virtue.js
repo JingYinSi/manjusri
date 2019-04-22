@@ -1,14 +1,26 @@
 
-const logger = require('@finelets/hyper-rest/app/Logger')
-
-const handler = function (req, res) {
-    return Promise.resolve({name: 'this is a daily virtue', id: req.params['id']})
-};
+const {
+    ifMatch,
+    ifNoneMatch,
+    update,
+    remove,
+    findById
+} = require('../biz/Transactions');
 
 module.exports = {
     url: '/jingyin/rests/manjusri/virtues/:id',
     rests: [{
         type: 'read',
-        handler: handler
+        ifNoneMatch,
+        dataRef: {subject: 'VirtueType'},
+        handler: findById
+    },
+    {
+        type: 'update',
+        ifMatch,
+        handler: (id, data) => {
+            data.id = id
+            return update(data)
+        }
     }]
 }

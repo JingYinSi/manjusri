@@ -11,6 +11,12 @@ const {
 
 module.exports = {
     url: '/jingyin/rests/biz/virtueTypes/:id',
+    transitions: {
+        'Virtue': {
+            id: 'context.subject'
+        },
+        ProjectVirtueTypes: {id: 'params.id'}
+    },
     rests: [{
             type: 'read',
             ifNoneMatch,

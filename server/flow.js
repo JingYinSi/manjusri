@@ -5,18 +5,18 @@ module.exports = {
     Manjusri: {
         Projects: 'Projects',
         VirtueTypes: 'VirtueTypes',
-        Onlines: 'Onlines',
-        DailyVirtues: 'DailyVirtues'
+        Onlines: 'Onlines'
     },
     Projects: {
         home: 'Manjusri'
     },
     Project: {
-        Projects: 'Projects',
-        VirtueTypes: 'ProjectVirtueTypes'
+        collection: 'Projects',
+        virtueTypes: 'ProjectVirtueTypes'
     },
     VirtueType: {
-        VirtueTypes: 'VirtueTypes'
+        tansactions: 'DailyVirtues',
+        collection: 'VirtueTypes'
     },
     VirtueTypes: {
         home: 'Manjusri'
@@ -25,6 +25,6 @@ module.exports = {
         project: 'Project'
     },
     Virtue: {
-        pay: 'WechatPay'
+        pay: 'Virtue'
     }
 }
