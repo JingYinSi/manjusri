@@ -14,7 +14,9 @@ module.exports = {
   rests: [{
       type: 'create',
       target: 'Project',
-      handler: entity.create
+      handler: (req) => {
+        return entity.create(req.body)
+      }
     },
     {
       type: 'query',

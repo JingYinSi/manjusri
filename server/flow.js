@@ -8,11 +8,21 @@ module.exports = {
         Onlines: 'Onlines',
         DailyVirtues: 'DailyVirtues'
     },
+    Projects: {
+        home: 'Manjusri'
+    },
     Project: {
-        Projects: 'Projects'
+        Projects: 'Projects',
+        VirtueTypes: 'ProjectVirtueTypes'
     },
     VirtueType: {
         VirtueTypes: 'VirtueTypes'
+    },
+    VirtueTypes: {
+        home: 'Manjusri'
+    },
+    ProjectVirtueTypes: {
+        project: 'Project'
     },
     Virtue: {
         pay: 'WechatPay'

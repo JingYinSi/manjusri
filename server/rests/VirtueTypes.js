@@ -14,7 +14,9 @@ module.exports = {
   rests: [{
       type: 'create',
       target: 'VirtueType',
-      handler: entity.create
+      handler: (req) => {
+        return entity.create(req.body)
+      }
     },
     {
       type: 'query',
