@@ -10,7 +10,7 @@ const {
 } = require('../biz/Projects');
 
 module.exports = {
-    url: '/jingyin/rests/biz/projects/:id',
+    url: '/jingyin/rests/manjusri/projects/:id',
     transitions: {
         'VirtueType': {
             id: 'context.project'

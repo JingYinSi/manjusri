@@ -10,12 +10,11 @@ const {
 } = require('../biz/VirtueTypes');
 
 module.exports = {
-    url: '/jingyin/rests/biz/virtueTypes/:id',
+    url: '/jingyin/rests/manjusri/virtueTypes/:id',
     transitions: {
         'Virtue': {
             id: 'context.subject'
-        },
-        ProjectVirtueTypes: {id: 'params.id'}
+        }
     },
     rests: [{
             type: 'read',

@@ -12,11 +12,6 @@ const list = (query, req) => {
         })
 }
 
-const prepay = function (data) {
-    /* subject, amount, price, num, giving */
-    return entity.create(data)
-}
-
 module.exports = {
     url: '/jingyin/rests/manjusri/subject/:id/dailyVirtues',
     transitions: {
@@ -28,16 +23,6 @@ module.exports = {
             type: 'query',
             element: 'Virtue',
             handler: list
-        },
-        {
-            type: 'create',
-            target: 'Virtue',
-            handler: (req) => {
-                return prepay({
-                    ...req.body,
-                    subject: req.params.id
-                })
-            }
         }
     ]
 }

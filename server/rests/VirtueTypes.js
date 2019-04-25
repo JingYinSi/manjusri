@@ -10,7 +10,7 @@ const list = () => {
 }
 
 module.exports = {
-  url: '/jingyin/rests/biz/virtueTypes',
+  url: '/jingyin/rests/manjusri/virtueTypes',
   rests: [{
       type: 'create',
       target: 'VirtueType',

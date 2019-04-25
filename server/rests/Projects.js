@@ -10,7 +10,7 @@ const list = () => {
 }
 
 module.exports = {
-  url: '/jingyin/rests/biz/projects',
+  url: '/jingyin/rests/manjusri/projects',
   rests: [{
       type: 'create',
       target: 'Project',
