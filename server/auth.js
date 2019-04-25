@@ -7,11 +7,7 @@ const redirects = require('../server/wechat/redirects'),
 
 module.exports = function (req, res, next) {
     let openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
-    if (process.env.DEVELOPMENT) {
-        if(!req.session.user) {
-            req.session.user = {openid}
-        }
-    } else {
+    if (!process.env.DEVELOPMENT) {
         logger.debug('now we are going to check session user ........');
         var sess = req.session;
         if (!sess || !sess.user || !sess.user.openid) {

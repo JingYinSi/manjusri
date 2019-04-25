@@ -40,7 +40,8 @@ const viewEngine = viewEngineFactory(
 
 var app = appBuilder.getApp()
 app.use(cors())
-app.use('/jingyin/manjusri', auth)
+// app.use('/jingyin/manjusri', auth)
+app.use(auth)
 
 appBuilder
 	.setViewEngine(viewEngine)
