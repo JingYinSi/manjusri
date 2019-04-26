@@ -18,12 +18,13 @@ module.exports = function (req, res, next) {
         }
         openid = sess.user.openid;
     }
-    return SessionUser(openid)
+    return next();
+    /* return SessionUser(openid)
         .then(function (user) {
             req.user = user;
             return next();
         })
         .catch(function (reason) {
             return reason.sendStatusTo(res);
-        })
+        }) */
 }
