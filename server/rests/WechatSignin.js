@@ -58,7 +58,8 @@ function signin(req, res) {
 }
 
 module.exports = {
-    url: '/jingyin/rests/manjusri/wx/signin',
+    // url: '/jingyin/rests/manjusri/wx/signin',
+    url: '/jingyin/manjusri/wx/signin',
     rests: [{
         type: 'get',
         handler: signin

@@ -8,7 +8,8 @@ const wx = require('../weixin'),
 module.exports = {
     toLogin: function (req, res) {
         // var url = urlRegister.getLink("login");
-        var url = '/jingyin/rests/manjusri/wx/signin'
+        // var url = '/jingyin/rests/manjusri/wx/signin'
+        var url = '/jingyin/manjusri/wx/signin'
         url = wx.weixinConfig.wrapRedirectURLByOath2WayBaseScope(url);
         //req.session.redirectToUrl = req.originalUrl;
         return res.redirect(url);
