@@ -5,7 +5,8 @@ module.exports = {
     Manjusri: {
         projects: 'Projects',
         virtueTypes: 'VirtueTypes',
-        Onlines: 'Onlines'
+        Onlines: 'Onlines',
+        wechatSignin: 'WechatSignin'
     },
     Projects: {
         home: 'Manjusri'

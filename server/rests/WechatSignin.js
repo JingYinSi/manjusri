@@ -2,7 +2,7 @@ const wx = require('../weixin').weixinService,
     logger = require('@finelets/hyper-rest/app/Logger')
 
 function signin(req, res) {
-    logger.debug('enter login ..........................')
+    logger.debug('enter login, code: ' + req.query.code || 'undefined')
     let errCode = 403;
     let code = req.query.code
     if (!code) {
