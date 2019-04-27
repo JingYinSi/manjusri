@@ -19,7 +19,8 @@ function signin(req, res) {
         .then(function (data) {
             const sess = req.session;
             sess.user = {...data};
-            logger.debug("session is built, and context of current session is:" + JSON.stringify(sess));
+            logger.debug("session is built, and context of current session is:" + JSON.stringify(sess, null, 2));
+            return sess.user
             //TODO:全局性地缓存refresh_token，在我的基础资料处可从该全局缓存中获得accesstoken, 以同步用户资料
             //sess.refresh_token = data.refresh_token;
 
