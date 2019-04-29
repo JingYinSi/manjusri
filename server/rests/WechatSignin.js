@@ -3,7 +3,7 @@ const wx = require('../weixin').weixinService,
 
 function signin(req, res) {
     logger.debug('enter login, code: ' + req.query.code || 'undefined')
-    logger.debug('redirectUrl: ' + req.query.redirectUrl || 'undefined')
+    logger.debug('redirectUrl: ' + req.query.url || 'undefined')
     let errCode = 403;
     let code = req.query.code
     if (!code) {
@@ -21,7 +21,7 @@ function signin(req, res) {
             const sess = req.session;
             sess.user = {...data};
             logger.debug("session is built, and context of current session is:" + JSON.stringify(sess, null, 2));
-            return res.redirect(`http://dev.jingyintemple.top/index.html#`)
+            return res.redirect(`http://dev.jingyintemple.top/index.html#${req.query.url}?code=${req.query.code}`)
             // return sess.user
             //TODO:全局性地缓存refresh_token，在我的基础资料处可从该全局缓存中获得accesstoken, 以同步用户资料
             //sess.refresh_token = data.refresh_token;
