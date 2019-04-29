@@ -3,6 +3,7 @@ const wx = require('../weixin').weixinService,
 
 function signin(req, res) {
     logger.debug('enter login, code: ' + req.query.code || 'undefined')
+    logger.debug('redirectUrl: ' + req.query.redirectUrl || 'undefined')
     let errCode = 403;
     let code = req.query.code
     if (!code) {
