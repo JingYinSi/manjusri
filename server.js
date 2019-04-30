@@ -44,7 +44,7 @@ appBuilder
 	.setFavicon('client/public/images/icon1.jpg')
 	.setSessionStore(sessionStore)
 	.useMiddleware('/jingyin/wechat', wechatLib)
-	// .useMiddleware('/jingyin/rests', auth)
+	.useMiddleware(auth)
 	.setResources(...rests)
 	// .setRoutes(routes)
 	.end();
