@@ -76,7 +76,7 @@ const handler = function (req, res) {
     }
     console.log('first set session user: ' + JSON.stringify(req.session, null, 2));
   }
-  
+
   onlines.lamping.items = __.map(onlines.lamping.items, item => {
     return {
       ...item,
@@ -89,7 +89,8 @@ const handler = function (req, res) {
       img: item.img || '/static/img/img_gongxiu_2.jpg'
     }
   })
-  return Promise.resolve(onlines)
+  return res.json(onlines)
+  // return Promise.resolve(onlines)
 };
 
 module.exports = {
