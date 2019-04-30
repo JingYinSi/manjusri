@@ -8,7 +8,8 @@ const path = require('path'),
 
 const logger = require('@finelets/hyper-rest/app/Logger'),
 	connectDb = require('@finelets/hyper-rest/db/mongoDb/ConnectMongoDb'),
-	sessionStore = require('@finelets/hyper-rest/session/MongoDbSessionStore')(1000 * 60 * 60 * 24);
+	// sessionStore = require('@finelets/hyper-rest/session/MongoDbSessionStore')(1000 * 60 * 60 * 24);
+	sessionStore = require('./server/MongoDbSrssionStore')(1000 * 60 * 60 * 24);
 
 const wechat = require('./server/wechat/wechat'),
 	token = process.env.WECHAT_APP_TOKEN,
