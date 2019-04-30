@@ -2,9 +2,11 @@ const wx = require('../weixin').weixinService,
     logger = require('@finelets/hyper-rest/app/Logger')
 
 function sessUser(req, res) {
+    logger.debug('entering WechatUser service ....')
     let code = req.query.code
     if (!code) {
-        return res.status(403).end()
+        logger.error('query param code is not contained in request')
+        return res.status(400).end()
     }
 
     return wx.getOpenId(code)

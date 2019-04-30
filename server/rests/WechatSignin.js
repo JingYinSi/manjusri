@@ -1,9 +1,7 @@
-const wx = require('../weixin').weixinService,
-    logger = require('@finelets/hyper-rest/app/Logger')
+const logger = require('@finelets/hyper-rest/app/Logger')
 
 function signin(req, res) {
-    logger.debug('enter login, code: ' + req.query.code || 'undefined')
-    logger.debug('redirectUrl: ' + req.query.url || 'undefined')
+    logger.debug('entering WechatSignin service ....')
     let errCode = 403;
     let code = req.query.code
     if (!code) {
@@ -16,7 +14,7 @@ function signin(req, res) {
         return res.status(errCode).end()
     }
     
-    return res.redirect(`http://dev.jingyintemple.top/index.html#${req.query.url}?code=${req.query.code}`)
+    return res.redirect(`${process.env.siteBaseUrl}/index.html#${req.query.url}?code=${req.query.code}`)
 }
 
 module.exports = {
