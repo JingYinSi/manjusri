@@ -62,9 +62,21 @@ const formonks = {
   ]
 }
 
-const onlines = {lamping, formonks}
+const onlines = {
+  lamping,
+  formonks
+}
 
-const handler = function () {
+const handler = function (req, res) {
+  if (req.session.user) {
+    req.session.user.isVisit++;
+  } else {
+    req.session.user = {
+      isVisit: 1
+    }
+    console.log('first set session user: ' + JSON.stringify(req.session, null, 2));
+  }
+  
   onlines.lamping.items = __.map(onlines.lamping.items, item => {
     return {
       ...item,
@@ -83,7 +95,9 @@ const handler = function () {
 module.exports = {
   url: '/jingyin/rests/manjusri/onlines/index',
   rests: [{
-    type: 'get',
+    type: 'http',
+    method: 'get',
+    // type: 'get',
     handler: handler
   }]
 }
