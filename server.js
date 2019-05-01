@@ -8,46 +8,19 @@ const path = require('path'),
 
 const logger = require('@finelets/hyper-rest/app/Logger'),
 	connectDb = require('@finelets/hyper-rest/db/mongoDb/ConnectMongoDb'),
-	// sessionStore = require('@finelets/hyper-rest/session/MongoDbSessionStore')(1000 * 60 * 60 * 24);
-	sessionStore = require('./server/MongoDbSrssionStore')(1000 * 60 * 60 * 24);
-
-const wechat = require('./server/wechat/wechat'),
-	token = process.env.WECHAT_APP_TOKEN,
+	wechat = require('./server/wechat/wechat'),
 	auth = require('./server/auth'),
 	wechatLib = require('wechat')(token, wechat);
 
-// const routes = require('./server/routes');
-
-//配置view engine
-/* const viewEngine = viewEngineFactory(
-	//按缺省规约：
-	// partials目录为path.join(__dirname, './client/views') + '/partials'
-	// views文件扩展名为'.hbs'
-	'hbs',
-	path.join(__dirname, './client/views'),
-	{
-		helpers: {
-			dateMMDD: function(timestamp) {
-				return moment(timestamp).format('MM-DD');
-			},
-			dateYYYYMMDD: function(timestamp) {
-				return moment(timestamp).format('YYYY-MM-DD');
-			}
-		}
-	}
-); */
-
-var app = appBuilder.getApp()
+let app = appBuilder.getApp()
 app.use(cors())
 
 appBuilder
 	.setWebRoot('/', './client/public')
 	.setFavicon('client/public/images/icon1.jpg')
-	.setSessionStore(sessionStore)
 	.useMiddleware('/jingyin/wechat', wechatLib)
-	.useMiddleware('/', auth)
+	.useMiddleware('/jingyin/manjusri/wx', auth)
 	.setResources(...rests)
-	// .setRoutes(routes)
 	.end();
 
 connectDb(function() {

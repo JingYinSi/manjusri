@@ -55,7 +55,7 @@ function sessUser(req, res) {
 }
 
 module.exports = {
-    url: '/jingyin/rests/manjusri/wx/user',
+    url: '/jingyin/manjusri/wx/user',
     rests: [{
         type: 'http',
         method: 'get',
