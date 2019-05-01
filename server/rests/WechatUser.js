@@ -1,4 +1,4 @@
-const wx = require('../weixin').weixinService,
+/* const wx = require('../weixin').weixinService,
     logger = require('@finelets/hyper-rest/app/Logger')
 
 function sessUser(req, res) {
@@ -22,7 +22,7 @@ function sessUser(req, res) {
 
             // return usersModule.findByOpenid(openid);
         })
-        /* .then(function (user) {
+        .then(function (user) {
             if (!user) {
                 errCode = 500;
                 return wx.weixinService.getUserInfoByOpenIdAndToken(accessToken, openid)
@@ -47,18 +47,43 @@ function sessUser(req, res) {
                 return redirectToUrl ? res.redirect(redirectToUrl) :
                     redirects.toHome(req, res);
             }
-        }) */
+        })
         .catch(function (err) {
             logger.debug("error:" + err);
             res.status(500).end()
         });
-}
+} */
 
-module.exports = {
-    url: '/jingyin/manjusri/wx/user',
-    rests: [{
-        type: 'http',
-        method: 'get',
-        handler: sessUser
-    }]
-}
+const jwt = require('jsonwebtoken'),
+    wx = require('../weixin').weixinService,
+    logger = require('@finelets/hyper-rest/app/Logger')
+
+function auth(req, res) {
+    logger.debug('entering Wechat Authentication service ....')
+    let code = req.query.code
+    if (!code) {
+        logger.error('query param code is not contained in request')
+        return res.status(400).end()
+    }
+
+    return wx.getOpenId(code)
+        .then(function (data) {
+                logger.debug('wx auth info:' + JSON.stringify(data, null, 2) || 'undefined')
+                logger.debug('process.env.JWT_SECRET:' + process.env.JWT_SECRET || 'undefined')
+                    const token = jwt.sign(data, process.env.JWT_SECRET)
+                    return res.json({token})
+                })
+            .catch(function (err) {
+                logger.error('Fail from wx getopenid: \r\n' + err)
+                res.status(500).end()
+            });
+        }
+
+    module.exports = {
+        url: '/jingyin/rests/manjusri/wx/auth',
+        rests: [{
+            type: 'http',
+            method: 'get',
+            handler: auth
+        }]
+    }
