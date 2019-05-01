@@ -15,7 +15,10 @@ module.exports = function (req, res, next) {
                 const decoded = jwt.verify(authStrs[1], process.env.JWT_SECRET)
                 logger.debug('Decoded auth: ' + JSON.stringify(decoded, null, 2) || 'undefined')
                 let {access_token} = decoded
-                if (access_token) next()
+                if (access_token) {
+                    req.user = decoded
+                    return next()
+                }
             }
         } catch (err) {}
     }
