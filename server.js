@@ -7,10 +7,10 @@ const path = require('path'),
 	rests = require('@finelets/hyper-rest/rests')(restDir, graph);
 
 const logger = require('@finelets/hyper-rest/app/Logger'),
-	connectDb = require('@finelets/hyper-rest/db/mongoDb/ConnectMongoDb'),
+	connectDb = require('@finelets/hyper-rest/db/mongoDb/ConnectMongoDb')
 	wechat = require('./server/wechat/wechat'),
 	auth = require('./server/auth'),
-	wechatLib = require('wechat')(token, wechat);
+	wechatLib = require('wechat')(process.env.WECHAT_APP_TOKEN, wechat);
 
 let app = appBuilder.getApp()
 app.use(cors())
