@@ -7,7 +7,8 @@ module.exports = {
         virtueTypes: 'VirtueTypes',
         Onlines: 'Onlines',
         wechatCode: 'WechatCode',
-        wechatAuth: 'WechatAuth'
+        wechatAuth: 'WechatAuth',
+        needAuth: 'NeedAuth'
     },
     Projects: {
         home: 'Manjusri'

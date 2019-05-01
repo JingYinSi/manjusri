@@ -19,7 +19,7 @@ appBuilder
 	.setWebRoot('/', './client/public')
 	.setFavicon('client/public/images/icon1.jpg')
 	.useMiddleware('/jingyin/wechat', wechatLib)
-	.useMiddleware('/jingyin/manjusri/wx', auth)
+	.useMiddleware('/jingyin/manjusri', auth)
 	.setResources(...rests)
 	.end();
 
