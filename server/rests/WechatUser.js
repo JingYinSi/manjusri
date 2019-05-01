@@ -69,9 +69,8 @@ function auth(req, res) {
     return wx.getOpenId(code)
         .then(function (data) {
                 logger.debug('wx auth info:' + JSON.stringify(data, null, 2) || 'undefined')
-                logger.debug('process.env.JWT_SECRET:' + process.env.JWT_SECRET || 'undefined')
                     const token = jwt.sign(data, process.env.JWT_SECRET)
-                    return res.json({token})
+                    return res.json({token}).end()
                 })
             .catch(function (err) {
                 logger.error('Fail from wx getopenid: \r\n' + err)
