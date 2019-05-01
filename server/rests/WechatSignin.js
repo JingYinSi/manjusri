@@ -17,6 +17,8 @@ function signin(req, res) {
 
     return wx.getOpenId(code)
         .then(function (data) {
+            logger.debug('wx auth info:' + JSON.stringify(data, null, 2) || 'undefined')
+            logger.debug('process.env.JWT_SECRET:' + process.env.JWT_SECRET || 'undefined')
             const token = jwt.sign(data, process.env.JWT_SECRET)
             return res.redirect(`${process.env.siteBaseUrl}/index.html#${req.query.url}?token=${token}`)
         })
