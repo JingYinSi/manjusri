@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken'),
     logger = require('@finelets/hyper-rest/app/Logger');
 
 module.exports = function (req, res, next) {
+    logger.debug('enter auth .....')
     let code = 401
     if (req.headers.authorization) {
         try {
