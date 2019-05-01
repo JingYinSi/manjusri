@@ -1,33 +1,24 @@
 /**
  * Created by clx on 2017/4/8.
  */
-const redirects = require('../server/wechat/redirects'),
-    SessionUser = require('./modules/2.1/SessionUser'),
+const jwt = require('jsonwebtoken'),
     logger = require('@finelets/hyper-rest/app/Logger');
 
 module.exports = function (req, res, next) {
-    logger.debug('Session: ' + JSON.stringify(req.session, null, 2) || 'undefined')
-    logger.debug('Session User: ' + JSON.stringify(req.session.user, null, 2) || 'undefined')
-    return next()
-    /* let openid = 'o0ghywcfW_2Dp4oN-7NADengZAVM';
-    if (!process.env.DEVELOPMENT) {
-        logger.debug('now we are going to check session user ........');
-        var sess = req.session;
-        if (!sess || !sess.user || !sess.user.openid) {
-            logger.debug("Current user does't login, redirect him to login ...........");
-            //TODO:某些GET请求可以在登录后自动重定向回来，但另一些请求则不行，请重新综合考虑这个问题
-            sess.redirectToUrl = req.originalUrl;
-            return redirects.toLogin(req, res);
-        }
-        openid = sess.user.openid;
+    let code = 401
+    if (req.headers.authorization) {
+        try {
+            let authStrs = req.headers.authorization.split(' ')
+            if (authStrs.length == 2 && authStrs[0] === 'Bearer' && authStrs[1]) {
+                code = 403
+                const decoded = jwt.verify(authStrs[1], process.env.JWT_SECRET)
+                logger.debug('Decoded auth: ' + JSON.stringify(decoded, null, 2) || 'undefined')
+                let {access_token} = decoded
+                if (access_token) next()
+            }
+        } catch (err) {}
     }
-    return next(); */
-    /* return SessionUser(openid)
-        .then(function (user) {
-            req.user = user;
-            return next();
-        })
-        .catch(function (reason) {
-            return reason.sendStatusTo(res);
-        }) */
+
+    logger.error('Fail to authorization from head')
+    return res.status(code).end()
 }

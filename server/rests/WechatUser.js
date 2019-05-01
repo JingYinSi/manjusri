@@ -54,22 +54,11 @@ function sessUser(req, res) {
         });
 }
 
-function testSess (req, res) {
-    if (req.session.user) {
-        req.session.user.isVisit++;
-    } else {
-        req.session.user = {isVisit: 1}
-        console.log('first set session user: ' + JSON.stringify(req.session, null, 2));
-    }
-    res.json(req.session.user);
-}
-
 module.exports = {
     url: '/jingyin/rests/manjusri/wx/user',
     rests: [{
         type: 'http',
         method: 'get',
-        // handler: sessUser
-        handler: testSess
+        handler: sessUser
     }]
 }

@@ -67,16 +67,7 @@ const onlines = {
   formonks
 }
 
-const handler = function (req, res) {
-  if (req.session.user) {
-    req.session.user.isVisit++;
-  } else {
-    req.session.user = {
-      isVisit: 1
-    }
-    console.log('first set session user: ' + JSON.stringify(req.session, null, 2));
-  }
-
+const handler = function () {
   onlines.lamping.items = __.map(onlines.lamping.items, item => {
     return {
       ...item,
@@ -89,16 +80,13 @@ const handler = function (req, res) {
       img: item.img || '/static/img/img_gongxiu_2.jpg'
     }
   })
-  return res.json(onlines)
-  // return Promise.resolve(onlines)
+  return Promise.resolve(onlines)
 };
 
 module.exports = {
   url: '/jingyin/rests/manjusri/onlines/index',
   rests: [{
-    type: 'http',
-    method: 'get',
-    // type: 'get',
+    type: 'get',
     handler: handler
   }]
 }

@@ -1,4 +1,6 @@
-const logger = require('@finelets/hyper-rest/app/Logger')
+const jwt = require('jsonwebtoken'),
+    wx = require('../weixin').weixinService,
+    logger = require('@finelets/hyper-rest/app/Logger')
 
 function signin(req, res) {
     logger.debug('entering WechatSignin service ....')
@@ -6,15 +8,22 @@ function signin(req, res) {
     let code = req.query.code
     if (!code) {
         const state = req.query.state
-        if(state) {
+        if (state) {
             logger.error(state)
             errCode = 400
-        }
-        else logger.warn('Current user refused to signin!')
+        } else logger.warn('Current user refused to signin!')
         return res.status(errCode).end()
     }
-    
-    return res.redirect(`${process.env.siteBaseUrl}/index.html#${req.query.url}?code=${req.query.code}`)
+
+    return wx.getOpenId(code)
+        .then(function (data) {
+            const token = jwt.sign(data, process.env.JWT_SECRET)
+            return res.redirect(`${process.env.siteBaseUrl}/index.html#${req.query.url}?token=${token}`)
+        })
+        .catch(function (err) {
+            logger.error('Fail from wx getopenid: \r\n' + err)
+            res.status(500).end()
+        });
 }
 
 module.exports = {
