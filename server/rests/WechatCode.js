@@ -1,7 +1,6 @@
 const logger = require('@finelets/hyper-rest/app/Logger')
 
 function signin(req, res) {
-    logger.debug('entering WechatSignin service ....')
     let errCode = 403;
     let code = req.query.code
     if (!code) {
@@ -14,6 +13,8 @@ function signin(req, res) {
         return res.status(errCode).end()
     }
     
+    logger.debug('we are going to redirect to auth page with auth code .....')
+    logger.debug(`The url: {process.env.siteBaseUrl}/index.html#${req.query.url}?code=${req.query.code}`)
     return res.redirect(`${process.env.siteBaseUrl}/index.html#${req.query.url}?code=${req.query.code}`)
 }
 
